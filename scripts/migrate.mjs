@@ -14,6 +14,12 @@ function quote(value) {
   return `'${String(value).replaceAll("'", "''")}'`;
 }
 
+function dollarQuote(value) {
+  let tag = 'migration_sql';
+  while (value.includes(`$${tag}$`)) tag += '_x';
+  return `$${tag}$${value}$${tag}$`;
+}
+
 export async function discoverMigrations() {
   const files = (await readdir(migrationsDir))
     .filter((file) => /^\d+-.+\.sql$/.test(file))
@@ -30,7 +36,7 @@ export function buildMigrationSql(migrations) {
     ...migrations.map(({ version, checksum: hash, sql }) => [
     'BEGIN;',
     `DO $$ BEGIN IF EXISTS (SELECT 1 FROM dgos_schema_migrations WHERE version = ${quote(version)} AND checksum <> ${quote(hash)}) THEN RAISE EXCEPTION 'migration checksum mismatch: ${version}'; END IF; END $$;`,
-    sql.trim(),
+    `DO $migration$ BEGIN IF NOT EXISTS (SELECT 1 FROM dgos_schema_migrations WHERE version = ${quote(version)} AND checksum = ${quote(hash)}) THEN EXECUTE ${dollarQuote(sql.trim())}; END IF; END $migration$;`,
     `INSERT INTO dgos_schema_migrations (version, checksum) VALUES (${quote(version)}, ${quote(hash)}) ON CONFLICT (version) DO NOTHING;`,
     'COMMIT;',
     ].join('\n')),
