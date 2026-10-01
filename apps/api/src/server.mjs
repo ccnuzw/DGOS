@@ -34,23 +34,23 @@ import { ProviderConfigService } from '../../../src/provider-config/service.mjs'
 import { InMemoryAiTaskRepository, PostgresAiTaskRepository } from '../../../src/ai-task/repository.mjs';
 import { AiTaskService } from '../../../src/ai-task/service.mjs';
 
-export function buildServer({ logger = true, repository, providerRepository, providerService, providerConfigRepository, aiTaskRepository, providerRunner, providerAdapters, providerEgress, quotaAdapter, secretService = new InMemorySecretService(), rateLimiter, clock } = {}) {
+export function buildServer({ logger = true, repository, providerRepository, providerService, providerConfigRepository, aiTaskRepository, providerRunner, providerAdapters, providerEgress, quotaAdapter, secretService = new InMemorySecretService(), rateLimiter, clock, appRepository: injectedAppRepository, permissionRepository: injectedPermissionRepository, actionRepository: injectedActionRepository, systemRepository: injectedSystemRepository, actionRegistry: injectedActionRegistry, auditRepository: injectedAuditRepository } = {}) {
   const resolvedRepository = repository ?? (process.env.DGOS_DATABASE_URL ? new PostgresIdentityRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryIdentityRepository());
   const app = Fastify({ logger });
   const identity = new IdentityService({ repository: resolvedRepository, secretService, clock });
   const providers = providerService ?? new ProviderService({ repository: providerRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresProviderRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryProviderRepository()), secretService, egress: new ProviderEgress(), adapters: { 'openai-compatible': createOpenAiCompatibleAdapter() } });
-  const audit = process.env.DGOS_DATABASE_URL ? new PostgresAuditRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryAuditRepository();
+  const audit = injectedAuditRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresAuditRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryAuditRepository());
   const runtimePool = process.env.DGOS_DATABASE_URL ? new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL }) : null;
   const governance = new GovernanceService({ retentionRepository: process.env.DGOS_DATABASE_URL ? new PostgresRetentionRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryRetentionRepository(audit), auditRepository: audit });
   const quotaPool = process.env.DGOS_DATABASE_URL ? new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL }) : null;
   const quota = quotaModules ? new quotaModules[1].QuotaService({ repository: quotaPool ? new quotaModules[0].PostgresQuotaRepository(quotaPool, { audit }) : new quotaModules[0].InMemoryQuotaRepository(), audit, clock }) : { preflightQuota: async () => { throw Object.assign(new Error('quota_unavailable'), { statusCode: 503 }); } };
-  const appRepository = runtimePool ? new PostgresAppRepository(runtimePool) : new InMemoryAppRepository({ audit });
+  const appRepository = injectedAppRepository ?? (runtimePool ? new PostgresAppRepository(runtimePool) : new InMemoryAppRepository({ audit }));
   const catalog = new CatalogService({ repository: appRepository, audit });
   const runtime = new AppRuntimeService({ repository: appRepository, audit });
-  const permissions = new PermissionBroker({ repository: runtimePool ? new PostgresPermissionRepository(runtimePool) : new InMemoryPermissionRepository(), audit });
-  const actionRegistry = new ActionRegistry();
-  const actions = new ActionService({ registry: actionRegistry, permissions, audit, repository: runtimePool ? new PostgresActionRepository(runtimePool) : new InMemoryActionRepository() });
-  const system = new SystemService({ audit, repository: runtimePool ? new PostgresSystemRepository(runtimePool) : new InMemorySystemRepository() });
+  const permissions = new PermissionBroker({ repository: injectedPermissionRepository ?? (runtimePool ? new PostgresPermissionRepository(runtimePool) : new InMemoryPermissionRepository()), audit });
+  const actionRegistry = injectedActionRegistry ?? new ActionRegistry();
+  const actions = new ActionService({ registry: actionRegistry, permissions, audit, repository: injectedActionRepository ?? (runtimePool ? new PostgresActionRepository(runtimePool) : new InMemoryActionRepository()) });
+  const system = new SystemService({ audit, repository: injectedSystemRepository ?? (runtimePool ? new PostgresSystemRepository(runtimePool) : new InMemorySystemRepository()) });
   const providerRegistry = new ProtocolAdapterRegistry(providerAdapters ?? [createConfiguredAdapter()]);
   const configuredEgress = providerEgress ?? new ProviderEgress();
   const providerConfigs = new ProviderConfigService({ repository: providerConfigRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresProviderConfigRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryProviderConfigRepository()), accountRepository: providers.repository, secretService, registry: providerRegistry, egress: configuredEgress, audit });
