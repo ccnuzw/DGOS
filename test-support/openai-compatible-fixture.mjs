@@ -16,9 +16,11 @@ export function createOpenAiCompatibleFixture(options = {}) {
   const model = options.model ?? process.env.DGOS_FIXTURE_MODEL ?? DEFAULT_MODEL;
   const defaultScenario = options.scenario ?? process.env.DGOS_FIXTURE_SCENARIO ?? 'success';
   const delayMs = Number(options.delayMs ?? process.env.DGOS_FIXTURE_DELAY_MS ?? 0);
+  const requests = [];
   const server = http.createServer(async (request, response) => {
     const url = new URL(request.url, 'http://fixture.local');
     const scenario = scenarioFrom(request, defaultScenario);
+    requests.push({ method: request.method, path: url.pathname, scenario, at: new Date().toISOString() });
     const auth = request.headers.authorization;
     if (scenario === 'forbidden') {
       response.writeHead(403, { 'content-type': 'application/json' });
@@ -79,6 +81,8 @@ export function createOpenAiCompatibleFixture(options = {}) {
     server,
     token,
     model,
+    requests,
+    get requestCount() { return requests.length; },
     async start(port = options.port ?? Number(process.env.DGOS_FIXTURE_PORT ?? 0), host = options.host ?? '127.0.0.1') {
       await new Promise((resolve, reject) => { server.once('error', reject); server.listen(port, host, resolve); });
       const address = server.address();

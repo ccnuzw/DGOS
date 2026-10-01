@@ -55,10 +55,12 @@ export function buildMigrationSql(migrations) {
   return statements.join('\n\n');
 }
 
-const migrations = await discoverMigrations();
-if (process.argv.includes('--print-sql')) {
-  process.stdout.write(`${buildMigrationSql(migrations)}\n`);
-} else {
-  console.log(JSON.stringify(migrationPlan(migrations), null, 2));
-  console.error('Migration runner is in plan mode. Pass --print-sql and execute against the approved PostgreSQL environment.');
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  const migrations = await discoverMigrations();
+  if (process.argv.includes('--print-sql')) {
+    process.stdout.write(`${buildMigrationSql(migrations)}\n`);
+  } else {
+    console.log(JSON.stringify(migrationPlan(migrations), null, 2));
+    console.error('Migration runner is in plan mode. Pass --print-sql and execute against the approved PostgreSQL environment.');
+  }
 }
