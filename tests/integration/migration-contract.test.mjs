@@ -12,4 +12,5 @@ test('V1 governance migration contains required idempotency and safety constrain
     'CHECK (state IN (\'reserved\', \'settled\', \'released\', \'needs_review\'))',
   ]) assert.match(sql, new RegExp(fragment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   assert.doesNotMatch(sql, /password|authorization|api[_ -]?key\s+text\b/i);
+  assert.doesNotMatch(sql, /pending-checksum-generated-by-release-tool/);
 });

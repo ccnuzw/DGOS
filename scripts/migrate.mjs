@@ -25,12 +25,16 @@ export async function discoverMigrations() {
 }
 
 export function buildMigrationSql(migrations) {
-  const statements = migrations.map(({ version, checksum: hash, sql }) => [
+  const statements = [
+    'CREATE TABLE IF NOT EXISTS dgos_schema_migrations (version text PRIMARY KEY, checksum text NOT NULL, applied_at timestamptz NOT NULL DEFAULT now());',
+    ...migrations.map(({ version, checksum: hash, sql }) => [
     'BEGIN;',
+    `DO $$ BEGIN IF EXISTS (SELECT 1 FROM dgos_schema_migrations WHERE version = ${quote(version)} AND checksum <> ${quote(hash)}) THEN RAISE EXCEPTION 'migration checksum mismatch: ${version}'; END IF; END $$;`,
     sql.trim(),
-    `INSERT INTO dgos_schema_migrations (version, checksum) VALUES (${quote(version)}, ${quote(hash)}) ON CONFLICT (version) DO UPDATE SET checksum = EXCLUDED.checksum;`,
+    `INSERT INTO dgos_schema_migrations (version, checksum) VALUES (${quote(version)}, ${quote(hash)}) ON CONFLICT (version) DO NOTHING;`,
     'COMMIT;',
-  ].join('\n'));
+    ].join('\n')),
+  ];
   return statements.join('\n\n');
 }
 

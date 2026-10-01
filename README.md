@@ -17,6 +17,8 @@ pnpm run check
 pnpm --filter @dgos/api dev
 ```
 
+MinIO is optional for the database/security foundation and is behind the `object-storage` profile. Start it when the registry is available with `docker compose --profile object-storage up -d`.
+
 The API health endpoint is available at `http://127.0.0.1:3000/health`.
 
 ## Repository areas

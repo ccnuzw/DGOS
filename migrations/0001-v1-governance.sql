@@ -136,7 +136,3 @@ CREATE TABLE IF NOT EXISTS audit_outbox (
   attempts integer NOT NULL DEFAULT 0 CHECK (attempts >= 0),
   next_attempt_at timestamptz NOT NULL DEFAULT now()
 );
-
-INSERT INTO dgos_schema_migrations (version, checksum)
-VALUES ('0001-v1-governance', 'pending-checksum-generated-by-release-tool')
-ON CONFLICT (version) DO NOTHING;
