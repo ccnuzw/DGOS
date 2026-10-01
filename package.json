@@ -22,6 +22,7 @@
     "provider:fixture": "node scripts/provider-fixture.mjs",
     "test:provider-fixture": "node --test tests/provider/*.test.mjs",
     "test:web:e2e": "pnpm --filter @dgos/web e2e",
+    "test:release": "node scripts/release-integration.mjs",
     "check": "node --check src/security/secret-service.mjs && node --check src/security/provider-egress.mjs && node --check src/security/rate-limiter.mjs && node --check src/identity/repository.mjs && pnpm -r check"
   },
   "devDependencies": {

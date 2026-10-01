@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@dgos/sdk": "workspace:*",
-    "pg": "^8.13.1"
+    "pg": "^8.13.1",
+    "redis": "^4.7.0"
   }
 }

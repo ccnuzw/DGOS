@@ -6,6 +6,8 @@ build/
 .env.*
 !.env.example
 coverage/
+test-results/
+playwright-report/
 .DS_Store
 *.log
 target/

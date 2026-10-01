@@ -1,0 +1,93 @@
+name: dgos-release
+x-node: &node
+  image: node:22-bookworm-slim
+  working_dir: /workspace
+  volumes:
+    - .:/workspace:ro
+x-runtime: &runtime
+  DGOS_DATABASE_URL: postgresql://dgos:dgos@postgres:5432/dgos
+  REDIS_URL: redis://redis:6379
+  NODE_ENV: test
+  DGOS_ALLOW_INSECURE_FIXTURE: '1'
+  DGOS_FIXTURE_BASE_URL: http://fixture:4080
+  DGOS_ALLOWED_ORIGINS: http://127.0.0.1:14173
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: dgos
+      POSTGRES_PASSWORD: dgos
+      POSTGRES_DB: dgos
+    ports: ['127.0.0.1:15432:5432']
+    tmpfs: ['/var/lib/postgresql/data']
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U dgos -d dgos']
+      interval: 1s
+      timeout: 3s
+      retries: 30
+  redis:
+    image: redis:7-alpine
+    ports: ['127.0.0.1:16379:6379']
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 1s
+      timeout: 3s
+      retries: 30
+  migrate:
+    <<: *node
+    environment: *runtime
+    command: ['node', 'scripts/apply-migrations.mjs']
+    depends_on:
+      postgres: {condition: service_healthy}
+  fixture:
+    <<: *node
+    command: ['node', 'scripts/release-fixture.mjs']
+    ports: ['127.0.0.1:14080:4080']
+    healthcheck:
+      test: ['CMD', 'node', '-e', "fetch('http://localhost:4080/__fixture').then(r=>{if(!r.ok)process.exit(1)})"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+  api:
+    <<: *node
+    environment:
+      <<: *runtime
+      HOST: 0.0.0.0
+      PORT: '3000'
+    command: ['node', 'apps/api/src/server.mjs']
+    ports: ['127.0.0.1:13000:3000']
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+      fixture: {condition: service_healthy}
+    healthcheck:
+      test: ['CMD', 'node', '-e', "fetch('http://localhost:3000/ready').then(r=>{if(!r.ok)process.exit(1)})"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+  worker:
+    <<: *node
+    environment:
+      <<: *runtime
+      DGOS_AI_TASK_LEASE_MS: '2000'
+      DGOS_AI_TASK_HEARTBEAT_MS: '200'
+      DGOS_AI_TASK_POLL_MS: '50'
+      DGOS_AI_TASK_IDLE_BACKOFF_MS: '100'
+    command: ['node', 'apps/worker/src/worker.mjs']
+    depends_on:
+      api: {condition: service_healthy}
+  web:
+    <<: *node
+    environment:
+      HOST: 0.0.0.0
+      PORT: '4173'
+      API_BASE_URL: http://api:3000
+    command: ['node', 'apps/web/scripts/serve.mjs']
+    ports: ['127.0.0.1:14173:4173']
+    depends_on:
+      api: {condition: service_healthy}
+    healthcheck:
+      test: ['CMD', 'node', '-e', "fetch('http://localhost:4173/').then(r=>{if(!r.ok)process.exit(1)})"]
+      interval: 2s
+      timeout: 3s
+      retries: 20

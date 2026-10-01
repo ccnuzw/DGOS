@@ -1,7 +1,8 @@
 import Fastify from 'fastify';
 import { randomUUID } from 'node:crypto';
 import { apiVersion } from '@dgos/sdk';
-import { InMemorySecretService } from '../../../src/security/secret-service.mjs';
+import { InMemorySecretService, RedisSecretService } from '../../../src/security/secret-service.mjs';
+import { createRuntimeEgress } from '../../../src/security/runtime-egress.mjs';
 import { createRateLimiter } from '../../../src/security/rate-limiter.mjs';
 import { InMemoryIdentityRepository, PostgresIdentityRepository } from '../../../src/identity/repository.mjs';
 import { IdentityService } from './identity-service.mjs';
@@ -44,6 +45,7 @@ export function buildServer({ logger = true, repository, providerRepository, pro
   const configuredEgress = providerEgress ?? new ProviderEgress();
   const providers = providerService ?? new ProviderService({ repository: providerRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresProviderRepository(makePool()) : new InMemoryProviderRepository()), secretService, egress: configuredEgress, adapters: { 'openai-compatible': createOpenAiCompatibleAdapter() } });
   const audit = injectedAuditRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresAuditRepository(makePool()) : new InMemoryAuditRepository());
+  if (!resolvedRepository.audit) resolvedRepository.audit = audit;
   const runtimePool = process.env.DGOS_DATABASE_URL ? makePool() : null;
   const governance = new GovernanceService({ retentionRepository: injectedRetentionRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresRetentionRepository(makePool()) : new InMemoryRetentionRepository(audit)), auditRepository: audit });
   const quotaPool = process.env.DGOS_DATABASE_URL ? makePool() : null;
@@ -62,11 +64,11 @@ export function buildServer({ logger = true, repository, providerRepository, pro
   const defaultQuotaAdapter = quotaModules?.[1]?.createQuotaAdapter ? quotaModules[1].createQuotaAdapter(quota) : { preflight: (input) => quota.preflight(input), reserve: (input) => quota.reserveQuota(input), settle: (input) => quota.settleUsage(input), release: (input) => quota.releaseQuota(input) };
   const taskRepository = aiTaskRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresAiTaskRepository(makePool()) : new InMemoryAiTaskRepository());
   const embeddedWorkerEnabled = !dispatchTask && taskRepository instanceof InMemoryAiTaskRepository && providerRunner;
-  const aiTasks = new AiTaskService({ repository: taskRepository, configService: providerConfigs, accountRepository: providers.repository, secretService, registry: providerRegistry, egress: configuredEgress, quota: quotaAdapter ?? defaultQuotaAdapter, audit, providerRunner, dispatch: dispatchTask ? (input) => dispatchTask(input) : embeddedWorkerEnabled ? async () => {} : undefined });
+  const aiTasks = new AiTaskService({ repository: taskRepository, configService: providerConfigs, accountRepository: providers.repository, secretService, registry: providerRegistry, egress: configuredEgress, quota: quotaAdapter ?? defaultQuotaAdapter, audit, providerRunner, dispatch: dispatchTask ?? (embeddedWorkerEnabled || taskRepository instanceof PostgresAiTaskRepository ? async () => {} : undefined) });
   const embeddedWorker = embeddedWorkerEnabled ? new AiTaskWorker({ repository: taskRepository, taskService: aiTasks, workerId: 'embedded-api-worker', pollIntervalMs: 1, idleBackoffMs: 5 }) : null;
   embeddedWorker?.start();
   if (embeddedWorker) app.addHook('onClose', async () => embeddedWorker.stop());
-  if (closeDatabasePools && pools.length) app.addHook('onClose', async () => { await Promise.all(pools.map((pool) => pool.end())); });
+  if (pools.length) app.addHook('onClose', async () => { await Promise.all(pools.map((pool) => pool.end())); });
   const loginLimiter = rateLimiter ?? createRateLimiter({ clock });
   const maxLoginAttempts = 5;
   const loginWindowMs = 60_000;
@@ -106,7 +108,8 @@ export function buildServer({ logger = true, repository, providerRepository, pro
     const origin = request.headers.origin;
     if (origin) {
       let parsed; try { parsed = new URL(origin); } catch { throw Object.assign(new Error('csrf_failed'), { statusCode: 403 }); }
-      if (parsed.host !== request.headers.host) throw Object.assign(new Error('csrf_failed'), { statusCode: 403 });
+      const allowed = (process.env.DGOS_ALLOWED_ORIGINS ?? '').split(',').filter(Boolean);
+      if (parsed.host !== request.headers.host && !allowed.includes(parsed.origin)) throw Object.assign(new Error('csrf_failed'), { statusCode: 403 });
     }
     if (!request.headers['x-dgos-csrf']) throw Object.assign(new Error('csrf_failed'), { statusCode: 403 });
   }
@@ -204,8 +207,9 @@ export function buildServer({ logger = true, repository, providerRepository, pro
 if (process.argv[1] && new URL(import.meta.url).pathname === process.argv[1]) {
   const redis = process.env.REDIS_URL ? createClient({ url: process.env.REDIS_URL }) : null;
   if (redis) await redis.connect();
-  const app = buildServer({ rateLimiter: createRateLimiter({ redis }) });
-  app.addHook('onClose', async () => { await embeddedWorker?.stop(); if (redis) await redis.quit(); });
+  const app = buildServer({ closeDatabasePools: true, rateLimiter: createRateLimiter({ redis }), secretService: redis ? new RedisSecretService(redis) : undefined, providerEgress: createRuntimeEgress() });
+  app.addHook('onClose', async () => { if (redis) await redis.quit(); });
+  for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => app.close().catch(() => { process.exitCode = 1; }));
   const host = process.env.HOST ?? '127.0.0.1';
   const port = Number(process.env.PORT ?? 3000);
   await app.listen({ host, port });

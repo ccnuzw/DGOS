@@ -33,7 +33,7 @@ export function createOpenAiCompatibleFixture(options = {}) {
       return;
     }
     if (scenario === 'timeout') {
-      await new Promise((resolve) => setTimeout(resolve, Number(url.searchParams.get('delayMs') ?? delayMs ?? 30_000)));
+      await new Promise((resolve) => { const timer = setTimeout(resolve, Number(url.searchParams.get('delayMs') ?? (delayMs || 30_000))); response.once('close', () => { clearTimeout(timer); resolve(); }); });
     }
     if (url.pathname === '/v1/models' && request.method === 'GET') {
       response.writeHead(200, { 'content-type': 'application/json' });

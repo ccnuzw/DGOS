@@ -23,7 +23,7 @@ export class PostgresAuditRepository {
     values.push(Math.min(100, Math.max(1, Number(limit) || 50)) + 1);
     const sql = `SELECT event_id, request_id, actor_type, actor_id, action, target_type, target_id, result, summary, policy_version, created_at FROM audit_events ${where.length ? `WHERE ${where.join(' AND ')}` : ''} ORDER BY created_at DESC, event_id DESC LIMIT $${values.length}`;
     const { rows } = await this.pool.query(sql, values);
-    const more = rows.length > Number(values.at(-1)) - 1; const page = rows.slice(0, -1).map((row) => ({ eventId: row.event_id, occurredAt: row.created_at.toISOString(), requestId: row.request_id, actor: { type: row.actor_type, id: row.actor_id }, action: row.action, target: { type: row.target_type, id: row.target_id }, result: row.result, summary: row.summary, policyVersion: row.policy_version === null ? undefined : String(row.policy_version) }));
+    const more = rows.length > Number(values.at(-1)) - 1; const page = rows.slice(0, Number(values.at(-1)) - 1).map((row) => ({ eventId: row.event_id, occurredAt: row.created_at.toISOString(), requestId: row.request_id, actor: { type: row.actor_type, id: row.actor_id }, action: row.action, target: { type: row.target_type, id: row.target_id }, result: row.result, summary: row.summary, policyVersion: row.policy_version === null ? undefined : String(row.policy_version) }));
     const last = rows[Math.min(rows.length, Number(values.at(-1)) - 1) - 1];
     return { items: page, nextCursor: more && last ? Buffer.from(`${last.created_at.toISOString()}|${last.event_id}`).toString('base64url') : null };
   }

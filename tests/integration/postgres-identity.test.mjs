@@ -38,6 +38,14 @@ test('PostgreSQL repository persists identity, key digest, and audit outbox', as
   assert.equal(rows.rows[0].state, 'active');
   const outbox = await pool.query('SELECT count(*)::int AS count FROM audit_outbox');
   assert.ok(outbox.rows[0].count >= 2);
+  const originalAudit = repo.audit;
+  repo.audit = { record: async () => { throw new Error('audit_unavailable'); } };
+  await assert.rejects(service.rotateKey({ keyId: key.key.keyId, actorId: bootstrap.principalId, requestId: randomUUID() }), /audit_unavailable/);
+  assert.equal((await repo.getKey(key.key.keyId)).state, 'active');
+  assert.equal((await repo.listKeys(bootstrap.principalId)).length, 1);
+  await assert.rejects(repo.renewSessionWithAudit(bootstrap.sessionId, 1, new Date(Date.now() + 60000), () => ({})), /audit_unavailable/);
+  assert.equal((await repo.getSession(bootstrap.sessionId)).sessionVersion, 1);
+  repo.audit = originalAudit;
   await pool.query('DELETE FROM audit_outbox WHERE event_id IN (SELECT event_id FROM audit_events WHERE actor_id = $1)', [bootstrap.principalId]);
   await pool.query('DELETE FROM audit_events WHERE actor_id = $1', [bootstrap.principalId]);
   await pool.query('DELETE FROM api_key_records WHERE owner_id = $1', [bootstrap.principalId]);

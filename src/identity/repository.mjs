@@ -14,7 +14,7 @@ function rowSession(row) {
 }
 
 function rowKey(row) {
-  return row && { keyId: row.key_id, ownerId: row.owner_id, name: row.scope?.name ?? 'API key', prefix: row.prefix, scopes: row.scope?.scopes ?? [], status: row.state, createdAt: iso(row.created_at), expiresAt: row.expires_at && iso(row.expires_at), rotationGroupId: row.rotation_group, version: Number(row.version) };
+  return row && { keyId: row.key_id, ownerId: row.owner_id, name: row.scope?.name ?? 'API key', prefix: row.prefix, scopes: row.scope?.scopes ?? [], state: row.state, status: row.state, createdAt: iso(row.created_at), expiresAt: row.expires_at && iso(row.expires_at), rotationGroupId: row.rotation_group, version: Number(row.version) };
 }
 
 export class PostgresIdentityRepository {
@@ -56,8 +56,8 @@ export class PostgresIdentityRepository {
     return rowSession(rows[0]);
   }
 
-  async renewSession(sessionId, expectedVersion, expiresAt) {
-    const { rows } = await this.pool.query("UPDATE admin_sessions SET expires_at = $3, last_seen_at = now(), session_version = session_version + 1 WHERE session_id = $1 AND session_version = $2 AND state = 'active' AND expires_at > now() RETURNING *", [sessionId, expectedVersion, expiresAt]);
+  async renewSession(sessionId, expectedVersion, expiresAt, client = this.pool) {
+    const { rows } = await client.query("UPDATE admin_sessions SET expires_at = $3, last_seen_at = now(), session_version = session_version + 1 WHERE session_id = $1 AND session_version = $2 AND state = 'active' AND expires_at > now() RETURNING *", [sessionId, expectedVersion, expiresAt]);
     return rowSession(rows[0]);
   }
   async renewSessionWithAudit(sessionId, expectedVersion, expiresAt, audit) { return this.withTransaction(async (client) => { const session = await this.renewSession(sessionId, expectedVersion, expiresAt, client); if (!session) return undefined; await this.audit.record(audit(session), client); return session; }); }

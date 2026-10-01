@@ -9,6 +9,7 @@ import { InMemorySecretService } from '../../src/security/secret-service.mjs';
 import { PostgresAiTaskRepository } from '../../src/ai-task/repository.mjs';
 import { createOpenAiCompatibleAdapter } from '../../src/provider-adapters/openai-compatible.mjs';
 import { discoverMigrations, buildMigrationSql } from '../../scripts/migrate.mjs';
+import { createPostgresWorker } from '../../apps/worker/src/worker.mjs';
 
 const dbUrl = process.env.DGOS_DATABASE_URL;
 const skip = !dbUrl;
@@ -36,6 +37,11 @@ async function setup() {
   const adapterForFixture = { ...adapter, async validate(input) { return adapter.validate({ ...input, config: { ...input.config, baseUrl: 'https://fixture.test/v1' } }); }, async listModels(input) { return adapter.listModels({ ...input, config: { ...input.config, baseUrl: 'https://fixture.test/v1' } }); }, streamText(input) { return adapter.streamText({ ...input, config: { ...input.config, baseUrl: 'https://fixture.test/v1' } }); } };
   const providerRunner = async function* ({ task, credential, signal }) { const response = await fetch(`${address.baseUrl}/chat/completions`, { method: 'POST', headers: { authorization: `Bearer ${credential}`, 'content-type': 'application/json' }, body: JSON.stringify({ model: task.modelId, messages: [{ role: 'user', content: task.inputText }], stream: true }), signal }); assert.equal(response.status, 200); for (const line of (await response.text()).split(/\r?\n/)) { if (!line.startsWith('data:')) continue; const value = line.slice(5).trim(); if (value === '[DONE]') break; const delta = JSON.parse(value).choices?.[0]?.delta?.content; if (delta) yield delta; } };
   const app = buildServer({ logger: false, closeDatabasePools: true, secretService, providerEgress: egress, providerAdapters: [adapterForFixture], providerRunner });
+  const runtime = createPostgresWorker({ pool, secretService });
+  runtime.taskService.egress = egress;
+  runtime.taskService.providerRunner = providerRunner;
+  runtime.worker.start();
+  app.addHook('onClose', async () => runtime.worker.stop());
   await app.listen({ host: '127.0.0.1', port: 0 });
   const api = `http://127.0.0.1:${app.server.address().port}`;
   return { pool, admin, database, isolatedUrl: isolatedUrl.toString(), fixture, address, app, api, taskRepository };

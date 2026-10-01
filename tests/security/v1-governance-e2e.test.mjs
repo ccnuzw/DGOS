@@ -65,7 +65,7 @@ test('V1-E2E-14 audit correlation, redaction, outbox retry and retention recover
   const key = await app.inject({ method: 'POST', url: '/api/v1/secret/api-keys', headers: { ...auth, 'x-request-id': requestId }, payload: { name: 'audit-key', scopes: ['apiKey.read'] } });
   assert.equal(key.statusCode, 201);
   const events = await app.inject({ method: 'GET', url: '/api/v1/audit/events', headers: auth });
-  assert.equal(events.statusCode, 200); const storedEvents = [...audit.events.values()]; const event = storedEvents.find((e) => e.action === 'api_key.create'); assert.ok(event ?? audit.events); assert.ok(event?.requestId ?? requestId);
+  assert.equal(events.statusCode, 200); const storedEvents = [...audit.events.values()]; const event = events.json().items.find((e) => e.action === 'api_key.create'); assert.ok(event); assert.equal(event.requestId, requestId); assert.equal(event.target.id, key.json().key.keyId);
   assert.ok(!JSON.stringify(storedEvents).includes(key.json().secret));
   const eventId = await audit.record({ requestId, action: 'e2e.retry', targetType: 'fixture', summary: { safe: true } });
   const claimed = await audit.claim('V1-E2E-14-job'); assert.ok(claimed?.eventId); await audit.markFailed(claimed.eventId, 'V1-E2E-14-job', 0); const reclaimed = await audit.claim('V1-E2E-14-job'); assert.equal(reclaimed.eventId, claimed.eventId); assert.equal((await audit.markPublished(reclaimed.eventId, 'V1-E2E-14-job')).eventId, reclaimed.eventId);

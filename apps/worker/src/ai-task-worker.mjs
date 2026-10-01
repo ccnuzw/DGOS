@@ -14,7 +14,7 @@ export class AiTaskWorker {
       return attempt;
     }
     let leaseLost = false;
-    const heartbeat = setInterval(async () => { try { if (!await this.repository.renewAttemptLease(attempt.attemptId, this.workerId, this.leaseMs)) leaseLost = true; } catch { leaseLost = true; } }, this.heartbeatMs);
+    const heartbeat = setInterval(async () => { try { if (!await this.repository.renewAttemptLease(attempt.attemptId, this.workerId, this.leaseMs)) leaseLost = true; const current = await this.repository.getTask(task.taskId); if (leaseLost || ['cancel_requested', 'cancelled'].includes(current?.status)) this.taskService.controllers?.get(task.taskId)?.abort(); } catch { leaseLost = true; this.taskService.controllers?.get(task.taskId)?.abort(); } }, this.heartbeatMs);
     heartbeat.unref?.();
     try {
       await this.taskService.run(task.taskId, task.inputText ?? '', task.ownerId, { attempt, workerId: this.workerId, isLeaseValid: () => !leaseLost });
