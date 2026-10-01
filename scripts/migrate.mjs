@@ -20,6 +20,10 @@ function dollarQuote(value) {
   return `$${tag}$${value}$${tag}$`;
 }
 
+const legacyAliases = new Map([
+  ['0010-quota-usage-idempotency', { version: '0008-quota-usage-idempotency', checksum: '87001b0cd6fe7dfa552f3eb278bac932ef0864af09b06cdc98c78bddd38ac5f2' }]
+]);
+
 export async function discoverMigrations() {
   const files = (await readdir(migrationsDir))
     .filter((file) => /^\d+-.+\.sql$/.test(file))
@@ -36,7 +40,7 @@ export function buildMigrationSql(migrations) {
     ...migrations.map(({ version, checksum: hash, sql }) => [
     'BEGIN;',
     `DO $$ BEGIN IF EXISTS (SELECT 1 FROM dgos_schema_migrations WHERE version = ${quote(version)} AND checksum <> ${quote(hash)}) THEN RAISE EXCEPTION 'migration checksum mismatch: ${version}'; END IF; END $$;`,
-    `DO $migration$ BEGIN IF NOT EXISTS (SELECT 1 FROM dgos_schema_migrations WHERE version = ${quote(version)} AND checksum = ${quote(hash)}) THEN EXECUTE ${dollarQuote(sql.trim())}; END IF; END $migration$;`,
+    `DO $migration$ BEGIN IF NOT EXISTS (SELECT 1 FROM dgos_schema_migrations WHERE version = ${quote(version)} AND checksum = ${quote(hash)}) AND NOT EXISTS (SELECT 1 FROM dgos_schema_migrations WHERE version = ${quote(legacyAliases.get(version)?.version ?? '')} AND checksum = ${quote(legacyAliases.get(version)?.checksum ?? '')}) THEN EXECUTE ${dollarQuote(sql.trim())}; END IF; END $migration$;`,
     `INSERT INTO dgos_schema_migrations (version, checksum) VALUES (${quote(version)}, ${quote(hash)}) ON CONFLICT (version) DO NOTHING;`,
     'COMMIT;',
     ].join('\n')),

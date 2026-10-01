@@ -12,7 +12,8 @@ test('public ProviderConfig to text task API supports explicit refresh, idempote
   const aiTaskRepository = new InMemoryAiTaskRepository();
   const secretService = new InMemorySecretService();
   const fixtureAdapter = { protocolType: 'openai-compatible', protocolVersion: 'v1', descriptorVersion: 'text.v1', taskModes: ['text.chat'], streamingText: true, cancellation: true, modelListing: true, async validate() { return { descriptorVersion: 'text.v1', inputs: ['text'], outputs: ['text'], taskModes: ['text.chat'], streaming: { text: true }, cancellation: true, modelCatalog: 'remote' }; }, async listModels() { return [{ modelId: 'fixture-text-model', displayName: 'Fixture model', taskModes: ['text.chat'], streaming: true, tools: false, capabilitySummary: { text: true } }]; } };
-  const app = buildServer({ logger: false, providerRepository, providerConfigRepository, aiTaskRepository, secretService, providerAdapters: [fixtureAdapter], providerRunner: async function* () { yield 'hello'; yield ' world'; }, providerEgress: {}, quotaAdapter: { preflight: async () => ({ allowed: true, reservationRef: 'fixture-reservation' }) } });
+  const quotaCalls = [];
+  const app = buildServer({ logger: false, providerRepository, providerConfigRepository, aiTaskRepository, secretService, providerAdapters: [fixtureAdapter], providerRunner: async function* () { yield 'hello'; yield ' world'; }, providerEgress: {}, quotaAdapter: { preflight: async (input) => { quotaCalls.push({ type: 'preflight', input }); return { decision: 'allow', allowed: true, requestId: input.requestId }; }, reserve: async (input) => { quotaCalls.push({ type: 'reserve', input }); return { reservationId: 'fixture-reservation', ...input, state: 'reserved', reservedAmount: 1 }; }, settle: async (input) => { quotaCalls.push({ type: 'settle', input }); return { reservationId: input.reservationId, state: input.release ? 'released' : 'settled', usageStatus: input.usageStatus, reconciliation: 'complete' }; }, release: async (input) => { quotaCalls.push({ type: 'release', input }); return { reservationId: input.reservationId, state: 'released', reconciliation: 'complete' }; } } });
   const bootstrap = await app.inject({ method: 'POST', url: '/api/v1/identity/admin/bootstrap', payload: { displayName: 'Task Owner', credential: 'owner-password' } });
   const ownerId = bootstrap.json().principalId;
   const token = bootstrap.json().sessionId;
@@ -45,6 +46,11 @@ test('public ProviderConfig to text task API supports explicit refresh, idempote
   const snapshot = await app.inject({ method: 'GET', url: `/api/v1/ai-tasks/${receipt.taskId}`, headers: auth });
   assert.equal(snapshot.json().status, 'succeeded');
   assert.equal(snapshot.json().text, 'hello world');
+  assert.equal(quotaCalls.filter((call) => call.type === 'preflight').length, 1);
+  assert.equal(quotaCalls.filter((call) => call.type === 'reserve').length, 1);
+  assert.equal(quotaCalls.filter((call) => call.type === 'settle').length, 1);
+  assert.equal(quotaCalls.find((call) => call.type === 'settle').input.terminalState, 'completed');
+  assert.equal(quotaCalls.find((call) => call.type === 'settle').input.usageStatus, 'unavailable');
   const events = await app.inject({ method: 'GET', url: `/api/v1/ai-tasks/${receipt.taskId}/events`, headers: auth });
   assert.match(events.headers['content-type'], /text\/event-stream/);
   const firstEvent = await aiTaskRepository.listEvents(receipt.taskId, 0);

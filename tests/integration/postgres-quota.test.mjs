@@ -26,7 +26,7 @@ test('PostgreSQL quota reservation concurrency, idempotency, settlement and chec
   const duplicateSettlements = await Promise.all(Array.from({ length: 5 }, () => service.settleUsage({ reservationId: created.reservationId, requestId: created.requestId, taskId: created.taskId, attemptId: created.attemptId, terminalState: 'completed', amount: 900, usageStatus: 'final' })));
   assert.equal(new Set(duplicateSettlements.map((entry) => entry.usageEventId)).size, 1); assert.equal(duplicateSettlements[0].usageEventId, settled.usage.usageEventId);
   await pool.query("UPDATE quota_reservations SET expires_at=now()-interval '1 second' WHERE reservation_id=$1", [outcomes.find((x) => x.status === 'fulfilled' && x.value.reservationId !== created.reservationId).value.reservationId]);
-  const repaired = await service.reconcile({ checkpointName: `quota-${suffix}` }); assert.equal(repaired.repaired, 1);
+  const repaired = await service.reconcile({ checkpointName: `quota-${suffix}`, subjectId }); assert.equal(repaired.repaired, 1);
   const resumed = await service.reconcile({ checkpointName: `quota-${suffix}` }); assert.equal(resumed.state, 'completed'); assert.ok(resumed.repaired >= 0);
   const auditCount = await pool.query("SELECT count(*)::int AS count FROM audit_events WHERE actor_id=$1 AND action LIKE 'quota.%'", [subjectId]); assert.ok(auditCount.rows[0].count >= 4);
   const outboxCount = await pool.query("SELECT count(*)::int AS count FROM audit_outbox WHERE event_id IN (SELECT event_id FROM audit_events WHERE actor_id=$1 AND action LIKE 'quota.%')", [subjectId]); assert.equal(outboxCount.rows[0].count, auditCount.rows[0].count);
