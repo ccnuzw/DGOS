@@ -1,0 +1,37 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "DGOS",
+  "version": "0.1.0",
+  "identifier": "com.dgos.desktop",
+  "build": {
+    "devUrl": "http://127.0.0.1:4173",
+    "frontendDist": "../../web",
+    "beforeDevCommand": "pnpm --filter @dgos/web start",
+    "beforeBuildCommand": "pnpm --filter @dgos/web build"
+  },
+  "app": {
+    "withGlobalTauri": false,
+    "windows": [
+      {
+        "title": "DGOS AI Workbench",
+        "width": 1280,
+        "height": 840,
+        "minWidth": 960,
+        "minHeight": 640,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self' http://127.0.0.1:3000; connect-src 'self' http://127.0.0.1:3000 ws://127.0.0.1:3000; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["app", "dmg"],
+    "macOS": {
+      "minimumSystemVersion": "13.0"
+    },
+    "icon": ["icons/icon.png"]
+  }
+}
