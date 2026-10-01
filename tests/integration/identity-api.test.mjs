@@ -24,6 +24,11 @@ test('identity and API key lifecycle exposes redacted contract', async () => {
   const manageKey = await app.inject({ method: 'POST', url: '/api/v1/secret/api-keys', headers: { authorization: `Bearer ${receipt.sessionId}` }, payload: { name: 'manage-ci', scopes: ['apiKey.read', 'apiKey.manage'] } });
   const keyAllowed = await app.inject({ method: 'GET', url: '/api/v1/secret/api-keys', headers: { authorization: `ApiKey ${manageKey.json().secret}` } });
   assert.equal(keyAllowed.statusCode, 200);
+  const auditDenied = await app.inject({ method: 'GET', url: '/api/v1/audit/events', headers: { authorization: `ApiKey ${manageKey.json().secret}` } });
+  assert.equal(auditDenied.statusCode, 403);
+  const audit = await app.inject({ method: 'GET', url: '/api/v1/audit/events', headers: { authorization: `Bearer ${receipt.sessionId}` } });
+  assert.equal(audit.statusCode, 200);
+  assert.ok(Array.isArray(audit.json().items));
   const loginFailures = await Promise.all(Array.from({ length: 5 }, () => app.inject({ method: 'POST', url: '/api/v1/identity/admin/login', payload: { principalHint: receipt.principalId, credential: 'wrong' } })));
   assert.equal(loginFailures.every((response) => response.statusCode === 401), true);
   const rateLimited = await app.inject({ method: 'POST', url: '/api/v1/identity/admin/login', payload: { principalHint: receipt.principalId, credential: 'wrong' } });

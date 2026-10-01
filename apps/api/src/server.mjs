@@ -10,12 +10,14 @@ import { createClient } from 'redis';
 import { InMemoryProviderRepository, PostgresProviderRepository } from '../../../src/provider/repository.mjs';
 import { ProviderEgress } from '../../../src/security/provider-egress.mjs';
 import { ProviderService, createOpenAiCompatibleAdapter } from './provider-service.mjs';
+import { PostgresAuditRepository, InMemoryAuditRepository } from '../../../src/audit/outbox.mjs';
 
 export function buildServer({ logger = true, repository, providerRepository, providerService, secretService = new InMemorySecretService(), rateLimiter, clock } = {}) {
   const resolvedRepository = repository ?? (process.env.DGOS_DATABASE_URL ? new PostgresIdentityRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryIdentityRepository());
   const app = Fastify({ logger });
   const identity = new IdentityService({ repository: resolvedRepository, secretService, clock });
   const providers = providerService ?? new ProviderService({ repository: providerRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresProviderRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryProviderRepository()), secretService, egress: new ProviderEgress(), adapters: { 'openai-compatible': createOpenAiCompatibleAdapter() } });
+  const audit = process.env.DGOS_DATABASE_URL ? new PostgresAuditRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryAuditRepository();
   const loginLimiter = rateLimiter ?? createRateLimiter({ clock });
   const maxLoginAttempts = 5;
   const loginWindowMs = 60_000;
@@ -71,6 +73,7 @@ export function buildServer({ logger = true, repository, providerRepository, pro
   app.post('/api/v1/provider/connection-tests', async (request, reply) => { await validateCsrf(request); const auth = await requireScope(request, 'provider.connection_test'); const result = await providers.startConnectionTest({ ...request.body, requestId: request.requestId }); const account = await providers.repository?.getAccount?.(result.accountId); if (account && account.ownerId !== auth.subjectId && auth.authMethod !== 'session') throw Object.assign(new Error('insufficient_scope'), { statusCode: 403 }); return reply.code(202).send(result); });
   app.get('/api/v1/provider/connection-tests/:testId', async (request) => { await requireScope(request, 'provider.connection_test'); return providers.getConnectionTest(request.params.testId); });
   app.delete('/api/v1/provider/connection-tests/:testId', async (request) => { await validateCsrf(request); const auth = await requireScope(request, 'provider.connection_test'); return providers.cancelConnectionTest(request.params.testId, request.requestId, auth.subjectId); });
+  app.get('/api/v1/audit/events', async (request) => { const auth = await requireScope(request, 'audit.read'); const query = request.query ?? {}; const isApiKey = auth.authMethod === 'api_key'; return audit.query({ ...query, restrictActorId: isApiKey ? auth.subjectId : undefined }); });
 
   app.get('/health', async () => ({ status: 'ok', service: 'dgos-api' }));
   app.get('/ready', async () => ({ status: 'ready', apiVersion }));
