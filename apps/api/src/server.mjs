@@ -35,15 +35,10 @@ import { InMemoryAiTaskRepository, PostgresAiTaskRepository } from '../../../src
 import { AiTaskService } from '../../../src/ai-task/service.mjs';
 import { AiTaskWorker } from '../../worker/src/ai-task-worker.mjs';
 
-<<<<<<< HEAD
 export function buildServer({ logger = true, repository, providerRepository, providerService, providerConfigRepository, aiTaskRepository, providerRunner, dispatchTask, providerAdapters, providerEgress, quotaAdapter, secretService = new InMemorySecretService(), rateLimiter, clock, closeDatabasePools = false, appRepository: injectedAppRepository, permissionRepository: injectedPermissionRepository, actionRepository: injectedActionRepository, systemRepository: injectedSystemRepository, actionRegistry: injectedActionRegistry, auditRepository: injectedAuditRepository, retentionRepository: injectedRetentionRepository } = {}) {
   const pools = [];
   const makePool = () => { const pool = new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL }); pools.push(pool); return pool; };
   const resolvedRepository = repository ?? (process.env.DGOS_DATABASE_URL ? new PostgresIdentityRepository(makePool()) : new InMemoryIdentityRepository());
-=======
-export function buildServer({ logger = true, repository, providerRepository, providerService, providerConfigRepository, aiTaskRepository, providerRunner, dispatchTask, providerAdapters, providerEgress, quotaAdapter, secretService = new InMemorySecretService(), rateLimiter, clock, appRepository: injectedAppRepository, permissionRepository: injectedPermissionRepository, actionRepository: injectedActionRepository, systemRepository: injectedSystemRepository, actionRegistry: injectedActionRegistry, actionHandlers = {}, auditRepository: injectedAuditRepository, retentionRepository: injectedRetentionRepository } = {}) {
-  const resolvedRepository = repository ?? (process.env.DGOS_DATABASE_URL ? new PostgresIdentityRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryIdentityRepository());
->>>>>>> codex/v1-task-c
   const app = Fastify({ logger });
   const identity = new IdentityService({ repository: resolvedRepository, secretService, clock });
   const configuredEgress = providerEgress ?? new ProviderEgress();
