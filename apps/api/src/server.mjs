@@ -35,7 +35,7 @@ import { InMemoryAiTaskRepository, PostgresAiTaskRepository } from '../../../src
 import { AiTaskService } from '../../../src/ai-task/service.mjs';
 import { AiTaskWorker } from '../../worker/src/ai-task-worker.mjs';
 
-export function buildServer({ logger = true, repository, providerRepository, providerService, providerConfigRepository, aiTaskRepository, providerRunner, dispatchTask, providerAdapters, providerEgress, quotaAdapter, secretService = new InMemorySecretService(), rateLimiter, clock, appRepository: injectedAppRepository, permissionRepository: injectedPermissionRepository, actionRepository: injectedActionRepository, systemRepository: injectedSystemRepository, actionRegistry: injectedActionRegistry, auditRepository: injectedAuditRepository, retentionRepository: injectedRetentionRepository } = {}) {
+export function buildServer({ logger = true, repository, providerRepository, providerService, providerConfigRepository, aiTaskRepository, providerRunner, dispatchTask, providerAdapters, providerEgress, quotaAdapter, secretService = new InMemorySecretService(), rateLimiter, clock, appRepository: injectedAppRepository, permissionRepository: injectedPermissionRepository, actionRepository: injectedActionRepository, systemRepository: injectedSystemRepository, actionRegistry: injectedActionRegistry, actionHandlers = {}, auditRepository: injectedAuditRepository, retentionRepository: injectedRetentionRepository } = {}) {
   const resolvedRepository = repository ?? (process.env.DGOS_DATABASE_URL ? new PostgresIdentityRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryIdentityRepository());
   const app = Fastify({ logger });
   const identity = new IdentityService({ repository: resolvedRepository, secretService, clock });
@@ -52,6 +52,8 @@ export function buildServer({ logger = true, repository, providerRepository, pro
   const actionRegistry = injectedActionRegistry ?? new ActionRegistry();
   const actions = new ActionService({ registry: actionRegistry, permissions, audit, repository: injectedActionRepository ?? (runtimePool ? new PostgresActionRepository(runtimePool) : new InMemoryActionRepository()) });
   const system = new SystemService({ audit, repository: injectedSystemRepository ?? (runtimePool ? new PostgresSystemRepository(runtimePool) : new InMemorySystemRepository()) });
+  if (!actionRegistry.get('system.settings.patch')) actions.register({ actionId: 'system.settings.patch', ownerAppId: 'dgos.system', requiredCapability: 'system.settings.write', riskLevel: 'medium', sideEffects: ['system.settings'], timeout: 10_000, inputSchema: { type: 'object', required: ['baseVersion', 'patch'], properties: { baseVersion: { type: 'string' }, patch: { type: 'object' } } }, description: 'Update a system setting with optimistic concurrency.' }, async (input, context) => system.patch({ ...input, actorId: context.subjectId, requestId: context.requestId ?? randomUUID() }));
+  for (const [actionId, handler] of Object.entries(actionHandlers)) { const definition = actionRegistry.get(actionId); if (definition && handler) actions.handlers.set(actionId, handler); }
   const providerRegistry = new ProtocolAdapterRegistry(providerAdapters ?? [createConfiguredAdapter()]);
   const configuredEgress = providerEgress ?? new ProviderEgress();
   const providerConfigs = new ProviderConfigService({ repository: providerConfigRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresProviderConfigRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryProviderConfigRepository()), accountRepository: providers.repository, secretService, registry: providerRegistry, egress: configuredEgress, audit });
@@ -165,7 +167,7 @@ export function buildServer({ logger = true, repository, providerRepository, pro
 
   app.get('/api/v1/actions', async (request) => { await appAuth(request, 'action.read'); return actions.list(); });
   app.post('/api/v1/actions/:actionId/plan', async (request) => { const auth = await appAuth(request, 'action.plan'); return actions.plan({ ...scopedBody(request,auth), actionId: request.params.actionId, subjectId: auth.subjectId, requestId: request.requestId }); });
-  app.post('/api/v1/actions/:actionId/execute', async (request, reply) => { const auth = await runtimeWrite(request,'action.execute'); return reply.code(202).send(await actions.execute({ ...scopedBody(request,auth), actionId: request.params.actionId, subjectId: auth.subjectId, requestId: request.requestId })); });
+  app.post('/api/v1/actions/:actionId/execute', async (request, reply) => { const auth = await runtimeWrite(request,'action.execute'); return reply.code(202).send(await actions.execute({ ...scopedBody(request,auth), actionId: request.params.actionId, subjectId: auth.subjectId, requestId: request.requestId, confirmed: request.body?.confirmed === true })); });
   app.get('/api/v1/action-runs/:runId', async (request) => { const auth = await appAuth(request, 'action.read'); return actions.get(request.params.runId, auth.subjectId); });
   app.delete('/api/v1/action-runs/:runId', async (request) => { const auth = await runtimeWrite(request,'action.execute'); return actions.cancel(request.params.runId, auth.subjectId, request.requestId); });
 
@@ -182,6 +184,10 @@ export function buildServer({ logger = true, repository, providerRepository, pro
     apiVersion,
     implementationStatus: 'foundation',
   }));
+
+  app.actions = actions;
+  app.permissions = permissions;
+  app.system = system;
 
   return app;
 }
