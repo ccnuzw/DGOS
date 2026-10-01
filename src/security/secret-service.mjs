@@ -1,0 +1,91 @@
+import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
+
+function digest(value) {
+  return createHash('sha256').update(value, 'utf8').digest('hex');
+}
+
+function requireText(value, name) {
+  if (typeof value !== 'string' || value.length === 0) {
+    throw new TypeError(`${name} must be a non-empty string`);
+  }
+}
+
+export class InMemorySecretService {
+  #records = new Map();
+  #clock;
+
+  constructor({ clock = () => Date.now() } = {}) {
+    this.#clock = clock;
+  }
+
+  async put({ secretRef, value, purpose, subjectId, ttlMs = 60_000 }) {
+    requireText(secretRef, 'secretRef');
+    requireText(value, 'value');
+    requireText(purpose, 'purpose');
+    requireText(subjectId, 'subjectId');
+    if (!Number.isSafeInteger(ttlMs) || ttlMs <= 0) {
+      throw new RangeError('ttlMs must be a positive safe integer');
+    }
+
+    const version = (this.#records.get(secretRef)?.version ?? 0) + 1;
+    this.#records.set(secretRef, {
+      digest: digest(value),
+      value,
+      purpose,
+      subjectId,
+      version,
+      expiresAt: this.#clock() + ttlMs,
+      revoked: false,
+    });
+    return { secretRef, version, credentialState: 'available' };
+  }
+
+  async resolve({ secretRef, purpose, subjectId }) {
+    requireText(secretRef, 'secretRef');
+    requireText(purpose, 'purpose');
+    requireText(subjectId, 'subjectId');
+    const record = this.#records.get(secretRef);
+    if (!record || record.revoked || record.expiresAt <= this.#clock()) {
+      throw new Error('credential_unavailable');
+    }
+    if (record.purpose !== purpose || record.subjectId !== subjectId) {
+      throw new Error('credential_scope_denied');
+    }
+    return {
+      secretRef,
+      version: record.version,
+      expiresAt: record.expiresAt,
+      async read() {
+        return record.value;
+      },
+    };
+  }
+
+  async revoke(secretRef) {
+    const record = this.#records.get(secretRef);
+    if (record) record.revoked = true;
+  }
+
+  async inspect(secretRef) {
+    const record = this.#records.get(secretRef);
+    if (!record) return { credentialState: 'missing' };
+    return {
+      credentialState: record.revoked || record.expiresAt <= this.#clock() ? 'unavailable' : 'available',
+      version: record.version,
+      digest: record.digest,
+    };
+  }
+}
+
+export function generateApiKey() {
+  const secret = `dgos_${randomBytes(32).toString('base64url')}`;
+  return { secret, prefix: secret.slice(0, 12), digest: digest(secret) };
+}
+
+export function verifyApiKey(secret, expectedDigest) {
+  requireText(secret, 'secret');
+  requireText(expectedDigest, 'expectedDigest');
+  const actual = Buffer.from(digest(secret), 'utf8');
+  const expected = Buffer.from(expectedDigest, 'utf8');
+  return actual.length === expected.length && timingSafeEqual(actual, expected);
+}

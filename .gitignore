@@ -1,0 +1,26 @@
+node_modules/
+dist/
+build/
+.turbo/
+.env
+.env.*
+!.env.example
+coverage/
+.DS_Store
+*.log
+target/
+.tauri/
+data/
+secrets/
+
+# Generated documentation previews and local exports
+preview/
+
+# Large research media is kept outside the source repository
+reference/*.mp4
+reference/*.webm
+reference/*.mov
+reference/*.mkv
+reference/*.zip
+reference/*.tar
+reference/*.tar.gz

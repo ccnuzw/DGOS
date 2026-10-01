@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "activeVersion": "V1",
+  "policy": "docs-policy.json",
+  "evidence": "docs-evidence.json",
+  "authorityFiles": [
+    "docs/02-产品与版本/当前版本/V1-版本总览.md",
+    "docs/02-产品与版本/当前版本/V1-实现状态.md",
+    "docs/04-技术架构/当前版本/V1-接口契约.md",
+    "docs/04-技术架构/当前版本/V1-openapi.yaml",
+    "docs/04-技术架构/当前版本/V1-数据模型.md",
+    "docs/06-决策记录/V1-冻结决策.md",
+    "docs/05-测试与发布/端到端验收/V1-端到端验收规范.md"
+  ],
+  "approvalMaxAgeDays": 30,
+  "requiredReports": [
+    "development",
+    "e2e",
+    "release"
+  ],
+  "requiredApprovals": [
+    "product",
+    "technical",
+    "release_manager"
+  ],
+  "commandRegistry": null,
+  "requireCommitBinding": true,
+  "requireManifest": true,
+  "release": {
+    "enforce": false,
+    "allowPendingACs": false
+  },
+  "secretScan": {
+    "enabled": true
+  }
+}

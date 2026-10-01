@@ -1,0 +1,12 @@
+{
+  "name": "@dgos/sdk",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "scripts": {
+    "build": "node --check src/index.mjs",
+    "check": "node --check src/index.mjs"
+  }
+}

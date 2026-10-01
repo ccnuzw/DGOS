@@ -1,0 +1,2038 @@
+{
+  "$schema": "spec-docs/facts/v1",
+  "version": "V1",
+  "updated": "2026-09-30",
+  "facts": [
+    {
+      "id": "V1-FR-001",
+      "type": "feature",
+      "title": "桌面与应用工作区",
+      "lifecycle": "active",
+      "spec_status": "ready",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/03-功能规格/V1/01-桌面与系统/01-桌面与应用工作区.md",
+      "references": [
+        "docs/02-产品与版本/当前版本/V1-实现状态.md",
+        "docs/04-技术架构/当前版本/V1-接口契约.md",
+        "docs/03-功能规格/V1/01-桌面与系统/01-桌面与应用工作区.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-FR-002",
+      "type": "feature",
+      "title": "开发者中心与 APP 生命周期",
+      "lifecycle": "active",
+      "spec_status": "ready",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/03-功能规格/V1/02-开发者体验/01-开发者中心与APP生命周期.md",
+      "references": [
+        "docs/02-产品与版本/当前版本/V1-实现状态.md",
+        "docs/04-技术架构/当前版本/V1-DGOS应用清单与运行时契约.md",
+        "docs/03-功能规格/V1/02-开发者体验/01-开发者中心与APP生命周期.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-FR-003",
+      "type": "feature",
+      "title": "Skill MCP 与 Agent 接入",
+      "lifecycle": "active",
+      "spec_status": "ready",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/03-功能规格/V1/03-Agent与协议/01-SkillMCP与Agent接入.md",
+      "references": [
+        "docs/02-产品与版本/当前版本/V1-实现状态.md",
+        "docs/04-技术架构/当前版本/V1-接口契约.md",
+        "docs/03-功能规格/V1/03-Agent与协议/01-SkillMCP与Agent接入.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-FR-004",
+      "type": "feature",
+      "title": "无限画布与项目",
+      "lifecycle": "planned",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "future",
+      "delivery_slice": "V2-foundation",
+      "authority": "docs/03-功能规格/V2/04-无限画布/01-无限画布与项目.md",
+      "references": [
+        "docs/02-产品与版本/后续版本/V2-规划.md",
+        "docs/99-历史归档/文档迁移映射.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-FR-005",
+      "type": "feature",
+      "title": "多模态 AI 任务工作流",
+      "lifecycle": "active",
+      "spec_status": "ready",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/03-功能规格/V1/05-AI工作流/01-多模态AI任务工作流.md",
+      "references": [
+        "docs/02-产品与版本/当前版本/V1-实现状态.md",
+        "docs/04-技术架构/当前版本/V1-接口契约.md",
+        "docs/03-功能规格/V1/05-AI工作流/01-多模态AI任务工作流.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-FR-006",
+      "type": "feature",
+      "title": "Canvas 插件与模板扩展",
+      "lifecycle": "planned",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "future",
+      "delivery_slice": "V5-ecosystem",
+      "authority": "docs/03-功能规格/V5/06-插件扩展/01-Canvas插件与模板扩展.md",
+      "references": [
+        "docs/02-产品与版本/后续版本/V5-规划.md",
+        "docs/99-历史归档/文档迁移映射.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-FR-007",
+      "type": "feature",
+      "title": "模型平台与工作流配置",
+      "lifecycle": "active",
+      "spec_status": "ready",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/03-功能规格/V1/07-模型与配置/01-模型平台与工作流配置.md",
+      "references": [
+        "docs/02-产品与版本/当前版本/V1-实现状态.md",
+        "docs/04-技术架构/当前版本/V1-接口契约.md",
+        "docs/03-功能规格/V1/07-模型与配置/01-模型平台与工作流配置.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-FR-008",
+      "type": "feature",
+      "title": "项目资产与生成历史",
+      "lifecycle": "planned",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "future",
+      "delivery_slice": "V4-assets",
+      "authority": "docs/03-功能规格/V4/08-资产与历史/01-项目资产与生成历史.md",
+      "references": [
+        "docs/02-产品与版本/后续版本/V4-规划.md",
+        "docs/99-历史归档/文档迁移映射.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-FR-009",
+      "type": "feature",
+      "title": "系统智能助手与快捷指令",
+      "lifecycle": "active",
+      "spec_status": "ready",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-assistant",
+      "authority": "docs/03-功能规格/V1/09-系统助手/01-系统智能助手与快捷指令.md",
+      "references": [
+        "docs/02-产品与版本/当前版本/V1-实现状态.md",
+        "docs/04-技术架构/当前版本/V1-接口契约.md",
+        "docs/03-功能规格/V1/09-系统助手/01-系统智能助手与快捷指令.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-NFR-001",
+      "type": "nfr",
+      "title": "权限最小化与秘密隔离",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/05-测试与发布/安全基线.md",
+      "references": [
+        "docs/03-功能规格/V1/00-V1需求编号.md",
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-NFR-002",
+      "type": "nfr",
+      "title": "异步任务可恢复与可追踪",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/05-测试与发布/测试策略.md",
+      "references": [
+        "docs/03-功能规格/V1/00-V1需求编号.md",
+        "docs/05-测试与发布/端到端验收/V1-端到端验收规范.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-NFR-003",
+      "type": "nfr",
+      "title": "应用包校验、回滚与不可覆盖发布",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/05-测试与发布/发布/检查清单.md",
+      "references": [
+        "docs/03-功能规格/V1/00-V1需求编号.md",
+        "docs/04-技术架构/当前版本/V1-DGOS应用清单与运行时契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-NFR-004",
+      "type": "nfr",
+      "title": "Provider 凭据隔离",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md",
+      "references": [
+        "docs/02-产品与版本/当前版本/V1-产品需求.md",
+        "docs/05-测试与发布/安全基线.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-NFR-005",
+      "type": "nfr",
+      "title": "桌面与 Web 前端一致性",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/02-产品与版本/当前版本/V1-产品需求.md",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-总体架构.md",
+        "docs/05-测试与发布/端到端验收/V1-端到端验收规范.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-NFR-006",
+      "type": "nfr",
+      "title": "Provider 协议可扩展",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/03-功能规格/V1/07-模型与配置/01-模型平台与工作流配置.md",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-NFR-007",
+      "type": "nfr",
+      "title": "文本任务流式与断线恢复",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/05-测试与发布/端到端验收/V1-端到端验收规范.md",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-RG-001",
+      "type": "release_gate",
+      "title": "首发功能规格 Ready 与 AC 映射",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "blocked",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-release",
+      "authority": "docs/03-功能规格/V1/00-V1需求编号.md",
+      "references": [
+        "docs/05-测试与发布/发布/检查清单.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-RG-002",
+      "type": "release_gate",
+      "title": "DGOS AI 工作台文本任务闭环",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "blocked",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-release",
+      "authority": "docs/03-功能规格/V1/00-V1需求编号.md",
+      "references": [
+        "docs/05-测试与发布/端到端验收/V1-端到端验收规范.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-RG-003",
+      "type": "release_gate",
+      "title": "平台安装、权限、秘密、设置与回滚",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "blocked",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-release",
+      "authority": "docs/03-功能规格/V1/00-V1需求编号.md",
+      "references": [
+        "docs/05-测试与发布/发布/检查清单.md",
+        "docs/05-测试与发布/端到端验收/V1-端到端验收规范.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-E2E-01",
+      "type": "acceptance",
+      "title": "桌面到工作区",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/05-测试与发布/端到端验收/V1-端到端验收规范.md",
+      "references": [
+        "docs/05-测试与发布/端到端验收/用例矩阵.md",
+        "docs/05-测试与发布/端到端验收/验证证据.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-E2E-02",
+      "type": "acceptance",
+      "title": "APP 审核目录与生命周期",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/05-测试与发布/端到端验收/V1-端到端验收规范.md",
+      "references": [
+        "docs/05-测试与发布/端到端验收/用例矩阵.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-E2E-03",
+      "type": "acceptance",
+      "title": "Agent 工具权限与超时",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/05-测试与发布/端到端验收/V1-端到端验收规范.md",
+      "references": [
+        "docs/05-测试与发布/端到端验收/用例矩阵.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-E2E-05",
+      "type": "acceptance",
+      "title": "线性文本 AI 任务",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/05-测试与发布/端到端验收/V1-端到端验收规范.md",
+      "references": [
+        "docs/05-测试与发布/端到端验收/用例矩阵.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-E2E-07",
+      "type": "acceptance",
+      "title": "Provider 与模型策略",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/05-测试与发布/端到端验收/V1-端到端验收规范.md",
+      "references": [
+        "docs/05-测试与发布/端到端验收/用例矩阵.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-E2E-09",
+      "type": "acceptance",
+      "title": "系统助手与动作执行",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-assistant",
+      "authority": "docs/05-测试与发布/端到端验收/V1-端到端验收规范.md",
+      "references": [
+        "docs/05-测试与发布/端到端验收/用例矩阵.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-E2E-10",
+      "type": "acceptance",
+      "title": "系统设置与运行时上下文",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/05-测试与发布/端到端验收/V1-端到端验收规范.md",
+      "references": [
+        "docs/05-测试与发布/端到端验收/用例矩阵.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-listActions",
+      "type": "operation",
+      "title": "listActions",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-assistant",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-readSystemSettings",
+      "type": "operation",
+      "title": "readSystemSettings",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-writeSystemSettings",
+      "type": "operation",
+      "title": "writeSystemSettings",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-readSystemContext",
+      "type": "operation",
+      "title": "readSystemContext",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-subscribeSystemContext",
+      "type": "operation",
+      "title": "subscribeSystemContext",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-checkPermission",
+      "type": "operation",
+      "title": "checkPermission",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-requestPermission",
+      "type": "operation",
+      "title": "requestPermission",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-planAction",
+      "type": "operation",
+      "title": "planAction",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-assistant",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-executeAction",
+      "type": "operation",
+      "title": "executeAction",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-assistant",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-getActionRun",
+      "type": "operation",
+      "title": "getActionRun",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-assistant",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-cancelActionRun",
+      "type": "operation",
+      "title": "cancelActionRun",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-assistant",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-listProviderProtocols",
+      "type": "operation",
+      "title": "listProviderProtocols",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-listProviderCapabilities",
+      "type": "operation",
+      "title": "listProviderCapabilities",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-listCapabilityProtocols",
+      "type": "operation",
+      "title": "listCapabilityProtocols",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-validateCapabilityProtocol",
+      "type": "operation",
+      "title": "validateCapabilityProtocol",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-listProviderConfigs",
+      "type": "operation",
+      "title": "listProviderConfigs",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-createProviderConfig",
+      "type": "operation",
+      "title": "createProviderConfig",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-validateProviderConfig",
+      "type": "operation",
+      "title": "validateProviderConfig",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-updateProviderConfig",
+      "type": "operation",
+      "title": "updateProviderConfig",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-deleteProviderConfig",
+      "type": "operation",
+      "title": "deleteProviderConfig",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-listProviderModels",
+      "type": "operation",
+      "title": "listProviderModels",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-refreshProviderModels",
+      "type": "operation",
+      "title": "refreshProviderModels",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-listProviderModelPolicies",
+      "type": "operation",
+      "title": "listProviderModelPolicies",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-updateProviderModelPolicy",
+      "type": "operation",
+      "title": "updateProviderModelPolicy",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-submitAiTask",
+      "type": "operation",
+      "title": "submitAiTask",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-getAiTask",
+      "type": "operation",
+      "title": "getAiTask",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-streamAiTaskEvents",
+      "type": "operation",
+      "title": "streamAiTaskEvents",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-listSkills",
+      "type": "operation",
+      "title": "listSkills",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-installSkill",
+      "type": "operation",
+      "title": "installSkill",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-setSkillState",
+      "type": "operation",
+      "title": "setSkillState",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-uninstallSkill",
+      "type": "operation",
+      "title": "uninstallSkill",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-listMcpServices",
+      "type": "operation",
+      "title": "listMcpServices",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-installMcp",
+      "type": "operation",
+      "title": "installMcp",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-setMcpState",
+      "type": "operation",
+      "title": "setMcpState",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-OP-uninstallMcp",
+      "type": "operation",
+      "title": "uninstallMcp",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "UserProfile",
+      "type": "entity",
+      "title": "UserProfile",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md",
+      "references": [],
+      "evidence": []
+    },
+    {
+      "id": "Session",
+      "type": "entity",
+      "title": "Session",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md",
+      "references": [],
+      "evidence": []
+    },
+    {
+      "id": "AppInstallRecord",
+      "type": "entity",
+      "title": "AppInstallRecord",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md",
+      "references": [],
+      "evidence": []
+    },
+    {
+      "id": "CatalogReviewRecord",
+      "type": "entity",
+      "title": "CatalogReviewRecord",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md",
+      "references": [],
+      "evidence": []
+    },
+    {
+      "id": "AppCapabilityGrant",
+      "type": "entity",
+      "title": "AppCapabilityGrant",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md",
+      "references": [],
+      "evidence": []
+    },
+    {
+      "id": "SystemContextSnapshot",
+      "type": "entity",
+      "title": "SystemContextSnapshot",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md",
+      "references": [],
+      "evidence": []
+    },
+    {
+      "id": "ProviderConfig",
+      "type": "entity",
+      "title": "ProviderConfig",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md",
+      "references": [],
+      "evidence": []
+    },
+    {
+      "id": "ModelCatalog",
+      "type": "entity",
+      "title": "ModelCatalog",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md",
+      "references": [],
+      "evidence": []
+    },
+    {
+      "id": "ModelCapabilityPolicy",
+      "type": "entity",
+      "title": "ModelCapabilityPolicy",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md",
+      "references": [],
+      "evidence": []
+    },
+    {
+      "id": "AITask",
+      "type": "entity",
+      "title": "AITask",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md",
+      "references": [],
+      "evidence": []
+    },
+    {
+      "id": "AITaskEvent",
+      "type": "entity",
+      "title": "AITaskEvent",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md",
+      "references": [],
+      "evidence": []
+    },
+    {
+      "id": "Artifact",
+      "type": "entity",
+      "title": "Artifact",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md",
+      "references": [],
+      "evidence": []
+    },
+    {
+      "id": "AuditEvent",
+      "type": "entity",
+      "title": "AuditEvent",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md",
+      "references": [],
+      "evidence": []
+    },
+    {
+      "id": "D018",
+      "type": "decision",
+      "title": "V1 Provider、身份边界与桌面/Web 共用前端",
+      "lifecycle": "active",
+      "spec_status": "frozen",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/06-决策记录/V1-冻结决策.md",
+      "references": [
+        "docs/02-产品与版本/版本路线图.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "D019",
+      "type": "decision",
+      "title": "V1 macOS、Docker Web、openai-compatible 与 SSE 边界",
+      "lifecycle": "active",
+      "spec_status": "frozen",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/06-决策记录/V1-冻结决策.md",
+      "references": [
+        "docs/02-产品与版本/当前版本/V1-版本总览.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "D022",
+      "type": "decision",
+      "title": "助手通过动作目录受控操作 DGOS",
+      "lifecycle": "deprecated",
+      "spec_status": "frozen",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-assistant",
+      "authority": "docs/06-决策记录/V1-冻结决策.md",
+      "references": [],
+      "evidence": []
+    },
+    {
+      "id": "D026",
+      "type": "decision",
+      "title": "V1 平台控制面与唯一参考 APP",
+      "lifecycle": "active",
+      "spec_status": "frozen",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/06-决策记录/V1-冻结决策.md",
+      "references": [
+        "docs/02-产品与版本/当前版本/V1-版本总览.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "D029",
+      "type": "decision",
+      "title": "V1 受控主体与 Session 边界",
+      "lifecycle": "active",
+      "spec_status": "frozen",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/06-决策记录/V1-冻结决策.md",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-数据模型.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "D030",
+      "type": "decision",
+      "title": "V1 应用目录审核与预装卸载策略",
+      "lifecycle": "active",
+      "spec_status": "frozen",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/06-决策记录/V1-冻结决策.md",
+      "references": [
+        "docs/03-功能规格/V1/02-开发者体验/01-开发者中心与APP生命周期.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "D031",
+      "type": "decision",
+      "title": "助手可操作大部分公开设置与应用配置",
+      "lifecycle": "active",
+      "spec_status": "frozen",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-assistant",
+      "authority": "docs/06-决策记录/V1-冻结决策.md",
+      "references": [
+        "docs/03-功能规格/V1/09-系统助手/01-系统智能助手与快捷指令.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "D032",
+      "type": "decision",
+      "title": "Provider 验证失败与既有任务收敛",
+      "lifecycle": "active",
+      "spec_status": "frozen",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/06-决策记录/V1-冻结决策.md",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-接口契约.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "D033",
+      "type": "decision",
+      "title": "任务与 Artifact 保留边界",
+      "lifecycle": "active",
+      "spec_status": "frozen",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/06-决策记录/V1-冻结决策.md",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-数据模型.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "D034",
+      "type": "decision",
+      "title": "主体与 Session 的 V1/V2 演进",
+      "lifecycle": "active",
+      "spec_status": "frozen",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/06-决策记录/V1-冻结决策.md",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-数据模型.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "D035",
+      "type": "decision",
+      "title": "清理期限与引用保护",
+      "lifecycle": "active",
+      "spec_status": "frozen",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/06-决策记录/V1-冻结决策.md",
+      "references": [
+        "docs/04-技术架构/当前版本/V1-数据模型.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "ADR-0001",
+      "type": "decision",
+      "title": "架构决策 0001",
+      "lifecycle": "active",
+      "spec_status": "draft",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/06-决策记录/ADR/0001-决策标题.md",
+      "references": [],
+      "evidence": []
+    },
+    {
+      "id": "ADR-0002",
+      "type": "decision",
+      "title": "V1 共用前端与桌面宿主",
+      "lifecycle": "active",
+      "spec_status": "frozen",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/06-决策记录/ADR/0002-V1共用前端与桌面宿主.md",
+      "references": [],
+      "evidence": []
+    },
+    {
+      "id": "ADR-0003",
+      "type": "decision",
+      "title": "V1 技术栈与可替换运行时",
+      "lifecycle": "active",
+      "spec_status": "frozen",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/06-决策记录/ADR/0003-V1技术栈与可替换运行时.md",
+      "references": [],
+      "evidence": []
+    },
+    {
+      "id": "ADR-0004",
+      "type": "decision",
+      "title": "V1 统一设计系统与跨应用交互契约",
+      "lifecycle": "active",
+      "spec_status": "frozen",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/06-决策记录/ADR/0004-V1统一设计系统与跨应用交互契约.md",
+      "references": [],
+      "evidence": []
+    },
+    {
+      "id": "M0-storage-baseline",
+      "type": "migration",
+      "title": "存储引擎、主体映射、保留期和备份基线",
+      "lifecycle": "planned",
+      "spec_status": "draft",
+      "implementation_status": "blocked",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md",
+      "references": [
+        "docs/06-决策记录/ADR/README.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "M1-install-identity-permission",
+      "type": "migration",
+      "title": "安装、身份、权限与设置物理结构",
+      "lifecycle": "planned",
+      "spec_status": "draft",
+      "implementation_status": "blocked",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md",
+      "references": [],
+      "evidence": []
+    },
+    {
+      "id": "M2-provider-task-artifact",
+      "type": "migration",
+      "title": "Provider、模型、Task、Event 与 Artifact 物理结构",
+      "lifecycle": "planned",
+      "spec_status": "draft",
+      "implementation_status": "blocked",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md",
+      "references": [],
+      "evidence": []
+    },
+    {
+      "id": "M3-host-migration-drill",
+      "type": "migration",
+      "title": "macOS 与 Docker Web 迁移演练",
+      "lifecycle": "planned",
+      "spec_status": "draft",
+      "implementation_status": "blocked",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-release",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md",
+      "references": [
+        "docs/05-测试与发布/发布/恢复手册.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-FR-010",
+      "type": "feature",
+      "title": "管理员登录与会话",
+      "lifecycle": "active",
+      "spec_status": "ready",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/03-功能规格/V1/10-身份与治理/01-管理员登录与会话.md",
+      "references": [
+        "docs/02-产品与版本/当前版本/V1-实现状态.md",
+        "docs/04-技术架构/当前版本/V1-接口契约.md",
+        "docs/03-功能规格/V1/10-身份与治理/01-管理员登录与会话.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-FR-011",
+      "type": "feature",
+      "title": "API Key 生命周期",
+      "lifecycle": "active",
+      "spec_status": "ready",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/03-功能规格/V1/10-身份与治理/02-API-Key生命周期.md",
+      "references": [
+        "docs/02-产品与版本/当前版本/V1-实现状态.md",
+        "docs/04-技术架构/当前版本/V1-接口契约.md",
+        "docs/03-功能规格/V1/10-身份与治理/02-API-Key生命周期.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-FR-012",
+      "type": "feature",
+      "title": "Provider 账号与连接",
+      "lifecycle": "active",
+      "spec_status": "ready",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/03-功能规格/V1/10-身份与治理/03-Provider账号与连接.md",
+      "references": [
+        "docs/02-产品与版本/当前版本/V1-实现状态.md",
+        "docs/04-技术架构/当前版本/V1-接口契约.md",
+        "docs/03-功能规格/V1/10-身份与治理/03-Provider账号与连接.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-FR-013",
+      "type": "feature",
+      "title": "上游账号连接测试",
+      "lifecycle": "active",
+      "spec_status": "ready",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/03-功能规格/V1/10-身份与治理/04-上游账号连接测试.md",
+      "references": [
+        "docs/02-产品与版本/当前版本/V1-实现状态.md",
+        "docs/04-技术架构/当前版本/V1-接口契约.md",
+        "docs/03-功能规格/V1/10-身份与治理/04-上游账号连接测试.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-FR-014",
+      "type": "feature",
+      "title": "审计与管理员系统治理",
+      "lifecycle": "active",
+      "spec_status": "ready",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-platform",
+      "authority": "docs/03-功能规格/V1/10-身份与治理/05-审计与管理员系统治理.md",
+      "references": [
+        "docs/02-产品与版本/当前版本/V1-实现状态.md",
+        "docs/04-技术架构/当前版本/V1-接口契约.md",
+        "docs/03-功能规格/V1/10-身份与治理/05-审计与管理员系统治理.md"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-FR-015",
+      "type": "feature",
+      "title": "用量与额度管理",
+      "lifecycle": "active",
+      "spec_status": "ready",
+      "implementation_status": "planned",
+      "delivery_scope": "active",
+      "delivery_slice": "V1-ai-task",
+      "authority": "docs/03-功能规格/V1/10-身份与治理/06-用量与额度管理.md",
+      "references": [
+        "docs/02-产品与版本/当前版本/V1-实现状态.md",
+        "docs/04-技术架构/当前版本/V1-接口契约.md",
+        "docs/03-功能规格/V1/10-身份与治理/06-用量与额度管理.md"
+      ],
+      "evidence": []
+    }
+  ],
+  "slices": [
+    {
+      "id": "V1-platform",
+      "version": "V1",
+      "status": "planned",
+      "authority": "docs/02-产品与版本/当前版本/V1-版本总览.md",
+      "features": [
+        "V1-FR-001",
+        "V1-FR-002",
+        "V1-FR-003",
+        "V1-E2E-01",
+        "V1-E2E-02",
+        "V1-E2E-03",
+        "V1-E2E-10",
+        "V1-NFR-001",
+        "V1-NFR-003",
+        "V1-NFR-005",
+        "V1-RG-003",
+        "M0-storage-baseline",
+        "M1-install-identity-permission"
+      ],
+      "depends_on": [],
+      "evidence": []
+    },
+    {
+      "id": "V1-ai-task",
+      "version": "V1",
+      "status": "planned",
+      "authority": "docs/02-产品与版本/当前版本/V1-版本总览.md",
+      "features": [
+        "V1-FR-005",
+        "V1-FR-007",
+        "V1-E2E-05",
+        "V1-E2E-07",
+        "V1-NFR-002",
+        "V1-NFR-004",
+        "V1-NFR-006",
+        "V1-NFR-007",
+        "M2-provider-task-artifact"
+      ],
+      "depends_on": [
+        "V1-platform"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-assistant",
+      "version": "V1",
+      "status": "planned",
+      "authority": "docs/02-产品与版本/当前版本/V1-版本总览.md",
+      "features": [
+        "V1-FR-009",
+        "V1-E2E-09"
+      ],
+      "depends_on": [
+        "V1-platform",
+        "V1-ai-task"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V1-release",
+      "version": "V1",
+      "status": "blocked",
+      "authority": "docs/05-测试与发布/发布/检查清单.md",
+      "features": [
+        "V1-RG-001",
+        "V1-RG-002",
+        "V1-RG-003",
+        "M3-host-migration-drill"
+      ],
+      "depends_on": [
+        "V1-platform",
+        "V1-ai-task",
+        "V1-assistant"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V2-foundation",
+      "version": "V2",
+      "status": "planned",
+      "authority": "docs/02-产品与版本/后续版本/V2-规划.md",
+      "features": [
+        "V1-FR-004"
+      ],
+      "depends_on": [
+        "V1-release"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V4-assets",
+      "version": "V4",
+      "status": "planned",
+      "authority": "docs/02-产品与版本/后续版本/V4-规划.md",
+      "features": [
+        "V1-FR-008"
+      ],
+      "depends_on": [
+        "V2-foundation"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V5-ecosystem",
+      "version": "V5",
+      "status": "planned",
+      "authority": "docs/02-产品与版本/后续版本/V5-规划.md",
+      "features": [
+        "V1-FR-006"
+      ],
+      "depends_on": [
+        "V4-assets"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V3-workflow",
+      "version": "V3",
+      "status": "planned",
+      "authority": "docs/02-产品与版本/后续版本/V3-规划.md",
+      "features": [],
+      "depends_on": [
+        "V2-foundation"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "V6-collaboration",
+      "version": "V6",
+      "status": "planned",
+      "authority": "docs/02-产品与版本/后续版本/V6-规划.md",
+      "features": [],
+      "depends_on": [
+        "V2-foundation",
+        "V4-assets",
+        "V5-ecosystem"
+      ],
+      "evidence": []
+    }
+  ],
+  "relations": [
+    {
+      "from": "V1-FR-001",
+      "to": "V1-OP-readSystemSettings",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-001",
+      "to": "V1-OP-writeSystemSettings",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-001",
+      "to": "V1-OP-readSystemContext",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-001",
+      "to": "V1-OP-subscribeSystemContext",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-001",
+      "to": "V1-OP-checkPermission",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-001",
+      "to": "V1-OP-requestPermission",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-009",
+      "to": "V1-OP-listActions",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-009",
+      "to": "V1-OP-planAction",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-009",
+      "to": "V1-OP-executeAction",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-009",
+      "to": "V1-OP-getActionRun",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-009",
+      "to": "V1-OP-cancelActionRun",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-007",
+      "to": "V1-OP-listProviderProtocols",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-007",
+      "to": "V1-OP-listProviderCapabilities",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-007",
+      "to": "V1-OP-listCapabilityProtocols",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-007",
+      "to": "V1-OP-validateCapabilityProtocol",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-007",
+      "to": "V1-OP-listProviderConfigs",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-007",
+      "to": "V1-OP-createProviderConfig",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-007",
+      "to": "V1-OP-validateProviderConfig",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-007",
+      "to": "V1-OP-updateProviderConfig",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-007",
+      "to": "V1-OP-deleteProviderConfig",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-007",
+      "to": "V1-OP-listProviderModels",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-007",
+      "to": "V1-OP-refreshProviderModels",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-007",
+      "to": "V1-OP-listProviderModelPolicies",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-007",
+      "to": "V1-OP-updateProviderModelPolicy",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-005",
+      "to": "V1-OP-submitAiTask",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-005",
+      "to": "V1-OP-getAiTask",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-005",
+      "to": "V1-OP-streamAiTaskEvents",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-003",
+      "to": "V1-OP-listSkills",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-003",
+      "to": "V1-OP-installSkill",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-003",
+      "to": "V1-OP-setSkillState",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-003",
+      "to": "V1-OP-uninstallSkill",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-003",
+      "to": "V1-OP-listMcpServices",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-003",
+      "to": "V1-OP-installMcp",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-003",
+      "to": "V1-OP-setMcpState",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-003",
+      "to": "V1-OP-uninstallMcp",
+      "type": "defines_operation",
+      "authority": "docs/04-技术架构/当前版本/V1-接口契约.md"
+    },
+    {
+      "from": "V1-FR-001",
+      "to": "UserProfile",
+      "type": "reads_entity",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md"
+    },
+    {
+      "from": "V1-FR-001",
+      "to": "Session",
+      "type": "reads_entity",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md"
+    },
+    {
+      "from": "V1-FR-001",
+      "to": "SystemContextSnapshot",
+      "type": "writes_entity",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md"
+    },
+    {
+      "from": "V1-FR-001",
+      "to": "AppCapabilityGrant",
+      "type": "writes_entity",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md"
+    },
+    {
+      "from": "V1-FR-002",
+      "to": "AppInstallRecord",
+      "type": "writes_entity",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md"
+    },
+    {
+      "from": "V1-FR-002",
+      "to": "CatalogReviewRecord",
+      "type": "writes_entity",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md"
+    },
+    {
+      "from": "V1-FR-003",
+      "to": "AuditEvent",
+      "type": "writes_entity",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md"
+    },
+    {
+      "from": "V1-FR-005",
+      "to": "AITask",
+      "type": "writes_entity",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md"
+    },
+    {
+      "from": "V1-FR-005",
+      "to": "AITaskEvent",
+      "type": "writes_entity",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md"
+    },
+    {
+      "from": "V1-FR-005",
+      "to": "Artifact",
+      "type": "writes_entity",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md"
+    },
+    {
+      "from": "V1-FR-007",
+      "to": "ProviderConfig",
+      "type": "writes_entity",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md"
+    },
+    {
+      "from": "V1-FR-007",
+      "to": "ModelCatalog",
+      "type": "writes_entity",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md"
+    },
+    {
+      "from": "V1-FR-007",
+      "to": "ModelCapabilityPolicy",
+      "type": "writes_entity",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md"
+    },
+    {
+      "from": "V1-FR-009",
+      "to": "AuditEvent",
+      "type": "writes_entity",
+      "authority": "docs/04-技术架构/当前版本/V1-数据模型.md"
+    },
+    {
+      "from": "V1-FR-001",
+      "to": "V1-E2E-01",
+      "type": "verified_by",
+      "authority": "docs/05-测试与发布/端到端验收/V1-端到端验收规范.md"
+    },
+    {
+      "from": "V1-FR-002",
+      "to": "V1-E2E-02",
+      "type": "verified_by",
+      "authority": "docs/05-测试与发布/端到端验收/V1-端到端验收规范.md"
+    },
+    {
+      "from": "V1-FR-003",
+      "to": "V1-E2E-03",
+      "type": "verified_by",
+      "authority": "docs/05-测试与发布/端到端验收/V1-端到端验收规范.md"
+    },
+    {
+      "from": "V1-FR-005",
+      "to": "V1-E2E-05",
+      "type": "verified_by",
+      "authority": "docs/05-测试与发布/端到端验收/V1-端到端验收规范.md"
+    },
+    {
+      "from": "V1-FR-007",
+      "to": "V1-E2E-07",
+      "type": "verified_by",
+      "authority": "docs/05-测试与发布/端到端验收/V1-端到端验收规范.md"
+    },
+    {
+      "from": "V1-FR-009",
+      "to": "V1-E2E-09",
+      "type": "verified_by",
+      "authority": "docs/05-测试与发布/端到端验收/V1-端到端验收规范.md"
+    },
+    {
+      "from": "V1-FR-001",
+      "to": "V1-E2E-10",
+      "type": "verified_by",
+      "authority": "docs/05-测试与发布/端到端验收/V1-端到端验收规范.md"
+    },
+    {
+      "from": "V1-FR-001",
+      "to": "D029",
+      "type": "decided_by",
+      "authority": "docs/06-决策记录/V1-冻结决策.md"
+    },
+    {
+      "from": "V1-FR-002",
+      "to": "D030",
+      "type": "decided_by",
+      "authority": "docs/06-决策记录/V1-冻结决策.md"
+    },
+    {
+      "from": "V1-FR-005",
+      "to": "D032",
+      "type": "decided_by",
+      "authority": "docs/06-决策记录/V1-冻结决策.md"
+    },
+    {
+      "from": "V1-FR-007",
+      "to": "D019",
+      "type": "decided_by",
+      "authority": "docs/06-决策记录/V1-冻结决策.md"
+    },
+    {
+      "from": "V1-FR-009",
+      "to": "D031",
+      "type": "decided_by",
+      "authority": "docs/06-决策记录/V1-冻结决策.md"
+    },
+    {
+      "from": "D031",
+      "to": "D022",
+      "type": "supersedes",
+      "authority": "docs/06-决策记录/V1-冻结决策.md"
+    },
+    {
+      "from": "V1-RG-001",
+      "to": "V1-E2E-01",
+      "type": "depends_on",
+      "authority": "docs/03-功能规格/V1/00-V1需求编号.md"
+    },
+    {
+      "from": "V1-RG-002",
+      "to": "V1-E2E-05",
+      "type": "depends_on",
+      "authority": "docs/03-功能规格/V1/00-V1需求编号.md"
+    },
+    {
+      "from": "V1-RG-003",
+      "to": "V1-E2E-02",
+      "type": "depends_on",
+      "authority": "docs/03-功能规格/V1/00-V1需求编号.md"
+    },
+    {
+      "from": "V1-FR-004",
+      "to": "V1-FR-005",
+      "type": "depends_on",
+      "authority": "docs/02-产品与版本/后续版本/V2-规划.md"
+    },
+    {
+      "from": "V1-FR-006",
+      "to": "V1-FR-004",
+      "type": "depends_on",
+      "authority": "docs/02-产品与版本/后续版本/V5-规划.md"
+    },
+    {
+      "from": "V1-FR-008",
+      "to": "V1-FR-004",
+      "type": "depends_on",
+      "authority": "docs/02-产品与版本/后续版本/V4-规划.md"
+    }
+  ]
+}

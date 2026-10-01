@@ -1,0 +1,1930 @@
+openapi: 3.0.3
+info:
+  title: DGOS V1 Logical API
+  version: "1.0.0"
+  description: |
+    DGOS V1 逻辑契约的 HTTPS JSON + SSE 投影。桌面 IPC 必须保持相同的动作、字段、权限和事件语义。
+    该文件是规划中的机器可验证 schema，不代表当前仓库已有实现。
+security:
+  - dgosSession: []
+  - dgosApiKey: []
+servers:
+  - url: https://localhost
+    description: Docker Compose Web projection (planned)
+tags:
+  - name: system
+  - name: providers
+  - name: ai-tasks
+  - name: skills
+  - name: mcp
+  - name: assistant
+  - name: identity
+  - name: secrets
+  - name: governance
+  - name: usage
+paths:
+  /api/v1/actions:
+    get:
+      tags: [assistant]
+      operationId: listActions
+      x-tag-feature: V1-FR-009
+      x-tag-implementation-status: planned
+      responses:
+        '200':
+          description: Actions visible to the current subject
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ActionList' }
+  /api/v1/system/settings:
+    get:
+      tags: [system]
+      operationId: readSystemSettings
+      x-tag-feature: V1-FR-001
+      x-tag-implementation-status: planned
+      responses:
+        '200':
+          description: Current system settings and effective values
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SystemSettingsSnapshot' }
+    patch:
+      tags: [system]
+      operationId: writeSystemSettings
+      x-tag-feature: V1-FR-001
+      x-tag-implementation-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SystemSettingsPatch' }
+      responses:
+        '200':
+          description: Updated settings and restart status
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SystemSettingsSnapshot' }
+        '409':
+          description: Settings version conflict
+  /api/v1/system/context:
+    get:
+      tags: [system]
+      operationId: readSystemContext
+      x-tag-feature: V1-FR-001
+      x-tag-implementation-status: planned
+      responses:
+        '200':
+          description: Redacted runtime context for the current application
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SystemContextSnapshot' }
+  /api/v1/system/context/events:
+    get:
+      tags: [system]
+      operationId: subscribeSystemContext
+      x-tag-feature: V1-FR-001
+      x-tag-implementation-status: planned
+      responses:
+        '200':
+          description: Server-sent system context changes
+          content:
+            text/event-stream:
+              schema: { type: string }
+  /api/v1/permissions/check:
+    post:
+      tags: [system]
+      operationId: checkPermission
+      x-tag-feature: V1-FR-001
+      x-tag-implementation-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PermissionCheckRequest' }
+      responses:
+        '200':
+          description: Effective permission decision
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PermissionDecisionResult' }
+  /api/v1/permissions/request:
+    post:
+      tags: [system]
+      operationId: requestPermission
+      x-tag-feature: V1-FR-001
+      x-tag-implementation-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PermissionRequest' }
+      responses:
+        '202':
+          description: User confirmation request created; no side effect has occurred
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PermissionDecisionResult' }
+  /api/v1/actions/{actionId}/plan:
+    post:
+      tags: [assistant]
+      operationId: planAction
+      x-tag-feature: V1-FR-009
+      x-tag-implementation-status: planned
+      parameters:
+        - { $ref: '#/components/parameters/ActionId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ActionPlanRequest' }
+      responses:
+        '200':
+          description: Action plan and confirmation requirement
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ActionPlan' }
+  /api/v1/actions/{actionId}/execute:
+    post:
+      tags: [assistant]
+      operationId: executeAction
+      x-tag-feature: V1-FR-009
+      x-tag-implementation-status: planned
+      parameters:
+        - { $ref: '#/components/parameters/ActionId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ActionExecuteRequest' }
+      responses:
+        '202':
+          description: Action execution accepted
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ActionRun' }
+  /api/v1/action-runs/{runId}:
+    get:
+      tags: [assistant]
+      operationId: getActionRun
+      x-tag-feature: V1-FR-009
+      x-tag-implementation-status: planned
+      parameters:
+        - { $ref: '#/components/parameters/ActionRunId' }
+      responses:
+        '200':
+          description: Action run snapshot
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ActionRun' }
+    delete:
+      tags: [assistant]
+      operationId: cancelActionRun
+      x-tag-feature: V1-FR-009
+      x-tag-implementation-status: planned
+      parameters:
+        - { $ref: '#/components/parameters/ActionRunId' }
+      responses:
+        '202':
+          description: Cancellation accepted
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ActionRun' }
+  /api/v1/provider/protocols:
+    get:
+      tags: [providers]
+      operationId: listProviderProtocols
+      x-tag-feature: V1-FR-007
+      x-tag-implementation-status: planned
+      responses:
+        '200':
+          description: Registered protocol adapters
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: '#/components/schemas/ProtocolAdapterRegistration' }
+  /api/v1/provider/configs/{providerId}/capabilities:
+    get:
+      tags: [providers]
+      operationId: listProviderCapabilities
+      x-tag-feature: V1-FR-007
+      x-tag-implementation-status: planned
+      parameters:
+        - { $ref: '#/components/parameters/ProviderId' }
+      responses:
+        '200':
+          description: Versioned capability descriptor
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProviderCapabilityDescriptor' }
+  /api/v1/provider/capability-protocols:
+    get:
+      tags: [providers]
+      operationId: listCapabilityProtocols
+      x-tag-feature: V1-FR-007
+      x-tag-implementation-status: planned
+      responses:
+        '200':
+          description: Registered declarative capability protocols
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: '#/components/schemas/CapabilityProtocolRegistration' }
+    post:
+      tags: [providers]
+      operationId: validateCapabilityProtocol
+      x-tag-feature: V1-FR-007
+      x-tag-implementation-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CapabilityProtocolRegistration' }
+      responses:
+        '200':
+          description: Canonical validated protocol
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CapabilityProtocolRegistration' }
+        '422':
+          description: Protocol schema or safety validation failed
+  /api/v1/provider/configs:
+    get:
+      tags: [providers]
+      operationId: listProviderConfigs
+      x-tag-feature: V1-FR-007
+      x-tag-implementation-status: planned
+      responses:
+        '200':
+          description: Redacted provider configurations
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: '#/components/schemas/ProviderConfig' }
+    post:
+      tags: [providers]
+      operationId: createProviderConfig
+      x-tag-feature: V1-FR-007
+      x-tag-implementation-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ProviderConfigInput' }
+      responses:
+        '201':
+          description: Created redacted configuration
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProviderConfig' }
+  /api/v1/provider/configs/{providerId}/validate:
+    post:
+      tags: [providers]
+      operationId: validateProviderConfig
+      x-tag-feature: V1-FR-007
+      x-tag-implementation-status: planned
+      parameters:
+        - { $ref: '#/components/parameters/ProviderId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RequestEnvelope' }
+      responses:
+        '200':
+          description: Protocol validation and redacted capability descriptor; failed validation atomically disables the provider for new tasks while retaining secret references and diagnostic catalog/policy history. Model catalog is refreshed by the separate models endpoint.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProviderValidationResult' }
+  /api/v1/provider/configs/{providerId}:
+    put:
+      tags: [providers]
+      operationId: updateProviderConfig
+      x-tag-feature: V1-FR-007
+      x-tag-implementation-status: planned
+      parameters:
+        - { $ref: '#/components/parameters/ProviderId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ProviderConfigUpdate' }
+      responses:
+        '200':
+          description: Updated redacted provider configuration. The updated configuration must pass validation before it can serve new tasks; validation failure disables the provider and retains secret references and diagnostic catalog/policy history.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProviderConfig' }
+    delete:
+      tags: [providers]
+      operationId: deleteProviderConfig
+      x-tag-feature: V1-FR-007
+      x-tag-implementation-status: planned
+      parameters:
+        - { $ref: '#/components/parameters/ProviderId' }
+      responses:
+        '204':
+          description: Provider configuration and its secret reference removed; model catalog history may remain as non-selectable history
+  /api/v1/provider/configs/{providerId}/models:
+    get:
+      tags: [providers]
+      operationId: listProviderModels
+      x-tag-feature: V1-FR-007
+      x-tag-implementation-status: planned
+      parameters:
+        - { $ref: '#/components/parameters/ProviderId' }
+      responses:
+        '200':
+          description: Provider model catalog and local capability policy
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, refreshedAt]
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: '#/components/schemas/ModelCatalogEntry' }
+                  refreshedAt: { type: string, format: date-time }
+    post:
+      tags: [providers]
+      operationId: refreshProviderModels
+      x-tag-feature: V1-FR-007
+      x-tag-implementation-status: planned
+      parameters:
+        - { $ref: '#/components/parameters/ProviderId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RequestEnvelope' }
+      responses:
+        '202':
+          description: Model refresh accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [requestId, status]
+                properties:
+                  requestId: { type: string }
+                  status: { type: string, enum: [queued, running, completed, failed] }
+  /api/v1/provider/configs/{providerId}/model-policies:
+    get:
+      tags: [providers]
+      operationId: listProviderModelPolicies
+      x-tag-feature: V1-FR-007
+      x-tag-implementation-status: planned
+      parameters:
+        - { $ref: '#/components/parameters/ProviderId' }
+      responses:
+        '200':
+          description: User editable model activation and capability policy
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: '#/components/schemas/ModelCapabilityPolicy' }
+    post:
+      tags: [providers]
+      operationId: updateProviderModelPolicy
+      x-tag-feature: V1-FR-007
+      x-tag-implementation-status: planned
+      parameters:
+        - { $ref: '#/components/parameters/ProviderId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ModelCapabilityPolicyUpdate' }
+      responses:
+        '200':
+          description: Updated model policy
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ModelCapabilityPolicy' }
+  /api/v1/ai-tasks:
+    post:
+      tags: [ai-tasks]
+      operationId: submitAiTask
+      x-tag-feature: V1-FR-005
+      x-tag-implementation-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AITaskSubmitRequest' }
+      responses:
+        '202':
+          description: Accepted idempotent task
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AITaskReceipt' }
+  /api/v1/ai-tasks/{taskId}:
+    get:
+      tags: [ai-tasks]
+      operationId: getAiTask
+      x-tag-feature: V1-FR-005
+      x-tag-implementation-status: planned
+      parameters:
+        - { $ref: '#/components/parameters/TaskId' }
+      responses:
+        '200':
+          description: Authoritative task snapshot
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AITaskSnapshot' }
+  /api/v1/ai-tasks/{taskId}/events:
+    get:
+      tags: [ai-tasks]
+      operationId: streamAiTaskEvents
+      x-tag-feature: V1-FR-005
+      x-tag-implementation-status: planned
+      description: SSE stream. Last-Event-ID or cursor resumes after a disconnect.
+      parameters:
+        - { $ref: '#/components/parameters/TaskId' }
+        - in: header
+          name: Last-Event-ID
+          required: false
+          schema: { type: string }
+        - in: query
+          name: cursor
+          required: false
+          schema: { type: string }
+      responses:
+        '200':
+          description: Sanitized task events
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                description: SSE frames carrying AITaskEvent JSON data
+  /api/v1/skills:
+    get:
+      tags: [skills]
+      operationId: listSkills
+      x-tag-feature: V1-FR-003
+      x-tag-implementation-status: planned
+      responses:
+        '200':
+          description: Skill registry entries
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ExtensionList' }
+    post:
+      tags: [skills]
+      operationId: installSkill
+      x-tag-feature: V1-FR-003
+      x-tag-implementation-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ExtensionInstallRequest' }
+      responses:
+        '202':
+          description: Skill installation accepted
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ExtensionRecord' }
+  /api/v1/skills/{skillId}/state:
+    post:
+      tags: [skills]
+      operationId: setSkillState
+      x-tag-feature: V1-FR-003
+      x-tag-implementation-status: planned
+      parameters:
+        - { $ref: '#/components/parameters/SkillId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ExtensionStateRequest' }
+      responses:
+        '200':
+          description: Updated skill state
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ExtensionRecord' }
+  /api/v1/skills/{skillId}:
+    delete:
+      tags: [skills]
+      operationId: uninstallSkill
+      x-tag-feature: V1-FR-003
+      x-tag-implementation-status: planned
+      parameters:
+        - { $ref: '#/components/parameters/SkillId' }
+      responses:
+        '202':
+          description: Skill uninstall accepted
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ExtensionRecord' }
+  /api/v1/mcp:
+    get:
+      tags: [mcp]
+      operationId: listMcpServices
+      x-tag-feature: V1-FR-003
+      x-tag-implementation-status: planned
+      responses:
+        '200':
+          description: MCP registry entries without secrets
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ExtensionList' }
+    post:
+      tags: [mcp]
+      operationId: installMcp
+      x-tag-feature: V1-FR-003
+      x-tag-implementation-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ExtensionInstallRequest' }
+      responses:
+        '202':
+          description: MCP installation accepted
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ExtensionRecord' }
+  /api/v1/mcp/{mcpId}/state:
+    post:
+      tags: [mcp]
+      operationId: setMcpState
+      x-tag-feature: V1-FR-003
+      x-tag-implementation-status: planned
+      parameters:
+        - { $ref: '#/components/parameters/McpId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ExtensionStateRequest' }
+      responses:
+        '200':
+          description: Updated MCP state
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ExtensionRecord' }
+  /api/v1/mcp/{mcpId}:
+    delete:
+      tags: [mcp]
+      operationId: uninstallMcp
+      x-tag-feature: V1-FR-003
+      x-tag-implementation-status: planned
+      parameters:
+        - { $ref: '#/components/parameters/McpId' }
+      responses:
+        '202':
+          description: MCP uninstall accepted
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ExtensionRecord' }
+  /api/v1/identity/admin/bootstrap:
+    post:
+      tags: [identity]
+      operationId: bootstrapAdmin
+      security: []
+      x-tag-feature: V1-FR-010
+      x-tag-implementation-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AdminBootstrapRequest' }
+      responses:
+        '201':
+          description: First administrator created and session issued
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AdminSessionReceipt' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+  /api/v1/identity/admin/login:
+    post:
+      tags: [identity]
+      operationId: adminLogin
+      security: []
+      x-tag-feature: V1-FR-010
+      x-tag-implementation-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AdminLoginRequest' }
+      responses:
+        '200':
+          description: Authenticated administrator session
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AdminSessionReceipt' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+  /api/v1/identity/admin/session:
+    get:
+      tags: [identity]
+      operationId: getAdminSession
+      x-tag-feature: V1-FR-010
+      x-tag-implementation-status: planned
+      security:
+        - dgosSession: []
+      responses:
+        '200':
+          description: Current administrator session
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AdminSession' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [identity]
+      operationId: renewAdminSession
+      x-tag-feature: V1-FR-010
+      x-tag-implementation-status: planned
+      security:
+        - dgosSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SessionRenewRequest' }
+      responses:
+        '200':
+          description: Renewed administrator session
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AdminSessionReceipt' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /api/v1/identity/admin/sessions/{sessionId}:
+    delete:
+      tags: [identity]
+      operationId: revokeAdminSession
+      x-tag-feature: V1-FR-010
+      x-tag-implementation-status: planned
+      security:
+        - dgosSession: []
+      parameters:
+        - { $ref: '#/components/parameters/SessionId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RequestEnvelope' }
+      responses:
+        '200':
+          description: Revoked administrator session
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AdminSessionReceipt' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /api/v1/secret/api-keys:
+    get:
+      tags: [secrets]
+      operationId: listApiKeys
+      x-tag-feature: V1-FR-011
+      x-tag-implementation-status: planned
+      responses:
+        '200':
+          description: Redacted API key metadata
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiKeyList' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+    post:
+      tags: [secrets]
+      operationId: createApiKey
+      x-tag-feature: V1-FR-011
+      x-tag-implementation-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateApiKeyRequest' }
+      responses:
+        '201':
+          description: API key metadata and one-time secret
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiKeySecretReceipt' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+  /api/v1/secret/api-keys/{keyId}/rotate:
+    post:
+      tags: [secrets]
+      operationId: rotateApiKey
+      x-tag-feature: V1-FR-011
+      x-tag-implementation-status: planned
+      parameters:
+        - { $ref: '#/components/parameters/KeyId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RotateApiKeyRequest' }
+      responses:
+        '200':
+          description: New API key with one-time secret and rotation metadata
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiKeySecretReceipt' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /api/v1/secret/api-keys/{keyId}:
+    delete:
+      tags: [secrets]
+      operationId: revokeApiKey
+      x-tag-feature: V1-FR-011
+      x-tag-implementation-status: planned
+      parameters:
+        - { $ref: '#/components/parameters/KeyId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RequestEnvelope' }
+      responses:
+        '200':
+          description: Revoked API key metadata
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiKeyMetadata' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/provider/accounts:
+    get:
+      tags: [providers]
+      operationId: listProviderAccounts
+      x-tag-feature: V1-FR-012
+      x-tag-implementation-status: planned
+      responses:
+        '200':
+          description: Provider accounts without credentials
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProviderAccountList' }
+    post:
+      tags: [providers]
+      operationId: createProviderAccount
+      x-tag-feature: V1-FR-012
+      x-tag-implementation-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateProviderAccountRequest' }
+      responses:
+        '201':
+          description: Provider account with redacted credential state
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProviderAccount' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+  /api/v1/provider/accounts/{accountId}/bindings:
+    post:
+      tags: [providers]
+      operationId: bindProviderAccount
+      x-tag-feature: V1-FR-012
+      x-tag-implementation-status: planned
+      parameters:
+        - { $ref: '#/components/parameters/AccountId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BindProviderAccountRequest' }
+      responses:
+        '201':
+          description: Provider account binding
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProviderBinding' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /api/v1/provider/accounts/{accountId}/state:
+    post:
+      tags: [providers]
+      operationId: setProviderAccountState
+      x-tag-feature: V1-FR-012
+      x-tag-implementation-status: planned
+      parameters:
+        - { $ref: '#/components/parameters/AccountId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ProviderAccountStateRequest' }
+      responses:
+        '200':
+          description: Updated provider account state
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProviderAccount' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /api/v1/provider/accounts/{accountId}:
+    delete:
+      tags: [providers]
+      operationId: deleteProviderAccount
+      x-tag-feature: V1-FR-012
+      x-tag-implementation-status: planned
+      parameters:
+        - { $ref: '#/components/parameters/AccountId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/VersionedRequest' }
+      responses:
+        '200':
+          description: Deleted or revoked provider account state
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProviderAccount' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /api/v1/provider/connection-tests:
+    post:
+      tags: [providers]
+      operationId: startProviderConnectionTest
+      x-tag-feature: V1-FR-013
+      x-tag-implementation-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/StartConnectionTestRequest' }
+      responses:
+        '202':
+          description: Connection test accepted
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ConnectionTest' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+  /api/v1/provider/connection-tests/{testId}:
+    get:
+      tags: [providers]
+      operationId: getProviderConnectionTest
+      x-tag-feature: V1-FR-013
+      x-tag-implementation-status: planned
+      parameters:
+        - { $ref: '#/components/parameters/TestId' }
+      responses:
+        '200':
+          description: Redacted connection test snapshot
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ConnectionTest' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      tags: [providers]
+      operationId: cancelProviderConnectionTest
+      x-tag-feature: V1-FR-013
+      x-tag-implementation-status: planned
+      parameters:
+        - { $ref: '#/components/parameters/TestId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RequestEnvelope' }
+      responses:
+        '202':
+          description: Connection test cancellation accepted
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ConnectionTest' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/audit/events:
+    get:
+      tags: [governance]
+      operationId: queryAuditEvents
+      x-tag-feature: V1-FR-014
+      x-tag-implementation-status: planned
+      parameters:
+        - { in: query, name: from, schema: { type: string, format: date-time } }
+        - { in: query, name: to, schema: { type: string, format: date-time } }
+        - { in: query, name: actorId, schema: { type: string } }
+        - { in: query, name: action, schema: { type: string } }
+        - { in: query, name: cursor, schema: { type: string } }
+        - { in: query, name: limit, schema: { type: integer, minimum: 1, maximum: 100, default: 50 } }
+      responses:
+        '200':
+          description: Authorized redacted audit page
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuditEventPage' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /api/v1/admin/governance/policy:
+    get:
+      tags: [governance]
+      operationId: getGovernancePolicy
+      x-tag-feature: V1-FR-014
+      x-tag-implementation-status: planned
+      responses:
+        '200':
+          description: Current governance policy
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GovernancePolicy' }
+    put:
+      tags: [governance]
+      operationId: updateGovernancePolicy
+      x-tag-feature: V1-FR-014
+      x-tag-implementation-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/GovernancePolicyUpdate' }
+      responses:
+        '200':
+          description: Updated governance policy
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GovernancePolicy' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+  /api/v1/admin/governance/retention-sweeps:
+    post:
+      tags: [governance]
+      operationId: executeRetentionSweep
+      x-tag-feature: V1-FR-014
+      x-tag-implementation-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RetentionSweepRequest' }
+      responses:
+        '202':
+          description: Retention sweep accepted
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RetentionJob' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /api/v1/admin/governance/retention-sweeps/{jobId}:
+    get:
+      tags: [governance]
+      operationId: getRetentionSweep
+      x-tag-feature: V1-FR-014
+      x-tag-implementation-status: planned
+      parameters:
+        - { $ref: '#/components/parameters/JobId' }
+      responses:
+        '200':
+          description: Retention sweep status
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RetentionJob' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/quota/preflight:
+    post:
+      tags: [usage]
+      operationId: preflightQuota
+      x-tag-feature: V1-FR-015
+      x-tag-implementation-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/QuotaPreflightRequest' }
+      responses:
+        '200':
+          description: Quota decision
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/QuotaDecision' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '429': { $ref: '#/components/responses/QuotaExceeded' }
+  /api/v1/quota/reservations:
+    post:
+      tags: [usage]
+      operationId: reserveQuota
+      x-tag-feature: V1-FR-015
+      x-tag-implementation-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/QuotaReservationRequest' }
+      responses:
+        '201':
+          description: Quota reservation
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/QuotaReservation' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '429': { $ref: '#/components/responses/QuotaExceeded' }
+  /api/v1/quota/reservations/{reservationId}/settle:
+    post:
+      tags: [usage]
+      operationId: settleUsage
+      x-tag-feature: V1-FR-015
+      x-tag-implementation-status: planned
+      parameters:
+        - { $ref: '#/components/parameters/ReservationId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UsageSettlementRequest' }
+      responses:
+        '200':
+          description: Settled or released reservation and usage fact
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UsageSettlement' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /api/v1/usage:
+    get:
+      tags: [usage]
+      operationId: queryUsage
+      x-tag-feature: V1-FR-015
+      x-tag-implementation-status: planned
+      parameters:
+        - { in: query, name: subjectId, schema: { type: string } }
+        - { in: query, name: from, required: true, schema: { type: string, format: date-time } }
+        - { in: query, name: to, required: true, schema: { type: string, format: date-time } }
+        - { in: query, name: cursor, schema: { type: string } }
+      responses:
+        '200':
+          description: Authorized usage aggregation
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UsagePage' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /api/v1/quota/policies:
+    get:
+      tags: [usage]
+      operationId: listQuotaPolicies
+      x-tag-feature: V1-FR-015
+      x-tag-implementation-status: planned
+      responses:
+        '200':
+          description: Authorized quota policies
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/QuotaPolicyList' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+    put:
+      tags: [usage]
+      operationId: updateQuotaPolicy
+      x-tag-feature: V1-FR-015
+      x-tag-implementation-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/QuotaPolicyUpdate' }
+      responses:
+        '200':
+          description: Versioned quota policy
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/QuotaPolicy' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+components:
+  securitySchemes:
+    dgosSession:
+      type: apiKey
+      in: cookie
+      name: dgos_session
+      description: Revocable DGOS administrator or subject session cookie.
+    dgosApiKey:
+      type: http
+      scheme: bearer
+      bearerFormat: DGOS-API-Key
+      description: DGOS API Key; the secret is never returned after creation.
+  responses:
+    Unauthorized:
+      description: Authentication missing, expired, or revoked
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    Forbidden:
+      description: Subject lacks the required capability or scope
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    NotFound:
+      description: Resource not found within the caller's authorized scope
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    Conflict:
+      description: Idempotency, version, reservation, or resource conflict
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    ValidationError:
+      description: Request failed schema or domain validation
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    RateLimited:
+      description: Authentication or operation rate limit exceeded
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    QuotaExceeded:
+      description: Hard quota prevents the operation
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    ServiceUnavailable:
+      description: Required service is unavailable; no protected side effect was committed
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+  parameters:
+    ProviderId: { in: path, name: providerId, required: true, schema: { type: string } }
+    TaskId: { in: path, name: taskId, required: true, schema: { type: string } }
+    SkillId: { in: path, name: skillId, required: true, schema: { type: string } }
+    McpId: { in: path, name: mcpId, required: true, schema: { type: string } }
+    ActionId: { in: path, name: actionId, required: true, schema: { type: string } }
+    ActionRunId: { in: path, name: runId, required: true, schema: { type: string } }
+    SessionId: { in: path, name: sessionId, required: true, schema: { type: string } }
+    KeyId: { in: path, name: keyId, required: true, schema: { type: string } }
+    AccountId: { in: path, name: accountId, required: true, schema: { type: string } }
+    TestId: { in: path, name: testId, required: true, schema: { type: string } }
+    JobId: { in: path, name: jobId, required: true, schema: { type: string } }
+    ReservationId: { in: path, name: reservationId, required: true, schema: { type: string } }
+  schemas:
+    ErrorResponse:
+      type: object
+      required: [errorKey, message, requestId]
+      properties:
+        errorKey: { type: string, description: Stable machine-readable error key }
+        message: { type: string, description: Safe human-readable message without secrets }
+        requestId: { type: string }
+        retryable: { type: boolean }
+        details: { type: object, additionalProperties: true, description: Redacted diagnostic details }
+    AdminBootstrapRequest:
+      allOf:
+        - $ref: '#/components/schemas/RequestEnvelope'
+        - type: object
+          required: [displayName, credential]
+          properties:
+            displayName: { type: string, minLength: 1 }
+            credential: { type: string, format: password, writeOnly: true }
+            recoveryRef: { type: string, writeOnly: true, description: Secret boundary reference }
+    AdminLoginRequest:
+      allOf:
+        - $ref: '#/components/schemas/RequestEnvelope'
+        - type: object
+          required: [principalHint, credential]
+          properties:
+            principalHint: { type: string, description: Opaque login hint; errors must remain non-enumerable }
+            credential: { type: string, format: password, writeOnly: true }
+    SessionRenewRequest:
+      allOf:
+        - $ref: '#/components/schemas/RequestEnvelope'
+        - $ref: '#/components/schemas/VersionedRequest'
+    AdminSessionReceipt:
+      type: object
+      required: [requestId, principalId, sessionId, state, expiresAt, sessionVersion]
+      properties:
+        requestId: { type: string }
+        principalId: { type: string }
+        sessionId: { type: string }
+        state: { type: string, enum: [active, revoked, expired] }
+        expiresAt: { type: string, format: date-time }
+        sessionVersion: { type: string }
+        authFreshUntil: { type: string, format: date-time }
+    AdminSession:
+      allOf:
+        - $ref: '#/components/schemas/AdminSessionReceipt'
+        - type: object
+          properties:
+            createdAt: { type: string, format: date-time }
+            lastActiveAt: { type: string, format: date-time }
+            deviceSummary: { type: object, additionalProperties: true }
+    ApiKeyMetadata:
+      type: object
+      required: [keyId, ownerId, name, prefix, scopes, status, createdAt]
+      properties:
+        keyId: { type: string }
+        ownerId: { type: string }
+        name: { type: string }
+        prefix: { type: string }
+        scopes: { type: array, items: { type: string } }
+        status: { type: string, enum: [active, rotation_pending, expired, revoked] }
+        createdAt: { type: string, format: date-time }
+        expiresAt: { type: string, format: date-time, nullable: true }
+        lastUsedAt: { type: string, format: date-time, nullable: true }
+        rotationGroupId: { type: string }
+        version: { type: string }
+    ApiKeyList:
+      type: object
+      required: [items]
+      properties:
+        items: { type: array, items: { $ref: '#/components/schemas/ApiKeyMetadata' } }
+        nextCursor: { type: string, nullable: true }
+    CreateApiKeyRequest:
+      allOf:
+        - $ref: '#/components/schemas/RequestEnvelope'
+        - type: object
+          required: [ownerId, name, scopes]
+          properties:
+            ownerId: { type: string }
+            name: { type: string, minLength: 1 }
+            scopes: { type: array, minItems: 1, items: { type: string } }
+            expiresAt: { type: string, format: date-time }
+    RotateApiKeyRequest:
+      allOf:
+        - $ref: '#/components/schemas/RequestEnvelope'
+        - $ref: '#/components/schemas/VersionedRequest'
+        - type: object
+          properties:
+            overlapUntil: { type: string, format: date-time }
+    ApiKeySecretReceipt:
+      type: object
+      required: [requestId, key, secret]
+      properties:
+        requestId: { type: string }
+        key: { $ref: '#/components/schemas/ApiKeyMetadata' }
+        secret: { type: string, writeOnly: true, description: One-time secret; never returned again }
+        previousKeyId: { type: string }
+    ProviderAccount:
+      type: object
+      required: [accountId, ownerId, protocolType, status, credentialState, version]
+      properties:
+        accountId: { type: string }
+        ownerId: { type: string }
+        protocolType: { type: string }
+        displayName: { type: string }
+        scope: { type: object, additionalProperties: true }
+        credentialState: { type: string, enum: [missing, configured, invalid, unavailable] }
+        status: { type: string, enum: [draft, credential_pending, ready, error, disabled, revoked, deleted] }
+        defaultForProtocol: { type: boolean }
+        version: { type: string }
+        createdAt: { type: string, format: date-time }
+    ProviderAccountList:
+      type: object
+      required: [items]
+      properties:
+        items: { type: array, items: { $ref: '#/components/schemas/ProviderAccount' } }
+        nextCursor: { type: string, nullable: true }
+    CreateProviderAccountRequest:
+      allOf:
+        - $ref: '#/components/schemas/RequestEnvelope'
+        - type: object
+          required: [ownerId, protocolType, displayName, credential]
+          properties:
+            ownerId: { type: string }
+            protocolType: { type: string }
+            displayName: { type: string, minLength: 1 }
+            credential: { type: string, format: password, writeOnly: true }
+            scope: { type: object, additionalProperties: true }
+            defaultForProtocol: { type: boolean, default: false }
+    BindProviderAccountRequest:
+      allOf:
+        - $ref: '#/components/schemas/RequestEnvelope'
+        - $ref: '#/components/schemas/VersionedRequest'
+        - type: object
+          required: [providerConfigId]
+          properties:
+            providerConfigId: { type: string }
+    ProviderBinding:
+      type: object
+      required: [bindingId, accountId, providerConfigId, version, state]
+      properties:
+        bindingId: { type: string }
+        accountId: { type: string }
+        providerConfigId: { type: string }
+        version: { type: string }
+        state: { type: string, enum: [active, unbound] }
+    ProviderAccountStateRequest:
+      allOf:
+        - $ref: '#/components/schemas/RequestEnvelope'
+        - $ref: '#/components/schemas/VersionedRequest'
+        - type: object
+          required: [state]
+          properties:
+            state: { type: string, enum: [ready, disabled, revoked] }
+    StartConnectionTestRequest:
+      allOf:
+        - $ref: '#/components/schemas/RequestEnvelope'
+        - type: object
+          required: [accountId, protocolVersion]
+          properties:
+            accountId: { type: string }
+            providerConfigId: { type: string }
+            accountVersion: { type: string }
+            configVersion: { type: string }
+            protocolVersion: { type: string }
+    ConnectionTest:
+      type: object
+      required: [testId, requestId, accountId, status, createdAt]
+      properties:
+        testId: { type: string }
+        requestId: { type: string }
+        accountId: { type: string }
+        providerConfigId: { type: string }
+        accountVersion: { type: string }
+        configVersion: { type: string }
+        protocolVersion: { type: string }
+        status: { type: string, enum: [queued, running, succeeded, failed, timed_out, cancel_requested, cancelled] }
+        reasonCode: { type: string, enum: [network_unreachable, tls_invalid, endpoint_invalid, authentication_failed, rate_limited, protocol_mismatch, upstream_unavailable, policy_blocked] }
+        latencyMs: { type: integer, minimum: 0 }
+        capabilitySummary: { type: object, additionalProperties: true }
+        createdAt: { type: string, format: date-time }
+        completedAt: { type: string, format: date-time, nullable: true }
+    AuditEvent:
+      type: object
+      required: [eventId, occurredAt, requestId, actor, action, result]
+      properties:
+        eventId: { type: string }
+        occurredAt: { type: string, format: date-time }
+        requestId: { type: string }
+        actor: { type: object, additionalProperties: true }
+        action: { type: string }
+        target: { type: object, additionalProperties: true }
+        result: { type: string, enum: [allowed, denied, succeeded, failed] }
+        reasonCode: { type: string }
+        policyVersion: { type: string }
+        summary: { type: object, additionalProperties: true, description: Redacted summary only }
+    AuditEventPage:
+      type: object
+      required: [items]
+      properties:
+        items: { type: array, items: { $ref: '#/components/schemas/AuditEvent' } }
+        nextCursor: { type: string, nullable: true }
+    GovernancePolicy:
+      type: object
+      required: [policyVersion, auditRetentionDays, version]
+      properties:
+        policyVersion: { type: string }
+        auditRetentionDays: { type: integer, minimum: 1 }
+        cacheRetentionDays: { type: integer, minimum: 1 }
+        revokedSessionRetentionDays: { type: integer, minimum: 1 }
+        version: { type: string }
+        updatedAt: { type: string, format: date-time }
+    GovernancePolicyUpdate:
+      allOf:
+        - $ref: '#/components/schemas/RequestEnvelope'
+        - $ref: '#/components/schemas/VersionedRequest'
+        - type: object
+          required: [auditRetentionDays]
+          properties:
+            auditRetentionDays: { type: integer, minimum: 1 }
+            cacheRetentionDays: { type: integer, minimum: 1 }
+            revokedSessionRetentionDays: { type: integer, minimum: 1 }
+            reason: { type: string, minLength: 1 }
+    RetentionSweepRequest:
+      allOf:
+        - $ref: '#/components/schemas/RequestEnvelope'
+        - type: object
+          required: [previewDigest]
+          properties:
+            previewDigest: { type: string }
+            dryRun: { type: boolean, default: false }
+    RetentionJob:
+      type: object
+      required: [jobId, requestId, state, checkpoint]
+      properties:
+        jobId: { type: string }
+        requestId: { type: string }
+        state: { type: string, enum: [planned, running, completed, partial, failed] }
+        checkpoint: { type: string }
+        deletedCount: { type: integer, minimum: 0 }
+        skippedCount: { type: integer, minimum: 0 }
+        failureCount: { type: integer, minimum: 0 }
+        skipReasons: { type: array, items: { type: string } }
+    QuotaPreflightRequest:
+      allOf:
+        - $ref: '#/components/schemas/RequestEnvelope'
+        - type: object
+          required: [target, metric, amount]
+          properties:
+            target: { type: object, additionalProperties: true }
+            metric: { type: string, enum: [requests, input_tokens, output_tokens, total_tokens] }
+            amount: { type: number, minimum: 0 }
+            inputDigest: { type: string }
+    QuotaDecision:
+      type: object
+      required: [requestId, decision, policyVersion]
+      properties:
+        requestId: { type: string }
+        decision: { type: string, enum: [allow, warn, deny] }
+        reasonCode: { type: string }
+        policyVersion: { type: string }
+        remaining: { type: number, minimum: 0 }
+    QuotaReservationRequest:
+      allOf:
+        - $ref: '#/components/schemas/QuotaPreflightRequest'
+        - type: object
+          required: [taskId, attemptId]
+          properties:
+            taskId: { type: string }
+            attemptId: { type: string }
+            expiresAt: { type: string, format: date-time }
+    QuotaReservation:
+      type: object
+      required: [reservationId, requestId, taskId, attemptId, reservedAmount, state, expiresAt]
+      properties:
+        reservationId: { type: string }
+        requestId: { type: string }
+        taskId: { type: string }
+        attemptId: { type: string }
+        reservedAmount: { type: number, minimum: 0 }
+        state: { type: string, enum: [reserved, settled, released, expired, reconciliation_required] }
+        expiresAt: { type: string, format: date-time }
+    UsageSettlementRequest:
+      allOf:
+        - $ref: '#/components/schemas/RequestEnvelope'
+        - type: object
+          required: [taskId, attemptId, terminalState]
+          properties:
+            taskId: { type: string }
+            attemptId: { type: string }
+            terminalState: { type: string, enum: [completed, failed, cancelled, timed_out] }
+            usage: { $ref: '#/components/schemas/UsageInput' }
+    UsageInput:
+      type: object
+      properties:
+        inputTokens: { type: integer, minimum: 0 }
+        outputTokens: { type: integer, minimum: 0 }
+        totalTokens: { type: integer, minimum: 0 }
+        status: { type: string, enum: [final, unavailable, estimated] }
+        sourceDigest: { type: string }
+    UsageSettlement:
+      type: object
+      required: [reservationId, state, requestId]
+      properties:
+        reservationId: { type: string }
+        requestId: { type: string }
+        state: { type: string, enum: [settled, released, reconciliation_required] }
+        usageEventId: { type: string }
+        usageStatus: { type: string, enum: [final, unavailable, estimated] }
+    UsagePage:
+      type: object
+      required: [items, from, to]
+      properties:
+        items: { type: array, items: { $ref: '#/components/schemas/UsageAggregate' } }
+        from: { type: string, format: date-time }
+        to: { type: string, format: date-time }
+        nextCursor: { type: string, nullable: true }
+    UsageAggregate:
+      type: object
+      required: [scope, metric, amount, usageStatus]
+      properties:
+        scope: { type: object, additionalProperties: true }
+        metric: { type: string }
+        amount: { type: number, minimum: 0 }
+        usageStatus: { type: string, enum: [final, unavailable, estimated, mixed] }
+        aggregateVersion: { type: string }
+    QuotaPolicy:
+      type: object
+      required: [policyId, scope, metric, limit, window, version, effectiveAt]
+      properties:
+        policyId: { type: string }
+        scope: { type: object, additionalProperties: true }
+        metric: { type: string }
+        limit: { type: number, minimum: 0 }
+        softLimit: { type: number, minimum: 0 }
+        window: { type: string, enum: [hour, day, month, rolling] }
+        version: { type: string }
+        effectiveAt: { type: string, format: date-time }
+        failOpen: { type: boolean, default: false }
+    QuotaPolicyList:
+      type: object
+      required: [items]
+      properties:
+        items: { type: array, items: { $ref: '#/components/schemas/QuotaPolicy' } }
+    QuotaPolicyUpdate:
+      allOf:
+        - $ref: '#/components/schemas/RequestEnvelope'
+        - $ref: '#/components/schemas/VersionedRequest'
+        - type: object
+          required: [scope, metric, limit, window, effectiveAt]
+          properties:
+            scope: { type: object, additionalProperties: true }
+            metric: { type: string }
+            limit: { type: number, minimum: 0 }
+            softLimit: { type: number, minimum: 0 }
+            window: { type: string, enum: [hour, day, month, rolling] }
+            effectiveAt: { type: string, format: date-time }
+            failOpen: { type: boolean, default: false }
+    VersionedRequest:
+      type: object
+      required: [baseVersion]
+      properties:
+        baseVersion: { type: string }
+    AppearanceSettings:
+      type: object
+      required: [appearanceMode, windowMaterial, interfaceMode, displayScale, wallpaperFollowsAppearance]
+      properties:
+        appearanceMode: { type: string, enum: [light, dark, system] }
+        windowMaterial: { type: string }
+        interfaceMode: { type: string }
+        displayScale: { type: number, enum: [0.75, 1.0, 1.25, 1.5, 1.75] }
+        lightWallpaperRef: { type: string }
+        darkWallpaperRef: { type: string }
+        wallpaperFollowsAppearance: { type: boolean }
+    LocaleSettings:
+      type: object
+      required: [uiLocale, effectiveLocale, regionFormat, assistantLanguage, projectContentLanguage]
+      properties:
+        uiLocale: { type: string }
+        effectiveLocale: { type: string }
+        regionFormat: { type: string }
+        assistantLanguage: { type: string }
+        projectContentLanguage: { type: string }
+        fallbackState: { type: string, enum: [none, partial, full] }
+    NetworkProxySettings:
+      type: object
+      required: [proxyMode, effectiveRoute, affectedServices, restartRequired]
+      properties:
+        proxyMode: { type: string, enum: [system, manual, off] }
+        manualProxyRef: { type: string, description: Secret boundary reference; never a credential value }
+        effectiveRoute: { type: string }
+        affectedServices: { type: array, items: { type: string } }
+        restartRequired: { type: boolean }
+    NetworkProxySummary:
+      type: object
+      required: [proxyMode, effectiveRoute, affectedServices, restartRequired]
+      properties:
+        proxyMode: { type: string, enum: [system, manual, off] }
+        effectiveRoute: { type: string }
+        affectedServices: { type: array, items: { type: string } }
+        restartRequired: { type: boolean }
+    GridSettings:
+      type: object
+      required: [enabled, style, spacing, majorLineEvery, showAxes, snapEnabled, snapTolerance, colorToken, opacity]
+      properties:
+        enabled: { type: boolean }
+        style: { type: string, enum: [dot, line] }
+        spacing: { type: number, minimum: 1 }
+        majorLineEvery: { type: integer, minimum: 1 }
+        showAxes: { type: boolean }
+        snapEnabled: { type: boolean }
+        snapTolerance: { type: number, minimum: 0 }
+        colorToken: { type: string }
+        opacity: { type: number, minimum: 0, maximum: 1 }
+    PermissionRule:
+      type: object
+      required: [appId, subjectType, subjectId, capability, scope, decision]
+      properties:
+        appId: { type: string }
+        subjectType: { type: string, enum: [user, organization, team, system] }
+        subjectId: { type: string }
+        capability: { type: string }
+        scope: { type: object, additionalProperties: true }
+        decision: { type: string, enum: [allow, ask, deny] }
+        source: { type: string, enum: [manifest, user, admin, system] }
+    SystemSettingsSnapshot:
+      type: object
+      required: [settingsVersion, appearance, locale, network, grid, restartRequired]
+      properties:
+        settingsVersion: { type: string }
+        appearance: { $ref: '#/components/schemas/AppearanceSettings' }
+        locale: { $ref: '#/components/schemas/LocaleSettings' }
+        network: { $ref: '#/components/schemas/NetworkProxySettings' }
+        grid: { $ref: '#/components/schemas/GridSettings' }
+        privacy: { type: object, additionalProperties: true }
+        appPermissions: { type: array, items: { $ref: '#/components/schemas/PermissionRule' } }
+        restartRequired: { type: boolean }
+        affectedServices: { type: array, items: { type: string } }
+    SystemSettingsPatch:
+      allOf:
+        - $ref: '#/components/schemas/RequestEnvelope'
+        - type: object
+          required: [baseVersion, domain, patch]
+          properties:
+            baseVersion: { type: string }
+            domain: { type: string, enum: [appearance, locale, network, grid, privacy, appPermissions] }
+            patch: { type: object, additionalProperties: true }
+    SystemContextSnapshot:
+      type: object
+      required: [contextVersion, appId, appearance, locale, networkSummary, grid, windowState, lifecycleState]
+      properties:
+        contextVersion: { type: string }
+        appId: { type: string }
+        appearance: { $ref: '#/components/schemas/AppearanceSettings' }
+        locale: { $ref: '#/components/schemas/LocaleSettings' }
+        networkSummary: { $ref: '#/components/schemas/NetworkProxySummary' }
+        grid: { $ref: '#/components/schemas/GridSettings' }
+        windowState: { type: object, additionalProperties: true }
+        lifecycleState: { type: string }
+        issuedAt: { type: string, format: date-time }
+    PermissionCheckRequest:
+      allOf:
+        - $ref: '#/components/schemas/RequestEnvelope'
+        - $ref: '#/components/schemas/PermissionRule'
+    PermissionRequest:
+      allOf:
+        - $ref: '#/components/schemas/RequestEnvelope'
+        - $ref: '#/components/schemas/PermissionRule'
+    PermissionDecisionResult:
+      type: object
+      required: [requestId, decision, reasonCode, policyVersion]
+      properties:
+        requestId: { type: string }
+        decision: { type: string, enum: [allow, ask, deny] }
+        reasonCode: { type: string }
+        policyVersion: { type: string }
+        auditRef: { type: string }
+    RequestEnvelope:
+      type: object
+      required: [requestId]
+      properties:
+        requestId: { type: string }
+    ProviderConfigInput:
+      allOf:
+        - $ref: '#/components/schemas/RequestEnvelope'
+        - type: object
+          required: [displayName, protocolType, baseUrl, apiKey]
+          properties:
+            displayName: { type: string, minLength: 1 }
+            protocolType: { type: string, example: openai-compatible }
+            baseUrl: { type: string, format: uri }
+            apiKey: { type: string, format: password, writeOnly: true, description: Write-only credential input; stored in DGOS Secret Boundary and never returned }
+            enabled: { type: boolean, default: true }
+    ProviderConfig:
+      type: object
+      required: [id, protocolType, validationState, adapterVersion]
+      properties:
+        id: { type: string }
+        protocolType: { type: string }
+        displayName: { type: string }
+        baseUrl: { type: string, format: uri }
+        credentialStatus: { type: string, enum: [missing, configured, invalid, unknown] }
+        validationState: { type: string, enum: [draft, validating, active, error, disabled] }
+        adapterVersion: { type: string }
+    ProviderConfigUpdate:
+      allOf:
+        - $ref: '#/components/schemas/RequestEnvelope'
+        - type: object
+          properties:
+            displayName: { type: string, minLength: 1 }
+            protocolType: { type: string }
+            baseUrl: { type: string, format: uri }
+            apiKey: { type: string, format: password, writeOnly: true, description: Optional replacement credential; omitted means keep the existing secret }
+            enabled: { type: boolean }
+    ProtocolAdapterRegistration:
+      type: object
+      required: [protocolType, adapterVersion, configSchemaRef, capabilityDescriptorSchemaVersion, status]
+      properties:
+        protocolType: { type: string }
+        adapterVersion: { type: string }
+        configSchemaRef: { type: string }
+        capabilityDescriptorSchemaVersion: { type: string }
+        taskModes: { type: array, items: { type: string } }
+        status: { type: string, enum: [active, disabled, incompatible] }
+    ProviderCapabilityDescriptor:
+      type: object
+      required: [descriptorVersion, inputs, outputs, taskModes, streaming, cancellation, modelCatalog]
+      properties:
+        descriptorVersion: { type: string }
+        inputs: { type: array, items: { type: string } }
+        outputs: { type: array, items: { type: string } }
+        taskModes: { type: array, items: { type: string } }
+        operationProfiles:
+          type: array
+          description: Provider operation profiles supported by this adapter, such as responses or chat-completions.
+          items: { type: string }
+        streaming:
+          type: object
+          required: [text]
+          properties: { text: { type: boolean } }
+        cancellation: { type: boolean }
+        tools:
+          type: object
+          description: Optional per-model tool capability declaration; does not grant DGOS permission by itself.
+          additionalProperties: true
+        modelCatalog: { type: string, enum: [remote, manual, hybrid] }
+        limits: { type: object, additionalProperties: true }
+    CapabilityProtocolRegistration:
+      type: object
+      required: [schemaVersion, kind, id, executor, capabilities, operations, workflows, modelProfiles]
+      properties:
+        schemaVersion: { type: string, enum: [dgos-capability/v1] }
+        kind: { type: string, enum: [model] }
+        id: { type: string, pattern: '^[a-z0-9][a-z0-9._-]*$' }
+        label: { type: string }
+        summary: { type: string }
+        executor:
+          type: object
+          required: [type, engine]
+          properties:
+            type: { type: string, enum: [declarative] }
+            engine: { type: string }
+        capabilities: { type: array, items: { type: string } }
+        operations: { type: object, additionalProperties: true }
+        workflows: { type: object, additionalProperties: true }
+        modelProfiles: { type: object, additionalProperties: true }
+        defaults: { type: object, additionalProperties: true }
+        limits: { type: object, additionalProperties: true }
+        uiSchemas: { type: object, additionalProperties: true }
+        assets: { type: object, additionalProperties: true }
+        status: { type: string, enum: [draft, validating, active, rejected, disabled] }
+        sourceRef: { type: string }
+    ProviderValidationResult:
+      type: object
+      required: [provider, descriptor]
+      properties:
+        provider: { $ref: '#/components/schemas/ProviderConfig' }
+        descriptor: { $ref: '#/components/schemas/ProviderCapabilityDescriptor' }
+    ModelCatalogEntry:
+      type: object
+      required: [modelId, modelRef, detectedCapabilities, availability]
+      properties:
+        modelId: { type: string }
+        modelRef: { type: string }
+        displayName: { type: string }
+        detectedCapabilities: { type: array, items: { type: string } }
+        availability: { type: string, enum: [available, unavailable, unknown, stale] }
+        lastSeenAt: { type: string, format: date-time }
+        policy: { $ref: '#/components/schemas/ModelCapabilityPolicy' }
+    ModelCapabilityPolicy:
+      type: object
+      required: [providerId, modelId, enabled, assignedCapabilities, defaultFor]
+      properties:
+        providerId: { type: string }
+        modelId: { type: string }
+        enabled: { type: boolean }
+        assignedCapabilities: { type: array, items: { $ref: '#/components/schemas/ModelCapability' } }
+        defaultFor: { type: array, items: { $ref: '#/components/schemas/ModelCapability' } }
+        classificationSource: { type: string, enum: [adapter, user, mixed, pending] }
+        outputSpec: { type: object, additionalProperties: true }
+        pricing: { type: object, additionalProperties: true }
+    ModelCapabilityPolicyUpdate:
+      allOf:
+        - $ref: '#/components/schemas/RequestEnvelope'
+        - type: object
+          required: [modelId, enabled, assignedCapabilities, defaultFor]
+          properties:
+            modelId: { type: string }
+            enabled: { type: boolean }
+            assignedCapabilities: { type: array, items: { $ref: '#/components/schemas/ModelCapability' } }
+            defaultFor: { type: array, items: { $ref: '#/components/schemas/ModelCapability' } }
+            outputSpec: { type: object, additionalProperties: true }
+            pricing: { type: object, additionalProperties: true }
+    ModelCapability:
+      type: string
+      pattern: '^[a-z][a-z0-9-]*$'
+      description: Registered DGOS model capability. The registry may describe text, image-generation, video-generation, audio-generation, understanding and embedding capabilities; V1 task execution exposes text only, while media execution requires a later version gate.
+    AITaskSubmitRequest:
+      allOf:
+        - $ref: '#/components/schemas/RequestEnvelope'
+        - type: object
+          required: [target, intent, input]
+          properties:
+            target: { type: string }
+            intent: { type: string, description: V1 executable intent is text.chat; media intents require a later version gate }
+            input: { type: object, additionalProperties: true }
+            options: { type: object, additionalProperties: true }
+    AITaskReceipt:
+      type: object
+      required: [taskId, requestId, status]
+      properties:
+        taskId: { type: string }
+        requestId: { type: string }
+        status: { type: string, enum: [queued, running, completed, failed, cancelled] }
+        descriptorVersion: { type: string }
+    AITaskSnapshot:
+      type: object
+      required: [taskId, status]
+      properties:
+        taskId: { type: string }
+        status: { type: string, enum: [queued, running, completed, failed, cancelled] }
+        text: { type: string, description: Current sanitized text summary }
+        artifactIds: { type: array, items: { type: string } }
+        error: { type: object, additionalProperties: true }
+    AITaskEvent:
+      type: object
+      required: [eventId, taskId, sequence, type, createdAt]
+      properties:
+        eventId: { type: string }
+        taskId: { type: string }
+        sequence: { type: integer, minimum: 0 }
+        type: { type: string, enum: [task.accepted, text.delta, task.progress, task.completed, task.failed, task.cancelled, stream.reset] }
+        delta: { type: string }
+        snapshot: { $ref: '#/components/schemas/AITaskSnapshot' }
+        createdAt: { type: string, format: date-time }
+    ExtensionStateRequest:
+      allOf:
+        - $ref: '#/components/schemas/RequestEnvelope'
+        - type: object
+          required: [desiredState]
+          properties:
+            desiredState: { type: string, enum: [enabled, disabled, configured, disconnected] }
+            config: { type: object, additionalProperties: true }
+    ExtensionInstallRequest:
+      allOf:
+        - $ref: '#/components/schemas/RequestEnvelope'
+        - type: object
+          required: [source]
+          properties:
+            source: { type: string, description: Registry or local package reference; not an executable command }
+            version: { type: string }
+            config: { type: object, additionalProperties: true }
+    ExtensionRecord:
+      type: object
+      required: [id, kind, state]
+      properties:
+        id: { type: string }
+        kind: { type: string, enum: [skill, mcp] }
+        state: { type: string }
+        version: { type: string }
+        credentialStatus: { type: string, enum: [not_required, missing, configured, invalid] }
+    ExtensionList:
+      type: object
+      required: [items]
+      properties:
+        items: { type: array, items: { $ref: '#/components/schemas/ExtensionRecord' } }
+    ActionDeclaration:
+      type: object
+      required: [actionId, actionVersion, appId, inputSchema, outputSchema, requiredCapabilities, risk, sideEffects, confirmation, idempotency, cancellable, state]
+      properties:
+        actionId: { type: string }
+        actionVersion: { type: string }
+        appId: { type: string }
+        label: { type: object, additionalProperties: { type: string } }
+        inputSchema: { type: object, additionalProperties: true }
+        outputSchema: { type: object, additionalProperties: true }
+        requiredCapabilities: { type: array, items: { type: string } }
+        risk: { type: string, enum: [read, write, external, destructive] }
+        sideEffects: { type: string, enum: [none, local-write, external-call, model-call, secret-use, destructive] }
+        confirmation: { type: string, enum: [none, required, elevated] }
+        idempotency: { type: string, enum: [safe, required, unsupported] }
+        cancellable: { type: boolean }
+        state: { type: string, enum: [ready, disabled, missing, denied, unavailable] }
+    ActionList:
+      type: object
+      required: [items]
+      properties:
+        items: { type: array, items: { $ref: '#/components/schemas/ActionDeclaration' } }
+    ActionPlanRequest:
+      allOf:
+        - $ref: '#/components/schemas/RequestEnvelope'
+        - type: object
+          required: [input]
+          properties:
+            input: { type: object, additionalProperties: true }
+    ActionPlan:
+      type: object
+      required: [actionId, actionVersion, input, confirmation, risk]
+      properties:
+        actionId: { type: string }
+        actionVersion: { type: string }
+        input: { type: object, additionalProperties: true }
+        confirmation: { type: string, enum: [none, required, elevated] }
+        risk: { type: string, enum: [read, write, external, destructive] }
+        targetSummary: { type: string }
+        inputSummary: { type: string }
+    ActionExecuteRequest:
+      allOf:
+        - $ref: '#/components/schemas/RequestEnvelope'
+        - type: object
+          required: [input]
+          properties:
+            input: { type: object, additionalProperties: true }
+            confirmationToken: { type: string, writeOnly: true }
+    ActionRun:
+      type: object
+      required: [runId, actionId, actionVersion, requestId, status]
+      properties:
+        runId: { type: string }
+        actionId: { type: string }
+        actionVersion: { type: string }
+        requestId: { type: string }
+        taskId: { type: string }
+        status: { type: string, enum: [planned, awaiting-confirmation, authorized, running, succeeded, denied, cancelled, failed, expired, missing] }
+        result: { type: object, additionalProperties: true }
+        error: { type: object, additionalProperties: true }
+x-dgos-implementation-status: planned
+x-dgos-contract-authority: "docs/04-技术架构/当前版本/V1-接口契约.md"

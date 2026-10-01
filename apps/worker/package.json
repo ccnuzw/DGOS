@@ -1,0 +1,14 @@
+{
+  "name": "@dgos/worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/worker.mjs",
+    "start": "node src/worker.mjs",
+    "build": "node --check src/worker.mjs",
+    "check": "node --check src/worker.mjs"
+  },
+  "dependencies": {
+    "@dgos/sdk": "workspace:*"
+  }
+}

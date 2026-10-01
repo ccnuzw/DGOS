@@ -1,0 +1,9 @@
+{
+  "name": "@dgos/ui",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node --check src/index.mjs",
+    "check": "node --check src/index.mjs"
+  }
+}

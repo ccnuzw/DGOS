@@ -1,0 +1,36 @@
+{
+  "activeVersion": "V1",
+  "commit": null,
+  "commit_binding": "absent",
+  "generatedAt": "2026-09-30T20:40:00.000Z",
+  "approvals": {
+    "proposal_id": null,
+    "authority_digest": null,
+    "approved_by": {
+      "product": "",
+      "technical": "",
+      "release_manager": ""
+    },
+    "approved_at": null
+  },
+  "reports": {
+    "development": {
+      "path": null,
+      "environment": "local"
+    },
+    "e2e": {
+      "path": null,
+      "environment": "local-mock"
+    },
+    "release": {
+      "path": null,
+      "environment": "production-gate"
+    }
+  },
+  "status": "pending",
+  "limitations": [
+    "DGOS 当前目录不是 Git 仓库，无法提供 commit SHA、branch history 或提交绑定证据。",
+    "当前没有 DGOS 产品源码、构建、测试报告、migration 或真实环境运行证据。",
+    "本清单未生成任何通过报告、审批或发布结论。"
+  ]
+}
