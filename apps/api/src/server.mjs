@@ -47,11 +47,6 @@ export function buildServer({ logger = true, repository, providerRepository, pro
   const runtimePool = process.env.DGOS_DATABASE_URL ? makePool() : null;
   const governance = new GovernanceService({ retentionRepository: injectedRetentionRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresRetentionRepository(makePool()) : new InMemoryRetentionRepository(audit)), auditRepository: audit });
   const quotaPool = process.env.DGOS_DATABASE_URL ? makePool() : null;
-  const providers = providerService ?? new ProviderService({ repository: providerRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresProviderRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryProviderRepository()), secretService, egress: new ProviderEgress(), adapters: { 'openai-compatible': createOpenAiCompatibleAdapter() } });
-  const audit = injectedAuditRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresAuditRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryAuditRepository());
-  const runtimePool = process.env.DGOS_DATABASE_URL ? new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL }) : null;
-  const governance = new GovernanceService({ retentionRepository: injectedRetentionRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresRetentionRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryRetentionRepository(audit)), auditRepository: audit });
-  const quotaPool = process.env.DGOS_DATABASE_URL ? new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL }) : null;
   const quota = quotaModules ? new quotaModules[1].QuotaService({ repository: quotaPool ? new quotaModules[0].PostgresQuotaRepository(quotaPool, { audit }) : new quotaModules[0].InMemoryQuotaRepository(), audit, clock }) : { preflightQuota: async () => { throw Object.assign(new Error('quota_unavailable'), { statusCode: 503 }); } };
   const appRepository = injectedAppRepository ?? (runtimePool ? new PostgresAppRepository(runtimePool) : new InMemoryAppRepository({ audit }));
   const catalog = new CatalogService({ repository: appRepository, audit });
