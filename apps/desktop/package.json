@@ -1,0 +1,12 @@
+{
+  "name": "@dgos/desktop",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "check": "node scripts/check.mjs",
+    "build": "node scripts/check.mjs && cargo check --manifest-path src-tauri/Cargo.toml",
+    "build:macos": "cargo tauri build --manifest-path src-tauri/Cargo.toml",
+    "dev": "cargo tauri dev --manifest-path src-tauri/Cargo.toml",
+    "e2e:macos": "node scripts/e2e-macos.mjs"
+  }
+}
