@@ -68,7 +68,7 @@ export function buildServer({ logger = true, repository, providerRepository, pro
   const embeddedWorker = embeddedWorkerEnabled ? new AiTaskWorker({ repository: taskRepository, taskService: aiTasks, workerId: 'embedded-api-worker', pollIntervalMs: 1, idleBackoffMs: 5 }) : null;
   embeddedWorker?.start();
   if (embeddedWorker) app.addHook('onClose', async () => embeddedWorker.stop());
-  if (pools.length) app.addHook('onClose', async () => { await Promise.all(pools.map((pool) => pool.end())); });
+  if (pools.length) app.addHook('onClose', async () => { await Promise.allSettled([system.ready, ...actions.registrations]); await Promise.all(pools.map((pool) => pool.end())); });
   const loginLimiter = rateLimiter ?? createRateLimiter({ clock });
   const maxLoginAttempts = 5;
   const loginWindowMs = 60_000;
