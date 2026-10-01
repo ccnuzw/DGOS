@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { PostgresAuditRepository } from '../audit/outbox.mjs';
 
 function iso(value) {
   return value instanceof Date ? value.toISOString() : new Date(value).toISOString();
@@ -17,7 +18,7 @@ function rowKey(row) {
 }
 
 export class PostgresIdentityRepository {
-  constructor(pool) { this.pool = pool; }
+  constructor(pool) { this.pool = pool; this.audit = new PostgresAuditRepository(pool); }
 
   async withTransaction(work) {
     const client = await this.pool.connect();
@@ -59,9 +60,10 @@ export class PostgresIdentityRepository {
     const { rows } = await this.pool.query("UPDATE admin_sessions SET expires_at = $3, last_seen_at = now(), session_version = session_version + 1 WHERE session_id = $1 AND session_version = $2 AND state = 'active' AND expires_at > now() RETURNING *", [sessionId, expectedVersion, expiresAt]);
     return rowSession(rows[0]);
   }
+  async renewSessionWithAudit(sessionId, expectedVersion, expiresAt, audit) { return this.withTransaction(async (client) => { const session = await this.renewSession(sessionId, expectedVersion, expiresAt, client); if (!session) return undefined; await this.audit.record(audit(session), client); return session; }); }
 
-  async revokeSession(sessionId) {
-    const { rows } = await this.pool.query("UPDATE admin_sessions SET state = 'revoked', revoked_at = now(), session_version = session_version + 1 WHERE session_id = $1 AND state = 'active' RETURNING *", [sessionId]);
+  async revokeSession(sessionId, client = this.pool) {
+    const { rows } = await client.query("UPDATE admin_sessions SET state = 'revoked', revoked_at = now(), session_version = session_version + 1 WHERE session_id = $1 AND state = 'active' RETURNING *", [sessionId]);
     return rowSession(rows[0]);
   }
 
@@ -83,10 +85,7 @@ export class PostgresIdentityRepository {
   async revokeKey(keyId) { const { rows } = await this.pool.query("UPDATE api_key_records SET state = 'revoked', revoked_at = now(), version = version + 1 WHERE key_id = $1 AND state = 'active' RETURNING *", [keyId]); return rowKey(rows[0]); }
 
   async writeAudit({ requestId, actorId, action, targetType, targetId, result = 'succeeded', summary = {} }, client = this.pool) {
-    const eventId = randomUUID();
-    await client.query('INSERT INTO audit_events (event_id, request_id, actor_type, actor_id, action, target_type, target_id, result, summary) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)', [eventId, requestId, actorId ? 'admin' : 'system', actorId ?? null, action, targetType, targetId ?? null, result, JSON.stringify(summary)]);
-    await client.query('INSERT INTO audit_outbox (event_id) VALUES ($1)', [eventId]);
-    return eventId;
+    return this.audit.record({ requestId, actorId, action, targetType, targetId, result, summary }, client);
   }
 }
 

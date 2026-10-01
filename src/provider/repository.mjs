@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { PostgresAuditRepository, InMemoryAuditRepository } from '../audit/outbox.mjs';
 
 const iso = (value) => value instanceof Date ? value.toISOString() : new Date(value).toISOString();
 
@@ -11,24 +12,29 @@ function testRow(row) {
 }
 
 export class PostgresProviderRepository {
-  constructor(pool) { this.pool = pool; }
+  constructor(pool) { this.pool = pool; this.audit = new PostgresAuditRepository(pool); }
   async withTransaction(work) { const client = await this.pool.connect(); try { await client.query('BEGIN'); const result = await work(client); await client.query('COMMIT'); return result; } catch (error) { await client.query('ROLLBACK'); throw error; } finally { client.release(); } }
   async listAccounts(ownerId) { const { rows } = await this.pool.query('SELECT * FROM provider_accounts WHERE owner_id = $1 AND state <> $2 ORDER BY created_at DESC', [ownerId, 'revoked']); return rows.map(accountRow); }
   async createAccount(input, client = this.pool) { const { rows } = await client.query('INSERT INTO provider_accounts (account_id, owner_type, owner_id, protocol_type, display_name, credential_ref, scope, state) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *', [input.accountId ?? randomUUID(), 'admin', input.ownerId, input.protocolType, input.displayName, input.credentialRef, JSON.stringify({ ...(input.scope ?? {}), defaultForProtocol: Boolean(input.defaultForProtocol) }), input.state ?? 'credential_pending']); return accountRow(rows[0]); }
+  async createAccountWithAudit(input, audit) { return this.withTransaction(async (client) => { const account = await this.createAccount(input, client); await this.writeAudit(audit(account), client); return account; }); }
   async getAccount(accountId) { const { rows } = await this.pool.query('SELECT * FROM provider_accounts WHERE account_id = $1', [accountId]); return accountRow(rows[0]); }
   async updateAccountState(accountId, expectedVersion, state) { const { rows } = await this.pool.query('UPDATE provider_accounts SET state = $3, version = version + 1, updated_at = now() WHERE account_id = $1 AND version = $2 AND state <> $4 RETURNING *', [accountId, expectedVersion, state, 'revoked']); return accountRow(rows[0]); }
   async revokeAccount(accountId, expectedVersion) { return this.updateAccountState(accountId, expectedVersion, 'revoked'); }
   async createBinding({ accountId, providerConfigId, policyVersion, bindingId = randomUUID() }, client = this.pool) { const { rows } = await client.query('INSERT INTO provider_bindings (binding_id, account_id, provider_config_id, policy_version, state) VALUES ($1, $2, $3, $4, $5) RETURNING *', [bindingId, accountId, providerConfigId, policyVersion, 'active']); return { bindingId: rows[0].binding_id, accountId: rows[0].account_id, providerConfigId: rows[0].provider_config_id, version: String(rows[0].version), state: rows[0].state }; }
+  async createBindingWithAudit(input, audit) { return this.withTransaction(async (client) => { const binding = await this.createBinding(input, client); await this.writeAudit(audit(binding), client); return binding; }); }
   async createConnectionTest(input, client = this.pool) { const { rows } = await client.query('INSERT INTO connection_tests (test_id, request_id, account_id, account_version, config_version, protocol_version, state) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *', [input.testId ?? randomUUID(), input.requestId, input.accountId, input.accountVersion, input.configVersion, input.protocolVersion, 'queued']); return testRow(rows[0]); }
+  async createConnectionTestWithAudit(input, audit) { return this.withTransaction(async (client) => { const test = await this.createConnectionTest(input, client); await this.writeAudit(audit(test), client); return test; }); }
   async claimConnectionTest(workerId, leaseMs = 15_000) { const client = await this.pool.connect(); try { await client.query('BEGIN'); const { rows } = await client.query("SELECT test_id FROM connection_tests WHERE (state = 'queued' AND lease_owner IS NULL) OR (state = 'running' AND lease_until < now()) ORDER BY created_at FOR UPDATE SKIP LOCKED LIMIT 1"); if (!rows[0]) { await client.query('COMMIT'); return undefined; } const result = await client.query("UPDATE connection_tests SET state = 'running', lease_owner = $1, lease_until = now() + ($2::int * interval '1 millisecond'), attempts = attempts + 1 WHERE test_id = $3 RETURNING *", [workerId, leaseMs, rows[0].test_id]); await client.query('COMMIT'); return testRow(result.rows[0]); } catch (error) { await client.query('ROLLBACK'); throw error; } finally { client.release(); } }
   async renewConnectionTestLease(testId, workerId, leaseMs = 15_000) { const { rows } = await this.pool.query("UPDATE connection_tests SET lease_until = now() + ($3::int * interval '1 millisecond') WHERE test_id = $1 AND lease_owner = $2 AND state = 'running' RETURNING *", [testId, workerId, leaseMs]); return testRow(rows[0]); }
   async getConnectionTest(testId) { const { rows } = await this.pool.query('SELECT * FROM connection_tests WHERE test_id = $1', [testId]); return testRow(rows[0]); }
   async finishConnectionTest(testId, state, reasonCode, durationMs, workerId) { const ownerClause = workerId ? ' AND lease_owner = $5' : ''; const params = workerId ? [testId, state, reasonCode ?? null, durationMs ?? null, workerId] : [testId, state, reasonCode ?? null, durationMs ?? null]; const { rows } = await this.pool.query(`UPDATE connection_tests SET state = $2, reason_code = $3, duration_ms = $4, finished_at = now(), lease_owner = NULL, lease_until = NULL WHERE test_id = $1 AND state IN ('queued', 'running')${ownerClause} RETURNING *`, params); return testRow(rows[0]); }
+  async finishConnectionTestWithAudit(testId, state, reasonCode, durationMs, workerId, audit) { return this.withTransaction(async (client) => { const ownerClause = workerId ? ' AND lease_owner = $5' : ''; const params = workerId ? [testId, state, reasonCode ?? null, durationMs ?? null, workerId] : [testId, state, reasonCode ?? null, durationMs ?? null]; const { rows } = await client.query(`UPDATE connection_tests SET state = $2, reason_code = $3, duration_ms = $4, finished_at = now(), lease_owner = NULL, lease_until = NULL WHERE test_id = $1 AND state IN ('queued', 'running')${ownerClause} RETURNING *`, params); const result = testRow(rows[0]); if (result) await this.writeAudit(audit(result), client); return result; }); }
   async cancelConnectionTest(testId) { return this.finishConnectionTest(testId, 'cancelled', null, null); }
-  async writeAudit() {}
+  async writeAudit(event, client = this.pool) { return this.audit.record(event, client); }
 }
 
 export class InMemoryProviderRepository {
+  audit = new InMemoryAuditRepository();
   accounts = new Map(); bindings = new Map(); tests = new Map();
   async listAccounts(ownerId) { return [...this.accounts.values()].filter((account) => account.ownerId === ownerId && account.status !== 'revoked'); }
   async createAccount(input) { const account = { accountId: input.accountId ?? randomUUID(), ownerId: input.ownerId, ownerType: 'admin', protocolType: input.protocolType, displayName: input.displayName, scope: input.scope ?? {}, status: input.state ?? 'credential_pending', credentialState: 'configured', defaultForProtocol: Boolean(input.defaultForProtocol), version: '1', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), _secretRef: input.credentialRef }; this.accounts.set(account.accountId, account); return account; }
@@ -42,4 +48,9 @@ export class InMemoryProviderRepository {
   async getConnectionTest(id) { return this.tests.get(id); }
   async finishConnectionTest(id, state, reasonCode, durationMs, workerId) { const test = this.tests.get(id); if (!test || !['queued', 'running'].includes(test.status) || workerId && test.leaseOwner !== workerId) return undefined; Object.assign(test, { status: state, reasonCode, latencyMs: durationMs, completedAt: new Date().toISOString(), leaseOwner: null, leaseUntil: null }); return test; }
   async cancelConnectionTest(id) { return this.finishConnectionTest(id, 'cancelled'); }
+  async writeAudit(event) { return this.audit.record(event); }
+  async createAccountWithAudit(input, audit) { const account = await this.createAccount(input); await this.writeAudit(audit(account)); return account; }
+  async createBindingWithAudit(input, audit) { const binding = await this.createBinding(input); await this.writeAudit(audit(binding)); return binding; }
+  async createConnectionTestWithAudit(input, audit) { const test = await this.createConnectionTest(input); await this.writeAudit(audit(test)); return test; }
+  async finishConnectionTestWithAudit(id, state, reasonCode, durationMs, workerId, audit) { const test = await this.finishConnectionTest(id, state, reasonCode, durationMs, workerId); if (test) await this.writeAudit(audit(test)); return test; }
 }

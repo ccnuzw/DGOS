@@ -15,10 +15,12 @@ export class ProviderTestWorker {
     try {
       const handle = await this.secretService.resolve({ secretRef: account._secretRef, purpose: 'provider-account', subjectId: account.ownerId });
       await this.adapters[account.protocolType].probe({ account, credential: await handle.read(), egress: this.egress, signal: controller.signal });
-      return await this.repository.finishConnectionTest(test.testId, 'succeeded', undefined, this.clock() - started, this.workerId);
+      const finished = await (this.repository.finishConnectionTestWithAudit ? this.repository.finishConnectionTestWithAudit(test.testId, 'succeeded', undefined, this.clock() - started, this.workerId, (value) => ({ requestId: test.requestId, action: 'provider.connection_test.finish', targetType: 'connection_test', targetId: test.testId, result: 'succeeded', summary: { status: value.status } })) : this.repository.finishConnectionTest(test.testId, 'succeeded', undefined, this.clock() - started, this.workerId));
+      return finished;
     } catch (error) {
       const reasonCode = error.name === 'AbortError' ? 'upstream_unavailable' : (REASON_CODES.has(error.errorKey ?? error.message) ? error.errorKey ?? error.message : 'upstream_unavailable');
-      return this.repository.finishConnectionTest(test.testId, 'failed', reasonCode, this.clock() - started, this.workerId);
+      const finished = await (this.repository.finishConnectionTestWithAudit ? this.repository.finishConnectionTestWithAudit(test.testId, 'failed', reasonCode, this.clock() - started, this.workerId, (value) => ({ requestId: test.requestId, action: 'provider.connection_test.finish', targetType: 'connection_test', targetId: test.testId, result: 'failed', summary: { status: value.status, reasonCode } })) : this.repository.finishConnectionTest(test.testId, 'failed', reasonCode, this.clock() - started, this.workerId));
+      return finished;
     } finally { clearTimeout(timeout); }
   }
   async runUntilEmpty() { const results = []; while (true) { const result = await this.runOnce(); if (!result) return results; results.push(result); } }
