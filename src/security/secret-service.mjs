@@ -10,6 +10,13 @@ function requireText(value, name) {
   }
 }
 
+export class SecretBackend {
+  async put() { throw new Error('secret_backend_not_implemented'); }
+  async resolve() { throw new Error('secret_backend_not_implemented'); }
+  async revoke() { throw new Error('secret_backend_not_implemented'); }
+  async inspect() { throw new Error('secret_backend_not_implemented'); }
+}
+
 export class InMemorySecretService {
   #records = new Map();
   #clock;
@@ -75,6 +82,27 @@ export class InMemorySecretService {
       digest: record.digest,
     };
   }
+}
+
+export class RedisSecretService {
+  constructor(redis, { clock = () => Date.now(), keyPrefix = 'dgos:secret:' } = {}) { this.redis = redis; this.clock = clock; this.keyPrefix = keyPrefix; }
+  key(secretRef) { return `${this.keyPrefix}${secretRef}`; }
+  async put({ secretRef, value, purpose, subjectId, ttlMs = 60_000 }) {
+    requireText(secretRef, 'secretRef'); requireText(value, 'value'); requireText(purpose, 'purpose'); requireText(subjectId, 'subjectId');
+    const key = this.key(secretRef); const previous = await this.redis.hGet(key, 'version'); const version = Number(previous ?? 0) + 1;
+    await this.redis.hSet(key, { value, purpose, subjectId, version: String(version), digest: digest(value) }); await this.redis.pExpire(key, ttlMs);
+    return { secretRef, version, credentialState: 'available' };
+  }
+  async resolve({ secretRef, purpose, subjectId }) {
+    requireText(secretRef, 'secretRef'); requireText(purpose, 'purpose'); requireText(subjectId, 'subjectId');
+    const record = await this.redis.hGetAll(this.key(secretRef));
+    if (!record.value) throw new Error('credential_unavailable');
+    if (record.purpose !== purpose || record.subjectId !== subjectId) throw new Error('credential_scope_denied');
+    const expiresAt = this.clock() + Math.max(0, await this.redis.pTTL(this.key(secretRef)));
+    return { secretRef, version: Number(record.version), expiresAt, async read() { return record.value; } };
+  }
+  async revoke(secretRef) { await this.redis.del(this.key(secretRef)); }
+  async inspect(secretRef) { const key = this.key(secretRef); const record = await this.redis.hGetAll(key); if (!record.value) return { credentialState: 'missing' }; return { credentialState: 'available', version: Number(record.version), digest: record.digest }; }
 }
 
 export function generateApiKey() {

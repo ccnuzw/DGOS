@@ -2,15 +2,17 @@ import Fastify from 'fastify';
 import { randomUUID } from 'node:crypto';
 import { apiVersion } from '@dgos/sdk';
 import { InMemorySecretService } from '../../../src/security/secret-service.mjs';
+import { createRateLimiter } from '../../../src/security/rate-limiter.mjs';
 import { InMemoryIdentityRepository, PostgresIdentityRepository } from '../../../src/identity/repository.mjs';
 import { IdentityService } from './identity-service.mjs';
 import pg from 'pg';
+import { createClient } from 'redis';
 
-export function buildServer({ logger = true, repository, secretService = new InMemorySecretService(), clock } = {}) {
+export function buildServer({ logger = true, repository, secretService = new InMemorySecretService(), rateLimiter, clock } = {}) {
   const resolvedRepository = repository ?? (process.env.DGOS_DATABASE_URL ? new PostgresIdentityRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryIdentityRepository());
   const app = Fastify({ logger });
   const identity = new IdentityService({ repository: resolvedRepository, secretService, clock });
-  const loginLimiter = new Map();
+  const loginLimiter = rateLimiter ?? createRateLimiter({ clock });
   const maxLoginAttempts = 5;
   const loginWindowMs = 60_000;
 
@@ -49,7 +51,7 @@ export function buildServer({ logger = true, repository, secretService = new InM
   }
 
   app.post('/api/v1/identity/admin/bootstrap', async (request, reply) => { const result = await identity.bootstrap({ ...request.body, requestId: request.requestId }); receiptCookie(reply, result); return reply.code(201).send(result); });
-  app.post('/api/v1/identity/admin/login', async (request, reply) => { const source = request.ip; const now = Date.now(); const attempts = loginLimiter.get(source) ?? { count: 0, resetAt: now + loginWindowMs }; if (attempts.resetAt <= now) { attempts.count = 0; attempts.resetAt = now + loginWindowMs; } if (attempts.count >= maxLoginAttempts) { const error = Object.assign(new Error('rate_limited'), { statusCode: 429, retryAfter: Math.ceil((attempts.resetAt - now) / 1000) }); throw error; } try { const result = await identity.login({ ...request.body, requestId: request.requestId }); loginLimiter.delete(source); receiptCookie(reply, result); return result; } catch (error) { attempts.count += 1; loginLimiter.set(source, attempts); throw error; } });
+  app.post('/api/v1/identity/admin/login', async (request, reply) => { const source = request.ip; const attempts = await loginLimiter.consume(source, { limit: maxLoginAttempts, windowMs: loginWindowMs }); if (!attempts.allowed) throw Object.assign(new Error('rate_limited'), { statusCode: 429, retryAfter: Math.ceil(attempts.retryAfterMs / 1000) }); try { const result = await identity.login({ ...request.body, requestId: request.requestId }); await loginLimiter.reset(source); receiptCookie(reply, result); return result; } catch (error) { throw error; } });
   app.get('/api/v1/identity/admin/session', async (request) => { const session = await currentSession(request); return { ...session, requestId: request.requestId }; });
   app.post('/api/v1/identity/admin/session', async (request, reply) => { await validateCsrf(request); const session = await currentSession(request); const result = await identity.renewSession({ sessionId: session.sessionId, version: request.body?.baseVersion ?? session.sessionVersion, requestId: request.requestId }); receiptCookie(reply, result); return result; });
   app.delete('/api/v1/identity/admin/sessions/:sessionId', async (request) => { await validateCsrf(request); const session = await currentSession(request); return identity.revokeSession({ sessionId: request.params.sessionId, actorId: session.principalId, requestId: request.requestId }); });
@@ -71,7 +73,10 @@ export function buildServer({ logger = true, repository, secretService = new InM
 }
 
 if (process.argv[1] && new URL(import.meta.url).pathname === process.argv[1]) {
-  const app = buildServer();
+  const redis = process.env.REDIS_URL ? createClient({ url: process.env.REDIS_URL }) : null;
+  if (redis) await redis.connect();
+  const app = buildServer({ rateLimiter: createRateLimiter({ redis }) });
+  if (redis) app.addHook('onClose', async () => redis.quit());
   const host = process.env.HOST ?? '127.0.0.1';
   const port = Number(process.env.PORT ?? 3000);
   await app.listen({ host, port });
