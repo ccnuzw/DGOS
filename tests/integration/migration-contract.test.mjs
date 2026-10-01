@@ -14,3 +14,8 @@ test('V1 governance migration contains required idempotency and safety constrain
   assert.doesNotMatch(sql, /password|authorization|api[_ -]?key\s+text\b/i);
   assert.doesNotMatch(sql, /pending-checksum-generated-by-release-tool/);
 });
+
+test('V1 runtime migration contains persistent control-plane tables', async () => {
+  const sql = await readFile(new URL('../../migrations/0011-runtime-persistence.sql', import.meta.url), 'utf8');
+  for (const fragment of ['permission_requests', 'action_definitions', 'action_plans', 'system_settings', 'system_setting_events', 'app_installs_request_id_uq']) assert.match(sql, new RegExp(fragment));
+});

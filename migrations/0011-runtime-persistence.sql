@@ -6,6 +6,8 @@ ALTER TABLE app_versions ADD COLUMN IF NOT EXISTS migration_metadata jsonb NOT N
 ALTER TABLE app_installs ADD COLUMN IF NOT EXISTS previous_app_version_id uuid REFERENCES app_versions(app_version_id);
 ALTER TABLE app_installs ADD COLUMN IF NOT EXISTS active_app_version_id uuid REFERENCES app_versions(app_version_id);
 ALTER TABLE app_installs ADD COLUMN IF NOT EXISTS install_id uuid;
+ALTER TABLE app_installs ADD COLUMN IF NOT EXISTS active_version text;
+ALTER TABLE app_installs ADD COLUMN IF NOT EXISTS previous_version text;
 ALTER TABLE app_installs ADD COLUMN IF NOT EXISTS last_health jsonb;
 ALTER TABLE app_installs ADD COLUMN IF NOT EXISTS request_id uuid;
 CREATE UNIQUE INDEX IF NOT EXISTS app_installs_request_id_uq ON app_installs(subject_id, request_id) WHERE request_id IS NOT NULL;
@@ -45,3 +47,4 @@ CREATE TABLE IF NOT EXISTS system_setting_events (
   event_id uuid PRIMARY KEY, scope_id uuid NOT NULL, context_version bigint NOT NULL,
   domain text NOT NULL, restart_required boolean NOT NULL DEFAULT false, created_at timestamptz NOT NULL DEFAULT now()
 );
+CREATE UNIQUE INDEX IF NOT EXISTS permission_requests_idempotency_uq ON permission_requests(subject_id,app_id,capability,scope,state) WHERE state='pending';

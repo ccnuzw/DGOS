@@ -1,0 +1,6 @@
+{
+  "name": "@dgos/web",
+  "private": true,
+  "type": "module",
+  "scripts": { "build": "node --check src/main.js && node -e \"const fs=require('fs'); for (const f of ['index.html','src/style.css']) if (!fs.existsSync(f)) process.exit(1)\"", "check": "node --check src/main.js" }
+}

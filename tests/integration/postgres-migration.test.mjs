@@ -13,6 +13,7 @@ test('PostgreSQL migration runner discovers and hashes migrations', async () => 
   assert.ok(migrations.some((item) => item.version === '0005-quota-usage'));
   assert.ok(migrations.some((item) => item.version === '0006-runtime'));
   assert.ok(migrations.some((item) => item.version === '0007-provider-config-ai-task'));
+  assert.ok(migrations.some((item) => item.version === '0011-runtime-persistence'));
   assert.deepEqual(migrations.map((item) => item.version), [...migrations.map((item) => item.version)].sort());
   assert.match(migrations[0].checksum, /^[a-f0-9]{64}$/);
 });
