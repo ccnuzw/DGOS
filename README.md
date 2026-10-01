@@ -21,6 +21,18 @@ MinIO is optional for the database/security foundation and is behind the `object
 
 The API health endpoint is available at `http://127.0.0.1:3000/health`.
 
+## OpenAI-compatible provider fixture
+
+Start a reproducible local fixture on a random port:
+
+```bash
+pnpm provider:fixture
+```
+
+It prints JSON containing `baseUrl` and the default token `dgos-fixture-token`. Set `DGOS_FIXTURE_PORT` for a fixed port, `DGOS_FIXTURE_TOKEN` for a test token, `DGOS_FIXTURE_MODEL` for the model id, and `DGOS_FIXTURE_SCENARIO` for the default scenario. A request may override the scenario with `?scenario=` or `x-fixture-scenario`.
+
+Supported scenarios are `success` (default), `forbidden`, `timeout`, `disconnect`, `malformed`, `malformed-after-data`, and `empty`. `DGOS_FIXTURE_DELAY_MS` adds a delay before streamed chunks. The server exposes `GET /v1/models` and `POST /v1/chat/completions`, validates `Authorization: Bearer <token>`, and closes cleanly on SIGINT/SIGTERM. Run the fixture tests with `pnpm test:provider-fixture`.
+
 ## Repository areas
 
 - `apps/api`: Fastify HTTP API entry point
