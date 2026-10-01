@@ -10,6 +10,9 @@ export function buildServer({ logger = true, repository, secretService = new InM
   const resolvedRepository = repository ?? (process.env.DGOS_DATABASE_URL ? new PostgresIdentityRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryIdentityRepository());
   const app = Fastify({ logger });
   const identity = new IdentityService({ repository: resolvedRepository, secretService, clock });
+  const loginLimiter = new Map();
+  const maxLoginAttempts = 5;
+  const loginWindowMs = 60_000;
 
   app.addHook('onRequest', async (request, reply) => {
     request.requestId = request.headers['x-request-id'] || randomUUID();
@@ -17,8 +20,8 @@ export function buildServer({ logger = true, repository, secretService = new InM
   });
   app.setErrorHandler((error, request, reply) => {
     const statusCode = error.statusCode >= 400 && error.statusCode < 600 ? error.statusCode : 500;
-    const messages = { invalid_request: 'Request is invalid', bootstrap_already_completed: 'Bootstrap is unavailable', invalid_credentials: 'Authentication failed', session_invalid: 'Session is invalid', session_conflict: 'Session changed; retry with a fresh session', session_not_found: 'Session not found', api_key_not_found: 'API key not found' };
-    reply.code(statusCode).send({ errorKey: error.message in messages ? error.message : 'internal_error', message: messages[error.message] ?? 'Request failed', requestId: request.requestId, retryable: statusCode >= 500 });
+    const messages = { invalid_request: 'Request is invalid', bootstrap_already_completed: 'Bootstrap is unavailable', invalid_credentials: 'Authentication failed', authentication_required: 'Authentication required', insufficient_scope: 'Required capability is missing', rate_limited: 'Too many authentication attempts', csrf_failed: 'Request origin validation failed', session_invalid: 'Session is invalid', session_conflict: 'Session changed; retry with a fresh session', session_not_found: 'Session not found', api_key_not_found: 'API key not found' };
+    reply.code(statusCode).send({ errorKey: error.message in messages ? error.message : 'internal_error', message: messages[error.message] ?? 'Request failed', requestId: request.requestId, retryable: statusCode >= 500, ...(error.retryAfter ? { details: { retryAfter: error.retryAfter } } : {}) });
   });
 
   async function currentSession(request) {
@@ -27,17 +30,33 @@ export function buildServer({ logger = true, repository, secretService = new InM
     if (!token) throw Object.assign(new Error('session_invalid'), { statusCode: 401 });
     return identity.getSession(token);
   }
-  function receiptCookie(reply, receipt) { reply.header('set-cookie', `dgos_session=${receipt.sessionId}; HttpOnly; Path=/; SameSite=Strict`); }
+  function receiptCookie(reply, receipt) { reply.header('set-cookie', `dgos_session=${receipt.sessionId}; HttpOnly; Path=/; SameSite=Strict${process.env.NODE_ENV === 'production' ? '; Secure' : ''}`); }
+  async function requireScope(request, scope) {
+    const authorization = request.headers.authorization;
+    if (authorization?.startsWith('ApiKey ')) {
+      const subject = await identity.authenticateApiKey(authorization.slice(7));
+      if (!subject.scopes.includes(scope) && !subject.scopes.includes('*')) throw Object.assign(new Error('insufficient_scope'), { statusCode: 403 });
+      request.auth = subject;
+      return subject;
+    }
+    const session = await currentSession(request);
+    request.auth = { subjectId: session.principalId, scopes: ['*'], authMethod: 'session' };
+    return request.auth;
+  }
+  async function validateCsrf(request) {
+    const cookie = request.headers.cookie?.includes('dgos_session=');
+    if (cookie && !request.headers['x-dgos-csrf']) throw Object.assign(new Error('csrf_failed'), { statusCode: 403 });
+  }
 
   app.post('/api/v1/identity/admin/bootstrap', async (request, reply) => { const result = await identity.bootstrap({ ...request.body, requestId: request.requestId }); receiptCookie(reply, result); return reply.code(201).send(result); });
-  app.post('/api/v1/identity/admin/login', async (request, reply) => { const result = await identity.login({ ...request.body, requestId: request.requestId }); receiptCookie(reply, result); return result; });
+  app.post('/api/v1/identity/admin/login', async (request, reply) => { const source = request.ip; const now = Date.now(); const attempts = loginLimiter.get(source) ?? { count: 0, resetAt: now + loginWindowMs }; if (attempts.resetAt <= now) { attempts.count = 0; attempts.resetAt = now + loginWindowMs; } if (attempts.count >= maxLoginAttempts) { const error = Object.assign(new Error('rate_limited'), { statusCode: 429, retryAfter: Math.ceil((attempts.resetAt - now) / 1000) }); throw error; } try { const result = await identity.login({ ...request.body, requestId: request.requestId }); loginLimiter.delete(source); receiptCookie(reply, result); return result; } catch (error) { attempts.count += 1; loginLimiter.set(source, attempts); throw error; } });
   app.get('/api/v1/identity/admin/session', async (request) => { const session = await currentSession(request); return { ...session, requestId: request.requestId }; });
-  app.post('/api/v1/identity/admin/session', async (request, reply) => { const session = await currentSession(request); const result = await identity.renewSession({ sessionId: session.sessionId, version: request.body?.baseVersion ?? session.sessionVersion, requestId: request.requestId }); receiptCookie(reply, result); return result; });
-  app.delete('/api/v1/identity/admin/sessions/:sessionId', async (request) => { const session = await currentSession(request); return identity.revokeSession({ sessionId: request.params.sessionId, actorId: session.principalId, requestId: request.requestId }); });
-  app.get('/api/v1/secret/api-keys', async (request) => { const session = await currentSession(request); return identity.listKeys(session.principalId); });
-  app.post('/api/v1/secret/api-keys', async (request, reply) => { const session = await currentSession(request); const body = { ...request.body, ownerId: request.body?.ownerId ?? session.principalId }; const result = await identity.createKey({ ...body, actorId: session.principalId, requestId: request.requestId }); return reply.code(201).send(result); });
-  app.post('/api/v1/secret/api-keys/:keyId/rotate', async (request) => { const session = await currentSession(request); return identity.rotateKey({ keyId: request.params.keyId, actorId: session.principalId, requestId: request.requestId }); });
-  app.delete('/api/v1/secret/api-keys/:keyId', async (request) => { const session = await currentSession(request); return identity.revokeKey({ keyId: request.params.keyId, actorId: session.principalId, requestId: request.requestId }); });
+  app.post('/api/v1/identity/admin/session', async (request, reply) => { await validateCsrf(request); const session = await currentSession(request); const result = await identity.renewSession({ sessionId: session.sessionId, version: request.body?.baseVersion ?? session.sessionVersion, requestId: request.requestId }); receiptCookie(reply, result); return result; });
+  app.delete('/api/v1/identity/admin/sessions/:sessionId', async (request) => { await validateCsrf(request); const session = await currentSession(request); return identity.revokeSession({ sessionId: request.params.sessionId, actorId: session.principalId, requestId: request.requestId }); });
+  app.get('/api/v1/secret/api-keys', async (request) => { const auth = await requireScope(request, 'apiKey.read'); return identity.listKeys(auth.subjectId); });
+  app.post('/api/v1/secret/api-keys', async (request, reply) => { await validateCsrf(request); const auth = await requireScope(request, 'apiKey.manage'); const body = { ...request.body, ownerId: request.body?.ownerId ?? auth.subjectId }; if (body.ownerId !== auth.subjectId && auth.authMethod !== 'session') throw Object.assign(new Error('insufficient_scope'), { statusCode: 403 }); const result = await identity.createKey({ ...body, actorId: auth.subjectId, requestId: request.requestId }); return reply.code(201).send(result); });
+  app.post('/api/v1/secret/api-keys/:keyId/rotate', async (request) => { await validateCsrf(request); const auth = await requireScope(request, 'apiKey.manage'); return identity.rotateKey({ keyId: request.params.keyId, actorId: auth.subjectId, requestId: request.requestId }); });
+  app.delete('/api/v1/secret/api-keys/:keyId', async (request) => { await validateCsrf(request); const auth = await requireScope(request, 'apiKey.manage'); return identity.revokeKey({ keyId: request.params.keyId, actorId: auth.subjectId, requestId: request.requestId }); });
 
   app.get('/health', async () => ({ status: 'ok', service: 'dgos-api' }));
   app.get('/ready', async () => ({ status: 'ready', apiVersion }));

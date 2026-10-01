@@ -21,6 +21,14 @@ export class IdentityService {
     catch { throw Object.assign(new Error('invalid_credentials'), { statusCode: 401 }); }
     return this.#issueSession(p, requestId);
   }
+  async authenticateApiKey(secret) {
+    if (!secret) throw Object.assign(new Error('authentication_required'), { statusCode: 401 });
+    const records = [];
+    if (this.repository.listAllActiveKeys) records.push(...await this.repository.listAllActiveKeys());
+    const record = authenticateApiKey(secret, records);
+    if (!record) throw Object.assign(new Error('invalid_credentials'), { statusCode: 401 });
+    return { subjectId: record.ownerId, scopes: record.scopes, keyId: record.keyId, authMethod: 'api_key' };
+  }
   async #issueSession(principal, requestId, client) { const session = await this.repository.createSession({ principalId: principal.principalId, expiresAt: new Date(this.clock() + SESSION_TTL_MS) }, client); await this.repository.writeAudit({ requestId, actorId: principal.principalId, action: 'admin.session.create', targetType: 'admin_session', targetId: session.sessionId }, client); return { requestId, principalId: principal.principalId, sessionId: session.sessionId, state: session.state, expiresAt: session.expiresAt, sessionVersion: String(session.sessionVersion), authFreshUntil: session.expiresAt }; }
   async getSession(sessionId) { const s = await this.repository.getSession(sessionId); if (!s || s.state !== 'active' || new Date(s.expiresAt) <= new Date(this.clock())) throw Object.assign(new Error('session_invalid'), { statusCode: 401 }); return { requestId: null, principalId: s.principalId, sessionId: s.sessionId, state: s.state, expiresAt: s.expiresAt, sessionVersion: String(s.sessionVersion), createdAt: s.createdAt, lastActiveAt: s.lastSeenAt }; }
   async renewSession({ sessionId, version, requestId }) { const s = await this.repository.renewSession(sessionId, version, new Date(this.clock() + SESSION_TTL_MS)); if (!s) throw Object.assign(new Error('session_conflict'), { statusCode: 409 }); await this.repository.writeAudit({ requestId, actorId: s.principalId, action: 'admin.session.renew', targetType: 'admin_session', targetId: sessionId }); return { requestId, principalId: s.principalId, sessionId, state: s.state, expiresAt: s.expiresAt, sessionVersion: String(s.sessionVersion), authFreshUntil: s.expiresAt }; }
