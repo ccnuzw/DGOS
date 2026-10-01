@@ -9,6 +9,7 @@ export class AiTaskWorker {
     if (!attempt) return undefined;
     const task = await this.repository.getTask(attempt.taskId);
     if (!task || ['succeeded', 'failed', 'cancelled', 'timed_out'].includes(task.status)) {
+      if (process.env.DGOS_WORKER_DEBUG === '1') console.error(JSON.stringify({ workerId: this.workerId, attemptId: attempt.attemptId, taskId: attempt.taskId, taskStatus: task?.status ?? null }));
       await this.repository.finishAttempt(attempt.attemptId, task?.status === 'cancelled' ? 'cancelled' : 'failed', { errorClass: 'task_unavailable' }, this.workerId);
       return attempt;
     }
@@ -17,8 +18,8 @@ export class AiTaskWorker {
     heartbeat.unref?.();
     try {
       await this.taskService.run(task.taskId, task.inputText ?? '', task.ownerId, { attempt, workerId: this.workerId, isLeaseValid: () => !leaseLost });
-    } catch {
-      // AiTaskService owns terminal state and quota finalization.
+    } catch (error) {
+      if (process.env.DGOS_WORKER_DEBUG === '1') console.error(JSON.stringify({ workerId: this.workerId, taskId: task.taskId, error: error?.message, errorKey: error?.errorKey }));
     } finally { clearInterval(heartbeat); }
     return this.repository.getTask(task.taskId);
   }
