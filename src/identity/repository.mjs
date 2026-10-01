@@ -77,6 +77,20 @@ export class PostgresIdentityRepository {
     const { rows } = await client.query('INSERT INTO api_key_records (key_id, owner_id, prefix, digest, scope, rotation_group, state, expires_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *', [keyId, ownerId, prefix, digest, scope, rotationGroupId, 'active', expiresAt ?? null]);
     return rowKey(rows[0]);
   }
+  async createKeyWithAudit(input, audit) { return this.withTransaction(async (client) => { const key = await this.createKey(input, client); await this.writeAudit(audit(key), client); return key; }); }
+  async rotateKeyWithAudit(previousId, input, audit) {
+    return this.withTransaction(async (client) => {
+      const { rows } = await client.query('SELECT * FROM api_key_records WHERE key_id = $1 FOR UPDATE', [previousId]);
+      const previous = rowKey(rows[0]);
+      if (!previous || previous.status !== 'active') return undefined;
+      const next = await this.createKey(input, client);
+      const revoked = await client.query("UPDATE api_key_records SET state = 'revoked', revoked_at = now(), version = version + 1 WHERE key_id = $1 AND state = 'active' RETURNING key_id", [previousId]);
+      if (!revoked.rows[0]) return undefined;
+      await this.writeAudit(audit(next, previous), client);
+      return next;
+    });
+  }
+  async revokeKeyWithAudit(keyId, audit) { return this.withTransaction(async (client) => { const { rows } = await client.query("UPDATE api_key_records SET state = 'revoked', revoked_at = now(), version = version + 1 WHERE key_id = $1 AND state = 'active' RETURNING *", [keyId]); const key = rowKey(rows[0]); if (key) await this.writeAudit(audit(key), client); return key; }); }
 
   async getKey(keyId) { const { rows } = await this.pool.query('SELECT * FROM api_key_records WHERE key_id = $1', [keyId]); return rowKey(rows[0]); }
 
@@ -105,5 +119,5 @@ export class InMemoryIdentityRepository {
   async revokeKey(id) { const k = this.keys.get(id); if (!k || k.state !== 'active') return undefined; k.state = k.status = 'revoked'; k.version += 1; return k; }
   async rotateKey(previousId, input) { const previous = this.keys.get(previousId); if (!previous || previous.state !== 'active') return undefined; const next = await this.createKey(input); previous.state = previous.status = 'revoked'; previous.version += 1; return next; }
   async withBootstrapLock(work) { return work(undefined); }
-  async writeAudit(event) { this.audits.push(event); return randomUUID(); }
+  async writeAudit(event) { this.audits.push(event); return this.audit?.record ? this.audit.record(event) : randomUUID(); }
 }

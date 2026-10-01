@@ -16,6 +16,10 @@ test('PostgreSQL repository persists identity, key digest, and audit outbox', as
   await pool.query('DELETE FROM model_catalog_entries');
   await pool.query('DELETE FROM model_catalogs');
   await pool.query('DELETE FROM model_policies');
+  await pool.query('DELETE FROM ai_task_events');
+  await pool.query('DELETE FROM artifacts');
+  await pool.query('DELETE FROM ai_task_attempts');
+  await pool.query('DELETE FROM ai_tasks');
   await pool.query('DELETE FROM provider_configs');
   await pool.query('DELETE FROM provider_accounts');
   await pool.query('DELETE FROM api_key_records');

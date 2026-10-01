@@ -41,6 +41,7 @@ export function buildServer({ logger = true, repository, providerRepository, pro
   const identity = new IdentityService({ repository: resolvedRepository, secretService, clock });
   const providers = providerService ?? new ProviderService({ repository: providerRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresProviderRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryProviderRepository()), secretService, egress: new ProviderEgress(), adapters: { 'openai-compatible': createOpenAiCompatibleAdapter() } });
   const audit = injectedAuditRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresAuditRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryAuditRepository());
+  if (resolvedRepository && audit && !resolvedRepository.audit) resolvedRepository.audit = audit;
   const runtimePool = process.env.DGOS_DATABASE_URL ? new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL }) : null;
   const governance = new GovernanceService({ retentionRepository: injectedRetentionRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresRetentionRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryRetentionRepository(audit)), auditRepository: audit });
   const quotaPool = process.env.DGOS_DATABASE_URL ? new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL }) : null;
@@ -97,7 +98,13 @@ export function buildServer({ logger = true, repository, providerRepository, pro
   }
   async function validateCsrf(request) {
     const cookie = request.headers.cookie?.includes('dgos_session=');
-    if (cookie && !request.headers['x-dgos-csrf']) throw Object.assign(new Error('csrf_failed'), { statusCode: 403 });
+    if (!cookie) return;
+    const origin = request.headers.origin;
+    if (origin) {
+      let parsed; try { parsed = new URL(origin); } catch { throw Object.assign(new Error('csrf_failed'), { statusCode: 403 }); }
+      if (parsed.host !== request.headers.host) throw Object.assign(new Error('csrf_failed'), { statusCode: 403 });
+    }
+    if (!request.headers['x-dgos-csrf']) throw Object.assign(new Error('csrf_failed'), { statusCode: 403 });
   }
   const runtimeWrite = async (request, scope) => { await validateCsrf(request); return requireScope(request, scope); };
   const scopedBody = (request, auth) => { const body=request.body ?? {}; if (body.subjectId && body.subjectId !== auth.subjectId) throw Object.assign(new Error('insufficient_scope'),{statusCode:403}); return body; };
@@ -106,7 +113,7 @@ export function buildServer({ logger = true, repository, providerRepository, pro
   app.post('/api/v1/identity/admin/login', async (request, reply) => { const source = request.ip; const attempts = await loginLimiter.consume(source, { limit: maxLoginAttempts, windowMs: loginWindowMs }); if (!attempts.allowed) throw Object.assign(new Error('rate_limited'), { statusCode: 429, retryAfter: Math.ceil(attempts.retryAfterMs / 1000) }); try { const result = await identity.login({ ...request.body, requestId: request.requestId }); await loginLimiter.reset(source); receiptCookie(reply, result); return result; } catch (error) { throw error; } });
   app.get('/api/v1/identity/admin/session', async (request) => { const session = await currentSession(request); return { ...session, requestId: request.requestId }; });
   app.post('/api/v1/identity/admin/session', async (request, reply) => { await validateCsrf(request); const session = await currentSession(request); const result = await identity.renewSession({ sessionId: session.sessionId, version: request.body?.baseVersion ?? session.sessionVersion, requestId: request.requestId }); receiptCookie(reply, result); return result; });
-  app.delete('/api/v1/identity/admin/sessions/:sessionId', async (request) => { await validateCsrf(request); const session = await currentSession(request); return identity.revokeSession({ sessionId: request.params.sessionId, actorId: session.principalId, requestId: request.requestId }); });
+  app.delete('/api/v1/identity/admin/sessions/:sessionId', async (request) => { await validateCsrf(request); const session = await currentSession(request); if (session.sessionId !== request.params.sessionId) throw Object.assign(new Error('insufficient_scope'), { statusCode: 403 }); return identity.revokeSession({ sessionId: request.params.sessionId, actorId: session.principalId, requestId: request.requestId }); });
   app.get('/api/v1/secret/api-keys', async (request) => { const auth = await requireScope(request, 'apiKey.read'); return identity.listKeys(auth.subjectId); });
   app.post('/api/v1/secret/api-keys', async (request, reply) => { await validateCsrf(request); const auth = await requireScope(request, 'apiKey.manage'); const body = { ...request.body, ownerId: request.body?.ownerId ?? auth.subjectId }; if (body.ownerId !== auth.subjectId && auth.authMethod !== 'session') throw Object.assign(new Error('insufficient_scope'), { statusCode: 403 }); const result = await identity.createKey({ ...body, actorId: auth.subjectId, requestId: request.requestId }); return reply.code(201).send(result); });
   app.post('/api/v1/secret/api-keys/:keyId/rotate', async (request) => { await validateCsrf(request); const auth = await requireScope(request, 'apiKey.manage'); return identity.rotateKey({ keyId: request.params.keyId, actorId: auth.subjectId, requestId: request.requestId }); });
@@ -116,7 +123,7 @@ export function buildServer({ logger = true, repository, providerRepository, pro
   app.post('/api/v1/provider/accounts/:accountId/bindings', async (request, reply) => { await validateCsrf(request); const auth = await requireScope(request, 'provider.account.write'); return reply.code(201).send(await providers.bindAccount({ accountId: request.params.accountId, ...request.body, requestId: request.requestId, actorId: auth.subjectId })); });
   app.post('/api/v1/provider/accounts/:accountId/state', async (request) => { await validateCsrf(request); const auth = await requireScope(request, 'provider.account.write'); return providers.setState({ accountId: request.params.accountId, ...request.body, requestId: request.requestId, actorId: auth.subjectId }); });
   app.delete('/api/v1/provider/accounts/:accountId', async (request) => { await validateCsrf(request); const auth = await requireScope(request, 'provider.account.delete'); return providers.deleteAccount({ accountId: request.params.accountId, version: request.body?.baseVersion, requestId: request.requestId, actorId: auth.subjectId }); });
-  app.post('/api/v1/provider/connection-tests', async (request, reply) => { await validateCsrf(request); const auth = await requireScope(request, 'provider.connection_test'); const result = await providers.startConnectionTest({ ...request.body, requestId: request.requestId }); const account = await providers.repository?.getAccount?.(result.accountId); if (account && account.ownerId !== auth.subjectId && auth.authMethod !== 'session') throw Object.assign(new Error('insufficient_scope'), { statusCode: 403 }); return reply.code(202).send(result); });
+  app.post('/api/v1/provider/connection-tests', async (request, reply) => { await validateCsrf(request); const auth = await requireScope(request, 'provider.connection_test'); const result = await providers.startConnectionTest({ ...request.body, ownerId: auth.subjectId, requestId: request.requestId }); return reply.code(202).send(result); });
   app.get('/api/v1/provider/connection-tests/:testId', async (request) => { await requireScope(request, 'provider.connection_test'); return providers.getConnectionTest(request.params.testId); });
   app.delete('/api/v1/provider/connection-tests/:testId', async (request) => { await validateCsrf(request); const auth = await requireScope(request, 'provider.connection_test'); return providers.cancelConnectionTest(request.params.testId, request.requestId, auth.subjectId); });
   app.get('/api/v1/provider/configs', async (request) => { const auth = await requireScope(request, 'provider.config.read'); return providerConfigs.list(auth.subjectId); });
