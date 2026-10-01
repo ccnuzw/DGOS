@@ -28,6 +28,9 @@ importers:
       '@dgos/sdk':
         specifier: workspace:*
         version: link:../../packages/sdk
+      pg:
+        specifier: ^8.13.1
+        version: 8.23.1
 
   packages/contracts: {}
 

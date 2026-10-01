@@ -1,7 +1,7 @@
 import { apiVersion } from '@dgos/sdk';
 
 export function createWorkerInfo() {
-  return { service: 'dgos-worker', apiVersion, status: 'idle' };
+  return { service: 'dgos-worker', apiVersion, status: 'idle', capabilities: ['provider.connection_test'] };
 }
 
 if (process.argv[1] && new URL(import.meta.url).pathname === process.argv[1]) {

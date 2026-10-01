@@ -29,7 +29,7 @@ export class ProviderEgress {
   #fetch;
   #allowHosts;
 
-  constructor({ lookup = (host) => dns.lookup(host, { all: true }), fetchImpl = globalThis.fetch, allowHosts = [] } = {}) {
+  constructor({ lookup = (host) => dns.lookup(host, { all: true }), fetchImpl = globalThis.fetch, allowHosts = [], connect = fetchImpl } = {}) {
     if (typeof fetchImpl !== 'function') throw new TypeError('fetchImpl must be a function');
     this.#lookup = lookup;
     this.#fetch = fetchImpl;

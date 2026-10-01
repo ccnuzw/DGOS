@@ -18,6 +18,9 @@ test('provider account and controlled connection test lifecycle', async () => {
   assert.equal(list.json().items.length, 1);
   const disabled = await app.inject({ method: 'POST', url: `/api/v1/provider/accounts/${account.json().accountId}/state`, headers: { authorization: `Bearer ${sessionId}` }, payload: { state: 'disabled', baseVersion: '1' } });
   assert.equal(disabled.statusCode, 200);
+  const queued = await app.inject({ method: 'POST', url: '/api/v1/provider/connection-tests', headers: { authorization: `Bearer ${sessionId}` }, payload: { accountId: account.json().accountId, protocolVersion: 'v1' } });
+  assert.equal(queued.statusCode, 202);
+  assert.equal(queued.json().status, 'queued');
   await app.close();
 });
 

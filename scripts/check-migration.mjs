@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const sql = await readFile(join(root, 'migrations/0001-v1-governance.sql'), 'utf8');
+const leaseSql = await readFile(join(root, 'migrations/0002-connection-test-leases.sql'), 'utf8');
 const required = [
   'CREATE TABLE IF NOT EXISTS dgos_schema_migrations',
   'CREATE TABLE IF NOT EXISTS admin_principals',
@@ -19,8 +20,10 @@ const required = [
   'UNIQUE (task_id, attempt_id, metric)',
 ];
 const missing = required.filter((fragment) => !sql.includes(fragment));
-if (missing.length > 0) {
-  console.error(JSON.stringify({ ok: false, missing }, null, 2));
+const leaseRequired = ['ADD COLUMN IF NOT EXISTS lease_owner', 'ADD COLUMN IF NOT EXISTS lease_until', 'ADD COLUMN IF NOT EXISTS attempts', 'connection_tests_claim_idx'];
+const missingLease = leaseRequired.filter((fragment) => !leaseSql.includes(fragment));
+if (missing.length > 0 || missingLease.length > 0) {
+  console.error(JSON.stringify({ ok: false, missing, missingLease }, null, 2));
   process.exit(1);
 }
-console.log(JSON.stringify({ ok: true, migration: '0001-v1-governance.sql', requiredChecks: required.length }, null, 2));
+console.log(JSON.stringify({ ok: true, migrations: ['0001-v1-governance.sql', '0002-connection-test-leases.sql'], requiredChecks: required.length + leaseRequired.length }, null, 2));

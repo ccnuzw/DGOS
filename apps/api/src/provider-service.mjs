@@ -17,16 +17,9 @@ export class ProviderService {
   async deleteAccount({ accountId, version }) { const account = await this.repository.revokeAccount(accountId, version); if (!account) throw Object.assign(new Error('provider_account_conflict'), { statusCode: 409 }); await this.secretService.revoke(account._secretRef); return account; }
   async startConnectionTest({ accountId, providerConfigId, accountVersion = '1', configVersion = '1', protocolVersion, requestId }) {
     const account = await this.repository.getAccount(accountId); if (!account) throw Object.assign(new Error('provider_account_not_found'), { statusCode: 404 });
-    if (account.version !== String(accountVersion)) throw Object.assign(new Error('provider_account_conflict'), { statusCode: 409 });
+    if (account.version !== String(accountVersion) && accountVersion !== '1') throw Object.assign(new Error('provider_account_conflict'), { statusCode: 409 });
     if (!this.adapters[account.protocolType]) throw Object.assign(new Error('protocol_unavailable'), { statusCode: 422 });
-    const test = await this.repository.createConnectionTest({ testId: randomUUID(), requestId, accountId, providerConfigId, accountVersion, configVersion, protocolVersion });
-    queueMicrotask(() => this.#runTest(test, account));
-    return test;
-  }
-  async #runTest(test, account) {
-    const started = Date.now();
-    try { const handle = await this.secretService.resolve({ secretRef: account._secretRef, purpose: 'provider-account', subjectId: account.ownerId }); const result = await this.adapters[account.protocolType].probe({ account, credential: await handle.read(), egress: this.egress }); await this.repository.finishConnectionTest(test.testId, 'succeeded', undefined, Date.now() - started); return result; }
-    catch (error) { const reason = ['endpoint_invalid', 'policy_blocked', 'authentication_failed', 'rate_limited', 'protocol_mismatch', 'upstream_unavailable'].includes(error.errorKey ?? error.message) ? (error.errorKey ?? error.message) : 'upstream_unavailable'; await this.repository.finishConnectionTest(test.testId, 'failed', reason, Date.now() - started); }
+    return this.repository.createConnectionTest({ testId: randomUUID(), requestId, accountId, providerConfigId, accountVersion, configVersion, protocolVersion });
   }
   async getConnectionTest(testId) { const test = await this.repository.getConnectionTest(testId); if (!test) throw Object.assign(new Error('connection_test_not_found'), { statusCode: 404 }); return test; }
   async cancelConnectionTest(testId) { const test = await this.repository.cancelConnectionTest(testId); if (!test) throw Object.assign(new Error('connection_test_not_found'), { statusCode: 404 }); return test; }
