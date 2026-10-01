@@ -9,8 +9,9 @@ test('PostgreSQL audit outbox publisher claim and idempotent publish', async (t)
   const pool = new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL ?? 'postgres://dgos:dgos@127.0.0.1:5432/dgos' });
   try { await pool.query('SELECT 1'); } catch (error) { await pool.end(); t.skip(`PostgreSQL unavailable: ${error.message}`); return; }
   const audit = new PostgresAuditRepository(pool);
-  const eventId = await audit.record({ requestId: randomUUID(), action: 'audit.fixture', targetType: 'fixture', summary: { safe: true } });
-  await pool.query('DELETE FROM audit_outbox');
+  const eventId = randomUUID();
+  await pool.query('INSERT INTO audit_events (event_id, request_id, actor_type, actor_id, action, target_type, target_id, result, summary) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)', [eventId, randomUUID(), 'system', null, 'audit.fixture', 'fixture', eventId, 'succeeded', JSON.stringify({ safe: true })]);
+  await pool.query('DELETE FROM audit_outbox WHERE event_id <> $1', [eventId]);
   await pool.query('INSERT INTO audit_outbox (event_id) VALUES ($1)', [eventId]);
   const [first, second] = await Promise.all([audit.claim('audit-a'), audit.claim('audit-b')]);
   assert.equal([first, second].filter(Boolean).length, 1);

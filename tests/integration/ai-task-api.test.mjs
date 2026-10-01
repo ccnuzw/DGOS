@@ -13,7 +13,7 @@ test('public ProviderConfig to text task API supports explicit refresh, idempote
   const secretService = new InMemorySecretService();
   const fixtureAdapter = { protocolType: 'openai-compatible', protocolVersion: 'v1', descriptorVersion: 'text.v1', taskModes: ['text.chat'], streamingText: true, cancellation: true, modelListing: true, async validate() { return { descriptorVersion: 'text.v1', inputs: ['text'], outputs: ['text'], taskModes: ['text.chat'], streaming: { text: true }, cancellation: true, modelCatalog: 'remote' }; }, async listModels() { return [{ modelId: 'fixture-text-model', displayName: 'Fixture model', taskModes: ['text.chat'], streaming: true, tools: false, capabilitySummary: { text: true } }]; } };
   const quotaCalls = [];
-  const app = buildServer({ logger: false, providerRepository, providerConfigRepository, aiTaskRepository, secretService, providerAdapters: [fixtureAdapter], providerRunner: async function* () { yield 'hello'; yield ' world'; }, providerEgress: {}, quotaAdapter: { preflight: async (input) => { quotaCalls.push({ type: 'preflight', input }); return { decision: 'allow', allowed: true, requestId: input.requestId }; }, reserve: async (input) => { quotaCalls.push({ type: 'reserve', input }); return { reservationId: 'fixture-reservation', ...input, state: 'reserved', reservedAmount: 1 }; }, settle: async (input) => { quotaCalls.push({ type: 'settle', input }); return { reservationId: input.reservationId, state: input.release ? 'released' : 'settled', usageStatus: input.usageStatus, reconciliation: 'complete' }; }, release: async (input) => { quotaCalls.push({ type: 'release', input }); return { reservationId: input.reservationId, state: 'released', reconciliation: 'complete' }; } } });
+  const app = buildServer({ logger: false, repository: new (await import('../../src/identity/repository.mjs')).InMemoryIdentityRepository(), auditRepository: new (await import('../../src/audit/outbox.mjs')).InMemoryAuditRepository(), providerRepository, providerConfigRepository, aiTaskRepository, secretService, providerAdapters: [fixtureAdapter], providerRunner: async function* () { yield 'hello'; yield ' world'; }, providerEgress: {}, quotaAdapter: { preflight: async (input) => { quotaCalls.push({ type: 'preflight', input }); return { decision: 'allow', allowed: true, requestId: input.requestId }; }, reserve: async (input) => { quotaCalls.push({ type: 'reserve', input }); return { reservationId: 'fixture-reservation', ...input, state: 'reserved', reservedAmount: 1 }; }, settle: async (input) => { quotaCalls.push({ type: 'settle', input }); return { reservationId: input.reservationId, state: input.release ? 'released' : 'settled', usageStatus: input.usageStatus, reconciliation: 'complete' }; }, release: async (input) => { quotaCalls.push({ type: 'release', input }); return { reservationId: input.reservationId, state: 'released', reconciliation: 'complete' }; } } });
   const bootstrap = await app.inject({ method: 'POST', url: '/api/v1/identity/admin/bootstrap', payload: { displayName: 'Task Owner', credential: 'owner-password' } });
   const ownerId = bootstrap.json().principalId;
   const token = bootstrap.json().sessionId;
@@ -77,7 +77,7 @@ test('quota preflight rejection fails the task before an attempt or reservation 
   const aiTaskRepository = new InMemoryAiTaskRepository();
   const secretService = new InMemorySecretService();
   const fixtureAdapter = { protocolType: 'openai-compatible', protocolVersion: 'v1', descriptorVersion: 'text.v1', taskModes: ['text.chat'], streamingText: true, cancellation: true, modelListing: true, async listModels() { return [{ modelId: 'fixture-text-model', displayName: 'Fixture model', taskModes: ['text.chat'], streaming: true, tools: false, capabilitySummary: { text: true } }]; } };
-  const app = buildServer({ logger: false, providerRepository, providerConfigRepository, aiTaskRepository, secretService, providerAdapters: [fixtureAdapter], quotaAdapter: { preflight: async () => { throw Object.assign(new Error('quota_exceeded'), { statusCode: 429 }); }, reserve: async () => { throw new Error('reserve_must_not_run'); } } });
+  const app = buildServer({ logger: false, repository: new (await import('../../src/identity/repository.mjs')).InMemoryIdentityRepository(), auditRepository: new (await import('../../src/audit/outbox.mjs')).InMemoryAuditRepository(), providerRepository, providerConfigRepository, aiTaskRepository, secretService, providerAdapters: [fixtureAdapter], quotaAdapter: { preflight: async () => { throw Object.assign(new Error('quota_exceeded'), { statusCode: 429 }); }, reserve: async () => { throw new Error('reserve_must_not_run'); } } });
   const bootstrap = await app.inject({ method: 'POST', url: '/api/v1/identity/admin/bootstrap', payload: { displayName: 'Quota Owner', credential: 'owner-password' } });
   const auth = { authorization: `Bearer ${bootstrap.json().sessionId}` };
   const account = await app.inject({ method: 'POST', url: '/api/v1/provider/accounts', headers: auth, payload: { protocolType: 'openai-compatible', displayName: 'Fixture', credential: 'fixture-secret', scope: { endpoint: 'https://provider.invalid/v1' } } });
@@ -93,4 +93,58 @@ test('quota preflight rejection fails the task before an attempt or reservation 
   assert.equal(tasks[0].status, 'failed');
   assert.equal(aiTaskRepository.attempts.size, 0);
   await app.close();
+});
+
+async function setupTaskFixture({ providerRunner, quotaAdapter }) {
+  const providerRepository = new InMemoryProviderRepository();
+  const providerConfigRepository = new InMemoryProviderConfigRepository();
+  const aiTaskRepository = new InMemoryAiTaskRepository();
+  const secretService = new InMemorySecretService();
+  const fixtureAdapter = { protocolType: 'openai-compatible', protocolVersion: 'v1', descriptorVersion: 'text.v1', taskModes: ['text.chat'], streamingText: true, cancellation: true, modelListing: true, async validate() { return { descriptorVersion: 'text.v1' }; }, async listModels() { return [{ modelId: 'fixture-text-model', displayName: 'Fixture model', taskModes: ['text.chat'], streaming: true, tools: false, capabilitySummary: { text: true } }]; } };
+  const app = buildServer({ logger: false, repository: new (await import('../../src/identity/repository.mjs')).InMemoryIdentityRepository(), auditRepository: new (await import('../../src/audit/outbox.mjs')).InMemoryAuditRepository(), providerRepository, providerConfigRepository, aiTaskRepository, secretService, providerAdapters: [fixtureAdapter], providerRunner, providerEgress: {}, quotaAdapter });
+  const bootstrap = await app.inject({ method: 'POST', url: '/api/v1/identity/admin/bootstrap', payload: { displayName: 'Lifecycle Owner', credential: 'owner-password' } });
+  const auth = { authorization: `Bearer ${bootstrap.json().sessionId}` };
+  const account = await app.inject({ method: 'POST', url: '/api/v1/provider/accounts', headers: auth, payload: { protocolType: 'openai-compatible', displayName: 'Fixture', credential: 'fixture-secret', scope: { endpoint: 'https://provider.invalid/v1' } } });
+  const config = await app.inject({ method: 'POST', url: '/api/v1/provider/configs', headers: auth, payload: { providerAccountId: account.json().accountId, protocolType: 'openai-compatible', displayName: 'Fixture config', baseUrl: 'https://provider.invalid/v1' } });
+  const configId = config.json().id;
+  assert.equal((await app.inject({ method: 'POST', url: `/api/v1/provider/configs/${configId}/validate`, headers: auth })).statusCode, 200);
+  assert.equal((await app.inject({ method: 'POST', url: `/api/v1/provider/configs/${configId}/models`, headers: auth })).statusCode, 200);
+  assert.equal((await app.inject({ method: 'POST', url: `/api/v1/provider/configs/${configId}/model-policies`, headers: auth, payload: { modelId: 'fixture-text-model', enabled: true, assignedCapabilities: ['text'], defaultFor: [], baseVersion: '0' } })).statusCode, 200);
+  return { app, auth, aiTaskRepository, configId };
+}
+
+test('provider failure settles quota exactly once', async () => {
+  const calls = [];
+  const fixture = await setupTaskFixture({ providerRunner: async function* () { throw Object.assign(new Error('upstream_unavailable'), { errorKey: 'upstream_unavailable' }); }, quotaAdapter: { preflight: async () => ({ decision: 'allow' }), reserve: async (input) => { calls.push(['reserve', input]); return { reservationId: 'failure-reservation' }; }, settle: async (input) => { calls.push(['settle', input]); return { state: 'settled' }; } } });
+  const response = await fixture.app.inject({ method: 'POST', url: '/api/v1/ai-tasks', headers: fixture.auth, payload: { requestId: 'provider-failure', target: 'text', intent: 'text.chat', input: { text: 'fail' }, options: { providerConfigId: fixture.configId, modelId: 'fixture-text-model' } } });
+  await new Promise((resolve) => setTimeout(resolve, 20));
+  assert.equal((await fixture.app.inject({ method: 'GET', url: `/api/v1/ai-tasks/${response.json().taskId}`, headers: fixture.auth })).json().status, 'failed');
+  assert.deepEqual(calls.map(([type]) => type), ['reserve', 'settle']);
+  assert.equal(calls[1][1].terminalState, 'failed');
+  await fixture.app.close();
+});
+
+test('task cancellation releases quota exactly once', async () => {
+  const calls = [];
+  const fixture = await setupTaskFixture({ providerRunner: async function* ({ signal }) { while (!signal.aborted) { yield 'partial'; await new Promise((resolve) => setTimeout(resolve, 5)); } throw Object.assign(new Error('cancelled'), { errorKey: 'cancelled' }); }, quotaAdapter: { preflight: async () => ({ decision: 'allow' }), reserve: async (input) => { calls.push(['reserve', input]); return { reservationId: 'cancel-reservation' }; }, settle: async (input) => { calls.push(['settle', input]); return { state: 'settled' }; }, release: async (input) => { calls.push(['release', input]); return { state: 'released' }; } } });
+  const response = await fixture.app.inject({ method: 'POST', url: '/api/v1/ai-tasks', headers: fixture.auth, payload: { requestId: 'task-cancel', target: 'text', intent: 'text.chat', input: { text: 'cancel' }, options: { providerConfigId: fixture.configId, modelId: 'fixture-text-model' } } });
+  await new Promise((resolve) => setTimeout(resolve, 20));
+  assert.equal((await fixture.app.inject({ method: 'DELETE', url: `/api/v1/ai-tasks/${response.json().taskId}`, headers: { ...fixture.auth, 'x-dgos-csrf': 'test' } })).statusCode, 200);
+  await new Promise((resolve) => setTimeout(resolve, 20));
+  assert.equal((await fixture.app.inject({ method: 'GET', url: `/api/v1/ai-tasks/${response.json().taskId}`, headers: fixture.auth })).json().status, 'cancelled');
+  assert.equal(calls.filter(([type]) => type === 'release').length, 1);
+  assert.equal(calls.filter(([type]) => type === 'settle').length, 0);
+  await fixture.app.close();
+});
+
+test('provider timeout settles quota with estimated usage exactly once', async () => {
+  const calls = [];
+  const fixture = await setupTaskFixture({ providerRunner: async function* () { throw Object.assign(new Error('timed_out'), { errorKey: 'timed_out' }); }, quotaAdapter: { preflight: async () => ({ decision: 'allow' }), reserve: async (input) => { calls.push(['reserve', input]); return { reservationId: 'timeout-reservation' }; }, settle: async (input) => { calls.push(['settle', input]); return { state: 'settled' }; } } });
+  const response = await fixture.app.inject({ method: 'POST', url: '/api/v1/ai-tasks', headers: fixture.auth, payload: { requestId: 'task-timeout', target: 'text', intent: 'text.chat', input: { text: 'timeout' }, options: { providerConfigId: fixture.configId, modelId: 'fixture-text-model' } } });
+  await new Promise((resolve) => setTimeout(resolve, 20));
+  const snapshot = await fixture.app.inject({ method: 'GET', url: `/api/v1/ai-tasks/${response.json().taskId}`, headers: fixture.auth });
+  assert.equal(snapshot.json().status, 'timed_out');
+  assert.equal(calls.filter(([type]) => type === 'settle').length, 1);
+  assert.equal(calls.find(([type]) => type === 'settle')[1].estimated, true);
+  await fixture.app.close();
 });

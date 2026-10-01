@@ -3,10 +3,12 @@ import assert from 'node:assert/strict';
 import { buildServer } from '../../apps/api/src/server.mjs';
 import { InMemoryProviderRepository } from '../../src/provider/repository.mjs';
 import { ProviderEgress } from '../../src/security/provider-egress.mjs';
+import { InMemoryIdentityRepository } from '../../src/identity/repository.mjs';
+import { InMemoryAuditRepository } from '../../src/audit/outbox.mjs';
 
 test('provider account and controlled connection test lifecycle', async () => {
   const providerRepository = new InMemoryProviderRepository();
-  const app = buildServer({ logger: false, providerRepository });
+  const app = buildServer({ logger: false, repository: new InMemoryIdentityRepository(), auditRepository: new InMemoryAuditRepository(), providerRepository });
   const bootstrap = await app.inject({ method: 'POST', url: '/api/v1/identity/admin/bootstrap', payload: { displayName: 'Provider Admin', credential: 'provider-password' } });
   const sessionId = bootstrap.json().sessionId;
   const account = await app.inject({ method: 'POST', url: '/api/v1/provider/accounts', headers: { authorization: `Bearer ${sessionId}` }, payload: { protocolType: 'openai-compatible', displayName: 'Local Provider', credential: 'provider-secret', scope: { endpoint: 'https://api.example.com' } } });

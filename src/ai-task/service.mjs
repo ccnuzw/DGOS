@@ -68,7 +68,7 @@ export class AiTaskService {
       const key = error.errorKey ?? 'upstream_unavailable';
       const terminalState = key === 'timed_out' ? 'timed_out' : key === 'cancelled' ? 'cancelled' : 'failed';
       if (attempt) await this.repository.updateAttempt(attempt.attemptId, { state: terminalState, errorClass: key, completedAt: new Date() });
-      if (attempt) await finalizeQuota({ terminalState, usageStatus: providerStarted ? 'unavailable' : 'unavailable', estimated: terminalState === 'timed_out' && providerStarted, release: !providerStarted });
+      if (attempt) await finalizeQuota({ terminalState, usageStatus: providerStarted ? 'unavailable' : 'unavailable', estimated: terminalState === 'timed_out' && providerStarted, release: terminalState === 'cancelled' || !providerStarted });
       if (terminalState === 'cancelled') { await this.repository.transition(taskId, 'cancelled'); await this.repository.event(taskId, 'task.cancelled', {}); }
       else { await this.repository.transition(taskId, terminalState, { error: { errorKey: key } }); await this.repository.event(taskId, 'task.failed', { snapshot: safe({ ...(await this.repository.getTask(taskId)), error: { errorKey: key } }) }); }
       await this.audit?.record({ requestId: task.requestId, actorId: ownerId, action: 'ai.task.fail', targetType: 'ai_task', targetId: taskId, result: 'failed', summary: { taskId, errorClass: key, quotaFinalized: Boolean(reservationId) } });

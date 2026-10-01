@@ -1,9 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { buildServer } from '../../apps/api/src/server.mjs';
+import { InMemoryIdentityRepository } from '../../src/identity/repository.mjs';
+import { InMemoryAuditRepository } from '../../src/audit/outbox.mjs';
 
 test('identity and API key lifecycle exposes redacted contract', async () => {
-  const app = buildServer({ logger: false });
+  const app = buildServer({ logger: false, repository: new InMemoryIdentityRepository(), auditRepository: new InMemoryAuditRepository() });
   const bootstrap = await app.inject({ method: 'POST', url: '/api/v1/identity/admin/bootstrap', payload: { displayName: 'Admin', credential: 'correct horse battery staple' } });
   assert.equal(bootstrap.statusCode, 201);
   const receipt = bootstrap.json();

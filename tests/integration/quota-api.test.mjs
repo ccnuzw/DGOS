@@ -2,9 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { buildServer } from '../../apps/api/src/server.mjs';
+import { InMemoryIdentityRepository } from '../../src/identity/repository.mjs';
+import { InMemoryAuditRepository } from '../../src/audit/outbox.mjs';
 
 test('quota API enforces scopes and provides preflight, reserve, settle, query and policy contract', async () => {
-  const app = buildServer({ logger: false });
+  const app = buildServer({ logger: false, repository: new InMemoryIdentityRepository(), auditRepository: new InMemoryAuditRepository() });
   const bootstrap = await app.inject({ method: 'POST', url: '/api/v1/identity/admin/bootstrap', payload: { displayName: 'Quota Admin', credential: 'quota-secret' } });
   const sessionId = bootstrap.json().sessionId;
   const policy = await app.inject({ method: 'PUT', url: '/api/v1/quota/policies', headers: { authorization: `Bearer ${sessionId}` }, payload: { requestId: randomUUID(), baseVersion: '0', scope: { type: 'subject', id: bootstrap.json().principalId }, metric: 'requests', window: 'hour', limit: 3, softLimit: 2, effectiveAt: new Date().toISOString() } });
