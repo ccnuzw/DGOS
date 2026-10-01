@@ -35,15 +35,18 @@ import { InMemoryAiTaskRepository, PostgresAiTaskRepository } from '../../../src
 import { AiTaskService } from '../../../src/ai-task/service.mjs';
 import { AiTaskWorker } from '../../worker/src/ai-task-worker.mjs';
 
-export function buildServer({ logger = true, repository, providerRepository, providerService, providerConfigRepository, aiTaskRepository, providerRunner, dispatchTask, providerAdapters, providerEgress, quotaAdapter, secretService = new InMemorySecretService(), rateLimiter, clock, appRepository: injectedAppRepository, permissionRepository: injectedPermissionRepository, actionRepository: injectedActionRepository, systemRepository: injectedSystemRepository, actionRegistry: injectedActionRegistry, auditRepository: injectedAuditRepository, retentionRepository: injectedRetentionRepository } = {}) {
-  const resolvedRepository = repository ?? (process.env.DGOS_DATABASE_URL ? new PostgresIdentityRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryIdentityRepository());
+export function buildServer({ logger = true, repository, providerRepository, providerService, providerConfigRepository, aiTaskRepository, providerRunner, dispatchTask, providerAdapters, providerEgress, quotaAdapter, secretService = new InMemorySecretService(), rateLimiter, clock, closeDatabasePools = false, appRepository: injectedAppRepository, permissionRepository: injectedPermissionRepository, actionRepository: injectedActionRepository, systemRepository: injectedSystemRepository, actionRegistry: injectedActionRegistry, auditRepository: injectedAuditRepository, retentionRepository: injectedRetentionRepository } = {}) {
+  const pools = [];
+  const makePool = () => { const pool = new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL }); pools.push(pool); return pool; };
+  const resolvedRepository = repository ?? (process.env.DGOS_DATABASE_URL ? new PostgresIdentityRepository(makePool()) : new InMemoryIdentityRepository());
   const app = Fastify({ logger });
   const identity = new IdentityService({ repository: resolvedRepository, secretService, clock });
-  const providers = providerService ?? new ProviderService({ repository: providerRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresProviderRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryProviderRepository()), secretService, egress: new ProviderEgress(), adapters: { 'openai-compatible': createOpenAiCompatibleAdapter() } });
-  const audit = injectedAuditRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresAuditRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryAuditRepository());
-  const runtimePool = process.env.DGOS_DATABASE_URL ? new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL }) : null;
-  const governance = new GovernanceService({ retentionRepository: injectedRetentionRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresRetentionRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryRetentionRepository(audit)), auditRepository: audit });
-  const quotaPool = process.env.DGOS_DATABASE_URL ? new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL }) : null;
+  const configuredEgress = providerEgress ?? new ProviderEgress();
+  const providers = providerService ?? new ProviderService({ repository: providerRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresProviderRepository(makePool()) : new InMemoryProviderRepository()), secretService, egress: configuredEgress, adapters: { 'openai-compatible': createOpenAiCompatibleAdapter() } });
+  const audit = injectedAuditRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresAuditRepository(makePool()) : new InMemoryAuditRepository());
+  const runtimePool = process.env.DGOS_DATABASE_URL ? makePool() : null;
+  const governance = new GovernanceService({ retentionRepository: injectedRetentionRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresRetentionRepository(makePool()) : new InMemoryRetentionRepository(audit)), auditRepository: audit });
+  const quotaPool = process.env.DGOS_DATABASE_URL ? makePool() : null;
   const quota = quotaModules ? new quotaModules[1].QuotaService({ repository: quotaPool ? new quotaModules[0].PostgresQuotaRepository(quotaPool, { audit }) : new quotaModules[0].InMemoryQuotaRepository(), audit, clock }) : { preflightQuota: async () => { throw Object.assign(new Error('quota_unavailable'), { statusCode: 503 }); } };
   const appRepository = injectedAppRepository ?? (runtimePool ? new PostgresAppRepository(runtimePool) : new InMemoryAppRepository({ audit }));
   const catalog = new CatalogService({ repository: appRepository, audit });
@@ -53,15 +56,15 @@ export function buildServer({ logger = true, repository, providerRepository, pro
   const actions = new ActionService({ registry: actionRegistry, permissions, audit, repository: injectedActionRepository ?? (runtimePool ? new PostgresActionRepository(runtimePool) : new InMemoryActionRepository()) });
   const system = new SystemService({ audit, repository: injectedSystemRepository ?? (runtimePool ? new PostgresSystemRepository(runtimePool) : new InMemorySystemRepository()) });
   const providerRegistry = new ProtocolAdapterRegistry(providerAdapters ?? [createConfiguredAdapter()]);
-  const configuredEgress = providerEgress ?? new ProviderEgress();
-  const providerConfigs = new ProviderConfigService({ repository: providerConfigRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresProviderConfigRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryProviderConfigRepository()), accountRepository: providers.repository, secretService, registry: providerRegistry, egress: configuredEgress, audit });
+  const providerConfigs = new ProviderConfigService({ repository: providerConfigRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresProviderConfigRepository(makePool()) : new InMemoryProviderConfigRepository()), accountRepository: providers.repository, secretService, registry: providerRegistry, egress: configuredEgress, audit });
   const defaultQuotaAdapter = quotaModules?.[1]?.createQuotaAdapter ? quotaModules[1].createQuotaAdapter(quota) : { preflight: (input) => quota.preflight(input), reserve: (input) => quota.reserveQuota(input), settle: (input) => quota.settleUsage(input), release: (input) => quota.releaseQuota(input) };
-  const taskRepository = aiTaskRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresAiTaskRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryAiTaskRepository());
+  const taskRepository = aiTaskRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresAiTaskRepository(makePool()) : new InMemoryAiTaskRepository());
   const embeddedWorkerEnabled = !dispatchTask && taskRepository instanceof InMemoryAiTaskRepository && providerRunner;
   const aiTasks = new AiTaskService({ repository: taskRepository, configService: providerConfigs, accountRepository: providers.repository, secretService, registry: providerRegistry, egress: configuredEgress, quota: quotaAdapter ?? defaultQuotaAdapter, audit, providerRunner, dispatch: dispatchTask ? (input) => dispatchTask(input) : embeddedWorkerEnabled ? async () => {} : undefined });
   const embeddedWorker = embeddedWorkerEnabled ? new AiTaskWorker({ repository: taskRepository, taskService: aiTasks, workerId: 'embedded-api-worker', pollIntervalMs: 1, idleBackoffMs: 5 }) : null;
   embeddedWorker?.start();
   if (embeddedWorker) app.addHook('onClose', async () => embeddedWorker.stop());
+  if (closeDatabasePools && pools.length) app.addHook('onClose', async () => { await Promise.all(pools.map((pool) => pool.end())); });
   const loginLimiter = rateLimiter ?? createRateLimiter({ clock });
   const maxLoginAttempts = 5;
   const loginWindowMs = 60_000;
