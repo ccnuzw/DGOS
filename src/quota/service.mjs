@@ -31,7 +31,7 @@ export class QuotaService {
 
 export function createQuotaAdapter(service) {
   return {
-    preflight: (input) => service.preflightQuota({ ...input, metric: input.metric ?? 'requests', amount: input.amount ?? 1 }),
+    preflight: (input) => service.preflight({ ...input, metric: input.metric ?? 'requests', amount: input.amount ?? 1 }),
     reserve: (input) => service.reserveQuota(input),
     settle: (input) => service.settleUsage(input),
     release: (input) => service.releaseQuota(input),

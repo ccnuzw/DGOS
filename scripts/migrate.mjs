@@ -20,6 +20,8 @@ function dollarQuote(value) {
   return `$${tag}$${value}$${tag}$`;
 }
 
+// 0008 was applied by an earlier branch with the same SQL as 0010. Keep the
+// alias only for databases that already recorded that historical version.
 const legacyAliases = new Map([
   ['0010-quota-usage-idempotency', { version: '0008-quota-usage-idempotency', checksum: '87001b0cd6fe7dfa552f3eb278bac932ef0864af09b06cdc98c78bddd38ac5f2' }]
 ]);
@@ -32,6 +34,10 @@ export async function discoverMigrations() {
     const sql = await readFile(join(migrationsDir, file), 'utf8');
     return { version: basename(file, '.sql'), file, checksum: checksum(sql), sql };
   }));
+}
+
+export function migrationPlan(migrations) {
+  return migrations.map(({ version, file, checksum: hash }) => ({ version, file, checksum: hash }));
 }
 
 export function buildMigrationSql(migrations) {
@@ -52,6 +58,6 @@ const migrations = await discoverMigrations();
 if (process.argv.includes('--print-sql')) {
   process.stdout.write(`${buildMigrationSql(migrations)}\n`);
 } else {
-  console.log(JSON.stringify(migrations.map(({ version, file, checksum: hash }) => ({ version, file, checksum: hash })), null, 2));
+  console.log(JSON.stringify(migrationPlan(migrations), null, 2));
   console.error('Migration runner is in plan mode. Pass --print-sql and execute against the approved PostgreSQL environment.');
 }

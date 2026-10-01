@@ -163,9 +163,9 @@ export function buildServer({ logger = true, repository, providerRepository, pro
   app.get('/api/v1/action-runs/:runId', async (request) => { const auth = await appAuth(request, 'action.read'); return actions.get(request.params.runId, auth.subjectId); });
   app.delete('/api/v1/action-runs/:runId', async (request) => { const auth = await runtimeWrite(request,'action.execute'); return actions.cancel(request.params.runId, auth.subjectId, request.requestId); });
 
-  app.get('/api/v1/system/settings', async (request) => { await appAuth(request, 'system.settings.read'); return system.snapshot(); });
+  app.get('/api/v1/system/settings', async (request) => { await appAuth(request, 'system.settings.read'); return await system.snapshot(); });
   app.patch('/api/v1/system/settings', async (request) => { const auth = await runtimeWrite(request,'system.settings.write'); return system.patch({ ...request.body, actorId: auth.subjectId, requestId: request.requestId }); });
-  app.get('/api/v1/system/context', async (request) => { await appAuth(request, 'system.settings.read'); return system.context(); });
+  app.get('/api/v1/system/context', async (request) => { await appAuth(request, 'system.settings.read'); return await system.context(); });
   app.get('/api/v1/system/context/events', async (request) => { await appAuth(request, 'system.settings.read'); return { items: system.repository?.eventsAfter ? await system.repository.eventsAfter(system.scopeId,request.query?.afterVersion ?? 0) : system.getEvents(request.query?.afterVersion ?? 0) }; });
 
   app.get('/health', async () => ({ status: 'ok', service: 'dgos-api' }));

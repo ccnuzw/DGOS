@@ -51,6 +51,10 @@ test('public ProviderConfig to text task API supports explicit refresh, idempote
   assert.equal(quotaCalls.filter((call) => call.type === 'settle').length, 1);
   assert.equal(quotaCalls.find((call) => call.type === 'settle').input.terminalState, 'completed');
   assert.equal(quotaCalls.find((call) => call.type === 'settle').input.usageStatus, 'unavailable');
+  assert.deepEqual(quotaCalls.map((call) => call.type), ['preflight', 'reserve', 'settle']);
+  assert.equal(quotaCalls[0].input.taskId, receipt.taskId);
+  assert.equal(quotaCalls[1].input.taskId, receipt.taskId);
+  assert.equal(quotaCalls[1].input.attemptId, quotaCalls[2].input.attemptId);
   const events = await app.inject({ method: 'GET', url: `/api/v1/ai-tasks/${receipt.taskId}/events`, headers: auth });
   assert.match(events.headers['content-type'], /text\/event-stream/);
   const firstEvent = await aiTaskRepository.listEvents(receipt.taskId, 0);
@@ -64,5 +68,29 @@ test('public ProviderConfig to text task API supports explicit refresh, idempote
   const denied = await app.inject({ method: 'GET', url: `/api/v1/artifacts/${artifactId}`, headers: { authorization: `ApiKey ${strangerKey.json().secret}` } });
   assert.equal(denied.statusCode, 404);
   assert.equal(ownerId, config.ownerId);
+  await app.close();
+});
+
+test('quota preflight rejection fails the task before an attempt or reservation is created', async () => {
+  const providerRepository = new InMemoryProviderRepository();
+  const providerConfigRepository = new InMemoryProviderConfigRepository();
+  const aiTaskRepository = new InMemoryAiTaskRepository();
+  const secretService = new InMemorySecretService();
+  const fixtureAdapter = { protocolType: 'openai-compatible', protocolVersion: 'v1', descriptorVersion: 'text.v1', taskModes: ['text.chat'], streamingText: true, cancellation: true, modelListing: true, async listModels() { return [{ modelId: 'fixture-text-model', displayName: 'Fixture model', taskModes: ['text.chat'], streaming: true, tools: false, capabilitySummary: { text: true } }]; } };
+  const app = buildServer({ logger: false, providerRepository, providerConfigRepository, aiTaskRepository, secretService, providerAdapters: [fixtureAdapter], quotaAdapter: { preflight: async () => { throw Object.assign(new Error('quota_exceeded'), { statusCode: 429 }); }, reserve: async () => { throw new Error('reserve_must_not_run'); } } });
+  const bootstrap = await app.inject({ method: 'POST', url: '/api/v1/identity/admin/bootstrap', payload: { displayName: 'Quota Owner', credential: 'owner-password' } });
+  const auth = { authorization: `Bearer ${bootstrap.json().sessionId}` };
+  const account = await app.inject({ method: 'POST', url: '/api/v1/provider/accounts', headers: auth, payload: { protocolType: 'openai-compatible', displayName: 'Fixture', credential: 'fixture-secret', scope: { endpoint: 'https://provider.invalid/v1' } } });
+  const config = await app.inject({ method: 'POST', url: '/api/v1/provider/configs', headers: auth, payload: { providerAccountId: account.json().accountId, protocolType: 'openai-compatible', displayName: 'Fixture config', baseUrl: 'https://provider.invalid/v1' } });
+  const configId = config.json().id;
+  await app.inject({ method: 'POST', url: `/api/v1/provider/configs/${configId}/validate`, headers: auth });
+  await app.inject({ method: 'POST', url: `/api/v1/provider/configs/${configId}/models`, headers: auth });
+  await app.inject({ method: 'POST', url: `/api/v1/provider/configs/${configId}/model-policies`, headers: auth, payload: { modelId: 'fixture-text-model', enabled: true, assignedCapabilities: ['text'], defaultFor: [], baseVersion: '0' } });
+  const response = await app.inject({ method: 'POST', url: '/api/v1/ai-tasks', headers: auth, payload: { requestId: 'quota-denied-task', target: 'text', intent: 'text.chat', input: { text: 'blocked' }, options: { providerConfigId: configId, modelId: 'fixture-text-model' } } });
+  assert.equal(response.statusCode, 429);
+  const tasks = [...aiTaskRepository.tasks.values()];
+  assert.equal(tasks.length, 1);
+  assert.equal(tasks[0].status, 'failed');
+  assert.equal(aiTaskRepository.attempts.size, 0);
   await app.close();
 });

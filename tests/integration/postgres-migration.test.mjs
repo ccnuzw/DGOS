@@ -17,3 +17,12 @@ test('PostgreSQL migration runner discovers and hashes migrations', async () => 
   assert.deepEqual(migrations.map((item) => item.version), [...migrations.map((item) => item.version)].sort());
   assert.match(migrations[0].checksum, /^[a-f0-9]{64}$/);
 });
+
+test('migration runner preserves the retired 0008 history through the 0010 alias', async () => {
+  const { execFile: run } = await import('node:child_process');
+  const { promisify: toPromise } = await import('node:util');
+  const exec = toPromise(run);
+  const { stdout } = await exec(process.execPath, ['scripts/migrate.mjs', '--print-sql'], { cwd: process.cwd() });
+  assert.match(stdout, /version = '0008-quota-usage-idempotency'/);
+  assert.match(stdout, /87001b0cd6fe7dfa552f3eb278bac932ef0864af09b06cdc98c78bddd38ac5f2/);
+});

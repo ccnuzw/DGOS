@@ -22,11 +22,13 @@ test('Fastify runtime API enforces CSRF, catalog visibility and settings concurr
   const listed=await app.inject({method:'GET',url:'/api/v1/apps',headers}); assert.equal(listed.statusCode,200); assert.equal(listed.json().items.length,0);
   const approved=await app.inject({method:'POST',url:'/api/v1/apps/com.example.api/approve',headers:writeHeaders,payload:{version:'1.0.0',build:'1'}}); assert.equal(approved.statusCode,200);
   const publicList=await app.inject({method:'GET',url:'/api/v1/apps',headers}); assert.equal(publicList.json().items.length,1);
-  const settings=await app.inject({method:'GET',url:'/api/v1/system/settings',headers}); assert.equal(settings.statusCode,200);
+  const settings=await app.inject({method:'GET',url:'/api/v1/system/settings',headers}); assert.equal(settings.statusCode,200); assert.equal(settings.json().settings.appearance.mode,'system');
+  const context=await app.inject({method:'GET',url:'/api/v1/system/context',headers}); assert.equal(context.statusCode,200); assert.equal(context.json().runtimeVersion,'v1');
   const stale=await app.inject({method:'PATCH',url:'/api/v1/system/settings',headers:writeHeaders,payload:{baseVersion:'999',patch:{domain:'locale',value:{language:'zh-CN'}}}}); assert.equal(stale.statusCode,409);
   const invalid=await app.inject({method:'PATCH',url:'/api/v1/system/settings',headers:writeHeaders,payload:{baseVersion:settings.json().settingsVersion,patch:{domain:'locale',value:{language:3}}}}); assert.equal(invalid.statusCode,422);
   const undeclared=await app.inject({method:'POST',url:'/api/v1/permissions/check',headers,payload:{appId:'com.example.api',capability:'files.write',declared:[]}}); assert.equal(undeclared.statusCode,200); assert.equal(undeclared.json().decision,'deny');
   const ask=await app.inject({method:'POST',url:'/api/v1/permissions/request',headers,payload:{appId:'com.example.api',capability:'settings.write',declared:['settings.write'],requestId:'00000000-0000-0000-0000-000000000101'}}); assert.equal(ask.statusCode,202); assert.equal(ask.json().confirmationRequired,true);
+  const denied=await app.inject({method:'PATCH',url:'/api/v1/permissions',headers:writeHeaders,payload:{requestId:'00000000-0000-0000-0000-000000000101',decision:'deny'}}); assert.equal(denied.statusCode,200); assert.equal(denied.json().decision,'deny');
   const actions=await app.inject({method:'GET',url:'/api/v1/actions',headers}); assert.equal(actions.statusCode,200); assert.ok(Array.isArray(actions.json().items));
   await app.close();
 });
