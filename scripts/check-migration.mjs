@@ -8,6 +8,7 @@ const leaseSql = await readFile(join(root, 'migrations/0002-connection-test-leas
 const outboxSql = await readFile(join(root, 'migrations/0003-audit-outbox-leases.sql'), 'utf8');
 const retentionSql = await readFile(join(root, 'migrations/0004-retention-jobs.sql'), 'utf8');
 const taskSql = await readFile(join(root, 'migrations/0007-provider-config-ai-task.sql'), 'utf8');
+const quotaSql = await readFile(join(root, 'migrations/0005-quota-usage.sql'), 'utf8');
 const required = [
   'CREATE TABLE IF NOT EXISTS dgos_schema_migrations',
   'CREATE TABLE IF NOT EXISTS admin_principals',
@@ -31,8 +32,10 @@ const retentionRequired = ['CREATE TABLE IF NOT EXISTS retention_jobs', 'preview
 const taskRequired = ['CREATE TABLE IF NOT EXISTS provider_configs', 'CREATE TABLE IF NOT EXISTS model_catalogs', 'CREATE TABLE IF NOT EXISTS model_policies', 'CREATE TABLE IF NOT EXISTS ai_tasks', 'CREATE TABLE IF NOT EXISTS ai_task_attempts', 'CREATE TABLE IF NOT EXISTS ai_task_events', 'CREATE TABLE IF NOT EXISTS artifacts', 'UNIQUE(owner_id,request_id)', 'UNIQUE(owner_id,request_id,input_digest)', 'UNIQUE(task_id,sequence)'];
 const missingRetention = retentionRequired.filter((fragment) => !retentionSql.includes(fragment));
 const missingTask = taskRequired.filter((fragment) => !taskSql.includes(fragment));
-if (missing.length > 0 || missingLease.length > 0 || missingOutbox.length > 0 || missingRetention.length > 0 || missingTask.length > 0) {
-  console.error(JSON.stringify({ ok: false, missing, missingLease, missingOutbox, missingRetention, missingTask }, null, 2));
+const quotaRequired = ['CREATE TABLE IF NOT EXISTS quota_policies', 'quota_policies_lookup_idx', 'request_id uuid', 'usage_status', 'task_id, attempt_id, metric', 'quota_reconciliation_checkpoints', 'quota_reconciliation_items'];
+const missingQuota = quotaRequired.filter((fragment) => !quotaSql.includes(fragment));
+if (missing.length > 0 || missingLease.length > 0 || missingOutbox.length > 0 || missingRetention.length > 0 || missingTask.length > 0 || missingQuota.length > 0) {
+  console.error(JSON.stringify({ ok: false, missing, missingLease, missingOutbox, missingRetention, missingTask, missingQuota }, null, 2));
   process.exit(1);
 }
-console.log(JSON.stringify({ ok: true, migrations: ['0001-v1-governance.sql', '0002-connection-test-leases.sql', '0003-audit-outbox-leases.sql', '0004-retention-jobs.sql', '0007-provider-config-ai-task.sql'], requiredChecks: required.length + leaseRequired.length + outboxRequired.length + retentionRequired.length + taskRequired.length }, null, 2));
+console.log(JSON.stringify({ ok: true, migrations: ['0001-v1-governance.sql', '0002-connection-test-leases.sql', '0003-audit-outbox-leases.sql', '0004-retention-jobs.sql', '0005-quota-usage.sql', '0007-provider-config-ai-task.sql'], requiredChecks: required.length + leaseRequired.length + outboxRequired.length + retentionRequired.length + quotaRequired.length + taskRequired.length }, null, 2));
