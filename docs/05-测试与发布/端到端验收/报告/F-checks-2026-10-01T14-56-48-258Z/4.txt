@@ -1,0 +1,20 @@
+
+> dgos-v1-foundation@ check /Users/apple/Progame/DGOS
+> node --check src/security/secret-service.mjs && node --check src/security/provider-egress.mjs && node --check src/security/rate-limiter.mjs && node --check src/identity/repository.mjs && pnpm -r check
+
+Scope: 7 of 8 workspace projects
+apps/desktop check$ node scripts/check.mjs
+packages/sdk check$ node --check src/index.mjs
+packages/contracts check$ node --check src/index.mjs
+apps/web check$ node --check src/main.js
+packages/sdk check: Done
+apps/web check: Done
+apps/desktop check: DGOS desktop host configuration is complete
+packages/ui check$ node --check src/index.mjs
+apps/desktop check: Done
+packages/contracts check: Done
+packages/ui check: Done
+apps/worker check$ node --check src/worker.mjs
+apps/api check$ node --check src/server.mjs
+apps/worker check: Done
+apps/api check: Done

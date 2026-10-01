@@ -1,0 +1,345 @@
+{
+  "run_id": "F-2026-10-01T14-57-48-215Z",
+  "environment": "local-compose-fixture",
+  "commit": "d20f0fb45795eab65b1422927b47fc390c5a18f0",
+  "started_at": "2026-10-01T14:57:48.223Z",
+  "cases": [
+    {
+      "name": "Web → API → PostgreSQL → two workers → adapter → fixture → SSE/Artifact; replay",
+      "status": "passed",
+      "taskId": "06381a8c-242d-4ebd-a89a-481909838a7c",
+      "attempts": [
+        {
+          "attempt_id": "3ebf0458-1a9e-403c-8fae-792e6fe4ad02",
+          "state": "succeeded",
+          "attempts": 1
+        }
+      ],
+      "reservations": [
+        {
+          "reservation_id": "72c35f5a-5424-4708-b0a4-2c5d16ff031d",
+          "state": "settled"
+        }
+      ],
+      "usage": [
+        {
+          "usage_event_id": "d7bba0b2-57bc-4bef-8ff3-4fa31d86189a"
+        }
+      ],
+      "artifactId": "3f8de5c9-6f53-43e5-8b68-6d1b7d382ae3",
+      "sequences": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "upstreamCalls": 1
+    },
+    {
+      "name": "Provider forbidden",
+      "status": "passed",
+      "taskId": "bac7d845-edf3-4748-91b6-8698a4fed251",
+      "attempts": [
+        {
+          "attempt_id": "6cdfc6b6-0bb0-42be-8e2c-be3ad793895a",
+          "state": "failed",
+          "attempts": 1
+        }
+      ],
+      "reservations": [
+        {
+          "reservation_id": "6a84ff2e-c9d5-4d65-b814-ed86b6dfe2b6",
+          "state": "settled"
+        }
+      ],
+      "usage": [
+        {
+          "usage_event_id": "2cf76a4b-d2ec-46f4-b9e0-7d1cf570e18c"
+        }
+      ],
+      "terminal": "failed"
+    },
+    {
+      "name": "Provider malformed",
+      "status": "passed",
+      "taskId": "0e1d1a45-893d-46a1-bf52-5e3db028e50b",
+      "attempts": [
+        {
+          "attempt_id": "ea1c963f-f5aa-45ab-8e4d-189f4bc96753",
+          "state": "failed",
+          "attempts": 1
+        }
+      ],
+      "reservations": [
+        {
+          "reservation_id": "0763bc81-e0b4-43ea-b56a-1b7925a1a371",
+          "state": "settled"
+        }
+      ],
+      "usage": [
+        {
+          "usage_event_id": "bbd780c9-5f97-4f10-8564-a4e2489247b3"
+        }
+      ],
+      "terminal": "failed"
+    },
+    {
+      "name": "Provider empty",
+      "status": "passed",
+      "taskId": "241d40bc-0ed2-426d-aa3b-6c1ae5dead7d",
+      "attempts": [
+        {
+          "attempt_id": "3b65e816-15b4-43e7-9175-3703a1b6f696",
+          "state": "failed",
+          "attempts": 1
+        }
+      ],
+      "reservations": [
+        {
+          "reservation_id": "69f37b9b-fc9b-40c2-9fa0-f06a7dfe198e",
+          "state": "settled"
+        }
+      ],
+      "usage": [
+        {
+          "usage_event_id": "abd73918-f273-4d3e-97ac-9f783d9b7b03"
+        }
+      ],
+      "terminal": "failed"
+    },
+    {
+      "name": "Provider disconnect",
+      "status": "passed",
+      "taskId": "d68c54ef-bd33-4bf0-a3d8-a407b7678277",
+      "attempts": [
+        {
+          "attempt_id": "31668a30-4fc1-4c51-806c-715366c008c6",
+          "state": "failed",
+          "attempts": 1
+        }
+      ],
+      "reservations": [
+        {
+          "reservation_id": "33db7780-8f13-4fc5-a8dc-d9ce94a02939",
+          "state": "settled"
+        }
+      ],
+      "usage": [
+        {
+          "usage_event_id": "ec87744e-a27c-4f10-b265-2b33133ebf28"
+        }
+      ],
+      "terminal": "failed"
+    },
+    {
+      "name": "Provider timeout",
+      "status": "passed",
+      "taskId": "e1c3f7f6-949b-4c25-8781-32329fa1ceb9",
+      "attempts": [
+        {
+          "attempt_id": "fa5ff085-2ec9-4d98-adb5-5d4ecd03fff1",
+          "state": "timed_out",
+          "attempts": 1
+        }
+      ],
+      "reservations": [
+        {
+          "reservation_id": "ccbcba80-25b1-4b42-8e31-008c3922373b",
+          "state": "settled"
+        }
+      ],
+      "usage": [
+        {
+          "usage_event_id": "9fe488fd-7c9e-4ebd-ad01-2736dd346b01"
+        }
+      ],
+      "terminal": "timed_out"
+    },
+    {
+      "name": "Cross-process cancellation releases once",
+      "status": "passed",
+      "taskId": "43fc265b-e958-4c5b-afc0-9679954c5575",
+      "attempts": [
+        {
+          "attempt_id": "0408c91d-00fe-4968-9ad6-031fe95b79bb",
+          "state": "cancelled",
+          "attempts": 1
+        }
+      ],
+      "reservations": [
+        {
+          "reservation_id": "0d59a4fb-1f3e-43b6-8469-6b0ffb5ab867",
+          "state": "released"
+        }
+      ],
+      "usage": []
+    },
+    {
+      "name": "Expired pre-provider claim is recovered once by competing processes",
+      "status": "passed",
+      "taskId": "fd40e41b-bd97-4de7-8875-46cd15353d48",
+      "attempts": [
+        {
+          "attempt_id": "c77c266d-01d3-437c-8692-df91e33b124b",
+          "state": "succeeded",
+          "attempts": 2
+        }
+      ],
+      "reservations": [
+        {
+          "reservation_id": "4206edd7-a7f8-475a-b7e7-9914d0907ccb",
+          "state": "settled"
+        }
+      ],
+      "usage": [
+        {
+          "usage_event_id": "e83b349d-bcf4-4368-85fe-846fec7094bf"
+        }
+      ]
+    },
+    {
+      "name": "SIGKILL during upstream IO; lease recovery and unique settlement",
+      "status": "passed",
+      "taskId": "35a5a5fe-4d23-4ef2-ae5c-3f6efd252df0",
+      "attempts": [
+        {
+          "attempt_id": "f470e99b-0f38-4ac9-94ee-bb6ac78ec0e7",
+          "state": "succeeded",
+          "attempts": 2
+        }
+      ],
+      "reservations": [
+        {
+          "reservation_id": "bb95aa53-556e-4c02-91e5-4aa8f76f8c43",
+          "state": "settled"
+        }
+      ],
+      "usage": [
+        {
+          "usage_event_id": "e46e0950-8ac5-48fc-b378-16be3db7cfc1"
+        }
+      ],
+      "upstreamCalls": 2,
+      "limitation": "已发上游请求后 crash 会重发；不构成上游 exactly-once 证据。"
+    },
+    {
+      "name": "PostgreSQL assistant action / settings conflict / deny",
+      "status": "passed",
+      "runId": "7ca65d16-eb25-43c2-aee2-274b140e753a",
+      "settingsVersion": "2"
+    },
+    {
+      "name": "Browser assistant JSON input / plan / execute with PostgreSQL",
+      "status": "passed",
+      "runId": "1712f760-ae48-469d-b8cc-ee0629f3c8e5"
+    },
+    {
+      "name": "PostgreSQL API key rotation/scope/revocation/audit",
+      "status": "passed",
+      "keyId": "0cd2a539-19f1-48d7-96a6-8006ef78f661",
+      "eventIds": [
+        "8f1e1545-18d2-4ac5-bddc-d54b14074979"
+      ]
+    },
+    {
+      "name": "API restart keeps secrets/settings; login, renew and revoke",
+      "status": "passed",
+      "principalId": "6b9d1e41-1619-4953-b167-fd359d2a00ff",
+      "settingsVersion": "3"
+    },
+    {
+      "name": "Local PostgreSQL backup/restore drill",
+      "status": "passed",
+      "taskCount": 9,
+      "backupSha256": "1a3ba6286aa69d107ce09e09973856bb4b0fe2ed93925f0b4a311dd1e361efab",
+      "limitation": "不含 Redis 秘密备份；非生产灾备验收。"
+    }
+  ],
+  "limitations": [
+    "受控 HTTP Provider fixture；未验证真实外部 Provider/TLS、签名桌面、生产 KMS。",
+    "worker SIGKILL 在已发上游请求时会重发；只保证已验证场景的唯一 quota 结算。",
+    "Action recovery 尚未持久化 handler 输入并重新派发；不能宣称重启接管完成。"
+  ],
+  "migrations": [
+    {
+      "version": "0001-v1-governance",
+      "checksum": "4041158120cf8fc433117e217d41e483272e8c198e9813935d1f1ae567a833e3"
+    },
+    {
+      "version": "0002-connection-test-leases",
+      "checksum": "556fae173bf3efe8b502ab715e1ac62364e978a8e5f989a1b6bd84e2388978f8"
+    },
+    {
+      "version": "0003-audit-outbox-leases",
+      "checksum": "090a9ca7f251014e7dc8bd35544a4e71ca43c7e30b6ef2e41cdce338f70055bc"
+    },
+    {
+      "version": "0004-retention-jobs",
+      "checksum": "0030ee08a56817e4d283913d6e55e5416478bc2ebc1e156b0e008fc8e75c8145"
+    },
+    {
+      "version": "0005-quota-usage",
+      "checksum": "d037c22c993b91c64e0c54f12d78ed698e303f57fbd64ecbd027721869016e86"
+    },
+    {
+      "version": "0006-runtime",
+      "checksum": "5537f89b8475c4546fe37f6d740a6a5d0300dea17e7095d9ee2df796863b792b"
+    },
+    {
+      "version": "0007-provider-config-ai-task",
+      "checksum": "caf1f288f9f285026649ee61f0770034cedabd02439de4c6d742b9ed644a4229"
+    },
+    {
+      "version": "0009-quota-usage-dimensions",
+      "checksum": "42a11b86d92e23f9d492b34e34a697f52d062e18388cce643f4eeafd3efc5a36"
+    },
+    {
+      "version": "0010-quota-usage-idempotency",
+      "checksum": "87001b0cd6fe7dfa552f3eb278bac932ef0864af09b06cdc98c78bddd38ac5f2"
+    },
+    {
+      "version": "0011-runtime-persistence",
+      "checksum": "bc3db9fa2b38de9817fa9a545bd89971112f22b9664622b652922c6aeca86eee"
+    },
+    {
+      "version": "0012-ai-task-leases",
+      "checksum": "07c93eaa90919726c6d3384b44d0ff3c1e046434c870d0b64196e81600c19813"
+    },
+    {
+      "version": "0013-action-run-recovery",
+      "checksum": "7dda51f53af4ebd624ebfaf1fccc2a1a6d626aefffc445dba31c6c217b939186"
+    },
+    {
+      "version": "0014-audit-runtime-targets",
+      "checksum": "b837e3c5e3f7300b4dd964706b7418b3b19e2889086216eb84833986decb7f49"
+    },
+    {
+      "version": "0015-action-handler-claim",
+      "checksum": "145866e6d23ab992c4fe2e4f11715f6948788a513fa34dfb6a3f16abbc410959"
+    }
+  ],
+  "exit_code": 0,
+  "finished_at": "2026-10-01T14:58:13.498Z",
+  "command": "pnpm run test:release",
+  "working_directory": "/Users/apple/Progame/DGOS",
+  "code_version": "d20f0fb45795eab65b1422927b47fc390c5a18f0",
+  "stats": {
+    "passed": 14,
+    "failed": 0
+  },
+  "test_report": "docs/05-测试与发布/端到端验收/报告/F-2026-10-01T14-57-48-215Z.md",
+  "cleanup": "浏览器及验证 DB pool 已关闭；Compose 服务保留待操作者 down，dgos_restore 已删除。",
+  "sanitization": "只存业务 ID、状态、摘要与截图；不存 Cookie/API Key/Provider credential/备份正文。",
+  "scope": "本地跨容器任务、动作、认证、迁移和数据库恢复",
+  "asset_sha256": {
+    "scripts/release-integration.mjs": "404e4066f5949b742d9f7404b988f13d936c9cecab0551a94c542e42d77e68ce",
+    "docker-compose.integration.yml": "6e13d75cb834d77423fe850e0c0a1d3d4b0ba187943e360a6a4a6203cc9dfe8c",
+    "apps/api/src/server.mjs": "9a71d9c1a9832ed20023e84b38517d00ea089ceef3bdd9d13d3547a74e5042fb",
+    "apps/worker/src/worker.mjs": "b7d27c691d1e01bdb7a478c5fb79e3ad23c45bd10ac0fd0c8e774f54717f963a",
+    "src/ai-task/service.mjs": "e3444ee1074eb3aa04564c7bef91bb7e18c2e39c5ed169ea292207bdcd65d93c",
+    "src/provider-adapters/openai-compatible.mjs": "6501f2dbe3a9eaf4f6bd6c6dcd42643d9c36793ff0a3a568c83aef04c067123b",
+    "apps/web/src/main.js": "098369c7ea6621895d5c8cb7f5ca8b7de610b533caf4ac8ca0923cbfd1154a91"
+  },
+  "working_tree": " M \"docs/02-\\344\\272\\247\\345\\223\\201\\344\\270\\216\\347\\211\\210\\346\\234\\254/\\345\\275\\223\\345\\211\\215\\347\\211\\210\\346\\234\\254/V1-\\345\\256\\236\\347\\216\\260\\347\\212\\266\\346\\200\\201.md\"\n M \"docs/05-\\346\\265\\213\\350\\257\\225\\344\\270\\216\\345\\217\\221\\345\\270\\203/\\347\\253\\257\\345\\210\\260\\347\\253\\257\\351\\252\\214\\346\\224\\266/V1-\\347\\253\\257\\345\\210\\260\\347\\253\\257\\351\\252\\214\\346\\224\\266\\350\\247\\204\\350\\214\\203.md\"\n M \"docs/05-\\346\\265\\213\\350\\257\\225\\344\\270\\216\\345\\217\\221\\345\\270\\203/\\347\\253\\257\\345\\210\\260\\347\\253\\257\\351\\252\\214\\346\\224\\266/\\347\\224\\250\\344\\276\\213\\347\\237\\251\\351\\230\\265.md\"\n"
+}

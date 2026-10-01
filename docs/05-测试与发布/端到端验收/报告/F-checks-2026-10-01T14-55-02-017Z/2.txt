@@ -1,0 +1,16 @@
+
+> dgos-v1-foundation@ test:web:e2e /Users/apple/Progame/DGOS
+> pnpm --filter @dgos/web e2e
+
+
+> @dgos/web@ e2e /Users/apple/Progame/DGOS/apps/web
+> playwright test -c playwright.config.mjs
+
+
+Running 2 tests using 2 workers
+
+  -  1 e2e/real-workbench.spec.mjs:5:1 › real API workbench submits and resumes a streamed task
+  ✓  2 e2e/workbench.spec.mjs:3:1 › web workbench covers bootstrap, provider catalog, policy, streamed task, resume and cancel (337ms)
+
+  1 skipped
+  1 passed (1.1s)

@@ -1,0 +1,20 @@
+
+> dgos-v1-foundation@ migrate:check /Users/apple/Progame/DGOS
+> node scripts/check-migration.mjs
+
+{
+  "ok": true,
+  "migrations": [
+    "0001-v1-governance.sql",
+    "0002-connection-test-leases.sql",
+    "0003-audit-outbox-leases.sql",
+    "0004-retention-jobs.sql",
+    "0005-quota-usage.sql",
+    "0007-provider-config-ai-task.sql",
+    "0009-quota-usage-dimensions.sql",
+    "0010-quota-usage-idempotency.sql",
+    "0011-runtime-persistence.sql",
+    "0012-ai-task-leases.sql"
+  ],
+  "requiredChecks": 57
+}

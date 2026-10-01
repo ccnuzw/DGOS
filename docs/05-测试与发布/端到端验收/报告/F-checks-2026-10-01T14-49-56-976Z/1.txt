@@ -1,0 +1,406 @@
+
+> dgos-v1-foundation@ test /Users/apple/Progame/DGOS
+> node --test --test-concurrency=1
+
+TAP version 13
+# Subtest: apps/worker/src/test-provider-runner.mjs
+ok 1 - apps/worker/src/test-provider-runner.mjs
+  ---
+  duration_ms: 31.227084
+  type: 'test'
+  ...
+# Subtest: public ProviderConfig to text task API supports explicit refresh, idempotency, SSE resume and artifact authorization
+ok 2 - public ProviderConfig to text task API supports explicit refresh, idempotency, SSE resume and artifact authorization
+  ---
+  duration_ms: 87.114042
+  type: 'test'
+  ...
+# Subtest: quota preflight rejection fails the task before an attempt or reservation is created
+ok 3 - quota preflight rejection fails the task before an attempt or reservation is created
+  ---
+  duration_ms: 8.621292
+  type: 'test'
+  ...
+# Subtest: provider failure settles quota exactly once
+ok 4 - provider failure settles quota exactly once
+  ---
+  duration_ms: 31.22125
+  type: 'test'
+  ...
+# Subtest: task cancellation releases quota exactly once
+ok 5 - task cancellation releases quota exactly once
+  ---
+  duration_ms: 48.776792
+  type: 'test'
+  ...
+# Subtest: provider timeout settles quota with estimated usage exactly once
+ok 6 - provider timeout settles quota with estimated usage exactly once
+  ---
+  duration_ms: 30.971709
+  type: 'test'
+  ...
+# Subtest: AI task worker claims queued attempts and reclaims expired leases
+ok 7 - AI task worker claims queued attempts and reclaims expired leases
+  ---
+  duration_ms: 17.912292
+  type: 'test'
+  ...
+# Subtest: AI task worker passes the claimed attempt and persisted input to the service
+ok 8 - AI task worker passes the claimed attempt and persisted input to the service
+  ---
+  duration_ms: 0.39125
+  type: 'test'
+  ...
+# Subtest: AI task worker runs a continuous loop and stops without claiming after stop
+ok 9 - AI task worker runs a continuous loop and stops without claiming after stop
+  ---
+  duration_ms: 6.374625
+  type: 'test'
+  ...
+# Subtest: lease loss prevents worker service from committing terminal state
+ok 10 - lease loss prevents worker service from committing terminal state
+  ---
+  duration_ms: 0.326459
+  type: 'test'
+  ...
+# Subtest: audit outbox publisher retries failures and marks success once
+ok 11 - audit outbox publisher retries failures and marks success once
+  ---
+  duration_ms: 0.755208
+  type: 'test'
+  ...
+# Subtest: identity and API key lifecycle exposes redacted contract
+ok 12 - identity and API key lifecycle exposes redacted contract
+  ---
+  duration_ms: 63.386791
+  type: 'test'
+  ...
+# Subtest: V1 governance migration contains required idempotency and safety constraints
+ok 13 - V1 governance migration contains required idempotency and safety constraints
+  ---
+  duration_ms: 2.799042
+  type: 'test'
+  ...
+# Subtest: V1 runtime migration contains persistent control-plane tables
+ok 14 - V1 runtime migration contains persistent control-plane tables
+  ---
+  duration_ms: 1.131625
+  type: 'test'
+  ...
+# Subtest: PostgreSQL persists provider catalogs, policies, tasks, ordered events and artifacts
+ok 15 - PostgreSQL persists provider catalogs, policies, tasks, ordered events and artifacts
+  ---
+  duration_ms: 53.154541
+  type: 'test'
+  ...
+# Subtest: PostgreSQL audit outbox publisher claim and idempotent publish
+ok 16 - PostgreSQL audit outbox publisher claim and idempotent publish
+  ---
+  duration_ms: 26.963042
+  type: 'test'
+  ...
+# Subtest: identity renew audit commits with the session update
+ok 17 - identity renew audit commits with the session update
+  ---
+  duration_ms: 17.459459
+  type: 'test'
+  ...
+# Subtest: PostgreSQL repository persists identity, key digest, and audit outbox
+ok 18 - PostgreSQL repository persists identity, key digest, and audit outbox
+  ---
+  duration_ms: 46.905167
+  type: 'test'
+  ...
+# Subtest: PostgreSQL migration runner discovers and hashes migrations
+ok 19 - PostgreSQL migration runner discovers and hashes migrations
+  ---
+  duration_ms: 41.759833
+  type: 'test'
+  ...
+# Subtest: migration runner preserves the retired 0008 history through the 0010 alias
+ok 20 - migration runner preserves the retired 0008 history through the 0010 alias
+  ---
+  duration_ms: 38.642875
+  type: 'test'
+  ...
+# Subtest: PostgreSQL connection test lease is claimed by one worker and finished once
+ok 21 - PostgreSQL connection test lease is claimed by one worker and finished once
+  ---
+  duration_ms: 29.859042
+  type: 'test'
+  ...
+# Subtest: PostgreSQL provider repository persists account and connection test snapshots
+ok 22 - PostgreSQL provider repository persists account and connection test snapshots
+  ---
+  duration_ms: 22.149458
+  type: 'test'
+  ...
+# Subtest: PostgreSQL quota reservation concurrency, idempotency, settlement and checkpoint recovery
+ok 23 - PostgreSQL quota reservation concurrency, idempotency, settlement and checkpoint recovery
+  ---
+  duration_ms: 80.303458
+  type: 'test'
+  ...
+# Subtest: PostgreSQL retention job deletes expired audit rows in resumable batches
+ok 24 - PostgreSQL retention job deletes expired audit rows in resumable batches
+  ---
+  duration_ms: 38.004917
+  type: 'test'
+  ...
+# Subtest: PostgreSQL runtime repositories persist restart-readable state
+ok 25 - PostgreSQL runtime repositories persist restart-readable state
+  ---
+  duration_ms: 48.391625
+  type: 'test'
+  ...
+# Subtest: provider account and controlled connection test lifecycle
+ok 26 - provider account and controlled connection test lifecycle
+  ---
+  duration_ms: 56.214334
+  type: 'test'
+  ...
+# Subtest: ProviderEgress rejects private and non-HTTPS targets before adapter fetch
+ok 27 - ProviderEgress rejects private and non-HTTPS targets before adapter fetch
+  ---
+  duration_ms: 0.443958
+  type: 'test'
+  ...
+# Subtest: provider worker claims queued tests and converges them once
+ok 28 - provider worker claims queued tests and converges them once
+  ---
+  duration_ms: 2.342083
+  type: 'test'
+  ...
+# Subtest: expired provider worker lease can be reclaimed
+ok 29 - expired provider worker lease can be reclaimed
+  ---
+  duration_ms: 0.169917
+  type: 'test'
+  ...
+# Subtest: quota API enforces scopes and provides preflight, reserve, settle, query and policy contract
+ok 30 - quota API enforces scopes and provides preflight, reserve, settle, query and policy contract
+  ---
+  duration_ms: 83.450459
+  type: 'test'
+  ...
+# Subtest: real PostgreSQL/API/provider fixture workflow records durable evidence
+ok 31 - real PostgreSQL/API/provider fixture workflow records durable evidence
+  ---
+  duration_ms: 6378.535291
+  type: 'test'
+  ...
+# Subtest: Redis rate limiter and secret backend work against local Redis
+ok 32 - Redis rate limiter and secret backend work against local Redis
+  ---
+  duration_ms: 11.536917
+  type: 'test'
+  ...
+# Subtest: retention sweep requires scope and returns a preview digest
+ok 33 - retention sweep requires scope and returns a preview digest
+  ---
+  duration_ms: 52.945667
+  type: 'test'
+  ...
+# Subtest: Fastify runtime API enforces CSRF, catalog visibility and settings concurrency
+ok 34 - Fastify runtime API enforces CSRF, catalog visibility and settings concurrency
+  ---
+  duration_ms: 53.667958
+  type: 'test'
+  ...
+# Subtest: Fastify runtime API isolates API key subject fields
+ok 35 - Fastify runtime API isolates API key subject fields
+  ---
+  duration_ms: 7.016167
+  type: 'test'
+  ...
+# (node:68611) [FSTWRN004] FastifyWarning: It seems that you are overriding an errorHandler in the same scope, which can lead to subtle bugs. To disable this behavior, set 'allowErrorHandlerOverride' to false. For more information, visit: https://fastify.dev/docs/latest/Reference/Server/\#allowerrorhandleroverride
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Fastify runtime API uses PostgreSQL repositories across server restart
+ok 36 - Fastify runtime API uses PostgreSQL repositories across server restart
+  ---
+  duration_ms: 82.962417
+  type: 'test'
+  ...
+# Subtest: fixture exposes OpenAI models structure
+ok 37 - fixture exposes OpenAI models structure
+  ---
+  duration_ms: 15.853917
+  type: 'test'
+  ...
+# Subtest: fixture emits parseable chat completion SSE
+ok 38 - fixture emits parseable chat completion SSE
+  ---
+  duration_ms: 6.310958
+  type: 'test'
+  ...
+# Subtest: fixture rejects missing or invalid authorization and supports forbidden scenario
+ok 39 - fixture rejects missing or invalid authorization and supports forbidden scenario
+  ---
+  duration_ms: 5.582291
+  type: 'test'
+  ...
+# Subtest: adapter can list models and stream from the real fixture
+ok 40 - adapter can list models and stream from the real fixture
+  ---
+  duration_ms: 5.026708
+  type: 'test'
+  ...
+# Subtest: adapter maps timeout, disconnect, malformed and empty streams
+ok 41 - adapter maps timeout, disconnect, malformed and empty streams
+  ---
+  duration_ms: 40.475125
+  type: 'test'
+  ...
+# Subtest: pinned transport enforces response size and timeout limits
+ok 42 - pinned transport enforces response size and timeout limits
+  ---
+  duration_ms: 2.863125
+  type: 'test'
+  ...
+# Subtest: default transport dials the validated IP while retaining TLS host verification
+ok 43 - default transport dials the validated IP while retaining TLS host verification
+  ---
+  duration_ms: 108.915667
+  type: 'test'
+  ...
+# Subtest: ProviderEgress blocks private and metadata targets before fetch
+ok 44 - ProviderEgress blocks private and metadata targets before fetch
+  ---
+  duration_ms: 3.047167
+  type: 'test'
+  ...
+# Subtest: ProviderEgress requires HTTPS and rejects redirects
+ok 45 - ProviderEgress requires HTTPS and rejects redirects
+  ---
+  duration_ms: 1.190875
+  type: 'test'
+  ...
+# Subtest: ProviderEgress rejects mixed DNS answers instead of allowing rebinding candidates
+ok 46 - ProviderEgress rejects mixed DNS answers instead of allowing rebinding candidates
+  ---
+  duration_ms: 0.591541
+  type: 'test'
+  ...
+# Subtest: ProviderEgress rejects IPv6 loopback, link-local, and unique-local targets
+ok 47 - ProviderEgress rejects IPv6 loopback, link-local, and unique-local targets
+  ---
+  duration_ms: 0.139833
+  type: 'test'
+  ...
+# Subtest: in-memory rate limiter resets after its window
+ok 48 - in-memory rate limiter resets after its window
+  ---
+  duration_ms: 0.399583
+  type: 'test'
+  ...
+# Subtest: SecretService scopes and expires short-lived handles
+ok 49 - SecretService scopes and expires short-lived handles
+  ---
+  duration_ms: 0.9015
+  type: 'test'
+  ...
+# Subtest: API key verification is digest based and does not require plaintext storage
+ok 50 - API key verification is digest based and does not require plaintext storage
+  ---
+  duration_ms: 0.249833
+  type: 'test'
+  ...
+# Subtest: V1-E2E-11 authentication session, expiry, origin and high-risk authorization
+ok 51 - V1-E2E-11 authentication session, expiry, origin and high-risk authorization
+  ---
+  duration_ms: 55.157917
+  type: 'test'
+  ...
+# Subtest: V1-E2E-12 API key one-time secret, isolation, overlap, revoke and expiry
+ok 52 - V1-E2E-12 API key one-time secret, isolation, overlap, revoke and expiry
+  ---
+  duration_ms: 11.637416
+  type: 'test'
+  ...
+# Subtest: V1-E2E-13 provider account connection controls reject SSRF and owner violations before enqueue
+ok 53 - V1-E2E-13 provider account connection controls reject SSRF and owner violations before enqueue
+  ---
+  duration_ms: 8.4835
+  type: 'test'
+  ...
+# Subtest: V1-E2E-14 audit correlation, redaction, outbox retry and retention recovery
+ok 54 - V1-E2E-14 audit correlation, redaction, outbox retry and retention recovery
+  ---
+  duration_ms: 9.456875
+  type: 'test'
+  ...
+# Subtest: quota preflight and reservation are bounded and idempotent
+ok 55 - quota preflight and reservation are bounded and idempotent
+  ---
+  duration_ms: 2.743667
+  type: 'test'
+  ...
+# Subtest: settlement handles terminal states, missing usage and replay
+ok 56 - settlement handles terminal states, missing usage and replay
+  ---
+  duration_ms: 1.310125
+  type: 'test'
+  ...
+# Subtest: usage query is subject isolated and reconciliation expires reservations
+ok 57 - usage query is subject isolated and reconciliation expires reservations
+  ---
+  duration_ms: 0.376792
+  type: 'test'
+  ...
+# Subtest: manifest validation and digest
+ok 58 - manifest validation and digest
+  ---
+  duration_ms: 1.303875
+  type: 'test'
+  ...
+# Subtest: catalog visibility and developer test install
+ok 59 - catalog visibility and developer test install
+  ---
+  duration_ms: 1.374416
+  type: 'test'
+  ...
+# Subtest: health failure rolls back and uninstall retains data
+ok 60 - health failure rolls back and uninstall retains data
+  ---
+  duration_ms: 0.960875
+  type: 'test'
+  ...
+# Subtest: permission deny precedence and revoke
+ok 61 - permission deny precedence and revoke
+  ---
+  duration_ms: 0.236625
+  type: 'test'
+  ...
+# Subtest: permission request transitions are expiring, idempotent and race-safe
+ok 62 - permission request transitions are expiring, idempotent and race-safe
+  ---
+  duration_ms: 0.515708
+  type: 'test'
+  ...
+# Subtest: action plan has no handler side effect and executes once
+ok 63 - action plan has no handler side effect and executes once
+  ---
+  duration_ms: 3.225875
+  type: 'test'
+  ...
+# Subtest: action run lease heartbeat and reclaim preserve exactly-once execution
+ok 64 - action run lease heartbeat and reclaim preserve exactly-once execution
+  ---
+  duration_ms: 82.754833
+  type: 'test'
+  ...
+# Subtest: settings optimistic concurrency and context redaction
+ok 65 - settings optimistic concurrency and context redaction
+  ---
+  duration_ms: 1.018167
+  type: 'test'
+  ...
+1..65
+# tests 65
+# suites 0
+# pass 65
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 80873.849

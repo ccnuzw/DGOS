@@ -1,0 +1,18 @@
+Scope: 7 of 8 workspace projects
+apps/desktop build$ node scripts/check.mjs && cargo check --manifest-path src-tauri/Cargo.toml
+packages/contracts build$ node --check src/index.mjs
+apps/web build$ node --check src/main.js && node -e "const fs=require('fs'); for (const f of ['index.html','src/style.css']) if (!fs.existsSync(f)) process.exit(1)"
+packages/sdk build$ node --check src/index.mjs
+packages/sdk build: Done
+packages/ui build$ node --check src/index.mjs
+apps/desktop build: DGOS desktop host configuration is complete
+packages/contracts build: Done
+apps/web build: Done
+packages/ui build: Done
+apps/desktop build:    Compiling dgos-desktop v0.1.0 (/Users/apple/Progame/DGOS/apps/desktop/src-tauri)
+apps/desktop build:     Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.64s
+apps/desktop build: Done
+apps/api build$ node --check src/server.mjs
+apps/worker build$ node --check src/worker.mjs
+apps/worker build: Done
+apps/api build: Done

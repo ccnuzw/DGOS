@@ -1,0 +1,1503 @@
+{
+  "ok": false,
+  "phase": "release",
+  "errors": [
+    {
+      "level": "error",
+      "file": "docs/05-测试与发布/端到端验收/用例矩阵.md",
+      "line": 0,
+      "code": "SDD_REVIEW_E2E_FACT_TYPE_MISSING",
+      "message": "V1-E2E-01 的最终断言没有明确事实类型"
+    },
+    {
+      "level": "error",
+      "file": "docs/05-测试与发布/端到端验收/用例矩阵.md",
+      "line": 0,
+      "code": "SDD_REVIEW_E2E_FACT_TYPE_MISSING",
+      "message": "V1-E2E-02 的最终断言没有明确事实类型"
+    },
+    {
+      "level": "error",
+      "file": "docs/05-测试与发布/端到端验收/用例矩阵.md",
+      "line": 0,
+      "code": "SDD_REVIEW_E2E_FACT_TYPE_MISSING",
+      "message": "V1-E2E-03 的最终断言没有明确事实类型"
+    },
+    {
+      "level": "error",
+      "file": "docs/05-测试与发布/端到端验收/用例矩阵.md",
+      "line": 0,
+      "code": "SDD_REVIEW_E2E_FACT_TYPE_MISSING",
+      "message": "V1-E2E-05 的最终断言没有明确事实类型"
+    },
+    {
+      "level": "error",
+      "file": "docs/05-测试与发布/端到端验收/用例矩阵.md",
+      "line": 0,
+      "code": "SDD_REVIEW_E2E_FACT_TYPE_MISSING",
+      "message": "V1-E2E-07 的最终断言没有明确事实类型"
+    },
+    {
+      "level": "error",
+      "file": "docs/05-测试与发布/端到端验收/用例矩阵.md",
+      "line": 0,
+      "code": "SDD_REVIEW_E2E_FACT_TYPE_MISSING",
+      "message": "V1-E2E-09 的最终断言没有明确事实类型"
+    },
+    {
+      "level": "error",
+      "file": "docs/05-测试与发布/端到端验收/用例矩阵.md",
+      "line": 0,
+      "code": "SDD_REVIEW_E2E_FACT_TYPE_MISSING",
+      "message": "V1-E2E-10 的最终断言没有明确事实类型"
+    },
+    {
+      "level": "error",
+      "file": "docs/05-测试与发布/端到端验收/用例矩阵.md",
+      "line": 0,
+      "code": "SDD_REVIEW_E2E_FACT_TYPE_MISSING",
+      "message": "V1-E2E-11 的最终断言没有明确事实类型"
+    },
+    {
+      "level": "error",
+      "file": "docs/05-测试与发布/端到端验收/用例矩阵.md",
+      "line": 0,
+      "code": "SDD_REVIEW_E2E_FACT_TYPE_MISSING",
+      "message": "V1-E2E-16 的最终断言没有明确事实类型"
+    },
+    {
+      "level": "error",
+      "file": "docs/05-测试与发布/端到端验收/用例矩阵.md",
+      "line": 5,
+      "code": "SDD_REVIEW_E2E_AUDIT_COLUMN_MISSING",
+      "message": "E2E 矩阵缺少审计列：必须真实的本系统依赖"
+    },
+    {
+      "level": "error",
+      "file": "docs/05-测试与发布/端到端验收/用例矩阵.md",
+      "line": 5,
+      "code": "SDD_REVIEW_E2E_AUDIT_COLUMN_MISSING",
+      "message": "E2E 矩阵缺少审计列：断言事实类型"
+    },
+    {
+      "level": "error",
+      "file": "docs/05-测试与发布/端到端验收/用例矩阵.md",
+      "line": 5,
+      "code": "SDD_REVIEW_E2E_AUDIT_COLUMN_MISSING",
+      "message": "E2E 矩阵缺少审计列：目标测试文件"
+    },
+    {
+      "level": "error",
+      "file": "docs/03-功能规格/V1/01-桌面与系统/01-桌面与应用工作区.md",
+      "line": 256,
+      "code": "AC_PENDING",
+      "message": "发布模式要求 AC 全部闭环，当前状态：规划中"
+    },
+    {
+      "level": "error",
+      "file": "docs/03-功能规格/V1/02-开发者体验/01-开发者中心与APP生命周期.md",
+      "line": 202,
+      "code": "AC_PENDING",
+      "message": "发布模式要求 AC 全部闭环，当前状态：规划中"
+    },
+    {
+      "level": "error",
+      "file": "docs/03-功能规格/V1/03-Agent与协议/01-SkillMCP与Agent接入.md",
+      "line": 289,
+      "code": "AC_PENDING",
+      "message": "发布模式要求 AC 全部闭环，当前状态：规划中"
+    },
+    {
+      "level": "error",
+      "file": "docs/03-功能规格/V1/05-AI工作流/01-多模态AI任务工作流.md",
+      "line": 204,
+      "code": "AC_PENDING",
+      "message": "发布模式要求 AC 全部闭环，当前状态：规划中"
+    },
+    {
+      "level": "error",
+      "file": "docs/03-功能规格/V1/07-模型与配置/01-模型平台与工作流配置.md",
+      "line": 309,
+      "code": "AC_PENDING",
+      "message": "发布模式要求 AC 全部闭环，当前状态：规划中"
+    },
+    {
+      "level": "error",
+      "file": "docs/03-功能规格/V1/09-系统助手/01-系统智能助手与快捷指令.md",
+      "line": 273,
+      "code": "AC_PENDING",
+      "message": "发布模式要求 AC 全部闭环，当前状态：规划中"
+    },
+    {
+      "level": "error",
+      "file": "docs/03-功能规格/V1/10-身份与治理/01-管理员登录与会话.md",
+      "line": 180,
+      "code": "AC_PENDING",
+      "message": "发布模式要求 AC 全部闭环，当前状态：规划中"
+    },
+    {
+      "level": "error",
+      "file": "docs/03-功能规格/V1/10-身份与治理/02-API-Key生命周期.md",
+      "line": 181,
+      "code": "AC_PENDING",
+      "message": "发布模式要求 AC 全部闭环，当前状态：规划中"
+    },
+    {
+      "level": "error",
+      "file": "docs/03-功能规格/V1/10-身份与治理/03-Provider账号与连接.md",
+      "line": 183,
+      "code": "AC_PENDING",
+      "message": "发布模式要求 AC 全部闭环，当前状态：规划中"
+    },
+    {
+      "level": "error",
+      "file": "docs/03-功能规格/V1/10-身份与治理/04-上游账号连接测试.md",
+      "line": 179,
+      "code": "AC_PENDING",
+      "message": "发布模式要求 AC 全部闭环，当前状态：规划中"
+    },
+    {
+      "level": "error",
+      "file": "docs/03-功能规格/V1/10-身份与治理/05-审计与管理员系统治理.md",
+      "line": 183,
+      "code": "AC_PENDING",
+      "message": "发布模式要求 AC 全部闭环，当前状态：规划中"
+    },
+    {
+      "level": "error",
+      "file": "docs-gate.json",
+      "line": 0,
+      "code": "COMMAND_REGISTRY_OFF",
+      "message": "未配置 commandRegistry，跳过命令登记校验"
+    },
+    {
+      "level": "error",
+      "file": "docs-evidence.json",
+      "line": 0,
+      "code": "APPROVAL_DIGEST_MISSING",
+      "message": "审批摘要未填写：运行 node scripts/docs-gate.mjs --authority-digest 后写入 approvals.authority_digest"
+    },
+    {
+      "level": "error",
+      "file": "docs-evidence.json",
+      "line": 0,
+      "code": "APPROVAL_PROPOSAL_MISSING",
+      "message": "审批缺少 proposal_id"
+    },
+    {
+      "level": "error",
+      "file": "docs-evidence.json",
+      "line": 0,
+      "code": "APPROVAL_ROLE_MISSING",
+      "message": "缺少审批角色：product"
+    },
+    {
+      "level": "error",
+      "file": "docs-evidence.json",
+      "line": 0,
+      "code": "APPROVAL_ROLE_MISSING",
+      "message": "缺少审批角色：technical"
+    },
+    {
+      "level": "error",
+      "file": "docs-evidence.json",
+      "line": 0,
+      "code": "APPROVAL_ROLE_MISSING",
+      "message": "缺少审批角色：release_manager"
+    },
+    {
+      "level": "error",
+      "file": "docs-evidence.json",
+      "line": 0,
+      "code": "APPROVAL_DATE_INVALID",
+      "message": "审批时间缺失、格式错误或位于未来"
+    },
+    {
+      "level": "error",
+      "file": "docs-evidence.json",
+      "line": 0,
+      "code": "COMMIT_MISSING",
+      "message": "证据清单未声明 commit"
+    },
+    {
+      "level": "error",
+      "file": "docs-evidence.json",
+      "line": 0,
+      "code": "REPORT_MISSING",
+      "message": "证据清单缺少 development 报告（development / e2e / release 为必需）"
+    },
+    {
+      "level": "error",
+      "file": "docs-evidence.json",
+      "line": 0,
+      "code": "REPORT_MISSING",
+      "message": "证据清单缺少 e2e 报告（development / e2e / release 为必需）"
+    },
+    {
+      "level": "error",
+      "file": "docs-evidence.json",
+      "line": 0,
+      "code": "REPORT_MISSING",
+      "message": "证据清单缺少 release 报告（development / e2e / release 为必需）"
+    }
+  ],
+  "warnings": [
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/01-桌面与系统/01-桌面与应用工作区.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-001/AC01 引用的测试资产不存在：tests/e2e/desktop.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/01-桌面与系统/01-桌面与应用工作区.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-001/AC01,AC02,AC03,AC04,AC05,AC06,AC07,AC08 引用的测试资产不存在：tests/e2e/desktop.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/01-桌面与系统/01-桌面与应用工作区.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-001/AC01,AC02,AC03,AC04,AC05,AC06,AC07,AC08 引用的测试资产不存在：tests/e2e/system-settings.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/01-桌面与系统/01-桌面与应用工作区.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-001/AC02 引用的测试资产不存在：tests/e2e/desktop-failure.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/01-桌面与系统/01-桌面与应用工作区.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-001/AC03 引用的测试资产不存在：tests/e2e/system-info.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/01-桌面与系统/01-桌面与应用工作区.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-001/AC04 引用的测试资产不存在：tests/e2e/system-settings.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/01-桌面与系统/01-桌面与应用工作区.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-001/AC05 引用的测试资产不存在：tests/e2e/locale-settings.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/01-桌面与系统/01-桌面与应用工作区.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-001/AC06 引用的测试资产不存在：tests/e2e/network-settings.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/01-桌面与系统/01-桌面与应用工作区.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-001/AC07,AC08 引用的测试资产不存在：tests/e2e/permission-boundary.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/02-开发者体验/01-开发者中心与APP生命周期.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-002/AC01 引用的测试资产不存在：tests/fixtures/app-invalid.zip"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/02-开发者体验/01-开发者中心与APP生命周期.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-002/AC01,AC02,AC03 引用的测试资产不存在：tests/e2e/developer-center.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/02-开发者体验/01-开发者中心与APP生命周期.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-002/AC02 引用的测试资产不存在：tests/e2e/release-rollback.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/02-开发者体验/01-开发者中心与APP生命周期.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-002/AC03 引用的测试资产不存在：tests/e2e/app-catalog-lifecycle.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/03-Agent与协议/01-SkillMCP与Agent接入.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-003/AC01 引用的测试资产不存在：tests/fixtures/agent-tools-invalid.json"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/03-Agent与协议/01-SkillMCP与Agent接入.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-003/AC01,AC02,AC03,AC04,AC05,AC06,AC07,AC08 引用的测试资产不存在：tests/e2e/agent-tools.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/03-Agent与协议/01-SkillMCP与Agent接入.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-003/AC01,AC02,AC03,AC04,AC05,AC06,AC07,AC08 引用的测试资产不存在：tests/e2e/mcp-management.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/03-Agent与协议/01-SkillMCP与Agent接入.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-003/AC01,AC02,AC03,AC04,AC05,AC06,AC07,AC08 引用的测试资产不存在：tests/e2e/mcp-quick-config.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/03-Agent与协议/01-SkillMCP与Agent接入.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-003/AC01,AC02,AC03,AC04,AC05,AC06,AC07,AC08 引用的测试资产不存在：tests/e2e/mcp-lifecycle.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/03-Agent与协议/01-SkillMCP与Agent接入.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-003/AC01,AC02,AC03,AC04,AC05,AC06,AC07,AC08 引用的测试资产不存在：tests/e2e/mcp-persistent-run.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/03-Agent与协议/01-SkillMCP与Agent接入.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-003/AC01,AC02,AC03,AC04,AC05,AC06,AC07,AC08 引用的测试资产不存在：tests/e2e/skill-management.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/03-Agent与协议/01-SkillMCP与Agent接入.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-003/AC01,AC02,AC03,AC04,AC05,AC06,AC07,AC08 引用的测试资产不存在：tests/e2e/skill-import-preview.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/03-Agent与协议/01-SkillMCP与Agent接入.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-003/AC02 引用的测试资产不存在：tests/e2e/agent-timeout.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/03-Agent与协议/01-SkillMCP与Agent接入.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-003/AC03 引用的测试资产不存在：tests/e2e/mcp-management.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/03-Agent与协议/01-SkillMCP与Agent接入.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-003/AC04 引用的测试资产不存在：tests/e2e/skill-management.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/03-Agent与协议/01-SkillMCP与Agent接入.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-003/AC05 引用的测试资产不存在：tests/e2e/mcp-quick-config.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/03-Agent与协议/01-SkillMCP与Agent接入.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-003/AC06 引用的测试资产不存在：tests/e2e/mcp-lifecycle.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/03-Agent与协议/01-SkillMCP与Agent接入.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-003/AC07 引用的测试资产不存在：tests/e2e/skill-import-preview.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/03-Agent与协议/01-SkillMCP与Agent接入.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-003/AC08 引用的测试资产不存在：tests/e2e/mcp-persistent-run.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/05-AI工作流/01-多模态AI任务工作流.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-005/AC01 引用的测试资产不存在：tests/e2e/ai-workflow.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/05-AI工作流/01-多模态AI任务工作流.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-005/AC01,AC02,AC08 引用的测试资产不存在：tests/e2e/ai-workflow.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/05-AI工作流/01-多模态AI任务工作流.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-005/AC01,AC02,AC08 引用的测试资产不存在：tests/integration/ai-task-stream.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/05-AI工作流/01-多模态AI任务工作流.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-005/AC02 引用的测试资产不存在：tests/fixtures/ai-task-failure.json"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/05-AI工作流/01-多模态AI任务工作流.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-005/AC08 引用的测试资产不存在：tests/integration/ai-task-stream.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/07-模型与配置/01-模型平台与工作流配置.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-007/AC01 引用的测试资产不存在：tests/e2e/model-config.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/07-模型与配置/01-模型平台与工作流配置.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-007/AC01,AC02,AC04,AC05,AC06,AC07,AC08,AC09 引用的测试资产不存在：tests/e2e/model-config.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/07-模型与配置/01-模型平台与工作流配置.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-007/AC01,AC02,AC04,AC05,AC06,AC07,AC08,AC09 引用的测试资产不存在：tests/e2e/model-capability-filter.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/07-模型与配置/01-模型平台与工作流配置.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-007/AC01,AC02,AC04,AC05,AC06,AC07,AC08,AC09 引用的测试资产不存在：tests/integration/provider-registry.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/07-模型与配置/01-模型平台与工作流配置.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-007/AC01,AC02,AC04,AC05,AC06,AC07,AC08,AC09 引用的测试资产不存在：tests/integration/capability-protocol.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/07-模型与配置/01-模型平台与工作流配置.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-007/AC02 引用的测试资产不存在：tests/fixtures/provider-invalid.json"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/07-模型与配置/01-模型平台与工作流配置.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-007/AC04 引用的测试资产不存在：tests/integration/provider-registry.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/07-模型与配置/01-模型平台与工作流配置.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-007/AC05 引用的测试资产不存在：tests/e2e/model-capability-filter.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/07-模型与配置/01-模型平台与工作流配置.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-007/AC06 引用的测试资产不存在：tests/e2e/provider-no-export.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/07-模型与配置/01-模型平台与工作流配置.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-007/AC07 引用的测试资产不存在：tests/e2e/model-capability-filter.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/07-模型与配置/01-模型平台与工作流配置.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-007/AC08 引用的测试资产不存在：tests/integration/capability-protocol.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/07-模型与配置/01-模型平台与工作流配置.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-007/AC09 引用的测试资产不存在：tests/integration/capability-protocol.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/07-模型与配置/01-模型平台与工作流配置.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-007/AC09 引用的测试资产不存在：tests/security/capability-protocol.security.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/09-系统助手/01-系统智能助手与快捷指令.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-009/AC01 引用的测试资产不存在：tests/e2e/assistant-shortcuts.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/09-系统助手/01-系统智能助手与快捷指令.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-009/AC01,AC02,AC03,AC04,AC05,AC06 引用的测试资产不存在：tests/e2e/assistant.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/09-系统助手/01-系统智能助手与快捷指令.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-009/AC01,AC02,AC03,AC04,AC05,AC06 引用的测试资产不存在：tests/integration/action-registry.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/09-系统助手/01-系统智能助手与快捷指令.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-009/AC02 引用的测试资产不存在：tests/integration/action-registry.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/09-系统助手/01-系统智能助手与快捷指令.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-009/AC03 引用的测试资产不存在：tests/e2e/assistant-confirmation.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/09-系统助手/01-系统智能助手与快捷指令.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-009/AC04 引用的测试资产不存在：tests/e2e/assistant-action-lifecycle.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/09-系统助手/01-系统智能助手与快捷指令.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-009/AC05 引用的测试资产不存在：tests/e2e/assistant-long-task.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/09-系统助手/01-系统智能助手与快捷指令.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-009/AC06 引用的测试资产不存在：tests/e2e/assistant-settings-actions.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/01-管理员登录与会话.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-010/AC01 引用的测试资产不存在：tests/e2e/admin-auth-session.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/01-管理员登录与会话.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-010/AC01,AC02,AC03,AC04 引用的测试资产不存在：tests/e2e/admin-auth-session.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/01-管理员登录与会话.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-010/AC01,AC02,AC03,AC04 引用的测试资产不存在：tests/security/admin-session-revocation.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/01-管理员登录与会话.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-010/AC02 引用的测试资产不存在：tests/security/admin-session-revocation.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/01-管理员登录与会话.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-010/AC03,AC04 引用的测试资产不存在：tests/e2e/admin-auth-session.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/02-API-Key生命周期.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-011/AC01 引用的测试资产不存在：tests/integration/api-key-lifecycle.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/02-API-Key生命周期.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-011/AC01,AC02,AC03,AC04 引用的测试资产不存在：tests/integration/api-key-lifecycle.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/02-API-Key生命周期.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-011/AC01,AC02,AC03,AC04 引用的测试资产不存在：tests/security/api-key-redaction.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/02-API-Key生命周期.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-011/AC02 引用的测试资产不存在：tests/security/api-key-redaction.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/02-API-Key生命周期.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-011/AC03,AC04 引用的测试资产不存在：tests/integration/api-key-lifecycle.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/03-Provider账号与连接.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-012/AC01 引用的测试资产不存在：tests/integration/provider-account-binding.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/03-Provider账号与连接.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-012/AC01,AC02,AC03,AC04 引用的测试资产不存在：tests/integration/provider-account-binding.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/03-Provider账号与连接.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-012/AC01,AC02,AC03,AC04 引用的测试资产不存在：tests/security/provider-account-isolation.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/03-Provider账号与连接.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-012/AC02 引用的测试资产不存在：tests/security/provider-account-isolation.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/03-Provider账号与连接.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-012/AC03,AC04 引用的测试资产不存在：tests/integration/provider-account-binding.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/04-上游账号连接测试.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-013/AC01 引用的测试资产不存在：tests/integration/provider-connection-test.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/04-上游账号连接测试.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-013/AC01,AC02,AC03,AC04 引用的测试资产不存在：tests/integration/provider-connection-test.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/04-上游账号连接测试.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-013/AC01,AC02,AC03,AC04 引用的测试资产不存在：tests/security/provider-connection-egress.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/04-上游账号连接测试.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-013/AC02 引用的测试资产不存在：tests/integration/provider-connection-test.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/04-上游账号连接测试.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-013/AC03 引用的测试资产不存在：tests/security/provider-connection-egress.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/04-上游账号连接测试.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-013/AC04 引用的测试资产不存在：tests/integration/provider-connection-test.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/05-审计与管理员系统治理.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-014/AC01 引用的测试资产不存在：tests/security/audit-redaction.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/05-审计与管理员系统治理.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-014/AC01,AC02,AC03,AC04,AC05 引用的测试资产不存在：tests/security/audit-redaction.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/05-审计与管理员系统治理.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-014/AC01,AC02,AC03,AC04,AC05 引用的测试资产不存在：tests/integration/governance-versioning.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/05-审计与管理员系统治理.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-014/AC01,AC02,AC03,AC04,AC05 引用的测试资产不存在：tests/integration/retention-sweep.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/05-审计与管理员系统治理.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-014/AC02 引用的测试资产不存在：tests/security/audit-redaction.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/05-审计与管理员系统治理.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-014/AC03 引用的测试资产不存在：tests/integration/governance-versioning.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "docs/03-功能规格/V1/10-身份与治理/05-审计与管理员系统治理.md",
+      "line": 0,
+      "code": "SDD_REVIEW_TEST_ASSET_MISSING",
+      "message": "V1-FR-014/AC04,AC05 引用的测试资产不存在：tests/integration/retention-sweep.spec.ts"
+    },
+    {
+      "level": "warn",
+      "file": "scripts/spec-diff.mjs",
+      "line": 0,
+      "code": "SPEC_DIFF_CHANGED",
+      "message": "规格基线检测到 34 项变化：added, authority_added, authority_changed, relationship_added"
+    }
+  ],
+  "spec_diff": {
+    "schema": "spec-docs/spec-diff/v1",
+    "read_only": true,
+    "target": "/Users/apple/Progame/DGOS",
+    "version": "V1",
+    "baseline": ".spec-docs/baselines/V1.json",
+    "baseline_digest": "9e5ba53c42b81f0852c0ac1dc91af7ddec8410a397badf7a6df3882b9316fc7f",
+    "current_digest": "2216fb6c32796d6772d41ffa80df27cc8b8cd411931144a567cf3227a2efab22",
+    "strict": false,
+    "errors": [],
+    "changes": [
+      {
+        "id": "V1-FR-010",
+        "kind": "added",
+        "category": "fact",
+        "current": {
+          "id": "V1-FR-010",
+          "type": "feature",
+          "title": "管理员登录与会话",
+          "lifecycle": "active",
+          "spec_status": "ready",
+          "implementation_status": "planned",
+          "delivery_scope": "active",
+          "delivery_slice": "V1-platform",
+          "authority": "docs/03-功能规格/V1/10-身份与治理/01-管理员登录与会话.md",
+          "references": [
+            "docs/02-产品与版本/当前版本/V1-实现状态.md",
+            "docs/04-技术架构/当前版本/V1-接口契约.md",
+            "docs/03-功能规格/V1/10-身份与治理/01-管理员登录与会话.md"
+          ],
+          "evidence": []
+        }
+      },
+      {
+        "id": "V1-FR-011",
+        "kind": "added",
+        "category": "fact",
+        "current": {
+          "id": "V1-FR-011",
+          "type": "feature",
+          "title": "API Key 生命周期",
+          "lifecycle": "active",
+          "spec_status": "ready",
+          "implementation_status": "planned",
+          "delivery_scope": "active",
+          "delivery_slice": "V1-platform",
+          "authority": "docs/03-功能规格/V1/10-身份与治理/02-API-Key生命周期.md",
+          "references": [
+            "docs/02-产品与版本/当前版本/V1-实现状态.md",
+            "docs/04-技术架构/当前版本/V1-接口契约.md",
+            "docs/03-功能规格/V1/10-身份与治理/02-API-Key生命周期.md"
+          ],
+          "evidence": []
+        }
+      },
+      {
+        "id": "V1-FR-012",
+        "kind": "added",
+        "category": "fact",
+        "current": {
+          "id": "V1-FR-012",
+          "type": "feature",
+          "title": "Provider 账号与连接",
+          "lifecycle": "active",
+          "spec_status": "ready",
+          "implementation_status": "planned",
+          "delivery_scope": "active",
+          "delivery_slice": "V1-ai-task",
+          "authority": "docs/03-功能规格/V1/10-身份与治理/03-Provider账号与连接.md",
+          "references": [
+            "docs/02-产品与版本/当前版本/V1-实现状态.md",
+            "docs/04-技术架构/当前版本/V1-接口契约.md",
+            "docs/03-功能规格/V1/10-身份与治理/03-Provider账号与连接.md"
+          ],
+          "evidence": []
+        }
+      },
+      {
+        "id": "V1-FR-013",
+        "kind": "added",
+        "category": "fact",
+        "current": {
+          "id": "V1-FR-013",
+          "type": "feature",
+          "title": "上游账号连接测试",
+          "lifecycle": "active",
+          "spec_status": "ready",
+          "implementation_status": "planned",
+          "delivery_scope": "active",
+          "delivery_slice": "V1-ai-task",
+          "authority": "docs/03-功能规格/V1/10-身份与治理/04-上游账号连接测试.md",
+          "references": [
+            "docs/02-产品与版本/当前版本/V1-实现状态.md",
+            "docs/04-技术架构/当前版本/V1-接口契约.md",
+            "docs/03-功能规格/V1/10-身份与治理/04-上游账号连接测试.md"
+          ],
+          "evidence": []
+        }
+      },
+      {
+        "id": "V1-FR-014",
+        "kind": "added",
+        "category": "fact",
+        "current": {
+          "id": "V1-FR-014",
+          "type": "feature",
+          "title": "审计与管理员系统治理",
+          "lifecycle": "active",
+          "spec_status": "ready",
+          "implementation_status": "planned",
+          "delivery_scope": "active",
+          "delivery_slice": "V1-platform",
+          "authority": "docs/03-功能规格/V1/10-身份与治理/05-审计与管理员系统治理.md",
+          "references": [
+            "docs/02-产品与版本/当前版本/V1-实现状态.md",
+            "docs/04-技术架构/当前版本/V1-接口契约.md",
+            "docs/03-功能规格/V1/10-身份与治理/05-审计与管理员系统治理.md"
+          ],
+          "evidence": []
+        }
+      },
+      {
+        "id": "V1-FR-015",
+        "kind": "added",
+        "category": "fact",
+        "current": {
+          "id": "V1-FR-015",
+          "type": "feature",
+          "title": "用量与额度管理",
+          "lifecycle": "active",
+          "spec_status": "ready",
+          "implementation_status": "planned",
+          "delivery_scope": "active",
+          "delivery_slice": "V1-ai-task",
+          "authority": "docs/03-功能规格/V1/10-身份与治理/06-用量与额度管理.md",
+          "references": [
+            "docs/02-产品与版本/当前版本/V1-实现状态.md",
+            "docs/04-技术架构/当前版本/V1-接口契约.md",
+            "docs/03-功能规格/V1/10-身份与治理/06-用量与额度管理.md"
+          ],
+          "evidence": []
+        }
+      },
+      {
+        "id": "docs/02-产品与版本/当前版本/V1-产品需求.md",
+        "kind": "authority_changed",
+        "category": "authority",
+        "path": "docs/02-产品与版本/当前版本/V1-产品需求.md",
+        "previous": {
+          "path": "docs/02-产品与版本/当前版本/V1-产品需求.md",
+          "sha256": "c610d268c056d8d7cdeab79e1b2d96bfa5c5162ff585f9a55886e0315e957eb3"
+        },
+        "current": {
+          "path": "docs/02-产品与版本/当前版本/V1-产品需求.md",
+          "sha256": "9a3e8001bf5fadde055371dec75c7d59f944a5abb65198ced88e739505efd484"
+        }
+      },
+      {
+        "id": "docs/02-产品与版本/当前版本/V1-版本总览.md",
+        "kind": "authority_changed",
+        "category": "authority",
+        "path": "docs/02-产品与版本/当前版本/V1-版本总览.md",
+        "previous": {
+          "path": "docs/02-产品与版本/当前版本/V1-版本总览.md",
+          "sha256": "a43f83c2abe508f0666349367a2d47a2d30efddddb7ef1d81ce64e690ade0284"
+        },
+        "current": {
+          "path": "docs/02-产品与版本/当前版本/V1-版本总览.md",
+          "sha256": "91ebec37872ba6734b6862bca1dc7a8deb397543442436f19dad110305c93c3d"
+        }
+      },
+      {
+        "id": "docs/03-功能规格/V1/00-V1需求编号.md",
+        "kind": "authority_changed",
+        "category": "authority",
+        "path": "docs/03-功能规格/V1/00-V1需求编号.md",
+        "previous": {
+          "path": "docs/03-功能规格/V1/00-V1需求编号.md",
+          "sha256": "64097a60e67f37f6dfbb6e0597aec62b611c9c19cac98e3e5b55b9a6f4623a64"
+        },
+        "current": {
+          "path": "docs/03-功能规格/V1/00-V1需求编号.md",
+          "sha256": "9ecd3558cdf66a6c8724b9caa8ba7ec149521de14acbaf8161ea7658cc346585"
+        }
+      },
+      {
+        "id": "docs/03-功能规格/V1/01-桌面与系统/01-桌面与应用工作区.md",
+        "kind": "authority_changed",
+        "category": "authority",
+        "path": "docs/03-功能规格/V1/01-桌面与系统/01-桌面与应用工作区.md",
+        "previous": {
+          "path": "docs/03-功能规格/V1/01-桌面与系统/01-桌面与应用工作区.md",
+          "sha256": "c47879629e6641d57270385770e145df166a7c4f6f35ba8e1422bca56f8dbc5b"
+        },
+        "current": {
+          "path": "docs/03-功能规格/V1/01-桌面与系统/01-桌面与应用工作区.md",
+          "sha256": "a8a23c4ce8cbc939924fbaff45415650fc041b513861ba80b028da6f0bd97f33"
+        }
+      },
+      {
+        "id": "docs/03-功能规格/V1/02-开发者体验/01-开发者中心与APP生命周期.md",
+        "kind": "authority_changed",
+        "category": "authority",
+        "path": "docs/03-功能规格/V1/02-开发者体验/01-开发者中心与APP生命周期.md",
+        "previous": {
+          "path": "docs/03-功能规格/V1/02-开发者体验/01-开发者中心与APP生命周期.md",
+          "sha256": "0587f63b3a61961e1bca763198dd1a68dd71b6cf4dec14d3337d4334b74e63db"
+        },
+        "current": {
+          "path": "docs/03-功能规格/V1/02-开发者体验/01-开发者中心与APP生命周期.md",
+          "sha256": "ab17080ec9778f7dd9bb65dfa9db396d26b29b10e162bd521e56f924df8604c7"
+        }
+      },
+      {
+        "id": "docs/03-功能规格/V1/03-Agent与协议/01-SkillMCP与Agent接入.md",
+        "kind": "authority_changed",
+        "category": "authority",
+        "path": "docs/03-功能规格/V1/03-Agent与协议/01-SkillMCP与Agent接入.md",
+        "previous": {
+          "path": "docs/03-功能规格/V1/03-Agent与协议/01-SkillMCP与Agent接入.md",
+          "sha256": "9a4d03cc8c7a80a4d6fb3408ef2e11fd7bb862f2248fbfa80af7f62747c4735e"
+        },
+        "current": {
+          "path": "docs/03-功能规格/V1/03-Agent与协议/01-SkillMCP与Agent接入.md",
+          "sha256": "e50aa6240ad6b4a60f6c6de028cb5b3133a759f6a5143850d0a416b00e34a81f"
+        }
+      },
+      {
+        "id": "docs/03-功能规格/V1/05-AI工作流/01-多模态AI任务工作流.md",
+        "kind": "authority_changed",
+        "category": "authority",
+        "path": "docs/03-功能规格/V1/05-AI工作流/01-多模态AI任务工作流.md",
+        "previous": {
+          "path": "docs/03-功能规格/V1/05-AI工作流/01-多模态AI任务工作流.md",
+          "sha256": "2e282d5050739fa7d65694861ca0c6a59ff65ec500945d273b1336b65f2dbfa2"
+        },
+        "current": {
+          "path": "docs/03-功能规格/V1/05-AI工作流/01-多模态AI任务工作流.md",
+          "sha256": "b4fa3f9c79c3bc5c7debec1f1d8d36d37c6d13b3097cb938f9d337c715582a5e"
+        }
+      },
+      {
+        "id": "docs/03-功能规格/V1/07-模型与配置/01-模型平台与工作流配置.md",
+        "kind": "authority_changed",
+        "category": "authority",
+        "path": "docs/03-功能规格/V1/07-模型与配置/01-模型平台与工作流配置.md",
+        "previous": {
+          "path": "docs/03-功能规格/V1/07-模型与配置/01-模型平台与工作流配置.md",
+          "sha256": "a10abaed89f0477573b07c1c4060c135c8ccddd57a3bf841811a9e8909a44243"
+        },
+        "current": {
+          "path": "docs/03-功能规格/V1/07-模型与配置/01-模型平台与工作流配置.md",
+          "sha256": "2aedfc6b335cbf63d43d13bb3604bfc225e6f5bbc857c8ca1883add83bf4fd4f"
+        }
+      },
+      {
+        "id": "docs/03-功能规格/V1/09-系统助手/01-系统智能助手与快捷指令.md",
+        "kind": "authority_changed",
+        "category": "authority",
+        "path": "docs/03-功能规格/V1/09-系统助手/01-系统智能助手与快捷指令.md",
+        "previous": {
+          "path": "docs/03-功能规格/V1/09-系统助手/01-系统智能助手与快捷指令.md",
+          "sha256": "f538f3d8d7e3c81ab5d1a187e3ee12428d9dd4a2e1d024565406b1df2f6cd544"
+        },
+        "current": {
+          "path": "docs/03-功能规格/V1/09-系统助手/01-系统智能助手与快捷指令.md",
+          "sha256": "35d7ea72a2233cb7ac66a9daee6f3ffbcb56e97f3fdba3508f38f6726df74129"
+        }
+      },
+      {
+        "id": "docs/03-功能规格/V1/10-身份与治理/01-管理员登录与会话.md",
+        "kind": "authority_added",
+        "category": "authority",
+        "path": "docs/03-功能规格/V1/10-身份与治理/01-管理员登录与会话.md",
+        "current": {
+          "path": "docs/03-功能规格/V1/10-身份与治理/01-管理员登录与会话.md",
+          "sha256": "5f8f4910fb02ea6834d21f3bd9a96bede473eb4b2be2932318b93c3f53655d76"
+        }
+      },
+      {
+        "id": "docs/03-功能规格/V1/10-身份与治理/02-API-Key生命周期.md",
+        "kind": "authority_added",
+        "category": "authority",
+        "path": "docs/03-功能规格/V1/10-身份与治理/02-API-Key生命周期.md",
+        "current": {
+          "path": "docs/03-功能规格/V1/10-身份与治理/02-API-Key生命周期.md",
+          "sha256": "8cebd9d8a585336b06f437ba4588ea41fef5fe4cf3327781ca707175bb5f6c66"
+        }
+      },
+      {
+        "id": "docs/03-功能规格/V1/10-身份与治理/03-Provider账号与连接.md",
+        "kind": "authority_added",
+        "category": "authority",
+        "path": "docs/03-功能规格/V1/10-身份与治理/03-Provider账号与连接.md",
+        "current": {
+          "path": "docs/03-功能规格/V1/10-身份与治理/03-Provider账号与连接.md",
+          "sha256": "53bdee33c242d79801fcce6a568771a28ec947cdfc18a8720d09d0ee1fe4edb8"
+        }
+      },
+      {
+        "id": "docs/03-功能规格/V1/10-身份与治理/04-上游账号连接测试.md",
+        "kind": "authority_added",
+        "category": "authority",
+        "path": "docs/03-功能规格/V1/10-身份与治理/04-上游账号连接测试.md",
+        "current": {
+          "path": "docs/03-功能规格/V1/10-身份与治理/04-上游账号连接测试.md",
+          "sha256": "923f40871047822b120f2665fe632d6ceba786ce3b3f2c5f9d5f4055dd2fcd2c"
+        }
+      },
+      {
+        "id": "docs/03-功能规格/V1/10-身份与治理/05-审计与管理员系统治理.md",
+        "kind": "authority_added",
+        "category": "authority",
+        "path": "docs/03-功能规格/V1/10-身份与治理/05-审计与管理员系统治理.md",
+        "current": {
+          "path": "docs/03-功能规格/V1/10-身份与治理/05-审计与管理员系统治理.md",
+          "sha256": "4d5b55ea4c046c784031e608de3ae7947b4e350cc625f60748f14a6931fa2f29"
+        }
+      },
+      {
+        "id": "docs/03-功能规格/V1/10-身份与治理/06-用量与额度管理.md",
+        "kind": "authority_added",
+        "category": "authority",
+        "path": "docs/03-功能规格/V1/10-身份与治理/06-用量与额度管理.md",
+        "current": {
+          "path": "docs/03-功能规格/V1/10-身份与治理/06-用量与额度管理.md",
+          "sha256": "b9bd6c9fb860ce0ca50ba95587b2da111b8644dfc646b9be978aed330b7d27e3"
+        }
+      },
+      {
+        "id": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+        "kind": "authority_changed",
+        "category": "authority",
+        "path": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+        "previous": {
+          "path": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+          "sha256": "3320d681e67ed5a67317655bd6405f7667067dcf77ce2fe82f8c783b13bce2d8"
+        },
+        "current": {
+          "path": "docs/04-技术架构/当前版本/V1-openapi.yaml",
+          "sha256": "1a9bf65cef6fea39fd0b6d1b8973a8ddaae724e89ede50e119cdbac10f969c16"
+        }
+      },
+      {
+        "id": "docs/04-技术架构/当前版本/V1-接口契约.md",
+        "kind": "authority_changed",
+        "category": "authority",
+        "path": "docs/04-技术架构/当前版本/V1-接口契约.md",
+        "previous": {
+          "path": "docs/04-技术架构/当前版本/V1-接口契约.md",
+          "sha256": "12c3363c31b3cef0342747121a713f84ba8ff878c7b91d947d4c8f82c837e839"
+        },
+        "current": {
+          "path": "docs/04-技术架构/当前版本/V1-接口契约.md",
+          "sha256": "082407061ae621f60dba5c1baf32f73d9ad0ed10ef13e531726ae293c1671635"
+        }
+      },
+      {
+        "id": "docs/04-技术架构/当前版本/V1-数据模型.md",
+        "kind": "authority_changed",
+        "category": "authority",
+        "path": "docs/04-技术架构/当前版本/V1-数据模型.md",
+        "previous": {
+          "path": "docs/04-技术架构/当前版本/V1-数据模型.md",
+          "sha256": "42be85c4ad072ff8b7366cd6f7afa1fddba81395bd78c0637120939a38054478"
+        },
+        "current": {
+          "path": "docs/04-技术架构/当前版本/V1-数据模型.md",
+          "sha256": "a7bf391a943a5478005cbea95b8b61fcbafeb87980f1462abd59f3fb247f3c97"
+        }
+      },
+      {
+        "id": "docs/05-测试与发布/安全基线.md",
+        "kind": "authority_changed",
+        "category": "authority",
+        "path": "docs/05-测试与发布/安全基线.md",
+        "previous": {
+          "path": "docs/05-测试与发布/安全基线.md",
+          "sha256": "b7d22ab10aa3da0943aa9af8d7f6d158c91b813ff0ecffbe4ed8baac92fefe2c"
+        },
+        "current": {
+          "path": "docs/05-测试与发布/安全基线.md",
+          "sha256": "ad540d0514d030f3df2be5a93a61f148b9c1552852d911f3e2f72bdf25517a2c"
+        }
+      },
+      {
+        "id": "docs/05-测试与发布/测试策略.md",
+        "kind": "authority_changed",
+        "category": "authority",
+        "path": "docs/05-测试与发布/测试策略.md",
+        "previous": {
+          "path": "docs/05-测试与发布/测试策略.md",
+          "sha256": "9324a372b733088dfe7c8eb10381f2829e3a4daeaa02db811b54fd9ffd12b3d6"
+        },
+        "current": {
+          "path": "docs/05-测试与发布/测试策略.md",
+          "sha256": "29075154019b45929602540d28a080ca4d72faecaf3bb584aa1e111cb9451492"
+        }
+      },
+      {
+        "id": "docs/05-测试与发布/端到端验收/V1-端到端验收规范.md",
+        "kind": "authority_changed",
+        "category": "authority",
+        "path": "docs/05-测试与发布/端到端验收/V1-端到端验收规范.md",
+        "previous": {
+          "path": "docs/05-测试与发布/端到端验收/V1-端到端验收规范.md",
+          "sha256": "d8b7ed2a1e5a6d277a69c89478ab0c8d2b5c7b54d4dbed40dfc34e59cfef8872"
+        },
+        "current": {
+          "path": "docs/05-测试与发布/端到端验收/V1-端到端验收规范.md",
+          "sha256": "ef8eb188b93c58027db449eacf3a4c4fdf6d84b1d120c52f55057b7552859a41"
+        }
+      },
+      {
+        "id": "docs/06-决策记录/V1-冻结决策.md",
+        "kind": "authority_changed",
+        "category": "authority",
+        "path": "docs/06-决策记录/V1-冻结决策.md",
+        "previous": {
+          "path": "docs/06-决策记录/V1-冻结决策.md",
+          "sha256": "2eb0453db852efe5006427e9980d87b221e69d52f071a77a729ae70a0d99b6e6"
+        },
+        "current": {
+          "path": "docs/06-决策记录/V1-冻结决策.md",
+          "sha256": "6e04f38a18fca4f7241101b1ee45c290f438546b7779de0b73bbb4a122fb0a27"
+        }
+      },
+      {
+        "id": "V1-platform->V1-FR-010",
+        "kind": "relationship_added",
+        "category": "relationship",
+        "relation": {
+          "from": "V1-platform",
+          "to": "V1-FR-010",
+          "type": "contains",
+          "authority": "docs/03-功能规格/V1/10-身份与治理/01-管理员登录与会话.md"
+        }
+      },
+      {
+        "id": "V1-platform->V1-FR-011",
+        "kind": "relationship_added",
+        "category": "relationship",
+        "relation": {
+          "from": "V1-platform",
+          "to": "V1-FR-011",
+          "type": "contains",
+          "authority": "docs/03-功能规格/V1/10-身份与治理/02-API-Key生命周期.md"
+        }
+      },
+      {
+        "id": "V1-ai-task->V1-FR-012",
+        "kind": "relationship_added",
+        "category": "relationship",
+        "relation": {
+          "from": "V1-ai-task",
+          "to": "V1-FR-012",
+          "type": "contains",
+          "authority": "docs/03-功能规格/V1/10-身份与治理/03-Provider账号与连接.md"
+        }
+      },
+      {
+        "id": "V1-ai-task->V1-FR-013",
+        "kind": "relationship_added",
+        "category": "relationship",
+        "relation": {
+          "from": "V1-ai-task",
+          "to": "V1-FR-013",
+          "type": "contains",
+          "authority": "docs/03-功能规格/V1/10-身份与治理/04-上游账号连接测试.md"
+        }
+      },
+      {
+        "id": "V1-platform->V1-FR-014",
+        "kind": "relationship_added",
+        "category": "relationship",
+        "relation": {
+          "from": "V1-platform",
+          "to": "V1-FR-014",
+          "type": "contains",
+          "authority": "docs/03-功能规格/V1/10-身份与治理/05-审计与管理员系统治理.md"
+        }
+      },
+      {
+        "id": "V1-ai-task->V1-FR-015",
+        "kind": "relationship_added",
+        "category": "relationship",
+        "relation": {
+          "from": "V1-ai-task",
+          "to": "V1-FR-015",
+          "type": "contains",
+          "authority": "docs/03-功能规格/V1/10-身份与治理/06-用量与额度管理.md"
+        }
+      }
+    ],
+    "governance": {
+      "requires_slice": true,
+      "requires_decision_review": true,
+      "required_writebacks": [
+        "authority_documents",
+        "facts_registry",
+        "indexes_and_traceability",
+        "traceability_matrix"
+      ],
+      "affected_slices": [
+        "V1-ai-task",
+        "V1-assistant",
+        "V1-platform",
+        "V1-release",
+        "V2-foundation",
+        "V3-workflow",
+        "V4-assets",
+        "V5-ecosystem",
+        "V6-collaboration"
+      ],
+      "affected_facts": [
+        "ADR-0001",
+        "ADR-0002",
+        "ADR-0003",
+        "ADR-0004",
+        "AITask",
+        "AITaskEvent",
+        "AppCapabilityGrant",
+        "AppInstallRecord",
+        "Artifact",
+        "AuditEvent",
+        "CatalogReviewRecord",
+        "D018",
+        "D019",
+        "D022",
+        "D026",
+        "D029",
+        "D030",
+        "D031",
+        "D032",
+        "D033",
+        "D034",
+        "D035",
+        "M0-storage-baseline",
+        "M1-install-identity-permission",
+        "M2-provider-task-artifact",
+        "M3-host-migration-drill",
+        "ModelCapabilityPolicy",
+        "ModelCatalog",
+        "ProviderConfig",
+        "Session",
+        "SystemContextSnapshot",
+        "UserProfile",
+        "V1-E2E-01",
+        "V1-E2E-02",
+        "V1-E2E-03",
+        "V1-E2E-05",
+        "V1-E2E-07",
+        "V1-E2E-09",
+        "V1-E2E-10",
+        "V1-FR-001",
+        "V1-FR-002",
+        "V1-FR-003",
+        "V1-FR-004",
+        "V1-FR-005",
+        "V1-FR-006",
+        "V1-FR-007",
+        "V1-FR-008",
+        "V1-FR-009",
+        "V1-FR-010",
+        "V1-FR-011",
+        "V1-FR-012",
+        "V1-FR-013",
+        "V1-FR-014",
+        "V1-FR-015",
+        "V1-NFR-001",
+        "V1-NFR-002",
+        "V1-NFR-003",
+        "V1-NFR-004",
+        "V1-NFR-005",
+        "V1-NFR-006",
+        "V1-NFR-007",
+        "V1-OP-cancelActionRun",
+        "V1-OP-checkPermission",
+        "V1-OP-createProviderConfig",
+        "V1-OP-deleteProviderConfig",
+        "V1-OP-executeAction",
+        "V1-OP-getActionRun",
+        "V1-OP-getAiTask",
+        "V1-OP-installMcp",
+        "V1-OP-installSkill",
+        "V1-OP-listActions",
+        "V1-OP-listCapabilityProtocols",
+        "V1-OP-listMcpServices",
+        "V1-OP-listProviderCapabilities",
+        "V1-OP-listProviderConfigs",
+        "V1-OP-listProviderModelPolicies",
+        "V1-OP-listProviderModels",
+        "V1-OP-listProviderProtocols",
+        "V1-OP-listSkills",
+        "V1-OP-planAction",
+        "V1-OP-readSystemContext",
+        "V1-OP-readSystemSettings",
+        "V1-OP-refreshProviderModels",
+        "V1-OP-requestPermission",
+        "V1-OP-setMcpState",
+        "V1-OP-setSkillState",
+        "V1-OP-streamAiTaskEvents",
+        "V1-OP-submitAiTask",
+        "V1-OP-subscribeSystemContext",
+        "V1-OP-uninstallMcp",
+        "V1-OP-uninstallSkill",
+        "V1-OP-updateProviderConfig",
+        "V1-OP-updateProviderModelPolicy",
+        "V1-OP-validateCapabilityProtocol",
+        "V1-OP-validateProviderConfig",
+        "V1-OP-writeSystemSettings",
+        "V1-RG-001",
+        "V1-RG-002",
+        "V1-RG-003"
+      ],
+      "affected_paths": [
+        "docs/02-产品与版本/后续版本/V2-规划.md",
+        "docs/02-产品与版本/后续版本/V3-规划.md",
+        "docs/02-产品与版本/后续版本/V4-规划.md",
+        "docs/02-产品与版本/后续版本/V5-规划.md",
+        "docs/02-产品与版本/后续版本/V6-规划.md",
+        "docs/02-产品与版本/当前版本/V1-产品需求.md",
+        "docs/02-产品与版本/当前版本/V1-实现状态.md",
+        "docs/02-产品与版本/当前版本/V1-版本总览.md",
+        "docs/02-产品与版本/版本路线图.md",
+        "docs/03-功能规格/V1/00-V1需求编号.md",
+        "docs/03-功能规格/V1/01-桌面与系统/01-桌面与应用工作区.md",
+        "docs/03-功能规格/V1/02-开发者体验/01-开发者中心与APP生命周期.md",
+        "docs/03-功能规格/V1/03-Agent与协议/01-SkillMCP与Agent接入.md",
+        "docs/03-功能规格/V1/05-AI工作流/01-多模态AI任务工作流.md",
+        "docs/03-功能规格/V1/07-模型与配置/01-模型平台与工作流配置.md",
+        "docs/03-功能规格/V1/09-系统助手/01-系统智能助手与快捷指令.md",
+        "docs/03-功能规格/V1/10-身份与治理/01-管理员登录与会话.md",
+        "docs/03-功能规格/V1/10-身份与治理/02-API-Key生命周期.md",
+        "docs/03-功能规格/V1/10-身份与治理/03-Provider账号与连接.md",
+        "docs/03-功能规格/V1/10-身份与治理/04-上游账号连接测试.md",
+        "docs/03-功能规格/V1/10-身份与治理/05-审计与管理员系统治理.md",
+        "docs/03-功能规格/V1/10-身份与治理/06-用量与额度管理.md",
+        "docs/03-功能规格/V2/04-无限画布/01-无限画布与项目.md",
+        "docs/03-功能规格/V4/08-资产与历史/01-项目资产与生成历史.md",
+        "docs/03-功能规格/V5/06-插件扩展/01-Canvas插件与模板扩展.md",
+        "docs/04-技术架构/当前版本/V1-DGOS应用清单与运行时契约.md",
+        "docs/04-技术架构/当前版本/V1-openapi.yaml",
+        "docs/04-技术架构/当前版本/V1-总体架构.md",
+        "docs/04-技术架构/当前版本/V1-接口契约.md",
+        "docs/04-技术架构/当前版本/V1-数据模型.md",
+        "docs/05-测试与发布/发布/恢复手册.md",
+        "docs/05-测试与发布/发布/检查清单.md",
+        "docs/05-测试与发布/安全基线.md",
+        "docs/05-测试与发布/测试策略.md",
+        "docs/05-测试与发布/端到端验收/V1-端到端验收规范.md",
+        "docs/05-测试与发布/端到端验收/用例矩阵.md",
+        "docs/05-测试与发布/端到端验收/验证证据.md",
+        "docs/06-决策记录/ADR/0001-决策标题.md",
+        "docs/06-决策记录/ADR/0002-V1共用前端与桌面宿主.md",
+        "docs/06-决策记录/ADR/0003-V1技术栈与可替换运行时.md",
+        "docs/06-决策记录/ADR/0004-V1统一设计系统与跨应用交互契约.md",
+        "docs/06-决策记录/ADR/README.md",
+        "docs/06-决策记录/V1-冻结决策.md",
+        "docs/99-历史归档/文档迁移映射.md"
+      ],
+      "unbound_changes": []
+    },
+    "summary": {
+      "changes": 34,
+      "kinds": [
+        "added",
+        "authority_added",
+        "authority_changed",
+        "relationship_added"
+      ],
+      "errors": 0,
+      "affected_slices": 9,
+      "unbound_changes": 0
+    }
+  }
+}

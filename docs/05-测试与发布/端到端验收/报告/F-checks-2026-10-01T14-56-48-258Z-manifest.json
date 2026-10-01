@@ -1,0 +1,51 @@
+{
+  "run_id": "F-checks-2026-10-01T14-56-48-258Z",
+  "environment": "local-isolated-postgres",
+  "commit": "d20f0fb45795eab65b1422927b47fc390c5a18f0",
+  "commands": [
+    {
+      "command": "pnpm test",
+      "exit_code": 0,
+      "output": "docs/05-测试与发布/端到端验收/报告/F-checks-2026-10-01T14-56-48-258Z/1.txt"
+    },
+    {
+      "command": "pnpm run test:web:e2e",
+      "exit_code": 0,
+      "output": "docs/05-测试与发布/端到端验收/报告/F-checks-2026-10-01T14-56-48-258Z/2.txt"
+    },
+    {
+      "command": "node --test tests/e2e/assistant-settings-actions.spec.mjs",
+      "exit_code": 0,
+      "output": "docs/05-测试与发布/端到端验收/报告/F-checks-2026-10-01T14-56-48-258Z/3.txt"
+    },
+    {
+      "command": "pnpm run check",
+      "exit_code": 0,
+      "output": "docs/05-测试与发布/端到端验收/报告/F-checks-2026-10-01T14-56-48-258Z/4.txt"
+    },
+    {
+      "command": "pnpm -r build",
+      "exit_code": 0,
+      "output": "docs/05-测试与发布/端到端验收/报告/F-checks-2026-10-01T14-56-48-258Z/5.txt"
+    },
+    {
+      "command": "pnpm run migrate:check",
+      "exit_code": 0,
+      "output": "docs/05-测试与发布/端到端验收/报告/F-checks-2026-10-01T14-56-48-258Z/6.txt"
+    },
+    {
+      "command": "node scripts/check-docs.mjs",
+      "exit_code": 0,
+      "output": "docs/05-测试与发布/端到端验收/报告/F-checks-2026-10-01T14-56-48-258Z/7.txt"
+    },
+    {
+      "command": "node scripts/docs-gate.mjs --phase release --json",
+      "exit_code": 1,
+      "output": "docs/05-测试与发布/端到端验收/报告/F-checks-2026-10-01T14-56-48-258Z/8.txt"
+    }
+  ],
+  "cleanup": "临时数据库已删除；原 dgos 数据库未由本脚本测试修改。",
+  "limitations": [
+    "release docs-gate 预期因缺发布证据阻塞；不将其当作通过。"
+  ]
+}

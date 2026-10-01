@@ -1,0 +1,479 @@
+
+> dgos-v1-foundation@ test /Users/apple/Progame/DGOS
+> node --test --test-concurrency=1
+
+TAP version 13
+# Subtest: apps/worker/src/test-provider-runner.mjs
+ok 1 - apps/worker/src/test-provider-runner.mjs
+  ---
+  duration_ms: 34.385333
+  type: 'test'
+  ...
+# Subtest: public ProviderConfig to text task API supports explicit refresh, idempotency, SSE resume and artifact authorization
+ok 2 - public ProviderConfig to text task API supports explicit refresh, idempotency, SSE resume and artifact authorization
+  ---
+  duration_ms: 91.032125
+  type: 'test'
+  ...
+# Subtest: quota preflight rejection fails the task before an attempt or reservation is created
+not ok 3 - quota preflight rejection fails the task before an attempt or reservation is created
+  ---
+  duration_ms: 16.518542
+  type: 'test'
+  location: '/Users/apple/Progame/DGOS/tests/integration/ai-task-api.test.mjs:74:1'
+  failureType: 'unhandledRejection'
+  error: 'Cannot use a pool after calling end on the pool'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    /Users/apple/Progame/DGOS/node_modules/.pnpm/pg-pool@3.14.0_pg@8.23.1/node_modules/pg-pool/index.js:45:11
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async PostgresSystemRepository.load (file:///Users/apple/Progame/DGOS/src/system/repository.mjs:10:38)
+    async #load (file:///Users/apple/Progame/DGOS/src/system/service.mjs:7:116)
+  ...
+# Subtest: provider failure settles quota exactly once
+ok 4 - provider failure settles quota exactly once
+  ---
+  duration_ms: 30.290875
+  type: 'test'
+  ...
+# Subtest: task cancellation releases quota exactly once
+ok 5 - task cancellation releases quota exactly once
+  ---
+  duration_ms: 54.799791
+  type: 'test'
+  ...
+# Subtest: provider timeout settles quota with estimated usage exactly once
+ok 6 - provider timeout settles quota with estimated usage exactly once
+  ---
+  duration_ms: 31.109208
+  type: 'test'
+  ...
+# Subtest: AI task worker claims queued attempts and reclaims expired leases
+ok 7 - AI task worker claims queued attempts and reclaims expired leases
+  ---
+  duration_ms: 17.561417
+  type: 'test'
+  ...
+# Subtest: AI task worker passes the claimed attempt and persisted input to the service
+ok 8 - AI task worker passes the claimed attempt and persisted input to the service
+  ---
+  duration_ms: 0.499542
+  type: 'test'
+  ...
+# Subtest: AI task worker runs a continuous loop and stops without claiming after stop
+ok 9 - AI task worker runs a continuous loop and stops without claiming after stop
+  ---
+  duration_ms: 5.235083
+  type: 'test'
+  ...
+# Subtest: lease loss prevents worker service from committing terminal state
+ok 10 - lease loss prevents worker service from committing terminal state
+  ---
+  duration_ms: 0.240084
+  type: 'test'
+  ...
+# Subtest: audit outbox publisher retries failures and marks success once
+ok 11 - audit outbox publisher retries failures and marks success once
+  ---
+  duration_ms: 0.812209
+  type: 'test'
+  ...
+# Subtest: identity and API key lifecycle exposes redacted contract
+not ok 12 - identity and API key lifecycle exposes redacted contract
+  ---
+  duration_ms: 77.546875
+  type: 'test'
+  location: '/Users/apple/Progame/DGOS/tests/integration/identity-api.test.mjs:7:1'
+  failureType: 'unhandledRejection'
+  error: 'Cannot use a pool after calling end on the pool'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    /Users/apple/Progame/DGOS/node_modules/.pnpm/pg-pool@3.14.0_pg@8.23.1/node_modules/pg-pool/index.js:45:11
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async PostgresSystemRepository.load (file:///Users/apple/Progame/DGOS/src/system/repository.mjs:10:38)
+    async #load (file:///Users/apple/Progame/DGOS/src/system/service.mjs:7:116)
+  ...
+# Subtest: V1 governance migration contains required idempotency and safety constraints
+ok 13 - V1 governance migration contains required idempotency and safety constraints
+  ---
+  duration_ms: 3.706125
+  type: 'test'
+  ...
+# Subtest: V1 runtime migration contains persistent control-plane tables
+ok 14 - V1 runtime migration contains persistent control-plane tables
+  ---
+  duration_ms: 0.986791
+  type: 'test'
+  ...
+# Subtest: PostgreSQL persists provider catalogs, policies, tasks, ordered events and artifacts
+ok 15 - PostgreSQL persists provider catalogs, policies, tasks, ordered events and artifacts
+  ---
+  duration_ms: 76.586584
+  type: 'test'
+  ...
+# Subtest: PostgreSQL audit outbox publisher claim and idempotent publish
+ok 16 - PostgreSQL audit outbox publisher claim and idempotent publish
+  ---
+  duration_ms: 34.77525
+  type: 'test'
+  ...
+# Subtest: identity renew audit commits with the session update
+ok 17 - identity renew audit commits with the session update
+  ---
+  duration_ms: 24.118542
+  type: 'test'
+  ...
+# Subtest: PostgreSQL repository persists identity, key digest, and audit outbox
+ok 18 - PostgreSQL repository persists identity, key digest, and audit outbox
+  ---
+  duration_ms: 64.888333
+  type: 'test'
+  ...
+# Subtest: PostgreSQL migration runner discovers and hashes migrations
+ok 19 - PostgreSQL migration runner discovers and hashes migrations
+  ---
+  duration_ms: 42.297041
+  type: 'test'
+  ...
+# Subtest: migration runner preserves the retired 0008 history through the 0010 alias
+ok 20 - migration runner preserves the retired 0008 history through the 0010 alias
+  ---
+  duration_ms: 39.063
+  type: 'test'
+  ...
+# Subtest: PostgreSQL connection test lease is claimed by one worker and finished once
+ok 21 - PostgreSQL connection test lease is claimed by one worker and finished once
+  ---
+  duration_ms: 35.222667
+  type: 'test'
+  ...
+# Subtest: PostgreSQL provider repository persists account and connection test snapshots
+ok 22 - PostgreSQL provider repository persists account and connection test snapshots
+  ---
+  duration_ms: 24.07725
+  type: 'test'
+  ...
+# Subtest: PostgreSQL quota reservation concurrency, idempotency, settlement and checkpoint recovery
+ok 23 - PostgreSQL quota reservation concurrency, idempotency, settlement and checkpoint recovery
+  ---
+  duration_ms: 115.731417
+  type: 'test'
+  ...
+# Subtest: PostgreSQL retention job deletes expired audit rows in resumable batches
+ok 24 - PostgreSQL retention job deletes expired audit rows in resumable batches
+  ---
+  duration_ms: 49.532416
+  type: 'test'
+  ...
+# Subtest: PostgreSQL runtime repositories persist restart-readable state
+ok 25 - PostgreSQL runtime repositories persist restart-readable state
+  ---
+  duration_ms: 57.96075
+  type: 'test'
+  ...
+# Subtest: provider account and controlled connection test lifecycle
+not ok 26 - provider account and controlled connection test lifecycle
+  ---
+  duration_ms: 66.099041
+  type: 'test'
+  location: '/Users/apple/Progame/DGOS/tests/integration/provider-api.test.mjs:9:1'
+  failureType: 'unhandledRejection'
+  error: 'Cannot use a pool after calling end on the pool'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    /Users/apple/Progame/DGOS/node_modules/.pnpm/pg-pool@3.14.0_pg@8.23.1/node_modules/pg-pool/index.js:45:11
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async PostgresSystemRepository.load (file:///Users/apple/Progame/DGOS/src/system/repository.mjs:10:38)
+    async #load (file:///Users/apple/Progame/DGOS/src/system/service.mjs:7:116)
+  ...
+# Subtest: ProviderEgress rejects private and non-HTTPS targets before adapter fetch
+ok 27 - ProviderEgress rejects private and non-HTTPS targets before adapter fetch
+  ---
+  duration_ms: 0.986833
+  type: 'test'
+  ...
+# Subtest: provider worker claims queued tests and converges them once
+ok 28 - provider worker claims queued tests and converges them once
+  ---
+  duration_ms: 2.486375
+  type: 'test'
+  ...
+# Subtest: expired provider worker lease can be reclaimed
+ok 29 - expired provider worker lease can be reclaimed
+  ---
+  duration_ms: 0.16975
+  type: 'test'
+  ...
+# Subtest: quota API enforces scopes and provides preflight, reserve, settle, query and policy contract
+ok 30 - quota API enforces scopes and provides preflight, reserve, settle, query and policy contract
+  ---
+  duration_ms: 89.020292
+  type: 'test'
+  ...
+# Subtest: real PostgreSQL/API/provider fixture workflow records durable evidence
+ok 31 - real PostgreSQL/API/provider fixture workflow records durable evidence
+  ---
+  duration_ms: 6520.58225
+  type: 'test'
+  ...
+# Subtest: Redis rate limiter and secret backend work against local Redis
+ok 32 - Redis rate limiter and secret backend work against local Redis
+  ---
+  duration_ms: 12.053625
+  type: 'test'
+  ...
+# Subtest: retention sweep requires scope and returns a preview digest
+not ok 33 - retention sweep requires scope and returns a preview digest
+  ---
+  duration_ms: 71.385041
+  type: 'test'
+  location: '/Users/apple/Progame/DGOS/tests/integration/retention-api.test.mjs:8:1'
+  failureType: 'unhandledRejection'
+  error: 'Cannot use a pool after calling end on the pool'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    /Users/apple/Progame/DGOS/node_modules/.pnpm/pg-pool@3.14.0_pg@8.23.1/node_modules/pg-pool/index.js:45:11
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async PostgresSystemRepository.load (file:///Users/apple/Progame/DGOS/src/system/repository.mjs:10:38)
+    async #load (file:///Users/apple/Progame/DGOS/src/system/service.mjs:7:116)
+  ...
+# Subtest: Fastify runtime API enforces CSRF, catalog visibility and settings concurrency
+ok 34 - Fastify runtime API enforces CSRF, catalog visibility and settings concurrency
+  ---
+  duration_ms: 59.521666
+  type: 'test'
+  ...
+# Subtest: Fastify runtime API isolates API key subject fields
+ok 35 - Fastify runtime API isolates API key subject fields
+  ---
+  duration_ms: 7.266208
+  type: 'test'
+  ...
+# (node:69754) [FSTWRN004] FastifyWarning: It seems that you are overriding an errorHandler in the same scope, which can lead to subtle bugs. To disable this behavior, set 'allowErrorHandlerOverride' to false. For more information, visit: https://fastify.dev/docs/latest/Reference/Server/\#allowerrorhandleroverride
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Fastify runtime API uses PostgreSQL repositories across server restart
+ok 36 - Fastify runtime API uses PostgreSQL repositories across server restart
+  ---
+  duration_ms: 91.364334
+  type: 'test'
+  ...
+# Subtest: fixture exposes OpenAI models structure
+ok 37 - fixture exposes OpenAI models structure
+  ---
+  duration_ms: 17.864459
+  type: 'test'
+  ...
+# Subtest: fixture emits parseable chat completion SSE
+ok 38 - fixture emits parseable chat completion SSE
+  ---
+  duration_ms: 6.796583
+  type: 'test'
+  ...
+# Subtest: fixture rejects missing or invalid authorization and supports forbidden scenario
+ok 39 - fixture rejects missing or invalid authorization and supports forbidden scenario
+  ---
+  duration_ms: 4.817667
+  type: 'test'
+  ...
+# Subtest: adapter can list models and stream from the real fixture
+ok 40 - adapter can list models and stream from the real fixture
+  ---
+  duration_ms: 5.641917
+  type: 'test'
+  ...
+# Subtest: adapter maps timeout, disconnect, malformed and empty streams
+ok 41 - adapter maps timeout, disconnect, malformed and empty streams
+  ---
+  duration_ms: 40.647792
+  type: 'test'
+  ...
+# Subtest: pinned transport enforces response size and timeout limits
+ok 42 - pinned transport enforces response size and timeout limits
+  ---
+  duration_ms: 2.747291
+  type: 'test'
+  ...
+# Subtest: default transport dials the validated IP while retaining TLS host verification
+ok 43 - default transport dials the validated IP while retaining TLS host verification
+  ---
+  duration_ms: 109.415583
+  type: 'test'
+  ...
+# Subtest: ProviderEgress blocks private and metadata targets before fetch
+ok 44 - ProviderEgress blocks private and metadata targets before fetch
+  ---
+  duration_ms: 2.904
+  type: 'test'
+  ...
+# Subtest: ProviderEgress requires HTTPS and rejects redirects
+ok 45 - ProviderEgress requires HTTPS and rejects redirects
+  ---
+  duration_ms: 1.172709
+  type: 'test'
+  ...
+# Subtest: ProviderEgress rejects mixed DNS answers instead of allowing rebinding candidates
+ok 46 - ProviderEgress rejects mixed DNS answers instead of allowing rebinding candidates
+  ---
+  duration_ms: 0.219083
+  type: 'test'
+  ...
+# Subtest: ProviderEgress rejects IPv6 loopback, link-local, and unique-local targets
+ok 47 - ProviderEgress rejects IPv6 loopback, link-local, and unique-local targets
+  ---
+  duration_ms: 0.146542
+  type: 'test'
+  ...
+# Subtest: in-memory rate limiter resets after its window
+ok 48 - in-memory rate limiter resets after its window
+  ---
+  duration_ms: 0.416167
+  type: 'test'
+  ...
+# Subtest: SecretService scopes and expires short-lived handles
+ok 49 - SecretService scopes and expires short-lived handles
+  ---
+  duration_ms: 0.861
+  type: 'test'
+  ...
+# Subtest: API key verification is digest based and does not require plaintext storage
+ok 50 - API key verification is digest based and does not require plaintext storage
+  ---
+  duration_ms: 0.234709
+  type: 'test'
+  ...
+# Subtest: V1-E2E-11 authentication session, expiry, origin and high-risk authorization
+not ok 51 - V1-E2E-11 authentication session, expiry, origin and high-risk authorization
+  ---
+  duration_ms: 62.501417
+  type: 'test'
+  location: '/Users/apple/Progame/DGOS/tests/security/v1-governance-e2e.test.mjs:20:1'
+  failureType: 'unhandledRejection'
+  error: 'Cannot use a pool after calling end on the pool'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    /Users/apple/Progame/DGOS/node_modules/.pnpm/pg-pool@3.14.0_pg@8.23.1/node_modules/pg-pool/index.js:45:11
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async PostgresSystemRepository.load (file:///Users/apple/Progame/DGOS/src/system/repository.mjs:10:38)
+    async #load (file:///Users/apple/Progame/DGOS/src/system/service.mjs:7:116)
+  ...
+# Subtest: V1-E2E-12 API key one-time secret, isolation, overlap, revoke and expiry
+not ok 52 - V1-E2E-12 API key one-time secret, isolation, overlap, revoke and expiry
+  ---
+  duration_ms: 16.507875
+  type: 'test'
+  location: '/Users/apple/Progame/DGOS/tests/security/v1-governance-e2e.test.mjs:32:1'
+  failureType: 'unhandledRejection'
+  error: 'Cannot use a pool after calling end on the pool'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    /Users/apple/Progame/DGOS/node_modules/.pnpm/pg-pool@3.14.0_pg@8.23.1/node_modules/pg-pool/index.js:45:11
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async PostgresSystemRepository.load (file:///Users/apple/Progame/DGOS/src/system/repository.mjs:10:38)
+    async #load (file:///Users/apple/Progame/DGOS/src/system/service.mjs:7:116)
+  ...
+# Subtest: V1-E2E-13 provider account connection controls reject SSRF and owner violations before enqueue
+not ok 53 - V1-E2E-13 provider account connection controls reject SSRF and owner violations before enqueue
+  ---
+  duration_ms: 11.213042
+  type: 'test'
+  location: '/Users/apple/Progame/DGOS/tests/security/v1-governance-e2e.test.mjs:49:1'
+  failureType: 'unhandledRejection'
+  error: 'Cannot use a pool after calling end on the pool'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    /Users/apple/Progame/DGOS/node_modules/.pnpm/pg-pool@3.14.0_pg@8.23.1/node_modules/pg-pool/index.js:45:11
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async PostgresSystemRepository.load (file:///Users/apple/Progame/DGOS/src/system/repository.mjs:10:38)
+    async #load (file:///Users/apple/Progame/DGOS/src/system/service.mjs:7:116)
+  ...
+# Subtest: V1-E2E-14 audit correlation, redaction, outbox retry and retention recovery
+not ok 54 - V1-E2E-14 audit correlation, redaction, outbox retry and retention recovery
+  ---
+  duration_ms: 11.672125
+  type: 'test'
+  location: '/Users/apple/Progame/DGOS/tests/security/v1-governance-e2e.test.mjs:61:1'
+  failureType: 'unhandledRejection'
+  error: 'Cannot use a pool after calling end on the pool'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    /Users/apple/Progame/DGOS/node_modules/.pnpm/pg-pool@3.14.0_pg@8.23.1/node_modules/pg-pool/index.js:45:11
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async PostgresSystemRepository.load (file:///Users/apple/Progame/DGOS/src/system/repository.mjs:10:38)
+    async #load (file:///Users/apple/Progame/DGOS/src/system/service.mjs:7:116)
+  ...
+# Subtest: quota preflight and reservation are bounded and idempotent
+ok 55 - quota preflight and reservation are bounded and idempotent
+  ---
+  duration_ms: 2.837834
+  type: 'test'
+  ...
+# Subtest: settlement handles terminal states, missing usage and replay
+ok 56 - settlement handles terminal states, missing usage and replay
+  ---
+  duration_ms: 1.381334
+  type: 'test'
+  ...
+# Subtest: usage query is subject isolated and reconciliation expires reservations
+ok 57 - usage query is subject isolated and reconciliation expires reservations
+  ---
+  duration_ms: 0.488084
+  type: 'test'
+  ...
+# Subtest: manifest validation and digest
+ok 58 - manifest validation and digest
+  ---
+  duration_ms: 1.358792
+  type: 'test'
+  ...
+# Subtest: catalog visibility and developer test install
+ok 59 - catalog visibility and developer test install
+  ---
+  duration_ms: 1.87975
+  type: 'test'
+  ...
+# Subtest: health failure rolls back and uninstall retains data
+ok 60 - health failure rolls back and uninstall retains data
+  ---
+  duration_ms: 1.088917
+  type: 'test'
+  ...
+# Subtest: permission deny precedence and revoke
+ok 61 - permission deny precedence and revoke
+  ---
+  duration_ms: 0.386667
+  type: 'test'
+  ...
+# Subtest: permission request transitions are expiring, idempotent and race-safe
+ok 62 - permission request transitions are expiring, idempotent and race-safe
+  ---
+  duration_ms: 0.5595
+  type: 'test'
+  ...
+# Subtest: action plan has no handler side effect and executes once
+ok 63 - action plan has no handler side effect and executes once
+  ---
+  duration_ms: 3.207042
+  type: 'test'
+  ...
+# Subtest: action run lease heartbeat and reclaim preserve exactly-once execution
+ok 64 - action run lease heartbeat and reclaim preserve exactly-once execution
+  ---
+  duration_ms: 83.032333
+  type: 'test'
+  ...
+# Subtest: settings optimistic concurrency and context redaction
+ok 65 - settings optimistic concurrency and context redaction
+  ---
+  duration_ms: 0.865833
+  type: 'test'
+  ...
+1..65
+# tests 65
+# suites 0
+# pass 57
+# fail 8
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 11168.438458
+ ELIFECYCLE  Test failed. See above for more details.

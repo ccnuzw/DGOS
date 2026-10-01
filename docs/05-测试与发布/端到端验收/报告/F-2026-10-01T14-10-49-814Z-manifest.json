@@ -1,0 +1,177 @@
+{
+  "run_id": "F-2026-10-01T14-10-49-814Z",
+  "environment": "local-compose-fixture",
+  "commit": "de16495c44e2b4b7404fa5429d9ce0cbddc506c7",
+  "started_at": "2026-10-01T14:10:49.824Z",
+  "cases": [
+    {
+      "name": "Web → API → PostgreSQL → two workers → adapter → fixture → SSE/Artifact; replay",
+      "status": "passed",
+      "taskId": "2c793830-ebbd-44c4-9856-d2e91e985399",
+      "attempts": [
+        {
+          "attempt_id": "89923245-50df-48f9-94df-779feb11c11d",
+          "state": "succeeded",
+          "attempts": 1
+        }
+      ],
+      "reservations": [
+        {
+          "reservation_id": "a48ba7bd-b8e4-4f02-b096-97e6a90a4bfb",
+          "state": "settled"
+        }
+      ],
+      "usage": [
+        {
+          "usage_event_id": "60ce7fae-bf77-48ac-8c71-4c354e9e74f0"
+        }
+      ],
+      "artifactId": "6d131fdf-ed53-4b07-a1bf-5670586d2330",
+      "sequences": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "upstreamCalls": 1
+    },
+    {
+      "name": "Provider forbidden",
+      "status": "passed",
+      "taskId": "58a83a02-7e37-43d5-b07b-0afe05d11982",
+      "attempts": [
+        {
+          "attempt_id": "e95296f2-c9c5-4150-bcae-67c963b475a6",
+          "state": "failed",
+          "attempts": 1
+        }
+      ],
+      "reservations": [
+        {
+          "reservation_id": "da0dedfd-4c1d-42b0-bb94-cc998da220ec",
+          "state": "settled"
+        }
+      ],
+      "usage": [
+        {
+          "usage_event_id": "6ecf14cc-8e53-4e51-b47f-f9861649a638"
+        }
+      ],
+      "terminal": "failed"
+    },
+    {
+      "name": "Provider malformed",
+      "status": "passed",
+      "taskId": "7eefaec4-55af-4b3f-b653-dca9b55504db",
+      "attempts": [
+        {
+          "attempt_id": "e570f90d-9c5a-4696-8201-7ad03e47bc05",
+          "state": "failed",
+          "attempts": 1
+        }
+      ],
+      "reservations": [
+        {
+          "reservation_id": "2494c9df-e14d-46f3-8f78-b812e9a11963",
+          "state": "settled"
+        }
+      ],
+      "usage": [
+        {
+          "usage_event_id": "c14c9c9d-e8a6-4604-b410-c5cd5123870f"
+        }
+      ],
+      "terminal": "failed"
+    },
+    {
+      "name": "Provider empty",
+      "status": "passed",
+      "taskId": "0fd4aac6-2694-4fcb-b9da-4b7e66fd0c12",
+      "attempts": [
+        {
+          "attempt_id": "aaa0955e-ad90-4e13-81eb-9fd6e6cc2157",
+          "state": "failed",
+          "attempts": 1
+        }
+      ],
+      "reservations": [
+        {
+          "reservation_id": "446bc017-6052-4cc7-a788-5fe05045dbbc",
+          "state": "settled"
+        }
+      ],
+      "usage": [
+        {
+          "usage_event_id": "bbf2e4eb-f079-41e4-89bc-58ba40db17a0"
+        }
+      ],
+      "terminal": "failed"
+    },
+    {
+      "name": "Provider disconnect",
+      "status": "passed",
+      "taskId": "919f39c5-8e9a-4084-b0f2-f2426b878e66",
+      "attempts": [
+        {
+          "attempt_id": "b4fc95b1-b716-4f9c-b46f-b87c0ecfe4f2",
+          "state": "failed",
+          "attempts": 1
+        }
+      ],
+      "reservations": [
+        {
+          "reservation_id": "a1b7d8f0-fc56-4f1a-b650-3f03d4fc9fff",
+          "state": "settled"
+        }
+      ],
+      "usage": [
+        {
+          "usage_event_id": "aa14b6c6-6027-4658-8339-b9759fd66679"
+        }
+      ],
+      "terminal": "failed"
+    },
+    {
+      "name": "Provider timeout",
+      "status": "passed",
+      "taskId": "e45960f5-145d-4974-88b4-298f350d598d",
+      "attempts": [
+        {
+          "attempt_id": "70debbad-90f6-4b18-bdbe-e89357985b4a",
+          "state": "timed_out",
+          "attempts": 1
+        }
+      ],
+      "reservations": [
+        {
+          "reservation_id": "0bc478c5-3267-4c18-aaf2-30068d9d272b",
+          "state": "settled"
+        }
+      ],
+      "usage": [
+        {
+          "usage_event_id": "c67f94ce-dfcc-4e71-9c4f-d6eb363a88f9"
+        }
+      ],
+      "terminal": "timed_out"
+    }
+  ],
+  "limitations": [
+    "受控 HTTP Provider fixture；未验证真实外部 Provider/TLS、签名桌面、生产 KMS。",
+    "worker crash 在已发上游请求时可能重发；本轮 crash 在 Provider 请求前注入。"
+  ],
+  "exit_code": 1,
+  "error": "Expected values to be strictly equal:\n\n0 !== 1\n",
+  "finished_at": "2026-10-01T14:11:07.181Z",
+  "asset_sha256": {
+    "scripts/release-integration.mjs": "c0f830d641ad9845b55af1dbc148b2d95886604525ea795b34b923a9d0e7c612",
+    "docker-compose.integration.yml": "6e13d75cb834d77423fe850e0c0a1d3d4b0ba187943e360a6a4a6203cc9dfe8c",
+    "apps/api/src/server.mjs": "5e3bf7f349a4873b8976b6fbd65723489d4786d923ef8231aefcc29041b2988b",
+    "apps/worker/src/worker.mjs": "68d639c1a6c460bf9de37bb1bdd9574e754aa6c6e0a4b5450443d8ceaf42f141",
+    "src/ai-task/service.mjs": "e3444ee1074eb3aa04564c7bef91bb7e18c2e39c5ed169ea292207bdcd65d93c",
+    "src/provider-adapters/openai-compatible.mjs": "6501f2dbe3a9eaf4f6bd6c6dcd42643d9c36793ff0a3a568c83aef04c067123b",
+    "apps/web/src/main.js": "5df6cfdfc055ed384f30362e9774dd31e6c926a8c5d698a3b3cd2fd7272780f9"
+  },
+  "working_tree": " M apps/api/src/server.mjs\n M apps/web/e2e/workbench.spec.mjs\n M apps/web/src/main.js\n M apps/worker/package.json\n M apps/worker/src/ai-task-worker.mjs\n M apps/worker/src/worker.mjs\n M pnpm-lock.yaml\n M src/ai-task/repository.mjs\n M src/ai-task/service.mjs\n M src/audit/outbox.mjs\n M src/identity/repository.mjs\n M src/provider-adapters/openai-compatible.mjs\n M test-support/openai-compatible-fixture.mjs\n M tests/security/v1-governance-e2e.test.mjs\n?? apps/web/test-results/\n?? docker-compose.integration.yml\n?? \"docs/02-\\344\\272\\247\\345\\223\\201\\344\\270\\216\\347\\211\\210\\346\\234\\254/\\345\\275\\223\\345\\211\\215\\347\\211\\210\\346\\234\\254/V1-\\344\\270\\213\\344\\270\\200\\351\\230\\266\\346\\256\\265\\350\\256\\241\\345\\210\\222.md\"\n?? \"docs/05-\\346\\265\\213\\350\\257\\225\\344\\270\\216\\345\\217\\221\\345\\270\\203/\\347\\253\\257\\345\\210\\260\\347\\253\\257\\351\\252\\214\\346\\224\\266/\\346\\212\\245\\345\\221\\212/F-2026-10-01T14-06-54-324Z-manifest.json\"\n?? \"docs/05-\\346\\265\\213\\350\\257\\225\\344\\270\\216\\345\\217\\221\\345\\270\\203/\\347\\253\\257\\345\\210\\260\\347\\253\\257\\351\\252\\214\\346\\224\\266/\\346\\212\\245\\345\\221\\212/F-2026-10-01T14-08-51-445Z-manifest.json\"\n?? \"docs/05-\\346\\265\\213\\350\\257\\225\\344\\270\\216\\345\\217\\221\\345\\270\\203/\\347\\253\\257\\345\\210\\260\\347\\253\\257\\351\\252\\214\\346\\224\\266/\\346\\212\\245\\345\\221\\212/F-2026-10-01T14-08-51-445Z/\"\n?? \"docs/05-\\346\\265\\213\\350\\257\\225\\344\\270\\216\\345\\217\\221\\345\\270\\203/\\347\\253\\257\\345\\210\\260\\347\\253\\257\\351\\252\\214\\346\\224\\266/\\346\\212\\245\\345\\221\\212/F-2026-10-01T14-10-49-814Z/\"\n?? scripts/apply-migrations.mjs\n?? scripts/release-fixture.mjs\n?? scripts/release-integration.mjs\n?? src/security/runtime-egress.mjs\n"
+}

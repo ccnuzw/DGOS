@@ -1,0 +1,24 @@
+{
+  "run_id": "F-2026-10-01T14-06-54-324Z",
+  "environment": "local-compose-fixture",
+  "commit": "de16495c44e2b4b7404fa5429d9ce0cbddc506c7",
+  "started_at": "2026-10-01T14:06:54.334Z",
+  "cases": [],
+  "limitations": [
+    "受控 HTTP Provider fixture；未验证真实外部 Provider/TLS、签名桌面、生产 KMS。",
+    "worker crash 在已发上游请求时可能重发；本轮 crash 在 Provider 请求前注入。"
+  ],
+  "exit_code": 1,
+  "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Validate and refresh catalog' })\u001b[22m\n",
+  "finished_at": "2026-10-01T14:07:24.776Z",
+  "asset_sha256": {
+    "scripts/release-integration.mjs": "57705bf11ad1887208e2f43c126700a21fe4db8479b9a81e281dea438bc24929",
+    "docker-compose.integration.yml": "6e13d75cb834d77423fe850e0c0a1d3d4b0ba187943e360a6a4a6203cc9dfe8c",
+    "apps/api/src/server.mjs": "ce1db5c6ca1ab7c5349c9370873f02838b40d5cc80730e7f39aae23d80b65b67",
+    "apps/worker/src/worker.mjs": "68d639c1a6c460bf9de37bb1bdd9574e754aa6c6e0a4b5450443d8ceaf42f141",
+    "src/ai-task/service.mjs": "e3444ee1074eb3aa04564c7bef91bb7e18c2e39c5ed169ea292207bdcd65d93c",
+    "src/provider-adapters/openai-compatible.mjs": "12d95ed8d97febbe796b54439cea74d41aa8977ec4dd87a900a1f26b3023dc63",
+    "apps/web/src/main.js": "689078e7b6ce9d5655a2af8fdfeee0b7881f40b906caed6555b83f1f49585e8e"
+  },
+  "working_tree": " M apps/api/src/server.mjs\n M apps/web/e2e/workbench.spec.mjs\n M apps/web/src/main.js\n M apps/worker/package.json\n M apps/worker/src/ai-task-worker.mjs\n M apps/worker/src/worker.mjs\n M pnpm-lock.yaml\n M src/ai-task/repository.mjs\n M src/ai-task/service.mjs\n M src/identity/repository.mjs\n M src/provider-adapters/openai-compatible.mjs\n M test-support/openai-compatible-fixture.mjs\n M tests/security/v1-governance-e2e.test.mjs\n?? apps/web/test-results/\n?? docker-compose.integration.yml\n?? \"docs/02-\\344\\272\\247\\345\\223\\201\\344\\270\\216\\347\\211\\210\\346\\234\\254/\\345\\275\\223\\345\\211\\215\\347\\211\\210\\346\\234\\254/V1-\\344\\270\\213\\344\\270\\200\\351\\230\\266\\346\\256\\265\\350\\256\\241\\345\\210\\222.md\"\n?? scripts/apply-migrations.mjs\n?? scripts/release-fixture.mjs\n?? scripts/release-integration.mjs\n?? src/security/runtime-egress.mjs\n"
+}
