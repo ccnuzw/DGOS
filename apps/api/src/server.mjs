@@ -33,8 +33,9 @@ import { InMemoryProviderConfigRepository, PostgresProviderConfigRepository } fr
 import { ProviderConfigService } from '../../../src/provider-config/service.mjs';
 import { InMemoryAiTaskRepository, PostgresAiTaskRepository } from '../../../src/ai-task/repository.mjs';
 import { AiTaskService } from '../../../src/ai-task/service.mjs';
+import { AiTaskWorker } from '../../worker/src/ai-task-worker.mjs';
 
-export function buildServer({ logger = true, repository, providerRepository, providerService, providerConfigRepository, aiTaskRepository, providerRunner, providerAdapters, providerEgress, quotaAdapter, secretService = new InMemorySecretService(), rateLimiter, clock, appRepository: injectedAppRepository, permissionRepository: injectedPermissionRepository, actionRepository: injectedActionRepository, systemRepository: injectedSystemRepository, actionRegistry: injectedActionRegistry, auditRepository: injectedAuditRepository, retentionRepository: injectedRetentionRepository } = {}) {
+export function buildServer({ logger = true, repository, providerRepository, providerService, providerConfigRepository, aiTaskRepository, providerRunner, dispatchTask, providerAdapters, providerEgress, quotaAdapter, secretService = new InMemorySecretService(), rateLimiter, clock, appRepository: injectedAppRepository, permissionRepository: injectedPermissionRepository, actionRepository: injectedActionRepository, systemRepository: injectedSystemRepository, actionRegistry: injectedActionRegistry, auditRepository: injectedAuditRepository, retentionRepository: injectedRetentionRepository } = {}) {
   const resolvedRepository = repository ?? (process.env.DGOS_DATABASE_URL ? new PostgresIdentityRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryIdentityRepository());
   const app = Fastify({ logger });
   const identity = new IdentityService({ repository: resolvedRepository, secretService, clock });
@@ -55,7 +56,10 @@ export function buildServer({ logger = true, repository, providerRepository, pro
   const configuredEgress = providerEgress ?? new ProviderEgress();
   const providerConfigs = new ProviderConfigService({ repository: providerConfigRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresProviderConfigRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryProviderConfigRepository()), accountRepository: providers.repository, secretService, registry: providerRegistry, egress: configuredEgress, audit });
   const defaultQuotaAdapter = quotaModules?.[1]?.createQuotaAdapter ? quotaModules[1].createQuotaAdapter(quota) : { preflight: (input) => quota.preflight(input), reserve: (input) => quota.reserveQuota(input), settle: (input) => quota.settleUsage(input), release: (input) => quota.releaseQuota(input) };
-  const aiTasks = new AiTaskService({ repository: aiTaskRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresAiTaskRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryAiTaskRepository()), configService: providerConfigs, accountRepository: providers.repository, secretService, registry: providerRegistry, egress: configuredEgress, quota: quotaAdapter ?? defaultQuotaAdapter, audit, providerRunner });
+  const taskRepository = aiTaskRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresAiTaskRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryAiTaskRepository());
+  const aiTasks = new AiTaskService({ repository: taskRepository, configService: providerConfigs, accountRepository: providers.repository, secretService, registry: providerRegistry, egress: configuredEgress, quota: quotaAdapter ?? defaultQuotaAdapter, audit, providerRunner });
+  const embeddedWorker = !dispatchTask && taskRepository instanceof InMemoryAiTaskRepository && providerRunner ? new AiTaskWorker({ repository: taskRepository, taskService: aiTasks, workerId: 'embedded-api-worker', pollIntervalMs: 1, idleBackoffMs: 5 }) : null;
+  embeddedWorker?.start();
   const loginLimiter = rateLimiter ?? createRateLimiter({ clock });
   const maxLoginAttempts = 5;
   const loginWindowMs = 60_000;
@@ -122,7 +126,7 @@ export function buildServer({ logger = true, repository, providerRepository, pro
   app.post('/api/v1/provider/configs/:providerId/models', async (request) => { await validateCsrf(request); const auth = await requireScope(request, 'provider.model.manage'); return providerConfigs.refresh(request.params.providerId, auth.subjectId, request.body?.requestId ?? request.requestId); });
   app.get('/api/v1/provider/configs/:providerId/model-policies', async (request) => { const auth = await requireScope(request, 'provider.model.read'); return providerConfigs.policies(request.params.providerId, auth.subjectId); });
   app.post('/api/v1/provider/configs/:providerId/model-policies', async (request) => { await validateCsrf(request); const auth = await requireScope(request, 'provider.model.manage'); return providerConfigs.policy(request.params.providerId, auth.subjectId, { ...request.body, requestId: request.body?.requestId ?? request.requestId }); });
-  app.post('/api/v1/ai-tasks', async (request, reply) => { await validateCsrf(request); const auth = await requireScope(request, 'ai_task.submit'); const receipt = await aiTasks.submit({ ...request.body, ownerId: auth.subjectId, requestId: request.body?.requestId ?? request.requestId }); return reply.code(202).send(receipt); });
+  app.post('/api/v1/ai-tasks', async (request, reply) => { await validateCsrf(request); const auth = await requireScope(request, 'ai_task.submit'); const receipt = await aiTasks.submit({ ...request.body, ownerId: auth.subjectId, requestId: request.body?.requestId ?? request.requestId }); if (dispatchTask) queueMicrotask(() => dispatchTask(receipt.taskId).catch(() => {})); return reply.code(202).send(receipt); });
   app.get('/api/v1/ai-tasks/:taskId', async (request) => { const auth = await requireScope(request, 'ai_task.read'); return aiTasks.get(request.params.taskId, auth.subjectId); });
   app.get('/api/v1/ai-tasks/:taskId/events', async (request, reply) => { const auth = await requireScope(request, 'ai_task.read'); const after = request.headers['last-event-id'] ?? request.query?.cursor ?? 0; const events = await aiTasks.events(request.params.taskId, auth.subjectId, after); reply.header('content-type', 'text/event-stream; charset=utf-8').header('cache-control', 'no-cache').header('connection', 'keep-alive'); return events.map((event) => `id: ${event.sequence}\nevent: ${event.type}\ndata: ${JSON.stringify(event)}\n\n`).join(''); });
   app.delete('/api/v1/ai-tasks/:taskId', async (request) => { await validateCsrf(request); const auth = await requireScope(request, 'ai_task.cancel'); return aiTasks.cancel(request.params.taskId, auth.subjectId, request.body?.requestId ?? request.requestId); });
@@ -184,7 +188,7 @@ if (process.argv[1] && new URL(import.meta.url).pathname === process.argv[1]) {
   const redis = process.env.REDIS_URL ? createClient({ url: process.env.REDIS_URL }) : null;
   if (redis) await redis.connect();
   const app = buildServer({ rateLimiter: createRateLimiter({ redis }) });
-  if (redis) app.addHook('onClose', async () => redis.quit());
+  app.addHook('onClose', async () => { await embeddedWorker?.stop(); if (redis) await redis.quit(); });
   const host = process.env.HOST ?? '127.0.0.1';
   const port = Number(process.env.PORT ?? 3000);
   await app.listen({ host, port });

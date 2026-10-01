@@ -26,3 +26,20 @@ test('AI task worker passes the claimed attempt and persisted input to the servi
   assert.equal(args[3].attempt.attemptId, attempt.attemptId);
   assert.equal(repository.attempts.size, 1);
 });
+
+test('AI task worker runs a continuous loop and stops without claiming after stop', async () => {
+  const repository = new InMemoryAiTaskRepository(); let calls = 0;
+  const worker = new AiTaskWorker({ repository, taskService: { run: async () => { calls += 1; } }, workerId: 'loop-worker', pollIntervalMs: 1, idleBackoffMs: 1 });
+  const loop = worker.start(); await new Promise((resolve) => setTimeout(resolve, 5)); await worker.stop(); await loop;
+  assert.equal(worker.running, false); assert.equal(calls, 0);
+});
+
+test('lease loss prevents worker service from committing terminal state', async () => {
+  const repository = new InMemoryAiTaskRepository();
+  const task = await repository.createTask({ ownerId: 'owner', requestId: 'request', target: 'text', intent: 'text.chat', modelId: 'model', providerConfigId: 'config', inputText: 'hello' });
+  const attempt = await repository.createAttempt({ taskId: task.taskId, providerConfigId: 'config', providerAccountId: 'account', modelId: 'model' });
+  await repository.claimAttempt('worker-a', 1);
+  const worker = new AiTaskWorker({ repository, taskService: { run: async (_id, _text, _owner, options) => { await new Promise((resolve) => setTimeout(resolve, 3)); assert.equal(options.isLeaseValid(), false); } }, workerId: 'worker-a', heartbeatMs: 1, leaseMs: 1 });
+  await worker.runOnce();
+  assert.equal((await repository.getAttempt(attempt.attemptId)).state, 'running');
+});
