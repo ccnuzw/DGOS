@@ -14,7 +14,7 @@ test('web workbench covers bootstrap, provider catalog, policy, streamed task, r
   await page.goto('/');
   await page.getByRole('button', { name: 'First-time setup' }).click();
   await page.getByLabel('Display name').fill('E2E Admin'); await page.getByLabel('Credential').fill('fixture-secret'); await page.getByRole('button', { name: 'Create admin session' }).click();
-  await expect(page.getByRole('heading', { name: 'AI Workbench' })).toBeVisible(); await expect(page.getByText('Fixture Text')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'AI Workbench' })).toBeVisible(); await page.getByRole('button', { name: 'Refresh' }).click(); await expect(page.getByText('Fixture Text')).toBeVisible();
   await page.getByLabel('Prompt').fill('Say hello'); await page.getByRole('button', { name: 'Run task' }).click();
   await expect(page.locator('.result pre')).toContainText('hello world'); await expect(page.locator('.pill.succeeded')).toBeVisible();
   await page.getByRole('button', { name: 'Re-query / resume' }).click(); await expect(page.locator('.result pre')).toContainText('hello world');
