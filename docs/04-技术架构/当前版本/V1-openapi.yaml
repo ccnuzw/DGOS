@@ -507,6 +507,19 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/AITaskSnapshot' }
+    delete:
+      tags: [ai-tasks]
+      operationId: cancelAiTask
+      x-tag-feature: V1-FR-005
+      x-tag-implementation-status: implemented
+      parameters:
+        - { $ref: '#/components/parameters/TaskId' }
+      responses:
+        '200':
+          description: Cancellation request or terminal task snapshot
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AITaskSnapshot' }
   /api/v1/ai-tasks/{taskId}/events:
     get:
       tags: [ai-tasks]
@@ -532,6 +545,29 @@ paths:
               schema:
                 type: string
                 description: SSE frames carrying AITaskEvent JSON data
+  /api/v1/artifacts/{artifactId}:
+    get:
+      tags: [ai-tasks]
+      operationId: readArtifact
+      x-tag-feature: V1-FR-005
+      x-tag-implementation-status: implemented
+      parameters:
+        - in: path
+          name: artifactId
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Sanitized task artifact content
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [artifactId, mimeType, content]
+                properties:
+                  artifactId: { type: string }
+                  mimeType: { type: string }
+                  content: { type: string }
   /api/v1/skills:
     get:
       tags: [skills]
@@ -1722,12 +1758,12 @@ components:
       allOf:
         - $ref: '#/components/schemas/RequestEnvelope'
         - type: object
-          required: [displayName, protocolType, baseUrl, apiKey]
+          required: [displayName, protocolType, baseUrl, providerAccountId]
           properties:
             displayName: { type: string, minLength: 1 }
             protocolType: { type: string, example: openai-compatible }
             baseUrl: { type: string, format: uri }
-            apiKey: { type: string, format: password, writeOnly: true, description: Write-only credential input; stored in DGOS Secret Boundary and never returned }
+            providerAccountId: { type: string, description: Existing ProviderAccount reference; credentials remain in SecretService }
             enabled: { type: boolean, default: true }
     ProviderConfig:
       type: object
@@ -1738,7 +1774,7 @@ components:
         displayName: { type: string }
         baseUrl: { type: string, format: uri }
         credentialStatus: { type: string, enum: [missing, configured, invalid, unknown] }
-        validationState: { type: string, enum: [draft, validating, active, error, disabled] }
+        validationState: { type: string, enum: [draft, validating, active, ready, error, disabled, revoked] }
         adapterVersion: { type: string }
     ProviderConfigUpdate:
       allOf:
@@ -1748,7 +1784,6 @@ components:
             displayName: { type: string, minLength: 1 }
             protocolType: { type: string }
             baseUrl: { type: string, format: uri }
-            apiKey: { type: string, format: password, writeOnly: true, description: Optional replacement credential; omitted means keep the existing secret }
             enabled: { type: boolean }
     ProtocolAdapterRegistration:
       type: object
@@ -1869,14 +1904,14 @@ components:
       properties:
         taskId: { type: string }
         requestId: { type: string }
-        status: { type: string, enum: [queued, running, completed, failed, cancelled] }
+        status: { type: string, enum: [accepted, queued, running, succeeded, completed, failed, cancel_requested, cancelled, timed_out] }
         descriptorVersion: { type: string }
     AITaskSnapshot:
       type: object
       required: [taskId, status]
       properties:
         taskId: { type: string }
-        status: { type: string, enum: [queued, running, completed, failed, cancelled] }
+        status: { type: string, enum: [accepted, queued, running, succeeded, completed, failed, cancel_requested, cancelled, timed_out] }
         text: { type: string, description: Current sanitized text summary }
         artifactIds: { type: array, items: { type: string } }
         error: { type: object, additionalProperties: true }

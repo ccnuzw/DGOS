@@ -7,6 +7,7 @@ const sql = await readFile(join(root, 'migrations/0001-v1-governance.sql'), 'utf
 const leaseSql = await readFile(join(root, 'migrations/0002-connection-test-leases.sql'), 'utf8');
 const outboxSql = await readFile(join(root, 'migrations/0003-audit-outbox-leases.sql'), 'utf8');
 const retentionSql = await readFile(join(root, 'migrations/0004-retention-jobs.sql'), 'utf8');
+const taskSql = await readFile(join(root, 'migrations/0007-provider-config-ai-task.sql'), 'utf8');
 const required = [
   'CREATE TABLE IF NOT EXISTS dgos_schema_migrations',
   'CREATE TABLE IF NOT EXISTS admin_principals',
@@ -27,9 +28,11 @@ const missingLease = leaseRequired.filter((fragment) => !leaseSql.includes(fragm
 const outboxRequired = ['ADD COLUMN IF NOT EXISTS lease_owner', 'ADD COLUMN IF NOT EXISTS lease_until', 'audit_outbox_claim_idx'];
 const missingOutbox = outboxRequired.filter((fragment) => !outboxSql.includes(fragment));
 const retentionRequired = ['CREATE TABLE IF NOT EXISTS retention_jobs', 'preview_digest', 'checkpoint', 'retention_jobs_state_idx'];
+const taskRequired = ['CREATE TABLE IF NOT EXISTS provider_configs', 'CREATE TABLE IF NOT EXISTS model_catalogs', 'CREATE TABLE IF NOT EXISTS model_policies', 'CREATE TABLE IF NOT EXISTS ai_tasks', 'CREATE TABLE IF NOT EXISTS ai_task_attempts', 'CREATE TABLE IF NOT EXISTS ai_task_events', 'CREATE TABLE IF NOT EXISTS artifacts', 'UNIQUE(owner_id,request_id)', 'UNIQUE(owner_id,request_id,input_digest)', 'UNIQUE(task_id,sequence)'];
 const missingRetention = retentionRequired.filter((fragment) => !retentionSql.includes(fragment));
-if (missing.length > 0 || missingLease.length > 0 || missingOutbox.length > 0 || missingRetention.length > 0) {
-  console.error(JSON.stringify({ ok: false, missing, missingLease, missingOutbox, missingRetention }, null, 2));
+const missingTask = taskRequired.filter((fragment) => !taskSql.includes(fragment));
+if (missing.length > 0 || missingLease.length > 0 || missingOutbox.length > 0 || missingRetention.length > 0 || missingTask.length > 0) {
+  console.error(JSON.stringify({ ok: false, missing, missingLease, missingOutbox, missingRetention, missingTask }, null, 2));
   process.exit(1);
 }
-console.log(JSON.stringify({ ok: true, migrations: ['0001-v1-governance.sql', '0002-connection-test-leases.sql', '0003-audit-outbox-leases.sql', '0004-retention-jobs.sql'], requiredChecks: required.length + leaseRequired.length + outboxRequired.length + retentionRequired.length }, null, 2));
+console.log(JSON.stringify({ ok: true, migrations: ['0001-v1-governance.sql', '0002-connection-test-leases.sql', '0003-audit-outbox-leases.sql', '0004-retention-jobs.sql', '0007-provider-config-ai-task.sql'], requiredChecks: required.length + leaseRequired.length + outboxRequired.length + retentionRequired.length + taskRequired.length }, null, 2));
