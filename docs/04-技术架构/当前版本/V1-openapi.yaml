@@ -4,7 +4,7 @@ info:
   version: "1.0.0"
   description: |
     DGOS V1 逻辑契约的 HTTPS JSON + SSE 投影。桌面 IPC 必须保持相同的动作、字段、权限和事件语义。
-    该文件是规划中的机器可验证 schema，不代表当前仓库已有实现。
+    该文件同时登记已实现的本地 contract projection 与尚未具备真实桌面/Web E2E 证据的 draft operation。
 security:
   - dgosSession: []
   - dgosApiKey: []
@@ -22,13 +22,69 @@ tags:
   - name: secrets
   - name: governance
   - name: usage
+  - name: apps
 paths:
+  /api/v1/apps:
+    get:
+      tags: [apps]
+      operationId: listApps
+      x-tag-feature: V1-FR-002
+      x-tag-implementation-status: implemented-local-contract
+      responses:
+        '200': { description: Public app catalog }
+    post:
+      tags: [apps]
+      operationId: submitAppManifest
+      x-tag-feature: V1-FR-002
+      x-tag-implementation-status: implemented-local-contract
+      responses:
+        '201': { description: Manifest accepted for review }
+  /api/v1/apps/{appId}/install:
+    post:
+      tags: [apps]
+      operationId: installApp
+      x-tag-feature: V1-FR-002
+      x-tag-implementation-status: implemented-local-contract
+      responses:
+        '200': { description: Installed app snapshot }
+  /api/v1/apps/{appId}/launch:
+    post:
+      tags: [apps]
+      operationId: launchApp
+      x-tag-feature: V1-FR-001
+      x-tag-implementation-status: implemented-local-contract
+      responses:
+        '200': { description: Active app snapshot }
+  /api/v1/apps/{appId}/update:
+    post:
+      tags: [apps]
+      operationId: updateApp
+      x-tag-feature: V1-FR-002
+      x-tag-implementation-status: implemented-local-contract
+      responses:
+        '200': { description: Updated app snapshot }
+  /api/v1/apps/{appId}/uninstall:
+    post:
+      tags: [apps]
+      operationId: uninstallApp
+      x-tag-feature: V1-FR-002
+      x-tag-implementation-status: implemented-local-contract
+      responses:
+        '200': { description: Uninstalled app snapshot with retained data }
+  /api/v1/apps/{appId}/health:
+    get:
+      tags: [apps]
+      operationId: checkAppHealth
+      x-tag-feature: V1-FR-002
+      x-tag-implementation-status: implemented-local-contract
+      responses:
+        '200': { description: Health snapshot }
   /api/v1/actions:
     get:
       tags: [assistant]
       operationId: listActions
       x-tag-feature: V1-FR-009
-      x-tag-implementation-status: planned
+      x-tag-implementation-status: implemented-local-contract
       responses:
         '200':
           description: Actions visible to the current subject
@@ -40,7 +96,7 @@ paths:
       tags: [system]
       operationId: readSystemSettings
       x-tag-feature: V1-FR-001
-      x-tag-implementation-status: planned
+      x-tag-implementation-status: implemented-local-contract
       responses:
         '200':
           description: Current system settings and effective values
@@ -51,7 +107,7 @@ paths:
       tags: [system]
       operationId: writeSystemSettings
       x-tag-feature: V1-FR-001
-      x-tag-implementation-status: planned
+      x-tag-implementation-status: implemented-local-contract
       requestBody:
         required: true
         content:
@@ -70,7 +126,7 @@ paths:
       tags: [system]
       operationId: readSystemContext
       x-tag-feature: V1-FR-001
-      x-tag-implementation-status: planned
+      x-tag-implementation-status: implemented-local-contract
       responses:
         '200':
           description: Redacted runtime context for the current application
@@ -82,7 +138,7 @@ paths:
       tags: [system]
       operationId: subscribeSystemContext
       x-tag-feature: V1-FR-001
-      x-tag-implementation-status: planned
+      x-tag-implementation-status: implemented-local-contract
       responses:
         '200':
           description: Server-sent system context changes
@@ -94,7 +150,7 @@ paths:
       tags: [system]
       operationId: checkPermission
       x-tag-feature: V1-FR-001
-      x-tag-implementation-status: planned
+      x-tag-implementation-status: implemented-local-contract
       requestBody:
         required: true
         content:
@@ -111,7 +167,7 @@ paths:
       tags: [system]
       operationId: requestPermission
       x-tag-feature: V1-FR-001
-      x-tag-implementation-status: planned
+      x-tag-implementation-status: implemented-local-contract
       requestBody:
         required: true
         content:
@@ -128,7 +184,7 @@ paths:
       tags: [assistant]
       operationId: planAction
       x-tag-feature: V1-FR-009
-      x-tag-implementation-status: planned
+      x-tag-implementation-status: implemented-local-contract
       parameters:
         - { $ref: '#/components/parameters/ActionId' }
       requestBody:
@@ -147,7 +203,7 @@ paths:
       tags: [assistant]
       operationId: executeAction
       x-tag-feature: V1-FR-009
-      x-tag-implementation-status: planned
+      x-tag-implementation-status: implemented-local-contract
       parameters:
         - { $ref: '#/components/parameters/ActionId' }
       requestBody:
@@ -166,7 +222,7 @@ paths:
       tags: [assistant]
       operationId: getActionRun
       x-tag-feature: V1-FR-009
-      x-tag-implementation-status: planned
+      x-tag-implementation-status: implemented-local-contract
       parameters:
         - { $ref: '#/components/parameters/ActionRunId' }
       responses:
@@ -179,7 +235,7 @@ paths:
       tags: [assistant]
       operationId: cancelActionRun
       x-tag-feature: V1-FR-009
-      x-tag-implementation-status: planned
+      x-tag-implementation-status: implemented-local-contract
       parameters:
         - { $ref: '#/components/parameters/ActionRunId' }
       responses:

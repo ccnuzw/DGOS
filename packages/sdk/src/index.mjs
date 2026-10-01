@@ -8,6 +8,7 @@ export const errorKeys = Object.freeze([
   'version_conflict',
   'service_unavailable',
 ]);
+export const runtimePaths = Object.freeze({ apps: '/api/v1/apps', actions: '/api/v1/actions', permissions: '/api/v1/permissions', settings: '/api/v1/system/settings', context: '/api/v1/system/context' });
 
 export function createRequestId() {
   return crypto.randomUUID();

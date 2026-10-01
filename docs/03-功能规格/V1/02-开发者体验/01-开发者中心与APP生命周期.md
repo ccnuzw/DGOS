@@ -216,6 +216,8 @@ Then 发布被拒绝，或安装回滚到旧代码且项目数据保留。
 
 ## 实现与验证
 
+本轮已实现 `src/apps/manifest-validator.mjs`、`src/apps/catalog-service.mjs`、`src/apps/runtime-service.mjs` 与 API `/api/v1/apps*` 生命周期入口；manifest digest、版本/build 唯一、审核状态、普通目录隔离、测试安装、健康检查回滚和数据保留由 `tests/unit/runtime.test.mjs` 覆盖。真实包执行器、签名验证和桌面宿主仍属于后续运行证据。
+
 当前只有 DX OS 外部研究资料和视频证据；没有 DGOS APP 包或发布运行证据。此功能为高风险，开发前必须完成 DGOS 自有契约和技术设计。
 
 ## 技术设计

@@ -1,0 +1,7 @@
+export class PermissionBroker {
+  constructor({ repository, audit } = {}) { this.repository = repository; this.audit = audit; }
+  check({ subjectId, appId, capability, scope = '*', declared = [], requestId }) { const decision = this.repository.get({ subjectId, appId, capability, scope }); const result = { decision: decision?.decision ?? (declared.includes(capability) ? 'ask' : 'deny'), reasonCode: decision?.decision ?? (declared.includes(capability) ? 'no_decision' : 'not_declared'), policyVersion: decision?.policyVersion ?? String(this.repository.version), subjectId, appId, capability, scope }; this.audit?.record({ requestId, actorId: subjectId, action: 'permission.check', targetType: 'permission', targetId: `${appId}:${capability}`, summary: { decision: result.decision, scope } }); return result; }
+  async decide(input) { if (!['allow', 'ask', 'deny'].includes(input.decision)) throw Object.assign(new Error('invalid_request'), { statusCode: 422 }); const result = this.repository.set(input, input.decision); await this.audit?.record({ requestId: input.requestId, actorId: input.subjectId, action: 'permission.change', targetType: 'permission', targetId: `${input.appId}:${input.capability}`, summary: { decision: input.decision, scope: input.scope } }); return result; }
+  async request(input) { const result = this.check(input); if (result.decision === 'ask') return { ...result, confirmationRequired: true, confirmationId: `${input.requestId}:permission` }; return result; }
+  revoke(input) { return this.decide({ ...input, decision: 'deny' }); }
+}

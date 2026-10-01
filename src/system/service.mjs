@@ -1,0 +1,8 @@
+const domains = ['appearance', 'locale', 'network', 'grid', 'privacy', 'appPermissions'];
+export class SystemService {
+  constructor({ audit } = {}) { this.audit = audit; this.version = 1; this.contextVersion = 1; this.settings = { appearance: { mode: 'system' }, locale: { language: 'en-US' }, network: { proxySecretRef: null }, grid: { enabled: true }, privacy: { telemetry: false }, appPermissions: {} }; this.events = []; }
+  snapshot() { return { settingsVersion: String(this.version), settings: structuredClone(this.settings) }; }
+  context() { const settings = this.snapshot().settings; if (settings.network) settings.network = { proxySecretRef: settings.network.proxySecretRef }; return { contextVersion: String(this.contextVersion), settings, runtimeVersion: 'v1' }; }
+  async patch({ patch, baseVersion, actorId, requestId }) { if (String(baseVersion) !== String(this.version)) throw Object.assign(new Error('version_conflict'), { statusCode: 409, current: this.snapshot() }); const domain = patch?.domain; if (!domains.includes(domain) || !patch.value) throw Object.assign(new Error('invalid_request'), { statusCode: 422 }); this.settings[domain] = structuredClone(patch.value); this.version += 1; this.contextVersion += 1; const event = { contextVersion: String(this.contextVersion), domain }; this.events.push(event); await this.audit?.record({ requestId, actorId, action: 'system.settings.patch', targetType: 'system_settings', targetId: domain, summary: { settingsVersion: String(this.version) } }); return { ...this.snapshot(), restartRequired: domain === 'network', contextVersion: String(this.contextVersion) }; }
+  getEvents(after = 0) { return this.events.filter((e) => Number(e.contextVersion) > Number(after)); }
+}
