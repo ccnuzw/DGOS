@@ -17,5 +17,6 @@ export function createWorkerInfo() {
 }
 
 if (process.argv[1] && new URL(import.meta.url).pathname === process.argv[1]) {
-  console.log(JSON.stringify({ ...createWorkerInfo(), workerId: workerConfig().workerId ?? 'generated', config: workerConfig() }));
+  if (!process.env.DGOS_DATABASE_URL || !process.env.DGOS_WORKER_TASK_SERVICE_MODULE) { console.log(JSON.stringify({ ...createWorkerInfo(), workerId: workerConfig().workerId ?? 'generated', config: workerConfig(), status: 'idle', startable: false, reason: 'DGOS_DATABASE_URL and DGOS_WORKER_TASK_SERVICE_MODULE are required' })); }
+  else throw new Error('worker bootstrap module must be started by an application host');
 }

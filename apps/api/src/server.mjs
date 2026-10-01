@@ -57,9 +57,11 @@ export function buildServer({ logger = true, repository, providerRepository, pro
   const providerConfigs = new ProviderConfigService({ repository: providerConfigRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresProviderConfigRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryProviderConfigRepository()), accountRepository: providers.repository, secretService, registry: providerRegistry, egress: configuredEgress, audit });
   const defaultQuotaAdapter = quotaModules?.[1]?.createQuotaAdapter ? quotaModules[1].createQuotaAdapter(quota) : { preflight: (input) => quota.preflight(input), reserve: (input) => quota.reserveQuota(input), settle: (input) => quota.settleUsage(input), release: (input) => quota.releaseQuota(input) };
   const taskRepository = aiTaskRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresAiTaskRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryAiTaskRepository());
-  const aiTasks = new AiTaskService({ repository: taskRepository, configService: providerConfigs, accountRepository: providers.repository, secretService, registry: providerRegistry, egress: configuredEgress, quota: quotaAdapter ?? defaultQuotaAdapter, audit, providerRunner });
-  const embeddedWorker = !dispatchTask && taskRepository instanceof InMemoryAiTaskRepository && providerRunner ? new AiTaskWorker({ repository: taskRepository, taskService: aiTasks, workerId: 'embedded-api-worker', pollIntervalMs: 1, idleBackoffMs: 5 }) : null;
+  const embeddedWorkerEnabled = !dispatchTask && taskRepository instanceof InMemoryAiTaskRepository && providerRunner;
+  const aiTasks = new AiTaskService({ repository: taskRepository, configService: providerConfigs, accountRepository: providers.repository, secretService, registry: providerRegistry, egress: configuredEgress, quota: quotaAdapter ?? defaultQuotaAdapter, audit, providerRunner, dispatch: dispatchTask ? (input) => dispatchTask(input) : embeddedWorkerEnabled ? async () => {} : undefined });
+  const embeddedWorker = embeddedWorkerEnabled ? new AiTaskWorker({ repository: taskRepository, taskService: aiTasks, workerId: 'embedded-api-worker', pollIntervalMs: 1, idleBackoffMs: 5 }) : null;
   embeddedWorker?.start();
+  if (embeddedWorker) app.addHook('onClose', async () => embeddedWorker.stop());
   const loginLimiter = rateLimiter ?? createRateLimiter({ clock });
   const maxLoginAttempts = 5;
   const loginWindowMs = 60_000;

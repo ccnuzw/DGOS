@@ -27,7 +27,11 @@ importers:
         specifier: ^4.7.0
         version: 4.7.1
 
-  apps/web: {}
+  apps/web:
+    devDependencies:
+      '@playwright/test':
+        specifier: ^1.63.0
+        version: 1.63.0
 
   apps/worker:
     dependencies:
