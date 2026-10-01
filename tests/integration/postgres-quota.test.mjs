@@ -13,6 +13,7 @@ test('PostgreSQL quota reservation concurrency, idempotency, settlement and chec
   try { await pool.query('SELECT 1'); } catch (error) { await pool.end(); t.skip(`PostgreSQL unavailable: ${error.message}`); return; }
   const audit = new PostgresAuditRepository(pool); const repository = new PostgresQuotaRepository(pool, { audit }); const service = new QuotaService({ repository, audit });
   const subjectId = randomUUID(); const suffix = randomUUID(); const base = { subjectId, scopeType: 'subject', scopeId: subjectId, metric: `requests_${suffix}`, windowSeconds: 3600, hardLimit: 3, softLimit: 2, requestId: randomUUID(), actorId: subjectId };
+  await pool.query('DELETE FROM quota_reservations WHERE subject_id=$1', [subjectId]);
   const policy = await service.updatePolicy(base); assert.equal(policy.version, 1);
   await assert.rejects(() => service.updatePolicy({ ...base, baseVersion: 0 }), /policy_version_conflict/);
   const attempts = Array.from({ length: 8 }, () => ({ subjectId, scopeType: 'subject', scopeId: subjectId, metric: base.metric, windowSeconds: 3600, hardLimit: 3, requestId: randomUUID(), taskId: randomUUID(), attemptId: randomUUID(), amount: 1 }));

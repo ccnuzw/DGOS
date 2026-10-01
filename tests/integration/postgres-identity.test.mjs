@@ -11,6 +11,11 @@ const connectionString = process.env.DGOS_DATABASE_URL ?? 'postgres://dgos:dgos@
 test('PostgreSQL repository persists identity, key digest, and audit outbox', async (t) => {
   const pool = new pg.Pool({ connectionString });
   try { await pool.query('SELECT 1'); } catch (error) { await pool.end(); t.skip(`PostgreSQL unavailable: ${error.message}`); return; }
+  await pool.query("DELETE FROM audit_outbox WHERE event_id IN (SELECT event_id FROM audit_events WHERE actor_id IN (SELECT principal_id FROM admin_principals WHERE credential_ref LIKE 'admin-credential:%'))");
+  await pool.query("DELETE FROM audit_events WHERE actor_id IN (SELECT principal_id FROM admin_principals WHERE credential_ref LIKE 'admin-credential:%')");
+  await pool.query("DELETE FROM api_key_records WHERE owner_id IN (SELECT principal_id FROM admin_principals WHERE credential_ref LIKE 'admin-credential:%')");
+  await pool.query("DELETE FROM admin_sessions WHERE principal_id IN (SELECT principal_id FROM admin_principals WHERE credential_ref LIKE 'admin-credential:%')");
+  await pool.query("DELETE FROM admin_principals WHERE credential_ref LIKE 'admin-credential:%'");
   const repo = new PostgresIdentityRepository(pool);
   const secret = new InMemorySecretService();
   const service = new IdentityService({ repository: repo, secretService: secret });

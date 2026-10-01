@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS provider_configs (
+  provider_config_id uuid PRIMARY KEY, owner_id uuid NOT NULL REFERENCES admin_principals(principal_id),
+  provider_account_id uuid NOT NULL REFERENCES provider_accounts(account_id), protocol_type text NOT NULL,
+  display_name text NOT NULL, base_url text NOT NULL,
+  status text NOT NULL CHECK (status IN ('draft','validating','ready','error','disabled','revoked')),
+  version bigint NOT NULL DEFAULT 1 CHECK (version > 0), protocol_version text NOT NULL, descriptor_version text,
+  credential_status text NOT NULL DEFAULT 'configured', request_id uuid,
+  created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now(), UNIQUE(owner_id,request_id)
+);
+CREATE INDEX IF NOT EXISTS provider_configs_owner_idx ON provider_configs(owner_id,status);
+CREATE TABLE IF NOT EXISTS model_catalogs (provider_config_id uuid NOT NULL REFERENCES provider_configs(provider_config_id), catalog_version bigint NOT NULL, status text NOT NULL CHECK(status IN ('fresh','stale','unavailable')), refreshed_at timestamptz, PRIMARY KEY(provider_config_id,catalog_version));
+CREATE TABLE IF NOT EXISTS model_catalog_entries (provider_config_id uuid NOT NULL, catalog_version bigint NOT NULL, model_id text NOT NULL, display_name text NOT NULL, capability_summary jsonb NOT NULL, task_modes jsonb NOT NULL, streaming boolean NOT NULL DEFAULT false, tools boolean NOT NULL DEFAULT false, enabled boolean NOT NULL DEFAULT false, default_eligible boolean NOT NULL DEFAULT false, source_digest text NOT NULL, PRIMARY KEY(provider_config_id,catalog_version,model_id), FOREIGN KEY(provider_config_id,catalog_version) REFERENCES model_catalogs(provider_config_id,catalog_version));
+CREATE TABLE IF NOT EXISTS model_policies (provider_config_id uuid NOT NULL REFERENCES provider_configs(provider_config_id), model_id text NOT NULL, enabled boolean NOT NULL, assigned_capabilities jsonb NOT NULL DEFAULT '[]', default_for jsonb NOT NULL DEFAULT '[]', policy_version bigint NOT NULL DEFAULT 1, classification_source text NOT NULL, output_spec jsonb NOT NULL DEFAULT '{}', pricing jsonb NOT NULL DEFAULT '{}', PRIMARY KEY(provider_config_id,model_id));
+CREATE INDEX IF NOT EXISTS model_policies_version_idx ON model_policies(provider_config_id,policy_version);
+CREATE TABLE IF NOT EXISTS ai_tasks (task_id uuid PRIMARY KEY, owner_id uuid NOT NULL REFERENCES admin_principals(principal_id), request_id uuid NOT NULL, target text NOT NULL, intent text NOT NULL, model_id text NOT NULL, provider_config_id uuid NOT NULL REFERENCES provider_configs(provider_config_id), input_digest text NOT NULL, state text NOT NULL CHECK(state IN ('accepted','queued','running','succeeded','failed','cancel_requested','cancelled','timed_out')), text text, error jsonb, artifact_ids jsonb NOT NULL DEFAULT '[]', created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now(), UNIQUE(owner_id,request_id,input_digest));
+CREATE INDEX IF NOT EXISTS ai_tasks_owner_idx ON ai_tasks(owner_id,state,updated_at);
+CREATE TABLE IF NOT EXISTS ai_task_attempts (attempt_id uuid PRIMARY KEY, task_id uuid NOT NULL REFERENCES ai_tasks(task_id), provider_config_id uuid NOT NULL, provider_account_id uuid NOT NULL, model_id text NOT NULL, state text NOT NULL CHECK(state IN ('queued','running','succeeded','failed','cancelled','timed_out')), error_class text, quota_reservation_ref text, started_at timestamptz, completed_at timestamptz, UNIQUE(task_id,attempt_id));
+CREATE TABLE IF NOT EXISTS ai_task_events (event_id uuid PRIMARY KEY, task_id uuid NOT NULL REFERENCES ai_tasks(task_id), sequence bigint NOT NULL, event_type text NOT NULL, payload jsonb NOT NULL DEFAULT '{}', created_at timestamptz NOT NULL DEFAULT now(), UNIQUE(task_id,sequence));
+CREATE INDEX IF NOT EXISTS ai_task_events_stream_idx ON ai_task_events(task_id,sequence);
+CREATE TABLE IF NOT EXISTS artifacts (artifact_id uuid PRIMARY KEY, task_id uuid NOT NULL REFERENCES ai_tasks(task_id), owner_id uuid NOT NULL REFERENCES admin_principals(principal_id), mime_type text NOT NULL, content text NOT NULL, created_at timestamptz NOT NULL DEFAULT now());
+CREATE INDEX IF NOT EXISTS artifacts_owner_idx ON artifacts(owner_id,created_at);
