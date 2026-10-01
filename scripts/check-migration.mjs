@@ -6,6 +6,7 @@ const root = fileURLToPath(new URL('..', import.meta.url));
 const sql = await readFile(join(root, 'migrations/0001-v1-governance.sql'), 'utf8');
 const leaseSql = await readFile(join(root, 'migrations/0002-connection-test-leases.sql'), 'utf8');
 const outboxSql = await readFile(join(root, 'migrations/0003-audit-outbox-leases.sql'), 'utf8');
+const retentionSql = await readFile(join(root, 'migrations/0004-retention-jobs.sql'), 'utf8');
 const required = [
   'CREATE TABLE IF NOT EXISTS dgos_schema_migrations',
   'CREATE TABLE IF NOT EXISTS admin_principals',
@@ -25,8 +26,10 @@ const leaseRequired = ['ADD COLUMN IF NOT EXISTS lease_owner', 'ADD COLUMN IF NO
 const missingLease = leaseRequired.filter((fragment) => !leaseSql.includes(fragment));
 const outboxRequired = ['ADD COLUMN IF NOT EXISTS lease_owner', 'ADD COLUMN IF NOT EXISTS lease_until', 'audit_outbox_claim_idx'];
 const missingOutbox = outboxRequired.filter((fragment) => !outboxSql.includes(fragment));
-if (missing.length > 0 || missingLease.length > 0 || missingOutbox.length > 0) {
-  console.error(JSON.stringify({ ok: false, missing, missingLease, missingOutbox }, null, 2));
+const retentionRequired = ['CREATE TABLE IF NOT EXISTS retention_jobs', 'preview_digest', 'checkpoint', 'retention_jobs_state_idx'];
+const missingRetention = retentionRequired.filter((fragment) => !retentionSql.includes(fragment));
+if (missing.length > 0 || missingLease.length > 0 || missingOutbox.length > 0 || missingRetention.length > 0) {
+  console.error(JSON.stringify({ ok: false, missing, missingLease, missingOutbox, missingRetention }, null, 2));
   process.exit(1);
 }
-console.log(JSON.stringify({ ok: true, migrations: ['0001-v1-governance.sql', '0002-connection-test-leases.sql', '0003-audit-outbox-leases.sql'], requiredChecks: required.length + leaseRequired.length + outboxRequired.length }, null, 2));
+console.log(JSON.stringify({ ok: true, migrations: ['0001-v1-governance.sql', '0002-connection-test-leases.sql', '0003-audit-outbox-leases.sql', '0004-retention-jobs.sql'], requiredChecks: required.length + leaseRequired.length + outboxRequired.length + retentionRequired.length }, null, 2));

@@ -11,6 +11,8 @@ import { InMemoryProviderRepository, PostgresProviderRepository } from '../../..
 import { ProviderEgress } from '../../../src/security/provider-egress.mjs';
 import { ProviderService, createOpenAiCompatibleAdapter } from './provider-service.mjs';
 import { PostgresAuditRepository, InMemoryAuditRepository } from '../../../src/audit/outbox.mjs';
+import { PostgresRetentionRepository, InMemoryRetentionRepository } from '../../../src/audit/retention.mjs';
+import { GovernanceService } from './governance-service.mjs';
 
 export function buildServer({ logger = true, repository, providerRepository, providerService, secretService = new InMemorySecretService(), rateLimiter, clock } = {}) {
   const resolvedRepository = repository ?? (process.env.DGOS_DATABASE_URL ? new PostgresIdentityRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryIdentityRepository());
@@ -18,6 +20,7 @@ export function buildServer({ logger = true, repository, providerRepository, pro
   const identity = new IdentityService({ repository: resolvedRepository, secretService, clock });
   const providers = providerService ?? new ProviderService({ repository: providerRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresProviderRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryProviderRepository()), secretService, egress: new ProviderEgress(), adapters: { 'openai-compatible': createOpenAiCompatibleAdapter() } });
   const audit = process.env.DGOS_DATABASE_URL ? new PostgresAuditRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryAuditRepository();
+  const governance = new GovernanceService({ retentionRepository: process.env.DGOS_DATABASE_URL ? new PostgresRetentionRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryRetentionRepository(audit), auditRepository: audit });
   const loginLimiter = rateLimiter ?? createRateLimiter({ clock });
   const maxLoginAttempts = 5;
   const loginWindowMs = 60_000;
@@ -28,7 +31,7 @@ export function buildServer({ logger = true, repository, providerRepository, pro
   });
   app.setErrorHandler((error, request, reply) => {
     const statusCode = error.statusCode >= 400 && error.statusCode < 600 ? error.statusCode : 500;
-    const messages = { invalid_request: 'Request is invalid', bootstrap_already_completed: 'Bootstrap is unavailable', invalid_credentials: 'Authentication failed', authentication_required: 'Authentication required', insufficient_scope: 'Required capability is missing', rate_limited: 'Too many authentication attempts', csrf_failed: 'Request origin validation failed', session_invalid: 'Session is invalid', session_conflict: 'Session changed; retry with a fresh session', session_not_found: 'Session not found', api_key_not_found: 'API key not found', protocol_unavailable: 'Provider protocol is unavailable', provider_account_not_found: 'Provider account not found', provider_account_conflict: 'Provider account changed; retry with a fresh version', connection_test_not_found: 'Connection test not found' };
+    const messages = { invalid_request: 'Request is invalid', bootstrap_already_completed: 'Bootstrap is unavailable', invalid_credentials: 'Authentication failed', authentication_required: 'Authentication required', insufficient_scope: 'Required capability is missing', rate_limited: 'Too many authentication attempts', csrf_failed: 'Request origin validation failed', session_invalid: 'Session is invalid', session_conflict: 'Session changed; retry with a fresh session', session_not_found: 'Session not found', api_key_not_found: 'API key not found', protocol_unavailable: 'Provider protocol is unavailable', provider_account_not_found: 'Provider account not found', provider_account_conflict: 'Provider account changed; retry with a fresh version', connection_test_not_found: 'Connection test not found', retention_preview_conflict: 'Retention preview changed; refresh before executing', retention_job_not_found: 'Retention job not found' };
     reply.code(statusCode).send({ errorKey: error.message in messages ? error.message : 'internal_error', message: messages[error.message] ?? 'Request failed', requestId: request.requestId, retryable: statusCode >= 500, ...(error.retryAfter ? { details: { retryAfter: error.retryAfter } } : {}) });
   });
 
@@ -74,6 +77,9 @@ export function buildServer({ logger = true, repository, providerRepository, pro
   app.get('/api/v1/provider/connection-tests/:testId', async (request) => { await requireScope(request, 'provider.connection_test'); return providers.getConnectionTest(request.params.testId); });
   app.delete('/api/v1/provider/connection-tests/:testId', async (request) => { await validateCsrf(request); const auth = await requireScope(request, 'provider.connection_test'); return providers.cancelConnectionTest(request.params.testId, request.requestId, auth.subjectId); });
   app.get('/api/v1/audit/events', async (request) => { const auth = await requireScope(request, 'audit.read'); const query = request.query ?? {}; const isApiKey = auth.authMethod === 'api_key'; return audit.query({ ...query, restrictActorId: isApiKey ? auth.subjectId : undefined }); });
+  app.post('/api/v1/admin/governance/retention-sweeps', async (request, reply) => { await validateCsrf(request); const auth = await requireScope(request, 'retention.write'); return reply.code(202).send(await governance.startRetention({ ...request.body, requestId: request.requestId, actorId: auth.subjectId })); });
+  app.get('/api/v1/admin/governance/retention-sweeps/:jobId', async (request) => { await requireScope(request, 'retention.read'); return governance.getRetention(request.params.jobId); });
+  app.post('/api/v1/admin/governance/retention-sweeps/:jobId/run', async (request) => { await validateCsrf(request); const auth = await requireScope(request, 'retention.write'); return governance.runRetention(request.params.jobId, request.requestId, auth.subjectId); });
 
   app.get('/health', async () => ({ status: 'ok', service: 'dgos-api' }));
   app.get('/ready', async () => ({ status: 'ready', apiVersion }));

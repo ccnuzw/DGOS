@@ -10,6 +10,8 @@ test('PostgreSQL audit outbox publisher claim and idempotent publish', async (t)
   try { await pool.query('SELECT 1'); } catch (error) { await pool.end(); t.skip(`PostgreSQL unavailable: ${error.message}`); return; }
   const audit = new PostgresAuditRepository(pool);
   const eventId = await audit.record({ requestId: randomUUID(), action: 'audit.fixture', targetType: 'fixture', summary: { safe: true } });
+  await pool.query('DELETE FROM audit_outbox');
+  await pool.query('INSERT INTO audit_outbox (event_id) VALUES ($1)', [eventId]);
   const [first, second] = await Promise.all([audit.claim('audit-a'), audit.claim('audit-b')]);
   assert.equal([first, second].filter(Boolean).length, 1);
   const owner = first ? 'audit-a' : 'audit-b';
