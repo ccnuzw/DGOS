@@ -18,3 +18,15 @@ test('ProviderEgress requires HTTPS and rejects redirects', async () => {
   const response = await egress.request({ url: 'https://provider.example/health' });
   assert.equal(response.status, 200);
 });
+
+test('ProviderEgress rejects mixed DNS answers instead of allowing rebinding candidates', async () => {
+  const egress = new ProviderEgress({ fetchImpl: noopFetch, lookup: async () => [{ address: '8.8.8.8' }, { address: '127.0.0.1' }] });
+  await assert.rejects(egress.request({ url: 'https://provider.example/health' }), (error) => error.errorKey === 'policy_blocked');
+});
+
+test('ProviderEgress rejects IPv6 loopback, link-local, and unique-local targets', async () => {
+  for (const address of ['::1', 'fe80::1', 'fd00::1']) {
+    const egress = new ProviderEgress({ fetchImpl: noopFetch, lookup: async () => [{ address }] });
+    await assert.rejects(egress.request({ url: 'https://provider.example/health' }), (error) => error.errorKey === 'policy_blocked');
+  }
+});
