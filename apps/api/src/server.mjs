@@ -7,11 +7,15 @@ import { InMemoryIdentityRepository, PostgresIdentityRepository } from '../../..
 import { IdentityService } from './identity-service.mjs';
 import pg from 'pg';
 import { createClient } from 'redis';
+import { InMemoryProviderRepository, PostgresProviderRepository } from '../../../src/provider/repository.mjs';
+import { ProviderEgress } from '../../../src/security/provider-egress.mjs';
+import { ProviderService, createOpenAiCompatibleAdapter } from './provider-service.mjs';
 
-export function buildServer({ logger = true, repository, secretService = new InMemorySecretService(), rateLimiter, clock } = {}) {
+export function buildServer({ logger = true, repository, providerRepository, providerService, secretService = new InMemorySecretService(), rateLimiter, clock } = {}) {
   const resolvedRepository = repository ?? (process.env.DGOS_DATABASE_URL ? new PostgresIdentityRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryIdentityRepository());
   const app = Fastify({ logger });
   const identity = new IdentityService({ repository: resolvedRepository, secretService, clock });
+  const providers = providerService ?? new ProviderService({ repository: providerRepository ?? (process.env.DGOS_DATABASE_URL ? new PostgresProviderRepository(new pg.Pool({ connectionString: process.env.DGOS_DATABASE_URL })) : new InMemoryProviderRepository()), secretService, egress: new ProviderEgress(), adapters: { 'openai-compatible': createOpenAiCompatibleAdapter() } });
   const loginLimiter = rateLimiter ?? createRateLimiter({ clock });
   const maxLoginAttempts = 5;
   const loginWindowMs = 60_000;
@@ -22,7 +26,7 @@ export function buildServer({ logger = true, repository, secretService = new InM
   });
   app.setErrorHandler((error, request, reply) => {
     const statusCode = error.statusCode >= 400 && error.statusCode < 600 ? error.statusCode : 500;
-    const messages = { invalid_request: 'Request is invalid', bootstrap_already_completed: 'Bootstrap is unavailable', invalid_credentials: 'Authentication failed', authentication_required: 'Authentication required', insufficient_scope: 'Required capability is missing', rate_limited: 'Too many authentication attempts', csrf_failed: 'Request origin validation failed', session_invalid: 'Session is invalid', session_conflict: 'Session changed; retry with a fresh session', session_not_found: 'Session not found', api_key_not_found: 'API key not found' };
+    const messages = { invalid_request: 'Request is invalid', bootstrap_already_completed: 'Bootstrap is unavailable', invalid_credentials: 'Authentication failed', authentication_required: 'Authentication required', insufficient_scope: 'Required capability is missing', rate_limited: 'Too many authentication attempts', csrf_failed: 'Request origin validation failed', session_invalid: 'Session is invalid', session_conflict: 'Session changed; retry with a fresh session', session_not_found: 'Session not found', api_key_not_found: 'API key not found', protocol_unavailable: 'Provider protocol is unavailable', provider_account_not_found: 'Provider account not found', provider_account_conflict: 'Provider account changed; retry with a fresh version', connection_test_not_found: 'Connection test not found' };
     reply.code(statusCode).send({ errorKey: error.message in messages ? error.message : 'internal_error', message: messages[error.message] ?? 'Request failed', requestId: request.requestId, retryable: statusCode >= 500, ...(error.retryAfter ? { details: { retryAfter: error.retryAfter } } : {}) });
   });
 
@@ -59,6 +63,14 @@ export function buildServer({ logger = true, repository, secretService = new InM
   app.post('/api/v1/secret/api-keys', async (request, reply) => { await validateCsrf(request); const auth = await requireScope(request, 'apiKey.manage'); const body = { ...request.body, ownerId: request.body?.ownerId ?? auth.subjectId }; if (body.ownerId !== auth.subjectId && auth.authMethod !== 'session') throw Object.assign(new Error('insufficient_scope'), { statusCode: 403 }); const result = await identity.createKey({ ...body, actorId: auth.subjectId, requestId: request.requestId }); return reply.code(201).send(result); });
   app.post('/api/v1/secret/api-keys/:keyId/rotate', async (request) => { await validateCsrf(request); const auth = await requireScope(request, 'apiKey.manage'); return identity.rotateKey({ keyId: request.params.keyId, actorId: auth.subjectId, requestId: request.requestId }); });
   app.delete('/api/v1/secret/api-keys/:keyId', async (request) => { await validateCsrf(request); const auth = await requireScope(request, 'apiKey.manage'); return identity.revokeKey({ keyId: request.params.keyId, actorId: auth.subjectId, requestId: request.requestId }); });
+  app.get('/api/v1/provider/accounts', async (request) => { const auth = await requireScope(request, 'provider.account.read'); return providers.listAccounts(auth.subjectId); });
+  app.post('/api/v1/provider/accounts', async (request, reply) => { await validateCsrf(request); const auth = await requireScope(request, 'provider.account.write'); const body = { ...request.body, ownerId: request.body?.ownerId ?? auth.subjectId }; if (body.ownerId !== auth.subjectId && auth.authMethod !== 'session') throw Object.assign(new Error('insufficient_scope'), { statusCode: 403 }); return reply.code(201).send(await providers.createAccount({ ...body, requestId: request.requestId })); });
+  app.post('/api/v1/provider/accounts/:accountId/bindings', async (request, reply) => { await validateCsrf(request); await requireScope(request, 'provider.account.write'); return reply.code(201).send(await providers.bindAccount({ accountId: request.params.accountId, ...request.body })); });
+  app.post('/api/v1/provider/accounts/:accountId/state', async (request) => { await validateCsrf(request); await requireScope(request, 'provider.account.write'); return providers.setState({ accountId: request.params.accountId, ...request.body }); });
+  app.delete('/api/v1/provider/accounts/:accountId', async (request) => { await validateCsrf(request); await requireScope(request, 'provider.account.delete'); return providers.deleteAccount({ accountId: request.params.accountId, version: request.body?.baseVersion }); });
+  app.post('/api/v1/provider/connection-tests', async (request, reply) => { await validateCsrf(request); const auth = await requireScope(request, 'provider.connection_test'); const result = await providers.startConnectionTest({ ...request.body, requestId: request.requestId }); const account = await providers.repository?.getAccount?.(result.accountId); if (account && account.ownerId !== auth.subjectId && auth.authMethod !== 'session') throw Object.assign(new Error('insufficient_scope'), { statusCode: 403 }); return reply.code(202).send(result); });
+  app.get('/api/v1/provider/connection-tests/:testId', async (request) => { await requireScope(request, 'provider.connection_test'); return providers.getConnectionTest(request.params.testId); });
+  app.delete('/api/v1/provider/connection-tests/:testId', async (request) => { await validateCsrf(request); await requireScope(request, 'provider.connection_test'); return providers.cancelConnectionTest(request.params.testId); });
 
   app.get('/health', async () => ({ status: 'ok', service: 'dgos-api' }));
   app.get('/ready', async () => ({ status: 'ready', apiVersion }));

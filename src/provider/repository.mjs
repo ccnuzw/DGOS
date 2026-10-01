@@ -1,0 +1,41 @@
+import { randomUUID } from 'node:crypto';
+
+const iso = (value) => value instanceof Date ? value.toISOString() : new Date(value).toISOString();
+
+function accountRow(row) {
+  return row && { accountId: row.account_id, ownerId: row.owner_id, ownerType: row.owner_type, protocolType: row.protocol_type, displayName: row.display_name, scope: row.scope, status: row.state, credentialState: row.credential_state ?? 'configured', defaultForProtocol: Boolean(row.scope?.defaultForProtocol), version: String(row.version), createdAt: iso(row.created_at), updatedAt: iso(row.updated_at), _secretRef: row.credential_ref };
+}
+
+function testRow(row) {
+  return row && { testId: row.test_id, requestId: row.request_id, accountId: row.account_id, providerConfigId: row.provider_config_id, accountVersion: String(row.account_version), configVersion: String(row.config_version), protocolVersion: row.protocol_version, status: row.state, reasonCode: row.reason_code ?? undefined, latencyMs: row.duration_ms ?? undefined, createdAt: iso(row.created_at), completedAt: row.finished_at && iso(row.finished_at) };
+}
+
+export class PostgresProviderRepository {
+  constructor(pool) { this.pool = pool; }
+  async withTransaction(work) { const client = await this.pool.connect(); try { await client.query('BEGIN'); const result = await work(client); await client.query('COMMIT'); return result; } catch (error) { await client.query('ROLLBACK'); throw error; } finally { client.release(); } }
+  async listAccounts(ownerId) { const { rows } = await this.pool.query('SELECT * FROM provider_accounts WHERE owner_id = $1 AND state <> $2 ORDER BY created_at DESC', [ownerId, 'revoked']); return rows.map(accountRow); }
+  async createAccount(input, client = this.pool) { const { rows } = await client.query('INSERT INTO provider_accounts (account_id, owner_type, owner_id, protocol_type, display_name, credential_ref, scope, state) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *', [input.accountId ?? randomUUID(), 'admin', input.ownerId, input.protocolType, input.displayName, input.credentialRef, JSON.stringify({ ...(input.scope ?? {}), defaultForProtocol: Boolean(input.defaultForProtocol) }), input.state ?? 'credential_pending']); return accountRow(rows[0]); }
+  async getAccount(accountId) { const { rows } = await this.pool.query('SELECT * FROM provider_accounts WHERE account_id = $1', [accountId]); return accountRow(rows[0]); }
+  async updateAccountState(accountId, expectedVersion, state) { const { rows } = await this.pool.query('UPDATE provider_accounts SET state = $3, version = version + 1, updated_at = now() WHERE account_id = $1 AND version = $2 AND state <> $4 RETURNING *', [accountId, expectedVersion, state, 'revoked']); return accountRow(rows[0]); }
+  async revokeAccount(accountId, expectedVersion) { return this.updateAccountState(accountId, expectedVersion, 'revoked'); }
+  async createBinding({ accountId, providerConfigId, policyVersion, bindingId = randomUUID() }, client = this.pool) { const { rows } = await client.query('INSERT INTO provider_bindings (binding_id, account_id, provider_config_id, policy_version, state) VALUES ($1, $2, $3, $4, $5) RETURNING *', [bindingId, accountId, providerConfigId, policyVersion, 'active']); return { bindingId: rows[0].binding_id, accountId: rows[0].account_id, providerConfigId: rows[0].provider_config_id, version: String(rows[0].version), state: rows[0].state }; }
+  async createConnectionTest(input, client = this.pool) { const { rows } = await client.query('INSERT INTO connection_tests (test_id, request_id, account_id, account_version, config_version, protocol_version, state) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *', [input.testId ?? randomUUID(), input.requestId, input.accountId, input.accountVersion, input.configVersion, input.protocolVersion, 'queued']); return testRow(rows[0]); }
+  async getConnectionTest(testId) { const { rows } = await this.pool.query('SELECT * FROM connection_tests WHERE test_id = $1', [testId]); return testRow(rows[0]); }
+  async finishConnectionTest(testId, state, reasonCode, durationMs) { const { rows } = await this.pool.query("UPDATE connection_tests SET state = $2, reason_code = $3, duration_ms = $4, finished_at = now() WHERE test_id = $1 AND state IN ('queued', 'running') RETURNING *", [testId, state, reasonCode ?? null, durationMs ?? null]); return testRow(rows[0]); }
+  async cancelConnectionTest(testId) { return this.finishConnectionTest(testId, 'cancelled', null, null); }
+  async writeAudit() {}
+}
+
+export class InMemoryProviderRepository {
+  accounts = new Map(); bindings = new Map(); tests = new Map();
+  async listAccounts(ownerId) { return [...this.accounts.values()].filter((account) => account.ownerId === ownerId && account.status !== 'revoked'); }
+  async createAccount(input) { const account = { accountId: input.accountId ?? randomUUID(), ownerId: input.ownerId, ownerType: 'admin', protocolType: input.protocolType, displayName: input.displayName, scope: input.scope ?? {}, status: input.state ?? 'credential_pending', credentialState: 'configured', defaultForProtocol: Boolean(input.defaultForProtocol), version: '1', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), _secretRef: input.credentialRef }; this.accounts.set(account.accountId, account); return account; }
+  async getAccount(id) { return this.accounts.get(id); }
+  async updateAccountState(id, expectedVersion, state) { const account = this.accounts.get(id); if (!account || account.version !== String(expectedVersion)) return undefined; account.status = state; account.version = String(Number(account.version) + 1); return account; }
+  async revokeAccount(id, version) { return this.updateAccountState(id, version, 'revoked'); }
+  async createBinding(input) { const binding = { bindingId: randomUUID(), ...input, version: '1', state: 'active' }; this.bindings.set(binding.bindingId, binding); return binding; }
+  async createConnectionTest(input) { const test = { testId: randomUUID(), ...input, status: 'queued', createdAt: new Date().toISOString() }; this.tests.set(test.testId, test); return test; }
+  async getConnectionTest(id) { return this.tests.get(id); }
+  async finishConnectionTest(id, state, reasonCode, durationMs) { const test = this.tests.get(id); if (!test || !['queued', 'running'].includes(test.status)) return undefined; Object.assign(test, { status: state, reasonCode, latencyMs: durationMs, completedAt: new Date().toISOString() }); return test; }
+  async cancelConnectionTest(id) { return this.finishConnectionTest(id, 'cancelled'); }
+}
