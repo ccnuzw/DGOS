@@ -22,9 +22,15 @@ test('PostgreSQL persists provider catalogs, policies, tasks, ordered events and
     assert.equal(policy.policyVersion, '1');
     const task = await taskRepo.createTask({ ownerId, requestId, target: 'text', intent: 'text.chat', modelId: 'fixture-text', providerConfigId: configId, inputDigest: 'digest-fixture' });
     taskId = task.taskId;
+    const attempt = await taskRepo.createAttempt({ taskId, providerConfigId: configId, providerAccountId: accountId, modelId: 'fixture-text' });
+    assert.equal(attempt.taskId, taskId);
+    const claimed = await taskRepo.claimAttempt('postgres-test-worker', 1000);
+    assert.equal(claimed.taskId, taskId);
     const e1 = await taskRepo.event(taskId, 'task.accepted'); const e2 = await taskRepo.event(taskId, 'text.delta', { delta: 'hello' });
     assert.deepEqual([String(e1.sequence), String(e2.sequence)], ['1', '2']);
     const artifact = await taskRepo.createArtifact({ taskId, ownerId, mimeType: 'text/plain', content: 'hello' }); artifactId = artifact.artifactId;
+    await taskRepo.transition(taskId, 'succeeded', { text: 'hello', artifactIds: [artifact.artifactId] });
+    assert.deepEqual((await taskRepo.getTask(taskId)).artifactIds, [artifact.artifactId]);
     assert.equal((await taskRepo.getArtifact(artifactId)).content, 'hello');
     assert.equal((await taskRepo.findByRequest(ownerId, requestId, 'digest-fixture')).taskId, taskId);
   } finally {
