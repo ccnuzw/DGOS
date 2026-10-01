@@ -12,6 +12,7 @@ const quotaSql = await readFile(join(root, 'migrations/0005-quota-usage.sql'), '
 const quotaRepairSql = await readFile(join(root, 'migrations/0010-quota-usage-idempotency.sql'), 'utf8');
 const quotaDimensionsSql = await readFile(join(root, 'migrations/0009-quota-usage-dimensions.sql'), 'utf8');
 const runtimeSql = await readFile(join(root, 'migrations/0011-runtime-persistence.sql'), 'utf8');
+const taskLeaseSql = await readFile(join(root, 'migrations/0012-ai-task-leases.sql'), 'utf8');
 const required = [
   'CREATE TABLE IF NOT EXISTS dgos_schema_migrations',
   'CREATE TABLE IF NOT EXISTS admin_principals',
@@ -43,8 +44,10 @@ const missingQuotaRepair = quotaRepairRequired.filter((fragment) => !quotaRepair
 const missingQuotaDimensions = quotaDimensionsRequired.filter((fragment) => !quotaDimensionsSql.includes(fragment));
 const runtimeRequired = ['permission_requests', 'action_definitions', 'action_plans', 'system_settings', 'system_setting_events', 'app_installs_request_id_uq'];
 const missingRuntime = runtimeRequired.filter((fragment) => !runtimeSql.includes(fragment));
-if (missing.length > 0 || missingLease.length > 0 || missingOutbox.length > 0 || missingRetention.length > 0 || missingTask.length > 0 || missingQuota.length > 0 || missingQuotaRepair.length > 0 || missingQuotaDimensions.length > 0 || missingRuntime.length > 0) {
-  console.error(JSON.stringify({ ok: false, missing, missingLease, missingOutbox, missingRetention, missingTask, missingQuota, missingQuotaRepair, missingQuotaDimensions, missingRuntime }, null, 2));
+const taskLeaseRequired = ['input_text', 'lease_owner', 'lease_until', 'ai_task_attempts_claim_idx', 'task_id);'];
+const missingTaskLease = taskLeaseRequired.filter((fragment) => !taskLeaseSql.includes(fragment));
+if (missing.length > 0 || missingLease.length > 0 || missingOutbox.length > 0 || missingRetention.length > 0 || missingTask.length > 0 || missingQuota.length > 0 || missingQuotaRepair.length > 0 || missingQuotaDimensions.length > 0 || missingRuntime.length > 0 || missingTaskLease.length > 0) {
+  console.error(JSON.stringify({ ok: false, missing, missingLease, missingOutbox, missingRetention, missingTask, missingQuota, missingQuotaRepair, missingQuotaDimensions, missingRuntime, missingTaskLease }, null, 2));
   process.exit(1);
 }
-  console.log(JSON.stringify({ ok: true, migrations: ['0001-v1-governance.sql', '0002-connection-test-leases.sql', '0003-audit-outbox-leases.sql', '0004-retention-jobs.sql', '0005-quota-usage.sql', '0007-provider-config-ai-task.sql', '0009-quota-usage-dimensions.sql', '0010-quota-usage-idempotency.sql', '0011-runtime-persistence.sql'], requiredChecks: required.length + leaseRequired.length + outboxRequired.length + retentionRequired.length + quotaRequired.length + taskRequired.length + quotaRepairRequired.length + quotaDimensionsRequired.length + runtimeRequired.length }, null, 2));
+  console.log(JSON.stringify({ ok: true, migrations: ['0001-v1-governance.sql', '0002-connection-test-leases.sql', '0003-audit-outbox-leases.sql', '0004-retention-jobs.sql', '0005-quota-usage.sql', '0007-provider-config-ai-task.sql', '0009-quota-usage-dimensions.sql', '0010-quota-usage-idempotency.sql', '0011-runtime-persistence.sql', '0012-ai-task-leases.sql'], requiredChecks: required.length + leaseRequired.length + outboxRequired.length + retentionRequired.length + quotaRequired.length + taskRequired.length + quotaRepairRequired.length + quotaDimensionsRequired.length + runtimeRequired.length + taskLeaseRequired.length }, null, 2));
