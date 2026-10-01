@@ -14,7 +14,7 @@ import { PostgresAuditRepository, InMemoryAuditRepository } from '../../../src/a
 import { PostgresRetentionRepository, InMemoryRetentionRepository } from '../../../src/audit/retention.mjs';
 import { GovernanceService } from './governance-service.mjs';
 let quotaModules;
-try { quotaModules = await Promise.all([import('../../../src/quota/repository.mjs'), import('./quota/service.mjs')]); } catch { quotaModules = null; }
+try { quotaModules = await Promise.all([import('../../../src/quota/repository.mjs'), import('../../../src/quota/service.mjs')]); } catch { quotaModules = null; }
 import { InMemoryAppRepository } from '../../../src/apps/repository.mjs';
 import { CatalogService } from '../../../src/apps/catalog-service.mjs';
 import { AppRuntimeService } from '../../../src/apps/runtime-service.mjs';
