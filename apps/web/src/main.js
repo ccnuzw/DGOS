@@ -1,0 +1,8 @@
+const root=document.querySelector('#root');
+const api=async(path,options={})=>{const r=await fetch(path,{...options,credentials:'include',headers:{'content-type':'application/json',...(options.method&&options.method!=='GET'?{'x-dgos-csrf':'web'}:{}),...(options.headers||{})}});if(!r.ok)throw new Error((await r.json().catch(()=>({}))).message||'Request failed');return r.json()};
+const escapeHtml=(s)=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let apps=null,settings=null,error='';
+async function refresh(){try{error='';[apps,settings]=await Promise.all([api('/api/v1/apps'),api('/api/v1/system/settings')]);render()}catch(e){error=e.message;render()}}
+async function install(appId){try{await api(`/api/v1/apps/${encodeURIComponent(appId)}/install`,{method:'POST',body:'{}'});await refresh()}catch(e){error=e.message;render()}}
+function render(){root.innerHTML=`<header><h1>DGOS Runtime</h1><button id="refresh">Refresh</button></header>${error?`<p class="error">${escapeHtml(error)}</p>`:''}<section><h2>App catalog</h2>${apps===null?'<p>Loading...</p>':apps.items?.length?`<ul>${apps.items.map(a=>`<li><span><b>${escapeHtml(a.appId)}</b><small>${escapeHtml(a.version)} build ${escapeHtml(a.build)} · ${escapeHtml(a.catalogState)}</small></span><button data-app="${escapeHtml(a.appId)}">Install</button></li>`).join('')}</ul>`:'<p class="empty">No approved apps.</p>'}</section><section><h2>System settings</h2>${settings?`<pre>${escapeHtml(JSON.stringify(settings.settings,null,2))}</pre>`:'<p>Loading...</p>'}</section>`;root.querySelector('#refresh')?.addEventListener('click',refresh);root.querySelectorAll('[data-app]').forEach(b=>b.addEventListener('click',()=>install(b.dataset.app)))}
+render();refresh();

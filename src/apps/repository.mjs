@@ -7,6 +7,6 @@ export class InMemoryAppRepository {
   async getApp(appId, version, build) { return [...this.apps.values()].find((x) => x.appId === appId && (!version || x.version === version) && (!build || x.build === build)); }
   async setCatalogState(appId, version, build, state, actorId) { const item = await this.getApp(appId, version, build); if (!item) return null; item.catalogState = state; item.updatedAt = new Date().toISOString(); if (this.audit) await this.audit.record({ actorId, action: `app.catalog.${state}`, targetType: 'app', targetId: appId, summary: { version, build, state } }); return item; }
   async getInstall(subjectId, appId) { return this.installs.get(`${subjectId}:${appId}`); }
-  async saveInstall(record) { this.installs.set(`${record.subjectId}:${record.appId}`, record); return record; }
+  async saveInstall(record) { const key = `${record.subjectId}:${record.appId}`; const current = this.installs.get(key); if (record.expectedVersion != null && current && String(current.versionNumber ?? 1) !== String(record.expectedVersion)) throw Object.assign(new Error('version_conflict'), { statusCode: 409 }); const saved = { ...record, versionNumber: Number(current?.versionNumber ?? 0) + 1 }; this.installs.set(key, saved); return saved; }
   async listInstalls(subjectId) { return [...this.installs.values()].filter((x) => x.subjectId === subjectId); }
 }

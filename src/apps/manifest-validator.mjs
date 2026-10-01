@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 
 const required = ['appId', 'version', 'build', 'releaseChannel', 'minRuntimeVersion', 'entrypoints', 'permissions', 'capabilityAllowlist', 'trustLevel', 'uninstallPolicy', 'backgroundPolicy'];
 const channels = new Set(['stable', 'beta', 'dev']);
-const trustLevels = new Set(['official', 'admin_approved', 'developer']);
+const trustLevels = new Set(['official', 'admin_approved', 'developer', 'approved']);
 
 function containsForbidden(value, path = '') {
   if (typeof value === 'string') {
@@ -16,6 +16,8 @@ function containsForbidden(value, path = '') {
 export function validateManifest(manifest) {
   const errors = [];
   if (!manifest || typeof manifest !== 'object') return { valid: false, errors: ['manifest must be an object'] };
+  if (manifest.format && manifest.format !== 'dgos.app') errors.push('format is incompatible');
+  if (manifest.manifestVersion && !/^1(?:\.\d+)?$/.test(String(manifest.manifestVersion))) errors.push('manifestVersion is incompatible');
   for (const key of required) if (manifest[key] === undefined) errors.push(`missing ${key}`);
   if (manifest.appId && !/^[a-z][a-z0-9.-]{1,63}$/.test(manifest.appId)) errors.push('appId must be a stable lowercase identifier');
   if (manifest.version && !/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(manifest.version)) errors.push('version must be semver');
@@ -23,7 +25,11 @@ export function validateManifest(manifest) {
   if (manifest.releaseChannel && !channels.has(manifest.releaseChannel)) errors.push('releaseChannel is invalid');
   if (manifest.trustLevel && !trustLevels.has(manifest.trustLevel)) errors.push('trustLevel is invalid');
   if (manifest.entrypoints && typeof manifest.entrypoints !== 'object') errors.push('entrypoints must be an object');
+  if (manifest.entrypoints && Object.values(manifest.entrypoints).some((entry) => String(entry).startsWith('/'))) errors.push('entrypoints must be relative paths');
+  if (manifest.entrypoints && !Object.values(manifest.entrypoints).length) errors.push('at least one entrypoint is required');
   for (const key of ['permissions', 'capabilityAllowlist']) if (manifest[key] && !Array.isArray(manifest[key])) errors.push(`${key} must be an array`);
+  if (manifest.actions && (!Array.isArray(manifest.actions) || manifest.actions.some((action) => !action?.actionId || action.version === undefined))) errors.push('actions must declare actionId and version');
+  if (manifest.dataVersion !== undefined && typeof manifest.dataVersion !== 'string') errors.push('dataVersion must be a string');
   const forbidden = containsForbidden(manifest);
   if (forbidden) errors.push(forbidden);
   const network = (manifest.capabilityAllowlist ?? []).filter((x) => String(x).startsWith('network.'));
