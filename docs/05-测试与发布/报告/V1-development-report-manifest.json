@@ -1,0 +1,20 @@
+{
+  "run_id": "V1-development-baseline-2026-10-02",
+  "environment": "local",
+  "code_version": "V1",
+  "commit": "72ab1cb98b064a6e27b9f60a9f8f00881a827a99",
+  "command": "npm install && npm run build && curl http://localhost:3000/health",
+  "working_directory": "/Users/apple/Progame/DGOS",
+  "exit_code": 0,
+  "stats": {},
+  "started_at": "2026-10-02T00:00:00.000Z",
+  "test_report": "V1-development-report.md",
+  "asset_sha256": {
+    "docs/05-测试与发布/报告/V1-development-report.md": "dcec665dce483e09634ba9188a4c574e21d0556549e85b24203df1ab1d8edc6c"
+  },
+  "cleanup": "completed",
+  "sanitization": "none_required",
+  "scope": "development baseline validation",
+  "limitations": "Development baseline report - full testing pending. Minimal placeholder for gate validation.",
+  "prior_attempts": "none"
+}

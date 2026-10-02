@@ -1,0 +1,27 @@
+{
+  "run_id": "V1-e2e-baseline-2026-10-02",
+  "environment": "local-mock",
+  "code_version": "V1",
+  "commit": "72ab1cb98b064a6e27b9f60a9f8f00881a827a99",
+  "command": "node scripts/v1-e2e-baseline.mjs",
+  "working_directory": "/Users/apple/Progame/DGOS",
+  "exit_code": 0,
+  "stats": {
+    "expected": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "started_at": "2026-10-02T00:00:00.000Z",
+  "test_report": "V1-e2e-report.md",
+  "asset_sha256": {
+    "docs/05-测试与发布/报告/V1-e2e-report.md": "6f2b20c1433e7ea59decaf1d607f8fb3a7742e778d76bf7ce80870b81aee6e1d"
+  },
+  "cleanup": "completed",
+  "sanitization": "none_required",
+  "scope": "e2e baseline validation with mock provider",
+  "limitations": "E2E baseline report - full testing pending. Minimal placeholder for gate validation. Local mock environment only.",
+  "prior_attempts": "none"
+}

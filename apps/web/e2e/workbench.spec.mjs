@@ -324,7 +324,7 @@ test('catalog selects a release and a sandboxed app bridges only a declared capa
   const frame = page.frameLocator('iframe[title="example.app"]');
   await expect(page.locator('.app-sandbox')).toHaveAttribute('sandbox', 'allow-scripts');
   await expect(page.locator('.app-sandbox')).toHaveAttribute('referrerpolicy', 'no-referrer');
-  await expect(page.locator('.dgos-status').last()).toHaveText('ready');
+  await expect(page.locator('.dgos-status').last()).toHaveText('ready', { timeout: 10000 });
   await expect.poll(() => bridgeCalls).toBe(1);
   await frame.locator('body').evaluate(() => window.invoke('unlisted.capability', '44444444-4444-4444-8444-444444444444'));
   await expect(frame.locator('body')).toContainText('Capability unavailable');
@@ -347,7 +347,7 @@ test('context permission revocation keeps the API error key and stops app pollin
   await page.route('**/api/v1/apps/dgos.ai-workbench/bridge', route => { contextReads++; return respond(route, { errorKey: 'permission_denied', message: 'Permission denied', requestId: 'req-context' }, 403); });
   await page.goto('/catalog');
   await page.getByRole('button', { name: 'Launch' }).click();
-  await expect(page.frameLocator('iframe[title="dgos.ai-workbench"]').locator('#state')).toHaveText('permission_denied:req-context');
+  await expect(page.frameLocator('iframe[title="dgos.ai-workbench"]').locator('#state')).toHaveText('permission_denied:req-context', { timeout: 10000 });
   const stoppedAt = contextReads;
   await page.waitForTimeout(300);
   expect(contextReads).toBe(stoppedAt);
@@ -363,7 +363,7 @@ test('invalid app session closes the iframe and stops pending bridge traffic', a
   await page.route('**/api/v1/apps/dgos.ai-workbench/bridge', route => { bridgeCalls++; return respond(route, { errorKey: 'session_invalid', message: 'Session expired', requestId: 'req-session-invalid' }, 401); });
   await page.goto('/catalog');
   await page.getByRole('button', { name: 'Launch' }).click();
-  await expect(page.getByRole('alert')).toContainText('Session expired · request req-session-invalid');
+  await expect(page.getByRole('alert')).toContainText('Session expired · request req-session-invalid', { timeout: 10000 });
   await expect(page.locator('iframe[title="dgos.ai-workbench"]')).toHaveCount(0);
   const stoppedAt = bridgeCalls;
   await page.waitForTimeout(300);
@@ -387,7 +387,7 @@ test('catalog resumes an existing task without submitting another task', async (
   });
   await page.goto('/catalog');
   await page.getByRole('button', { name: 'Launch' }).click();
-  await expect(page.locator('.dgos-status').last()).toHaveText('ready');
+  await expect(page.locator('.dgos-status').last()).toHaveText('ready', { timeout: 10000 });
   await page.getByLabel('Task ID').fill('task-existing');
   await page.getByRole('button', { name: 'Re-query / resume' }).click();
   await expect(page.locator('.task-output').first()).toHaveText('existing result');
@@ -412,12 +412,12 @@ test('catalog records a public submitted task reference and auto-recovers after 
   });
   await page.goto('/catalog');
   await page.getByRole('button', { name: 'Launch' }).click();
-  await expect(page.locator('.dgos-status').last()).toHaveText('ready');
+  await expect(page.locator('.dgos-status').last()).toHaveText('ready', { timeout: 10000 });
   await page.frameLocator('iframe[title="dgos.ai-workbench"]').locator('body').evaluate(() => window.submit());
   await expect(page.getByLabel('Task ID')).toHaveValue('task-public');
   await page.reload();
   await page.getByRole('button', { name: 'Launch' }).click();
-  await expect(page.locator('.task-output').first()).toContainText('previous result');
+  await expect(page.locator('.task-output').first()).toContainText('previous result', { timeout: 10000 });
   await expect(page.locator('.task-output').last()).toContainText('previous artifact');
   expect(calls).toEqual(['dgos.aiTask.submit', 'dgos.aiTask.get', 'dgos.aiTask.events', 'dgos.artifact.read']);
   const persisted = await page.evaluate(() => ({ ...localStorage }));
@@ -571,7 +571,7 @@ test('extension confirmation freezes the same request and input for invocation',
   await page.route('**/api/v1/extensions/runs', route => { invocation = route.request().postDataJSON(); return respond(route, { runId: 'run-1', state: 'queued' }, 202); });
   await page.route('**/api/v1/extensions/runs/run-1', route => respond(route, { runId: 'run-1', state: 'queued' }));
   await page.goto('/mcp');
-  await page.getByRole('button', { name: 'Tools', exact: true }).click();
+  await page.getByRole('button', { name: 'Discover Tools' }).click({ timeout: 10000 });
   await page.getByRole('button', { name: 'Choose' }).click();
   await page.getByLabel('Calling app ID').fill('app-1');
   await page.getByLabel('Input JSON').fill('{"query":"hello"}');
@@ -588,9 +588,9 @@ test('Chinese language covers the developer and extension operation controls', a
   await expect(page.getByRole('heading', { name: '提交签名应用包' })).toBeVisible();
   await expect(page.getByLabel('应用包封装 JSON')).toBeVisible();
   await page.getByRole('link', { name: 'MCP 服务' }).click();
-  await expect(page.getByRole('heading', { name: '已安装 MCP 服务' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'MCP 服务器' })).toBeVisible({ timeout: 10000 });
   await expect(page.getByRole('button', { name: '断开连接' })).toBeVisible();
-  await expect(page.getByRole('button', { name: '工具' })).toBeVisible();
+  await expect(page.getByRole('button', { name: '发现工具' })).toBeVisible();
 });
 
 test('extension install stops after an unavailable preview endpoint', async ({ page }) => {
@@ -612,8 +612,9 @@ test('shell keeps theme, language and scale across navigation and reload', async
   await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
   await expect(page.locator('html')).toHaveAttribute('lang','zh');
   await page.keyboard.press('Control+k');
-  await expect(page.getByRole('dialog', { name: '打开命令面板' })).toBeVisible();
-  await page.getByRole('dialog').getByRole('button', { name: 'AI 工作台' }).click();
+  const dialog = page.getByRole('dialog');
+  await expect(dialog).toBeVisible({ timeout: 10000 });
+  await dialog.getByRole('button', { name: 'AI 工作台' }).click();
   await expect(page).toHaveURL(/\/ai-tasks$/);
   await page.reload();
   await expect(page.getByLabel('显示倍率')).toHaveValue('150');

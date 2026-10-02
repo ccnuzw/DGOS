@@ -1,0 +1,1301 @@
+{
+  "schema": "dgos/v1-candidate-group/v1",
+  "work_package": "V1-CANDIDATE-COVERAGE",
+  "revision": 15,
+  "run_id": "V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory",
+  "group": "memory",
+  "started_at": "2026-10-02T12:28:49.910Z",
+  "ended_at": "2026-10-02T12:29:04.191Z",
+  "candidate_id": "b67b68666a012f2cc2f1dc3911be3301cfe26dc88451c6c60e2bf25176bf1f24",
+  "build_sha256": "a576a9cf6ad34f073d248ce0d4419f9416854ff5705acd481630825e0acb3643",
+  "runtime_assets": {
+    "config": {
+      "id": "config-2c050aa7",
+      "files": {
+        "docker-compose.production.yml": "665075a6a0a14e222d37de62ab38ac2b87022bad7a0360793215b1ec24407aae",
+        "docker-compose.integration.yml": "4c5dec78651a9fce318e6eae6819b6b97dbb90bcef4b6b0d1c53d2d0a1e39e54",
+        "deployment/Dockerfile": "af655a07980dec7c52f80ea2dff0556639fd43eb4b1e9b3784c574bc5f95c7f4",
+        "deployment/Caddyfile": "c80ff0d71d0202128e69b5cb56415139c86a4f639f53185265682e4e3e255a69",
+        "scripts/v1-ops-api.mjs": "bd0277e16ba95d3c4e78fe46f11c8468ea927aec76e9b2f7d8e78aabe25f2ac7",
+        "scripts/v1-ops-worker.mjs": "5f35d9a6568ac7659c003751e7f40632b2645cd1726e177f8704026df235359a",
+        "apps/api/src/server.mjs": "87a7dacf9c4c75e9ce119bf80e6a2938aec2544a54cb5058138ec01d9a932cf0",
+        "apps/worker/src/worker.mjs": "e94c90888699b34a66632c77b8d5afea879734605e341423cf5cb821c58aa7e4",
+        "scripts/v1-ui-management-fixture.mjs": "e746a1a03e377a3f596df9f13773de266d08ba6a46c876c48c2f7b5ec0ad8922",
+        "src/extensions/v1-default-runtime.json": "bd239ddf74be47cd4b7334335148defec79417bf13315359c19de07296e2a064",
+        ".herdr/state/package-fixture-r9/trust-roots.json": "bad1036ed3b953108b9c7f785f1062ebe47d079bffe1ba5eca300057adfee1a0",
+        ".herdr/state/integration-trust-roots-r9.json": "1933e71b80dfd3c63ad93117d199bc9fef18a00597e510f5976c761af9f91ddc"
+      }
+    },
+    "envelope": {
+      "id": "envelope-102fb6ca",
+      "path": ".herdr/state/package-fixture-r9/ai-workbench-envelope.json",
+      "sha256": "102fb6cac8aa112f7d762ea7f4e0defceb9af0ea543f02de367d7694494451be"
+    },
+    "dist": {
+      "id": "dist-f809ef9d",
+      "root": "apps/web/dist",
+      "files": {
+        "apps/web/dist/assets/index-BFWr4XFs.css": "fa3cf098e7e1bf210a0960839de2472b8f6fe88dcdbad29210e3ad7e77627383",
+        "apps/web/dist/assets/index-CpUC1UQM.js": "d1ee371089424b92fa25396e2ac1e2178e011a461aaa9df661c816784927e583",
+        "apps/web/dist/index.html": "5eb7b42bdb6ed5c1bf95c863708fd6f21ef714a23250b25c5e606a999bb5b6a2"
+      }
+    },
+    "image": {
+      "id": "sha256:3b376cc7754ced0c9268c3c1a6033a7c1aaef30e2ebb1d7fc2b34fc3b5e79431",
+      "sha256": "3b376cc7754ced0c9268c3c1a6033a7c1aaef30e2ebb1d7fc2b34fc3b5e79431"
+    },
+    "native_app": {
+      "id": "native-app-9e91bbf7",
+      "root": "apps/desktop/src-tauri/target/debug/bundle/macos/DGOS.app",
+      "files": {
+        "apps/desktop/src-tauri/target/debug/bundle/macos/DGOS.app/Contents/Info.plist": "b791496769b5184c8d13524da10ed68f269fa356d26dfacf5cd7a6ba090b3100",
+        "apps/desktop/src-tauri/target/debug/bundle/macos/DGOS.app/Contents/MacOS/dgos-desktop": "42feaf6a63a97648172b24bb632087d14319cd1614caf670a1c5fbb28cae71eb",
+        "apps/desktop/src-tauri/target/debug/bundle/macos/DGOS.app/Contents/MacOS/dgos-keychain-fixture": "64e56a308ddb7208f28fa8202b10ca3342f2f1f7045e6ae26cc77fb35631ee8f",
+        "apps/desktop/src-tauri/target/debug/bundle/macos/DGOS.app/Contents/Resources/icon.icns": "56ade122620de621ccdbba5617500a4300f6b377ce1670de7bd893a12d546cf5"
+      }
+    }
+  },
+  "source_identity": {
+    "commit": null,
+    "head_commit": "65d6f581cf5cb066d56c45d7c434dbe36472fbfd",
+    "working_tree_sha256": "fde9b3782ab4d5713758ce1017fc641d6b4024be05647517cffe2d158e8d4516"
+  },
+  "source_identity_start": {
+    "commit": null,
+    "head_commit": "65d6f581cf5cb066d56c45d7c434dbe36472fbfd",
+    "working_tree_sha256": "fde9b3782ab4d5713758ce1017fc641d6b4024be05647517cffe2d158e8d4516"
+  },
+  "source_identity_end": {
+    "commit": null,
+    "head_commit": "65d6f581cf5cb066d56c45d7c434dbe36472fbfd",
+    "working_tree_sha256": "5c5968fa9ea929945b6910dc475973073a61665f6f4cf9e9b31261a984a53c7c"
+  },
+  "source_drift": true,
+  "exit_code": 1,
+  "candidate_complete": false,
+  "environment": "local host Node with isolated resources; image is candidate artifact binding only",
+  "admin_database": null,
+  "child_database": null,
+  "redis_db": null,
+  "frozen_migrations": [],
+  "evidence_dirs": [
+    "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory"
+  ],
+  "generated_files": [],
+  "generated_file_sha256": {},
+  "asset_sha256": {
+    "tests/e2e/assistant-settings-actions.spec.mjs": "a97d7094d610d0ed6dcaff9acd2fd3fbc95da0d3990e9c8a8f9ac43a4554cb27",
+    "tests/extensions/daemon-r3.test.mjs": "124bda7c8f300e827c1256a984f0239732af173d00b194307acc2b52488a2f28",
+    "tests/extensions/extension-routes.test.mjs": "fc626974eba5e49afc61156713dba1d7f1b15546d00823d8d53a496890840f47",
+    "tests/extensions/extension-service.test.mjs": "d1cdd5655c44a0bb4002c4a99a31a576b113595e96eaa7df4449b2fd95961589",
+    "tests/extensions/hardening-r3.test.mjs": "8c8a3fe52e0a6052359be401c0c21f50b12bc6af6d076856287c1f92947d3596",
+    "tests/extensions/mcp-transport.test.mjs": "e8f00f1fbbc087fcd4249e42bcddc0f133749062ad8856082679c606d3ea5f05",
+    "tests/extensions/runtime-loader-r3.test.mjs": "382021d98ad9522f22c679b83d70c34e3de016254da88427fdb38d825c94b6c3",
+    "tests/integration/action-candidates-wiring.test.mjs": "6e5c77a1241f1772da7015df967ee6cc8ff73acd2f9023663b624dc9b4158c0c",
+    "tests/integration/ai-task-api.test.mjs": "231b3be9e954605072f08b1acc98062c9615dae68dcc7b0504218ec1d4fe3d6b",
+    "tests/integration/ai-task-worker.test.mjs": "0b5640bcb97ddf63459bc4367293ac0b068a144ae02c07b5cee570d67736d103",
+    "tests/integration/app-capabilities.test.mjs": "088ee1351bfcf5eec0ac928d1cc3509ba1c1b91e142846aabe82481819c8a578",
+    "tests/integration/app-package-fixture.test.mjs": "340629d5d5b529715bd877a97a65077a7a0b7e7ef7bd23e0b4e227e489b808c2",
+    "tests/integration/audit-outbox.test.mjs": "d1a9efb7e787a1029f9a1a434434703e1983eaefefa27d29ec0ac25499cfab54",
+    "tests/integration/governance-wiring.test.mjs": "c8a3facf3a505664c48bde8bcac0228a93d614ee53c323b144d091cadbdc5a6f",
+    "tests/integration/identity-api.test.mjs": "6f2e22421ee06873084dea7638ac61ff8f4eb0cb30608080eadba1e084b46086",
+    "tests/integration/migration-contract.test.mjs": "e23a48c8658249e803bd3c7ed214a22ccbb2110532d83254fd853b0511389641",
+    "tests/integration/permission-write-freshness.test.mjs": "c9c681e6fddf4f3d16292c2df3237a5948853553862ffd0c90b3b592d5c92618",
+    "tests/integration/provider-admission-wiring.test.mjs": "1ae7bbe75989b5da1bf41936c752f5fe06cc085d80868ab1a45b4f6a2f1a51d4",
+    "tests/integration/provider-api.test.mjs": "6547eaa1cd17474fa2408c983ffe4d735a4c17d74a9fffee6e3690f6a41b4058",
+    "tests/integration/provider-test-loop.test.mjs": "f052d0cf12cf0c4c4a0c75647f311423f633e26f4add7307126093636670c961",
+    "tests/integration/provider-worker.test.mjs": "3c1e03d6e593ca296d27e03f2022e292a540f2942ba9e81f8543b73039c2e77e",
+    "tests/integration/quota-api.test.mjs": "1889a42d60daed3e1a44add7dac8c51e5953789b40119254fa69f7b5156c3ca5",
+    "tests/integration/quota-reservation.spec.mjs": "d154d5cf851e9c01a0b54f7a77e4eff5cf6f3e84e9b0ddd6b990e343dd8c0b40",
+    "tests/integration/retention-api.test.mjs": "29b5d99547a45b27f44d2d2cfac9d53b750b47fe5a02ad14a573258318b08806",
+    "tests/integration/system-info.test.mjs": "67dba97a460bb10dc96d3fa6dc000badca6c9b72b712d60e7b9443ba799eb4b0",
+    "tests/integration/usage-settlement.spec.mjs": "4bc1565b7b73bae82b67d861cebb2f4d72157e5a85b7dd62f9c96d0db2d263df",
+    "tests/provider/openai-compatible-fixture.test.mjs": "7f9a8ca71d1b50d4c5f1c92a33e7e8510fb96eabb19880197959acf65ffbbe83",
+    "tests/provider/openai-compatible-stream.test.mjs": "53ba599ca4ab3e22720f60200a1dc231bc6b4e1041b54fcc3060430801ae5d60",
+    "tests/provider/profile-task-wiring.test.mjs": "c3d6ee672337f32713bfca09b1df310a4c8393e6d0e7be4bd67b0de9efebd0cb",
+    "tests/provider/provider-admission-profile.test.mjs": "4a6b6a0f43de60a33e355a84317e876eeb94fb6d7e3a475895a6e6918c4769cf",
+    "tests/provider/provider-config-disabled.test.mjs": "31c6b7de483a8a6c49e78458a1e58286fbfde15470851d39d2c84f9480446565",
+    "tests/provider/provider-no-export.test.mjs": "68a21c636189ec46190dd0ef2221df51bc9b655e5f3519ea71e19ba65b335190",
+    "tests/provider/provider-parameters.test.mjs": "81a51b9922602dedcffcd1e9223b371c43bd0673c093f124a46f50f8a693d307",
+    "tests/provider/provider-probe.test.mjs": "66a814c3b42a4c7d18847104ce5974623a80cfe6f6a8ce2e471eaa6648e3f79c",
+    "tests/provider/provider-protocol-routes.test.mjs": "3c6a66f93918d29fde26b94e4db74da0cfe7cc28f31a79584ed293540caee494",
+    "tests/security/encrypted-secret-handle.test.mjs": "f8f8133ab871826be94699b54b761ffc2fecb112d6e672347edc23de9edef618",
+    "tests/security/governance-hardening-r3.test.mjs": "d4c8fd3472d560fc3cf7d36047148c2169dd378c215a69c2b84199dacc0fc086",
+    "tests/security/identity-closure.test.mjs": "5f1cc3b351806cde740ad867730d6110db36c665c81a366381fb1a6f51e646dc",
+    "tests/security/key-delegation.test.mjs": "809fd0486e9bd13ecc94f48f63f91fc3d7347f88bb7617bfd4385286317920ed",
+    "tests/security/provider-egress.test.mjs": "3220d9816db7a1cba2d303e6003c7915bb05fe0a359d7f48d2ab2e56a0f5d294",
+    "tests/security/rate-limiter.test.mjs": "4656c561069eb5601fd44dad757b83365d0c881f6fb849b0c24c6b643065df37",
+    "tests/security/request-transport.test.mjs": "39e5d5a7c1977917dbc489d9908fb0654a00e0e21a10ba50f79ee836531cb49d",
+    "tests/security/secret-service.test.mjs": "abe25423ec0584d7fe49147446100a38fd7f8756072f3613387491d82cc651b4",
+    "tests/security/usage-scope.spec.mjs": "c56cfe6f856d5001c21847e577c2c2494ff611a30c05be1da0164461a7398a2f",
+    "tests/security/v1-governance-e2e.test.mjs": "d81f7eaa0dab94d90aff6e198a14aeb2ec80a0774aa99438bdf50e667ead0749",
+    "tests/security/v1-ops-durable-secret.test.mjs": "a4afc6662b64dd5d6840fe626b0f7af29e0eb9a497b8326a047faa878a3bbda0",
+    "tests/tooling/release-environment.test.mjs": "45729da47844be55f3a01af3236144d31028893e6b804fcccbc9cb47a6e9ed2c",
+    "tests/tooling/v1-acceptance-tooling.test.mjs": "2bc6201ba685f888e7a22375c2bb0db869d74765258239860fe687c6e728be43"
+  },
+  "results": [
+    {
+      "asset": "tests/e2e/assistant-settings-actions.spec.mjs",
+      "covers": [
+        "tests/e2e/assistant-settings-actions.spec.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "V1-FR-009/V1-E2E-09 assistant action workflow enforces permission, confirmation, versions, cancel and audit"
+      ],
+      "command": "node --test --test-reporter=tap tests/e2e/assistant-settings-actions.spec.mjs",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/001.tap.txt",
+      "log_sha256": "9f90ac275424c497741e70c3d268dcf5bfdc053dca27015d6f5d27417265ff5f"
+    },
+    {
+      "asset": "tests/extensions/daemon-r3.test.mjs",
+      "covers": [
+        "tests/extensions/daemon-r3.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "daemon catches tick errors, bounds claims, and awaits shutdown"
+      ],
+      "command": "node --test --test-reporter=tap tests/extensions/daemon-r3.test.mjs",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/002.tap.txt",
+      "log_sha256": "7f71ffb8e3dc98ce28d158b455d36369214a7a6831ca1fbda33c5504a5eb8a93"
+    },
+    {
+      "asset": "tests/extensions/extension-routes.test.mjs",
+      "covers": [
+        "tests/extensions/extension-routes.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "extension route projection injects auth subject and exposes SSE run events"
+      ],
+      "command": "node --test --test-reporter=tap tests/extensions/extension-routes.test.mjs",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/003.tap.txt",
+      "log_sha256": "d78ef5850c4fcec3c2d4358105d7f9d2bb1cf9b58d9d30529b10bd27d60b2cd1"
+    },
+    {
+      "asset": "tests/extensions/extension-service.test.mjs",
+      "covers": [
+        "tests/extensions/extension-service.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "permission and confirmation reject before install or process start",
+        "managed MCP connection and run use one process, idempotent request, and redacted snapshot",
+        "cancel queued and timeout running do not retry handler",
+        "recovery marks uncertain claimed execution and never dispatches it again",
+        "preview is owner and digest bound; raw process fields are rejected",
+        "concurrent connect uses one attempt and cancellation reaches live child",
+        "skill package and child IDs remain distinct; untrusted preview cannot install"
+      ],
+      "command": "node --test --test-reporter=tap tests/extensions/extension-service.test.mjs",
+      "tests": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/004.tap.txt",
+      "log_sha256": "cbdc51a1f695da8a00e06aa8d376a6b2cec5cdfd63393836930886a5e8e1508e"
+    },
+    {
+      "asset": "tests/extensions/hardening-r3.test.mjs",
+      "covers": [
+        "tests/extensions/hardening-r3.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "same MCP ID is isolated across subjects and disconnects",
+        "API connect records intent without pretending another process owns transport",
+        "audit failure keeps connection intent and terminal Run uncommitted",
+        "G deployment adapter requires active release, dependency, and capability",
+        "cancel from API instance aborts handler running in another service instance"
+      ],
+      "command": "node --test --test-reporter=tap tests/extensions/hardening-r3.test.mjs",
+      "tests": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/005.tap.txt",
+      "log_sha256": "c4b28e9c1eb464c29bc5945021d4158939864b6a173a88bcaecdf26b23c141ea"
+    },
+    {
+      "asset": "tests/extensions/mcp-transport.test.mjs",
+      "covers": [
+        "tests/extensions/mcp-transport.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "server-owned stdio profile keeps MCP process through calls and stops on disconnect",
+        "server-owned stdio credential field reaches child without caller env control",
+        "stdio sandbox rejects workspace-wide and secret profile roots before process start",
+        "macOS sandbox profile executes fixture while denying filesystem writes",
+        "server-owned HTTP endpoint completes MCP initialize, discovery, call, and disconnect",
+        "server-owned HTTP credential header reaches MCP and is required",
+        "HTTP MCP egress rejects private HTTPS addresses before transport",
+        "service invokes persisted run through persistent stdio MCP transport"
+      ],
+      "command": "node --test --test-reporter=tap tests/extensions/mcp-transport.test.mjs",
+      "tests": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/006.tap.txt",
+      "log_sha256": "b2d77353acd4d9d364930e54e4bd508f35c446f7b73d27cacd653d26bfdd6e04"
+    },
+    {
+      "asset": "tests/extensions/runtime-loader-r3.test.mjs",
+      "covers": [
+        "tests/extensions/runtime-loader-r3.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "deployment loader supplies trusted first-party source and controlled handler",
+        "quick MCP config loads server-owned profile and completes a real tool call"
+      ],
+      "command": "node --test --test-reporter=tap tests/extensions/runtime-loader-r3.test.mjs",
+      "tests": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/007.tap.txt",
+      "log_sha256": "2d70923cf9543fe5135368dc6f340a04a48119b669cebe3574109583a22b6ff7"
+    },
+    {
+      "asset": "tests/integration/action-candidates-wiring.test.mjs",
+      "covers": [
+        "tests/integration/action-candidates-wiring.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "local assistant resolve yields only authorized registered candidates and never executes"
+      ],
+      "command": "node --test --test-reporter=tap tests/integration/action-candidates-wiring.test.mjs",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/008.tap.txt",
+      "log_sha256": "0a999263d6c02d25d334b0139fd5e66596b1704e57de5e6525d551490afa213a"
+    },
+    {
+      "asset": "tests/integration/ai-task-api.test.mjs",
+      "covers": [
+        "tests/integration/ai-task-api.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "public ProviderConfig to text task API supports explicit refresh, idempotency, SSE resume and artifact authorization",
+        "quota preflight rejection creates no task, attempt or reservation",
+        "provider failure settles quota exactly once",
+        "task cancellation releases quota exactly once",
+        "provider timeout settles quota with estimated usage exactly once"
+      ],
+      "command": "node --test --test-reporter=tap tests/integration/ai-task-api.test.mjs",
+      "tests": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/009.tap.txt",
+      "log_sha256": "2ddab324105cc99147c7e3bd84ba206f303fbc38e3b855b00089ce39eb28591a"
+    },
+    {
+      "asset": "tests/integration/ai-task-worker.test.mjs",
+      "covers": [
+        "tests/integration/ai-task-worker.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "AI task worker claims queued attempts and reclaims expired leases",
+        "AI task worker passes the claimed attempt and persisted input to the service",
+        "AI task worker runs a continuous loop and stops without claiming after stop",
+        "lease loss prevents worker service from committing terminal state"
+      ],
+      "command": "node --test --test-reporter=tap tests/integration/ai-task-worker.test.mjs",
+      "tests": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/010.tap.txt",
+      "log_sha256": "1d6c5eb146ae624b06421aa2e89f313c29e47df7ca5a997286ed8bb1fc69eddc"
+    },
+    {
+      "asset": "tests/integration/app-capabilities.test.mjs",
+      "covers": [
+        "tests/integration/app-capabilities.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "instance context requires both declared grants, projects no private settings and uses numeric cursors",
+        "model bridge exposes only current resolved models and the exact public projection",
+        "bridge rejects caller identity injection and forwards events as bounded JSON"
+      ],
+      "command": "node --test --test-reporter=tap tests/integration/app-capabilities.test.mjs",
+      "tests": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/011.tap.txt",
+      "log_sha256": "7f769c401693e4e8e2241a421f3dd073ea4be8e4e67fd92bdf68d57b9c1c1046"
+    },
+    {
+      "asset": "tests/integration/app-package-fixture.test.mjs",
+      "covers": [
+        "tests/integration/app-package-fixture.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "package fixture signs nine capabilities and seeds only through public HTTP"
+      ],
+      "command": "node --test --test-reporter=tap tests/integration/app-package-fixture.test.mjs",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/012.tap.txt",
+      "log_sha256": "10d2403b2f100355bbf0d84faadbef02745c39a837fa2ebeff737638fe9ec119"
+    },
+    {
+      "asset": "tests/integration/audit-outbox.test.mjs",
+      "covers": [
+        "tests/integration/audit-outbox.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "audit outbox publisher retries failures and marks success once"
+      ],
+      "command": "node --test --test-reporter=tap tests/integration/audit-outbox.test.mjs",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/013.tap.txt",
+      "log_sha256": "632e92191667fcfe4b5d55c96a7f73ad2247afc99c55f460529ff86091576fb2"
+    },
+    {
+      "asset": "tests/integration/governance-wiring.test.mjs",
+      "covers": [
+        "tests/integration/governance-wiring.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "stale session cannot mutate governance; renewal does not bypass fresh authentication",
+        "API key management capability cannot delegate a broader scope"
+      ],
+      "command": "node --test --test-reporter=tap tests/integration/governance-wiring.test.mjs",
+      "tests": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/014.tap.txt",
+      "log_sha256": "0170cb0edf092c2a713b3d55d7d2bd7e4250332cfcaa20f824e425e2b4f0cca1"
+    },
+    {
+      "asset": "tests/integration/identity-api.test.mjs",
+      "covers": [
+        "tests/integration/identity-api.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "identity and API key lifecycle exposes redacted contract"
+      ],
+      "command": "node --test --test-reporter=tap tests/integration/identity-api.test.mjs",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/015.tap.txt",
+      "log_sha256": "d488ef2567555372adec0e3d6278d60ecb71b45bdc9e412916670b9cd28d4c6c"
+    },
+    {
+      "asset": "tests/integration/migration-contract.test.mjs",
+      "covers": [
+        "tests/integration/migration-contract.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "V1 governance migration contains required idempotency and safety constraints",
+        "V1 runtime migration contains persistent control-plane tables"
+      ],
+      "command": "node --test --test-reporter=tap tests/integration/migration-contract.test.mjs",
+      "tests": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/016.tap.txt",
+      "log_sha256": "93ca88267a5cc4b2265a2b754f812e8bb58036bf04109c0970bd8eca886eccd8"
+    },
+    {
+      "asset": "tests/integration/permission-write-freshness.test.mjs",
+      "covers": [
+        "tests/integration/permission-write-freshness.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "permission decision writes reject stale sessions and API Keys without changing effective permission"
+      ],
+      "command": "node --test --test-reporter=tap tests/integration/permission-write-freshness.test.mjs",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/017.tap.txt",
+      "log_sha256": "ad16989c9e641393d2f538753cc9b9e78dcd088cf78e2e089aa47743f73dbbc8"
+    },
+    {
+      "asset": "tests/integration/provider-admission-wiring.test.mjs",
+      "covers": [
+        "tests/integration/provider-admission-wiring.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "public task admission rejects incomplete Provider state without enqueueing and preserves existing task"
+      ],
+      "command": "node --test --test-reporter=tap tests/integration/provider-admission-wiring.test.mjs",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/018.tap.txt",
+      "log_sha256": "14b2b7b3ac267c5a327badeda634c2e541ea50f5fb016a22be1beece4a0cf676"
+    },
+    {
+      "asset": "tests/integration/provider-api.test.mjs",
+      "covers": [
+        "tests/integration/provider-api.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "provider account and controlled connection test lifecycle",
+        "ProviderEgress rejects private and non-HTTPS targets before adapter fetch"
+      ],
+      "command": "node --test --test-reporter=tap tests/integration/provider-api.test.mjs",
+      "tests": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/019.tap.txt",
+      "log_sha256": "5b5b1310a4f398839aa39b1b51b13d3ae1d1e84472cd0c2228c1f495e49938ce"
+    },
+    {
+      "asset": "tests/integration/provider-test-loop.test.mjs",
+      "covers": [
+        "tests/integration/provider-test-loop.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "provider test loop polls independently until stopped"
+      ],
+      "command": "node --test --test-reporter=tap tests/integration/provider-test-loop.test.mjs",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/020.tap.txt",
+      "log_sha256": "0ee3c397b8ff1cb5a62b55c3b417ac656cc1ca42e53693cb5abf013778b5728b"
+    },
+    {
+      "asset": "tests/integration/provider-worker.test.mjs",
+      "covers": [
+        "tests/integration/provider-worker.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "provider worker claims queued tests and converges them once",
+        "expired provider worker lease can be reclaimed",
+        "cancelled running probe aborts and converges under its original testId",
+        "late probe success cannot override cancellation or write a second terminal audit",
+        "claimed cancel request records exactly one terminal audit without probing",
+        "total deadline ends an unresponsive probe without a false success"
+      ],
+      "command": "node --test --test-reporter=tap tests/integration/provider-worker.test.mjs",
+      "tests": 6,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/021.tap.txt",
+      "log_sha256": "cfe36e7d719e6cf5267b39f651af45baf1686f086f5ddd3d3cb2bce66348b8cb"
+    },
+    {
+      "asset": "tests/integration/quota-api.test.mjs",
+      "covers": [
+        "tests/integration/quota-api.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "quota API enforces scopes and provides preflight, reserve, settle, query and policy contract"
+      ],
+      "command": "node --test --test-reporter=tap tests/integration/quota-api.test.mjs",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/022.tap.txt",
+      "log_sha256": "615f7bedc9d1be2748aa7c5e7c5945017fef2218f36ad37437f43e0ccefe0e57"
+    },
+    {
+      "asset": "tests/integration/quota-reservation.spec.mjs",
+      "covers": [
+        "tests/integration/quota-reservation.spec.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "V1-E2E-15 reservation hard limit and stable replay"
+      ],
+      "command": "node --test --test-reporter=tap tests/integration/quota-reservation.spec.mjs",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/023.tap.txt",
+      "log_sha256": "2e76522b756bc72016dc5a782946e2c81e1edda711209ec73b4792776b8b3760"
+    },
+    {
+      "asset": "tests/integration/retention-api.test.mjs",
+      "covers": [
+        "tests/integration/retention-api.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "retention sweep requires scope and returns a preview digest"
+      ],
+      "command": "node --test --test-reporter=tap tests/integration/retention-api.test.mjs",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/024.tap.txt",
+      "log_sha256": "15cfbe257936b94ff066457d7f552fbdce5afd97c95493aae1f17f1f91279b83"
+    },
+    {
+      "asset": "tests/integration/system-info.test.mjs",
+      "covers": [
+        "tests/integration/system-info.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "GET /api/v1/system/info returns system information",
+        "GET /api/v1/system/info requires authentication",
+        "GET /api/v1/system/info with API key authentication"
+      ],
+      "command": "node --test --test-reporter=tap tests/integration/system-info.test.mjs",
+      "tests": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/025.tap.txt",
+      "log_sha256": "ba99f4d98fa2f3126c85d42684b74d80f2ced93285afcf72bbfc92c5fc15e58f"
+    },
+    {
+      "asset": "tests/integration/usage-settlement.spec.mjs",
+      "covers": [
+        "tests/integration/usage-settlement.spec.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "V1-E2E-15 terminal settlement and release are exactly once"
+      ],
+      "command": "node --test --test-reporter=tap tests/integration/usage-settlement.spec.mjs",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/026.tap.txt",
+      "log_sha256": "b90212740460359a51dd871d914d800261cf20baf501e375d015cde62798be78"
+    },
+    {
+      "asset": "tests/provider/openai-compatible-fixture.test.mjs",
+      "covers": [
+        "tests/provider/openai-compatible-fixture.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "fixture exposes OpenAI models structure",
+        "fixture emits parseable chat completion SSE",
+        "fixture rejects missing or invalid authorization and supports forbidden scenario",
+        "adapter can list models and stream from the real fixture",
+        "adapter maps timeout, disconnect, malformed and empty streams"
+      ],
+      "command": "node --test --test-reporter=tap tests/provider/openai-compatible-fixture.test.mjs",
+      "tests": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/027.tap.txt",
+      "log_sha256": "37962711b2a84bd83979a84b119efdf8d2bfd6d3c8e9dd20c7840d5f5b3c0702"
+    },
+    {
+      "asset": "tests/provider/openai-compatible-stream.test.mjs",
+      "covers": [
+        "tests/provider/openai-compatible-stream.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "adapter yields first delta before real TLS upstream ends, then accepts terminal usage",
+        "adapter requires complete SSE and discards untrusted usage evidence",
+        "adapter cancellation rejects a partially delivered stream",
+        "Responses usage is trusted only from a completed response and full transport EOF"
+      ],
+      "command": "node --test --test-reporter=tap tests/provider/openai-compatible-stream.test.mjs",
+      "tests": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/028.tap.txt",
+      "log_sha256": "91eabed9e8b915d9e07e376bf19a37b80f8e6cb2accf09147793beb6d412ea9a"
+    },
+    {
+      "asset": "tests/provider/profile-task-wiring.test.mjs",
+      "covers": [
+        "tests/provider/profile-task-wiring.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "public Task uses bound responses operation once and stores the text artifact"
+      ],
+      "command": "node --test --test-reporter=tap tests/provider/profile-task-wiring.test.mjs",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/029.tap.txt",
+      "log_sha256": "63e76b8a514267b6b4c8fb88f4576461825bc8d2900bdd31df01a3a3dffc1bc0"
+    },
+    {
+      "asset": "tests/provider/provider-admission-profile.test.mjs",
+      "covers": [
+        "tests/provider/provider-admission-profile.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "new task admission checks config, account, catalog and policy without task side effects",
+        "text profile allows only declared text operations and exact model names",
+        "text profile snapshots defaults, limits and selector rejection",
+        "bound text profile selects the real upstream operation and rejects disabled declarations"
+      ],
+      "command": "node --test --test-reporter=tap tests/provider/provider-admission-profile.test.mjs",
+      "tests": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/030.tap.txt",
+      "log_sha256": "54ddc66856a67f2f00b6e08b41567bac71acf64aefc60ca11e8565799718ed3e"
+    },
+    {
+      "asset": "tests/provider/provider-config-disabled.test.mjs",
+      "covers": [
+        "tests/provider/provider-config-disabled.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "failed validation disables new task admission until explicit refresh"
+      ],
+      "command": "node --test --test-reporter=tap tests/provider/provider-config-disabled.test.mjs",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/031.tap.txt",
+      "log_sha256": "2bbbbbbbc83fc72029abf88ab8b2b97c256a1ed00024dd5066e2acba53307a8b"
+    },
+    {
+      "asset": "tests/provider/provider-no-export.test.mjs",
+      "covers": [
+        "tests/provider/provider-no-export.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "provider management has no import/export route and redacts credentials"
+      ],
+      "command": "node --test --test-reporter=tap tests/provider/provider-no-export.test.mjs",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/032.tap.txt",
+      "log_sha256": "059920805ddfc8d5e14c8894731c662e33f393eee0b1811e5d5186b8058c7ea1"
+    },
+    {
+      "asset": "tests/provider/provider-parameters.test.mjs",
+      "covers": [
+        "tests/provider/provider-parameters.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "parameter merge is per key, limits tighten, and text counts Unicode scalars",
+        "catalog refresh rolls back on audit failure and rejects stale config version"
+      ],
+      "command": "node --test --test-reporter=tap tests/provider/provider-parameters.test.mjs",
+      "tests": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/033.tap.txt",
+      "log_sha256": "479c2fd54bad4200c763a821bf05b0947a8666b25a0b4c510dbdfbc5d390c25f"
+    },
+    {
+      "asset": "tests/provider/provider-probe.test.mjs",
+      "covers": [
+        "tests/provider/provider-probe.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "connection probe sends bounded, abortable request and accepts a models envelope",
+        "connection probe classifies status and malformed models without exposing upstream body"
+      ],
+      "command": "node --test --test-reporter=tap tests/provider/provider-probe.test.mjs",
+      "tests": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/034.tap.txt",
+      "log_sha256": "2b61fa1113bb2d1eed2a9aeaecc1319272776421f5c88791786196592d1e2a54"
+    },
+    {
+      "asset": "tests/provider/provider-protocol-routes.test.mjs",
+      "covers": [
+        "tests/provider/provider-protocol-routes.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "protocol directory exposes one public DTO and validation has no publish side effect"
+      ],
+      "command": "node --test --test-reporter=tap tests/provider/provider-protocol-routes.test.mjs",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/035.tap.txt",
+      "log_sha256": "aad9cf0494e12f5b4b85b8afbadf18491423dc51ff820d5e059dc8c6baefea47"
+    },
+    {
+      "asset": "tests/security/encrypted-secret-handle.test.mjs",
+      "covers": [
+        "tests/security/encrypted-secret-handle.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "encrypted secret handles fail closed after revoke, version change and handle expiry"
+      ],
+      "command": "node --test --test-reporter=tap tests/security/encrypted-secret-handle.test.mjs",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/036.tap.txt",
+      "log_sha256": "d9640f4504b97ef9f9fae81e0c44dde59af2eef1cb2ea40333b39ad50b793270"
+    },
+    {
+      "asset": "tests/security/governance-hardening-r3.test.mjs",
+      "covers": [
+        "tests/security/governance-hardening-r3.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "login audit failure leaves no session and failed bootstrap revokes its secret",
+        "subject/source backoff grows and source remains blocked after subject success",
+        "retention plan without preview confirmation cannot execute"
+      ],
+      "command": "node --test --test-reporter=tap tests/security/governance-hardening-r3.test.mjs",
+      "tests": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/037.tap.txt",
+      "log_sha256": "f7df688bc20c53fdfb087b8ab62dbe0143ba084eec51f63e53bc79c1439601fd"
+    },
+    {
+      "asset": "tests/security/identity-closure.test.mjs",
+      "covers": [
+        "tests/security/identity-closure.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "identity audit failures leave session state unchanged and never retain secret values"
+      ],
+      "command": "node --test --test-reporter=tap tests/security/identity-closure.test.mjs",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/038.tap.txt",
+      "log_sha256": "a801956991f45a2a2ec79ea1322a4f84c2db059cb3fc3938adfb67d1692f7574"
+    },
+    {
+      "asset": "tests/security/key-delegation.test.mjs",
+      "covers": [
+        "tests/security/key-delegation.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "key scopes cannot widen an API key caller and owner cannot change",
+        "API key expiry and rotation cutoff are checked at authentication time"
+      ],
+      "command": "node --test --test-reporter=tap tests/security/key-delegation.test.mjs",
+      "tests": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/039.tap.txt",
+      "log_sha256": "0753850795259d081def36424c2c02895eefc8bff99353b42e2067483cf9fcee"
+    },
+    {
+      "asset": "tests/security/provider-egress.test.mjs",
+      "covers": [
+        "tests/security/provider-egress.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "ProviderEgress blocks private and metadata targets before fetch",
+        "ProviderEgress requires HTTPS and rejects redirects",
+        "ProviderEgress rejects mixed DNS answers instead of allowing rebinding candidates",
+        "ProviderEgress rejects IPv6 loopback, link-local, and unique-local targets"
+      ],
+      "command": "node --test --test-reporter=tap tests/security/provider-egress.test.mjs",
+      "tests": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/040.tap.txt",
+      "log_sha256": "9cb4f8489f74c5787557c4024ec43453fdbfc2445a2492f5dc7fd7e8a388382f"
+    },
+    {
+      "asset": "tests/security/rate-limiter.test.mjs",
+      "covers": [
+        "tests/security/rate-limiter.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "in-memory rate limiter resets after its window"
+      ],
+      "command": "node --test --test-reporter=tap tests/security/rate-limiter.test.mjs",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/041.tap.txt",
+      "log_sha256": "2e6a227e436eabf9c3ac3edcc8947748d0a2fcf03f418a7e14cd275956ee6be6"
+    },
+    {
+      "asset": "tests/security/request-transport.test.mjs",
+      "covers": [
+        "tests/security/request-transport.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "trusted single-hop ingress requires declared peer and exact public HTTPS origin",
+        "missing or malformed deployment config fails closed",
+        "direct TLS socket is secure only for configured public host",
+        "explicit native local API checks socket peer, local address, host and port",
+        "insecure local fixture requires nonproduction explicit origin"
+      ],
+      "command": "node --test --test-reporter=tap tests/security/request-transport.test.mjs",
+      "tests": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/042.tap.txt",
+      "log_sha256": "160c8986320e3e130f776438045c745711aba0ac61111f0fb16eb14c5b9be7e4"
+    },
+    {
+      "asset": "tests/security/secret-service.test.mjs",
+      "covers": [
+        "tests/security/secret-service.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "SecretService scopes and expires short-lived handles",
+        "API key verification is digest based and does not require plaintext storage"
+      ],
+      "command": "node --test --test-reporter=tap tests/security/secret-service.test.mjs",
+      "tests": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/043.tap.txt",
+      "log_sha256": "7748432b18c9decbd606bc376dbe3776405d83f677ef485357f67caa3e4dc90a"
+    },
+    {
+      "asset": "tests/security/usage-scope.spec.mjs",
+      "covers": [
+        "tests/security/usage-scope.spec.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "V1-E2E-15 usage scope rejects API key cross-subject query"
+      ],
+      "command": "node --test --test-reporter=tap tests/security/usage-scope.spec.mjs",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/044.tap.txt",
+      "log_sha256": "1759fb2d5640be65cb72672e2147a58a76382e3dd192a24f86c21476b25f6aae"
+    },
+    {
+      "asset": "tests/security/v1-governance-e2e.test.mjs",
+      "covers": [
+        "tests/security/v1-governance-e2e.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "V1-E2E-11 authentication session, expiry, origin and high-risk authorization",
+        "V1-E2E-12 API key one-time secret, isolation, overlap, revoke and expiry",
+        "V1-E2E-13 provider account connection controls reject SSRF and owner violations before enqueue",
+        "V1-E2E-14 audit correlation, redaction, outbox retry and retention recovery"
+      ],
+      "command": "node --test --test-reporter=tap tests/security/v1-governance-e2e.test.mjs",
+      "tests": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/045.tap.txt",
+      "log_sha256": "2b691334c9e302715fbafe1eac58287d9be965db3c67be06e4fa9a105e609c8b"
+    },
+    {
+      "asset": "tests/security/v1-ops-durable-secret.test.mjs",
+      "covers": [
+        "tests/security/v1-ops-durable-secret.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "durable ciphertext survives restart and never stores plaintext",
+        "read checks authoritative version, revoke and scope every time",
+        "authenticated control metadata cannot be flipped to revive or rescope a record",
+        "legacy ciphertext requires explicit reviewed offline migration",
+        "verification tolerates an active writer lock and rejects orphan lock or temp",
+        "production audit records anonymous digests and failure blocks read",
+        "TTL, missing key and storage failure fail closed",
+        "parallel instances increment versions and stale CAS cannot overwrite",
+        "tampered ciphertext and unavailable durable directory fail closed",
+        "backup, restore and rewrap use independent key directory",
+        "restore rejects modified ciphertext backup",
+        "production config rejects fixtures and defaults; controlled handle can initialize"
+      ],
+      "command": "node --test --test-reporter=tap tests/security/v1-ops-durable-secret.test.mjs",
+      "tests": 12,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/046.tap.txt",
+      "log_sha256": "5b6b682abbb4d29c691bca5150b28b309a6f7c91c9236432b59be05b85b7016b"
+    },
+    {
+      "asset": "tests/tooling/release-environment.test.mjs",
+      "covers": [
+        "tests/tooling/release-environment.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "integration destructive commands use a dedicated project and database",
+        "integration ports reject other workers, invalid values and collisions"
+      ],
+      "command": "node --test --test-reporter=tap tests/tooling/release-environment.test.mjs",
+      "tests": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/047.tap.txt",
+      "log_sha256": "edc8e625ae4e207a5a6f168116f3bb712d272a6fcef96bb731a67cdd8b62f2e4"
+    },
+    {
+      "asset": "tests/tooling/v1-acceptance-tooling.test.mjs",
+      "covers": [
+        "tests/tooling/v1-acceptance-tooling.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "provider workflow harness rejects a nonrandom Verify parent before database work",
+        "candidate plan classifies root tests without worktree discovery or unsafe DB fallback",
+        "five-group child environment removes inherited storage URLs and uses workflow CHILD",
+        "frozen migration selection and TAP failures stay strict",
+        "requirement registry preserves 62 AC, 12 E2E, 7 NFR and 3 RG and defaults to uncovered",
+        "Provider receipt must name one exact report/log/manifest stem",
+        "five groups write paired manifests, continue independent failures and drop exact PG children",
+        "skipped or excluded tests and source drift cannot complete a candidate",
+        "candidate groups compose only with complete matching source, build, assets and cases",
+        "candidate file bindings detect changed logs and runtime assets",
+        "a hashed replacement log without a business assertion does not cover the placeholder",
+        "unchanged HTML cannot hide changed or omitted dist JavaScript",
+        "optional native app binding checks actual bundle files",
+        "command registry contains only actual narrow entries and keeps release binding enabled"
+      ],
+      "command": "node --test --test-reporter=tap tests/tooling/v1-acceptance-tooling.test.mjs",
+      "tests": 14,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": true,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-memory/048.tap.txt",
+      "log_sha256": "38d37a11fda4045d7bf6d85d4acd2c48d5a9ba67078588e03520aebb638292d3"
+    }
+  ],
+  "failed_assets": [
+    "tests/tooling/v1-acceptance-tooling.test.mjs: exit=0 signal=null timeout=false tests=14 failed=0 skipped=0"
+  ],
+  "unexecuted_assets": [
+    "tests/tooling/v1-ops-release.test.mjs",
+    "tests/tooling/v1-performance.test.mjs",
+    "tests/tooling/verify-release.test.mjs",
+    "tests/unit-quota.test.mjs",
+    "tests/unit/app-packages.test.mjs",
+    "tests/unit/runtime.test.mjs"
+  ],
+  "covered_cases": [],
+  "cleanup": [],
+  "error": "source drift after tests/tooling/v1-acceptance-tooling.test.mjs",
+  "limitations": [
+    "Local host execution only; browser/native and unresolved branch receipts remain pending.",
+    "Image field binds the candidate artifact and does not claim these tests ran in that image.",
+    "No E2E case is claimed without explicit passing business assertions."
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "runId": "V1-EXT-http-2026-10-02T13-33-32-892Z-b7a65ad2",
+  "codeVersion": "working-tree",
+  "assetSha256": {
+    "scripts/v1-extension-http.mjs": "cc6bbb2e4ade7337d822b5c94b7d5416ba4190c2cd2448b3cc4fe4e05ab6e350",
+    "scripts/v1-performance.mjs": "093768ad7e5e5adda1453379b9d02bcf557ae0bd02de19b48197eca51e57f80a",
+    "tests/extensions/extension-http-daemon.mjs": "3fb392a868424408d61deef0d5d18180ff59cf3c90c2c128074c9c910d20575a",
+    "apps/api/src/server.mjs": "87a7dacf9c4c75e9ce119bf80e6a2938aec2544a54cb5058138ec01d9a932cf0",
+    "apps/api/src/extension-routes.mjs": "6fd65b099d9f1c9d41303796b40285ebfa39bde9f3e8fe7e1584382bd5c4e83d",
+    "apps/extension-runner/src/daemon.mjs": "44b3232e36d862fae673c892c1a189447f2bc0be82d13204ffff63e736309e3d",
+    "src/extensions/service.mjs": "6856cbdcdd3e26a85ec4ff5613d41984e62ba7c548881024117c092bc8d600da",
+    "src/extensions/runtime.mjs": "ecd30a48f96c63b0f511936f8201cae81ed4cf914528a59ce61faa674215a32d",
+    "src/apps/package-service.mjs": "23b779bdc9c252e3d29c95348b8aeb8e3a7f64e0bafadd4b3afb28bf22362f84"
+  },
+  "evidencePath": "/Users/apple/Progame/DGOS/.herdr/V1-EXT-http-2026-10-02T13-33-32-892Z-b7a65ad2.json",
+  "limitations": [
+    "Local signed package fixture and macOS sandbox are not production deployment evidence.",
+    "V1 schema permits one active admin principal, so a second authenticated subject cannot be produced through the public identity API in this database.",
+    "API uses buildServer with real routes and repositories; extension daemon runs in a separate Node process in this harness."
+  ]
+}

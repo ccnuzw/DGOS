@@ -12,10 +12,13 @@ import {
 import { webHost } from "@dgos/host-adapter-web";
 import { ApiError, api, items, json, receiptError } from "./api";
 import { allLabels } from "./i18n";
-import { Developer, ExtensionsV1 } from "./advanced";
+import { ExtensionsV1 } from "./advanced";
+import { DeveloperCenter } from "./developer-center";
 import { GovernanceControl, KeyControl, ProviderControl, UsageControl } from "./hardening";
 import { AppCatalog } from "./catalog";
 import { Protocols as ProtocolControl } from "./protocols";
+import { SystemInfo } from "./system-info";
+import { ModelManagement } from "./model-management";
 import { useDialogKeyboard } from './dialog';
 import { displayNumber, setRegionFormat } from './region';
 import { DeviceSessions } from './sessions';
@@ -39,7 +42,9 @@ const terminal = (value: string) =>
   ].includes(value);
 const navigationRoutes: Record<string, string> = {
   "system.settings": routes.settings,
+  "system.info": routes.system,
   "provider.settings": routes.providers,
+  "model.management": routes.models,
   "skill.management": routes.skills,
   "mcp.management": routes.mcp,
   "app.catalog": routes.catalog,
@@ -277,6 +282,7 @@ function Desktop({ t }: { t: ReturnType<typeof allLabels> }) {
     ["assistant", t.assistant],
     ["settings", t.settings],
     ["providers", t.providers],
+    ["models", t.models],
     ["skills", t.skills],
     ["mcp", t.mcp],
   ] as const;
@@ -1642,13 +1648,15 @@ function App() {
     desktop: <Desktop t={t} />,
     catalog: <AppCatalog t={t} subjectId={session.principalId} />,
     settings: <><Settings t={t} onAppearance={appearance} subjectId={session.principalId} /><DeviceSessions t={t} onStepUp={beginStepUp} /></>,
+    system: <SystemInfo t={t} />,
     providers: <ProviderControl t={t} />,
+    models: <ModelManagement t={t} onChanged={() => {}} />,
     protocols: <ProtocolControl t={t} />,
     skills: <ExtensionsV1 t={t} kind="skills" />,
     mcp: <ExtensionsV1 t={t} kind="mcp" />,
     assistant: <Assistant t={t} session={session} />,
     tasks: <Tasks t={t} />,
-    developer: <Developer t={t} />,
+    developer: <DeveloperCenter t={t} />,
     keys: <KeyControl t={t} session={session} onStepUp={beginStepUp} />,
     governance: <GovernanceControl t={t} onStepUp={beginStepUp} />,
     usage: <UsageControl t={t} session={session} />,

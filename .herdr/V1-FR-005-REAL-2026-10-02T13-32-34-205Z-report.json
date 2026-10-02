@@ -1,0 +1,39 @@
+{
+  "runId": "V1-FR-005-REAL-2026-10-02T13-32-34-205Z",
+  "startedAt": "2026-10-02T13:32:34.206Z",
+  "title": "FR-005 Complete Real Provider Validation",
+  "acs": {
+    "AC01": {
+      "name": "Text task end-to-end flow",
+      "status": "pending",
+      "tests": []
+    },
+    "AC02": {
+      "name": "Failure and duplicate submission",
+      "status": "pending",
+      "tests": []
+    },
+    "AC08": {
+      "name": "SSE streaming with reconnection",
+      "status": "pending",
+      "tests": []
+    }
+  },
+  "evidence": {
+    "provider": {
+      "base_url": "https://cc.nextcc.cc",
+      "protocol": "openai-compatible",
+      "models_available": 3,
+      "connection_verified": "2026-10-02"
+    }
+  },
+  "costs": {
+    "totalTokens": 0,
+    "estimatedUSD": 0
+  },
+  "limitations": [],
+  "fatalError": {
+    "message": "DGOS_DATABASE_URL environment variable required",
+    "stack": "Error: DGOS_DATABASE_URL environment variable required\n    at main (file:///Users/apple/Progame/DGOS/scripts/v1-fr-005-real-provider-validation.mjs:100:13)"
+  }
+}

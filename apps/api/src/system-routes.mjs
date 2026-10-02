@@ -26,6 +26,75 @@ const sse = (events) => events.map((event) => `id: ${event.contextVersion}\neven
 
 export function registerSystemRoutes(app, { system, readAuth, writeAuth, permissionRules, requireFreshSession }) {
   if (!system || !readAuth || !writeAuth) throw new Error('system_routes_dependencies_required');
+
+  app.get('/api/v1/system/info', async (request) => {
+    await readAuth(request, 'system.settings.read');
+    const os = await import('node:os');
+    const systemSnapshot = await system.snapshot();
+    const settings = normalizeSystemSettings(systemSnapshot.settings);
+
+    // Gather system information
+    const cpus = os.cpus();
+    const totalMemory = os.totalmem();
+    const freeMemory = os.freemem();
+    const memoryUsage = process.memoryUsage();
+
+    // Calculate CPU usage (simplified - returns load average)
+    const loadAvg = os.loadavg();
+    const cpuUsage = cpus.length > 0 ? (loadAvg[0] / cpus.length) * 100 : 0;
+
+    // Check service health
+    const databaseStatus = process.env.DGOS_DATABASE_URL ? 'active' : 'in-memory';
+    const redisStatus = process.env.DGOS_REDIS_URL ? 'active' : 'not-configured';
+
+    return {
+      system: {
+        version: 'V1',
+        apiVersion: '1.0.0',
+        nodeVersion: process.version,
+        platform: `${os.platform()} ${os.arch()}`,
+        uptime: process.uptime(),
+      },
+      resources: {
+        cpuUsage: Math.min(cpuUsage, 100),
+        cpuCount: cpus.length,
+        memoryUsed: totalMemory - freeMemory,
+        memoryTotal: totalMemory,
+        heapUsed: memoryUsage.heapUsed,
+        heapTotal: memoryUsage.heapTotal,
+      },
+      services: {
+        api: { status: 'active' },
+        worker: { status: 'unknown' },
+        database: {
+          status: databaseStatus,
+          connections: undefined,
+        },
+        redis: { status: redisStatus },
+      },
+      network: {
+        proxyMode: settings.network.proxyMode,
+        effectiveRoute: settings.network.effectiveRoute,
+        restartRequired: settings.network.restartRequired,
+        affectedServices: settings.network.affectedServices,
+      },
+      apps: {
+        installedCount: 0,
+        runningCount: 0,
+      },
+      sessions: {
+        activeCount: 0,
+        totalUsers: 0,
+      },
+      storage: {
+        databaseType: process.env.DGOS_DATABASE_URL ? 'PostgreSQL' : 'In-Memory',
+        databaseSize: undefined,
+        totalRecords: undefined,
+        auditEvents: undefined,
+      },
+    };
+  });
+
   app.get('/api/v1/system/settings', async (request) => {
     const auth = await readAuth(request, 'system.settings.read');
     const rules = permissionRules?.list ? await permissionRules.list({ subjectId: auth.subjectId }) : undefined;

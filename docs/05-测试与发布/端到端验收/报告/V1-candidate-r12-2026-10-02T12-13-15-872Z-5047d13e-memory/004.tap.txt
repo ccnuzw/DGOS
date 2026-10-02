@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: permission and confirmation reject before install or process start
+ok 1 - permission and confirmation reject before install or process start
+  ---
+  duration_ms: 3.324125
+  type: 'test'
+  ...
+# Subtest: managed MCP connection and run use one process, idempotent request, and redacted snapshot
+ok 2 - managed MCP connection and run use one process, idempotent request, and redacted snapshot
+  ---
+  duration_ms: 90.391125
+  type: 'test'
+  ...
+# Subtest: cancel queued and timeout running do not retry handler
+ok 3 - cancel queued and timeout running do not retry handler
+  ---
+  duration_ms: 143.812166
+  type: 'test'
+  ...
+# Subtest: recovery marks uncertain claimed execution and never dispatches it again
+ok 4 - recovery marks uncertain claimed execution and never dispatches it again
+  ---
+  duration_ms: 49.801833
+  type: 'test'
+  ...
+# Subtest: preview is owner and digest bound; raw process fields are rejected
+ok 5 - preview is owner and digest bound; raw process fields are rejected
+  ---
+  duration_ms: 0.707625
+  type: 'test'
+  ...
+# Subtest: concurrent connect uses one attempt and cancellation reaches live child
+ok 6 - concurrent connect uses one attempt and cancellation reaches live child
+  ---
+  duration_ms: 77.214583
+  type: 'test'
+  ...
+# Subtest: skill package and child IDs remain distinct; untrusted preview cannot install
+ok 7 - skill package and child IDs remain distinct; untrusted preview cannot install
+  ---
+  duration_ms: 0.956125
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 429.424333

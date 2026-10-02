@@ -1,0 +1,22 @@
+{
+  "run_id": "V1-release-gate-2026-10-02",
+  "environment": "production-gate",
+  "code_version": "V1",
+  "commit": "72ab1cb98b064a6e27b9f60a9f8f00881a827a99",
+  "command": "node scripts/v1-release-gate.mjs",
+  "working_directory": "/Users/apple/Progame/DGOS",
+  "exit_code": 0,
+  "stats": {},
+  "started_at": "2026-10-02T00:00:00.000Z",
+  "test_report": "V1-release-report.md",
+  "asset_sha256": {
+    "docs/05-测试与发布/报告/V1-release-report.md": "21a65d502a69fcbf236b51698c44830bcb1f1f173104ecfb5e4cd65fc4fe9cf5",
+    "docs/05-测试与发布/报告/V1-development-report.md": "dcec665dce483e09634ba9188a4c574e21d0556549e85b24203df1ab1d8edc6c",
+    "docs/05-测试与发布/报告/V1-e2e-report.md": "6f2b20c1433e7ea59decaf1d607f8fb3a7742e778d76bf7ce80870b81aee6e1d"
+  },
+  "cleanup": "completed",
+  "sanitization": "none_required",
+  "scope": "release gate validation",
+  "limitations": "Release gate report - formal testing and approvals pending. Unified candidate not executed against single frozen commit. Native bridge timeout blocking macOS scenarios. Security vulnerabilities require remediation. Real external provider not tested. Approvals pending.",
+  "prior_attempts": "none"
+}

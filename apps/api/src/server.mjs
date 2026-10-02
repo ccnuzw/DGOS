@@ -249,12 +249,6 @@ export function buildServer({ logger = true, repository, providerRepository, pro
 
   app.get('/health', async () => ({ status: 'ok', service: 'dgos-api' }));
   app.get('/ready', async () => { await Promise.all(pools.map((pool) => pool.query('SELECT 1'))); return { status: 'ready', apiVersion }; });
-  app.get('/api/v1/system/info', async () => ({
-    product: 'DGOS',
-    version: 'v1',
-    apiVersion,
-    implementationStatus: 'foundation',
-  }));
 
   app.actions = actions;
   app.permissions = permissions;

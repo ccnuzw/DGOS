@@ -1,0 +1,52 @@
+name: dgos-test
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: dgos
+      POSTGRES_DB: dgos
+      POSTGRES_PASSWORD: testpassword123
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U dgos -d dgos']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks: [backend]
+    
+  redis:
+    image: redis:7-alpine
+    command: ['redis-server', '--save', '', '--appendonly', 'no']
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks: [backend]
+    
+  api:
+    image: dgos-api:v1
+    environment:
+      NODE_ENV: production
+      DGOS_DATABASE_URL: postgresql://dgos:testpassword123@postgres:5432/dgos
+      REDIS_URL: redis://redis:6379
+      PORT: 3000
+    depends_on:
+      postgres: {condition: service_healthy}
+      redis: {condition: service_healthy}
+    networks: [backend]
+    ports: ['13000:3000']
+    
+  web:
+    image: dgos-web:v1
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 4173
+      API_BASE_URL: http://api:3000
+    depends_on:
+      api: {condition: service_started}
+    networks: [backend]
+    ports: ['14173:4173']
+
+networks:
+  backend:

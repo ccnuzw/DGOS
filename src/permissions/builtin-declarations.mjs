@@ -1,5 +1,5 @@
 const declarations = Object.freeze({
-  'dgos.system': Object.freeze(['system.settings.read', 'system.settings.write', 'system.navigate', 'permission.manage']),
+  'dgos.system': Object.freeze(['system.settings.read', 'system.settings.write', 'system.info.read', 'system.navigate', 'permission.manage']),
   'dgos.extensions': Object.freeze([
     'skill.read', 'skill.install', 'skill.manage', 'skill.uninstall', 'skill.execute',
     'mcp.read', 'mcp.install', 'mcp.manage', 'mcp.uninstall', 'mcp.connect', 'mcp.execute',

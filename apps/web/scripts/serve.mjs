@@ -32,7 +32,14 @@ const server = http.createServer((request, response) => {
   if (!file.startsWith(`${dist}${path.sep}`) && file !== dist) {response.writeHead(403);response.end('Forbidden');return;}
   const candidate = fs.existsSync(file) && fs.statSync(file).isFile() ? file : pathname.includes('.') ? null : path.join(dist, 'index.html');
   if (!candidate) {response.writeHead(404);response.end('Not found');return;}
-  response.writeHead(200, {'content-type':mime[path.extname(candidate)] || 'application/octet-stream','cache-control':candidate.endsWith('index.html')?'no-cache':'public, max-age=31536000, immutable'});
+  const securityHeaders = {
+    'content-type': mime[path.extname(candidate)] || 'application/octet-stream',
+    'cache-control': candidate.endsWith('index.html') ? 'no-cache' : 'public, max-age=31536000, immutable',
+    'x-content-type-options': 'nosniff',
+    'x-frame-options': 'DENY',
+    'referrer-policy': 'strict-origin-when-cross-origin'
+  };
+  response.writeHead(200, securityHeaders);
   fs.createReadStream(candidate).pipe(response);
 });
 

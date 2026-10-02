@@ -1,0 +1,368 @@
+{
+  "schema": "dgos/v1-candidate-group/v1",
+  "work_package": "V1-CANDIDATE-COVERAGE",
+  "revision": 15,
+  "run_id": "V1-candidate-r12-2026-10-02T12-13-15-872Z-5047d13e-memory",
+  "group": "memory",
+  "started_at": "2026-10-02T12:13:15.962Z",
+  "ended_at": "2026-10-02T12:16:18.606Z",
+  "candidate_id": "b8d1278acb7673959239bb0a1fe2ecafd3ecc272b6c0389490f9139b010fc5fb",
+  "build_sha256": "f942cd3efe20c939621815d12e5db2110a74bc53a703f71c7d7c328d21121319",
+  "runtime_assets": {
+    "config": {
+      "id": "config-1f4601f4",
+      "files": {
+        "docker-compose.production.yml": "665075a6a0a14e222d37de62ab38ac2b87022bad7a0360793215b1ec24407aae",
+        "docker-compose.integration.yml": "4c5dec78651a9fce318e6eae6819b6b97dbb90bcef4b6b0d1c53d2d0a1e39e54",
+        "deployment/Dockerfile": "af655a07980dec7c52f80ea2dff0556639fd43eb4b1e9b3784c574bc5f95c7f4",
+        "deployment/Caddyfile": "c80ff0d71d0202128e69b5cb56415139c86a4f639f53185265682e4e3e255a69",
+        "scripts/v1-ops-api.mjs": "bd0277e16ba95d3c4e78fe46f11c8468ea927aec76e9b2f7d8e78aabe25f2ac7",
+        "scripts/v1-ops-worker.mjs": "5f35d9a6568ac7659c003751e7f40632b2645cd1726e177f8704026df235359a",
+        "apps/api/src/server.mjs": "817de931008a26870e7363e10778e22d5a7abae22796595d94dc6d46c9e80546",
+        "apps/worker/src/worker.mjs": "e94c90888699b34a66632c77b8d5afea879734605e341423cf5cb821c58aa7e4",
+        "scripts/v1-ui-management-fixture.mjs": "e746a1a03e377a3f596df9f13773de266d08ba6a46c876c48c2f7b5ec0ad8922",
+        "src/extensions/v1-default-runtime.json": "bd239ddf74be47cd4b7334335148defec79417bf13315359c19de07296e2a064",
+        ".herdr/state/package-fixture-r9/trust-roots.json": "bad1036ed3b953108b9c7f785f1062ebe47d079bffe1ba5eca300057adfee1a0",
+        ".herdr/state/integration-trust-roots-r9.json": "1933e71b80dfd3c63ad93117d199bc9fef18a00597e510f5976c761af9f91ddc"
+      }
+    },
+    "envelope": {
+      "id": "envelope-102fb6ca",
+      "path": ".herdr/state/package-fixture-r9/ai-workbench-envelope.json",
+      "sha256": "102fb6cac8aa112f7d762ea7f4e0defceb9af0ea543f02de367d7694494451be"
+    },
+    "dist": {
+      "id": "dist-f809ef9d",
+      "root": "apps/web/dist",
+      "files": {
+        "apps/web/dist/assets/index-BFWr4XFs.css": "fa3cf098e7e1bf210a0960839de2472b8f6fe88dcdbad29210e3ad7e77627383",
+        "apps/web/dist/assets/index-CpUC1UQM.js": "d1ee371089424b92fa25396e2ac1e2178e011a461aaa9df661c816784927e583",
+        "apps/web/dist/index.html": "5eb7b42bdb6ed5c1bf95c863708fd6f21ef714a23250b25c5e606a999bb5b6a2"
+      }
+    },
+    "image": {
+      "id": "sha256:a05678c0fe6a07933998186529177931712db9242cd5a30208bf6f9c67ef11bc",
+      "sha256": "a05678c0fe6a07933998186529177931712db9242cd5a30208bf6f9c67ef11bc"
+    },
+    "native_app": {
+      "id": "native-app-9e91bbf7",
+      "root": "apps/desktop/src-tauri/target/debug/bundle/macos/DGOS.app",
+      "files": {
+        "apps/desktop/src-tauri/target/debug/bundle/macos/DGOS.app/Contents/Info.plist": "b791496769b5184c8d13524da10ed68f269fa356d26dfacf5cd7a6ba090b3100",
+        "apps/desktop/src-tauri/target/debug/bundle/macos/DGOS.app/Contents/MacOS/dgos-desktop": "42feaf6a63a97648172b24bb632087d14319cd1614caf670a1c5fbb28cae71eb",
+        "apps/desktop/src-tauri/target/debug/bundle/macos/DGOS.app/Contents/MacOS/dgos-keychain-fixture": "64e56a308ddb7208f28fa8202b10ca3342f2f1f7045e6ae26cc77fb35631ee8f",
+        "apps/desktop/src-tauri/target/debug/bundle/macos/DGOS.app/Contents/Resources/icon.icns": "56ade122620de621ccdbba5617500a4300f6b377ce1670de7bd893a12d546cf5"
+      }
+    }
+  },
+  "source_identity": {
+    "commit": null,
+    "head_commit": "65d6f581cf5cb066d56c45d7c434dbe36472fbfd",
+    "working_tree_sha256": "dff86c9a6b021f03e7568395f8a68c20201372e6a141e72f56be4f0ced6a3e23"
+  },
+  "source_identity_start": {
+    "commit": null,
+    "head_commit": "65d6f581cf5cb066d56c45d7c434dbe36472fbfd",
+    "working_tree_sha256": "dff86c9a6b021f03e7568395f8a68c20201372e6a141e72f56be4f0ced6a3e23"
+  },
+  "source_identity_end": {
+    "commit": null,
+    "head_commit": "65d6f581cf5cb066d56c45d7c434dbe36472fbfd",
+    "working_tree_sha256": "dbf9f1e838f4ce2923d0246a8f4801096e43fe168bc7e8390d6cec578c1c98a7"
+  },
+  "source_drift": true,
+  "exit_code": 1,
+  "candidate_complete": false,
+  "environment": "local host Node with isolated resources; image is candidate artifact binding only",
+  "admin_database": null,
+  "child_database": null,
+  "redis_db": null,
+  "frozen_migrations": [],
+  "evidence_dirs": [
+    "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-13-15-872Z-5047d13e-memory"
+  ],
+  "generated_files": [],
+  "generated_file_sha256": {},
+  "asset_sha256": {
+    "tests/e2e/assistant-settings-actions.spec.mjs": "a97d7094d610d0ed6dcaff9acd2fd3fbc95da0d3990e9c8a8f9ac43a4554cb27",
+    "tests/extensions/daemon-r3.test.mjs": "124bda7c8f300e827c1256a984f0239732af173d00b194307acc2b52488a2f28",
+    "tests/extensions/extension-routes.test.mjs": "fc626974eba5e49afc61156713dba1d7f1b15546d00823d8d53a496890840f47",
+    "tests/extensions/extension-service.test.mjs": "d1cdd5655c44a0bb4002c4a99a31a576b113595e96eaa7df4449b2fd95961589",
+    "tests/extensions/hardening-r3.test.mjs": "8c8a3fe52e0a6052359be401c0c21f50b12bc6af6d076856287c1f92947d3596",
+    "tests/extensions/mcp-transport.test.mjs": "e8f00f1fbbc087fcd4249e42bcddc0f133749062ad8856082679c606d3ea5f05",
+    "tests/extensions/runtime-loader-r3.test.mjs": "382021d98ad9522f22c679b83d70c34e3de016254da88427fdb38d825c94b6c3",
+    "tests/integration/action-candidates-wiring.test.mjs": "6e5c77a1241f1772da7015df967ee6cc8ff73acd2f9023663b624dc9b4158c0c",
+    "tests/integration/ai-task-api.test.mjs": "231b3be9e954605072f08b1acc98062c9615dae68dcc7b0504218ec1d4fe3d6b"
+  },
+  "results": [
+    {
+      "asset": "tests/e2e/assistant-settings-actions.spec.mjs",
+      "covers": [
+        "tests/e2e/assistant-settings-actions.spec.mjs"
+      ],
+      "cases": [],
+      "assertions": [],
+      "command": "node --test --test-reporter=tap tests/e2e/assistant-settings-actions.spec.mjs",
+      "tests": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "exit_code": 1,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-13-15-872Z-5047d13e-memory/001.tap.txt",
+      "log_sha256": "772368c7444716f0309a7dffdb6074c59a10a00960e67c475b7b08e932809f6b"
+    },
+    {
+      "asset": "tests/extensions/daemon-r3.test.mjs",
+      "covers": [
+        "tests/extensions/daemon-r3.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "daemon catches tick errors, bounds claims, and awaits shutdown"
+      ],
+      "command": "node --test --test-reporter=tap tests/extensions/daemon-r3.test.mjs",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-13-15-872Z-5047d13e-memory/002.tap.txt",
+      "log_sha256": "b3f726ef7417dd73d0af4093de3e558dd5c62670d861e9f21ad2b351b684d36a"
+    },
+    {
+      "asset": "tests/extensions/extension-routes.test.mjs",
+      "covers": [
+        "tests/extensions/extension-routes.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "extension route projection injects auth subject and exposes SSE run events"
+      ],
+      "command": "node --test --test-reporter=tap tests/extensions/extension-routes.test.mjs",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-13-15-872Z-5047d13e-memory/003.tap.txt",
+      "log_sha256": "285b737c0529ed541cf677952d9cea3951610ba88be5edc89a987bfedfa0885b"
+    },
+    {
+      "asset": "tests/extensions/extension-service.test.mjs",
+      "covers": [
+        "tests/extensions/extension-service.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "permission and confirmation reject before install or process start",
+        "managed MCP connection and run use one process, idempotent request, and redacted snapshot",
+        "cancel queued and timeout running do not retry handler",
+        "recovery marks uncertain claimed execution and never dispatches it again",
+        "preview is owner and digest bound; raw process fields are rejected",
+        "concurrent connect uses one attempt and cancellation reaches live child",
+        "skill package and child IDs remain distinct; untrusted preview cannot install"
+      ],
+      "command": "node --test --test-reporter=tap tests/extensions/extension-service.test.mjs",
+      "tests": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-13-15-872Z-5047d13e-memory/004.tap.txt",
+      "log_sha256": "557c968e575a30a42e208828e00fae99c516cb11a208209d2f1ba73acd9dab3a"
+    },
+    {
+      "asset": "tests/extensions/hardening-r3.test.mjs",
+      "covers": [
+        "tests/extensions/hardening-r3.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "same MCP ID is isolated across subjects and disconnects",
+        "API connect records intent without pretending another process owns transport",
+        "audit failure keeps connection intent and terminal Run uncommitted",
+        "G deployment adapter requires active release, dependency, and capability",
+        "cancel from API instance aborts handler running in another service instance"
+      ],
+      "command": "node --test --test-reporter=tap tests/extensions/hardening-r3.test.mjs",
+      "tests": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-13-15-872Z-5047d13e-memory/005.tap.txt",
+      "log_sha256": "adc9a7c04af17b1a05b23c056a37fa4504d1766c1fb602e602a5d2b7c9885da3"
+    },
+    {
+      "asset": "tests/extensions/mcp-transport.test.mjs",
+      "covers": [
+        "tests/extensions/mcp-transport.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "server-owned stdio profile keeps MCP process through calls and stops on disconnect",
+        "server-owned stdio credential field reaches child without caller env control",
+        "stdio sandbox rejects workspace-wide and secret profile roots before process start",
+        "macOS sandbox profile executes fixture while denying filesystem writes",
+        "server-owned HTTP endpoint completes MCP initialize, discovery, call, and disconnect",
+        "server-owned HTTP credential header reaches MCP and is required",
+        "HTTP MCP egress rejects private HTTPS addresses before transport",
+        "service invokes persisted run through persistent stdio MCP transport"
+      ],
+      "command": "node --test --test-reporter=tap tests/extensions/mcp-transport.test.mjs",
+      "tests": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-13-15-872Z-5047d13e-memory/006.tap.txt",
+      "log_sha256": "c0ee66c2006e795b0b794ea884a33ef11d331ecbddc3bf227a649a4d30daa973"
+    },
+    {
+      "asset": "tests/extensions/runtime-loader-r3.test.mjs",
+      "covers": [
+        "tests/extensions/runtime-loader-r3.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [
+        "deployment loader supplies trusted first-party source and controlled handler",
+        "quick MCP config loads server-owned profile and completes a real tool call"
+      ],
+      "command": "node --test --test-reporter=tap tests/extensions/runtime-loader-r3.test.mjs",
+      "tests": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-13-15-872Z-5047d13e-memory/007.tap.txt",
+      "log_sha256": "065b4f27f6e93acd6119f2ca2901936f4282dc3b3f3e064a6fb4f310c08a950c"
+    },
+    {
+      "asset": "tests/integration/action-candidates-wiring.test.mjs",
+      "covers": [
+        "tests/integration/action-candidates-wiring.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [],
+      "command": "node --test --test-reporter=tap tests/integration/action-candidates-wiring.test.mjs",
+      "tests": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "exit_code": 1,
+      "signal": null,
+      "timed_out": false,
+      "timeout_ms": 180000,
+      "source_drift": false,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-13-15-872Z-5047d13e-memory/008.tap.txt",
+      "log_sha256": "33541e0ef38ef9852fa8c721d9bba70a96365bd8b7cbe755338e80d911e49252"
+    },
+    {
+      "asset": "tests/integration/ai-task-api.test.mjs",
+      "covers": [
+        "tests/integration/ai-task-api.test.mjs"
+      ],
+      "cases": [],
+      "assertions": [],
+      "command": "node --test --test-reporter=tap tests/integration/ai-task-api.test.mjs",
+      "tests": 0,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": null,
+      "signal": "SIGKILL",
+      "timed_out": true,
+      "timeout_ms": 180000,
+      "source_drift": true,
+      "log": "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-13-15-872Z-5047d13e-memory/009.tap.txt",
+      "log_sha256": "78dd10caee871fbff23af65f3ed7d0c48b7ffb8404d0be9f5a647877cb520e48"
+    }
+  ],
+  "failed_assets": [
+    "tests/e2e/assistant-settings-actions.spec.mjs: exit=1 signal=null timeout=false tests=1 failed=1 skipped=0",
+    "tests/integration/action-candidates-wiring.test.mjs: exit=1 signal=null timeout=false tests=1 failed=1 skipped=0",
+    "tests/integration/ai-task-api.test.mjs: exit=null signal=SIGKILL timeout=true tests=0 failed=0 skipped=0"
+  ],
+  "unexecuted_assets": [
+    "tests/integration/ai-task-worker.test.mjs",
+    "tests/integration/app-capabilities.test.mjs",
+    "tests/integration/app-package-fixture.test.mjs",
+    "tests/integration/audit-outbox.test.mjs",
+    "tests/integration/governance-wiring.test.mjs",
+    "tests/integration/identity-api.test.mjs",
+    "tests/integration/migration-contract.test.mjs",
+    "tests/integration/permission-write-freshness.test.mjs",
+    "tests/integration/provider-admission-wiring.test.mjs",
+    "tests/integration/provider-api.test.mjs",
+    "tests/integration/provider-test-loop.test.mjs",
+    "tests/integration/provider-worker.test.mjs",
+    "tests/integration/quota-api.test.mjs",
+    "tests/integration/quota-reservation.spec.mjs",
+    "tests/integration/retention-api.test.mjs",
+    "tests/integration/usage-settlement.spec.mjs",
+    "tests/provider/openai-compatible-fixture.test.mjs",
+    "tests/provider/openai-compatible-stream.test.mjs",
+    "tests/provider/profile-task-wiring.test.mjs",
+    "tests/provider/provider-admission-profile.test.mjs",
+    "tests/provider/provider-config-disabled.test.mjs",
+    "tests/provider/provider-no-export.test.mjs",
+    "tests/provider/provider-parameters.test.mjs",
+    "tests/provider/provider-probe.test.mjs",
+    "tests/provider/provider-protocol-routes.test.mjs",
+    "tests/security/encrypted-secret-handle.test.mjs",
+    "tests/security/governance-hardening-r3.test.mjs",
+    "tests/security/identity-closure.test.mjs",
+    "tests/security/key-delegation.test.mjs",
+    "tests/security/provider-egress.test.mjs",
+    "tests/security/rate-limiter.test.mjs",
+    "tests/security/request-transport.test.mjs",
+    "tests/security/secret-service.test.mjs",
+    "tests/security/usage-scope.spec.mjs",
+    "tests/security/v1-governance-e2e.test.mjs",
+    "tests/security/v1-ops-durable-secret.test.mjs",
+    "tests/tooling/release-environment.test.mjs",
+    "tests/tooling/v1-acceptance-tooling.test.mjs",
+    "tests/tooling/v1-ops-release.test.mjs",
+    "tests/tooling/v1-performance.test.mjs",
+    "tests/tooling/verify-release.test.mjs",
+    "tests/unit-quota.test.mjs",
+    "tests/unit/app-packages.test.mjs",
+    "tests/unit/runtime.test.mjs"
+  ],
+  "covered_cases": [],
+  "cleanup": [],
+  "error": "source drift after tests/integration/ai-task-api.test.mjs",
+  "limitations": [
+    "Local host execution only; browser/native and unresolved branch receipts remain pending.",
+    "Image field binds the candidate artifact and does not claim these tests ran in that image.",
+    "No E2E case is claimed without explicit passing business assertions."
+  ]
+}

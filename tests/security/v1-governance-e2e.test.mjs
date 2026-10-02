@@ -48,6 +48,95 @@ test('V1-E2E-12 API key one-time secret, isolation, overlap, revoke and expiry',
   await app.close();
 });
 
+test('V1-E2E-12 extended: API key overlap window and grace period expiry', async () => {
+  const { app, receipt } = await setup('V1-E2E-12-overlap');
+  const auth = { authorization: `Bearer ${receipt.sessionId}` };
+
+  // Create initial key
+  const created = await app.inject({
+    method: 'POST',
+    url: '/api/v1/secret/api-keys',
+    headers: auth,
+    payload: { name: 'overlap-test', scopes: ['apiKey.read'] }
+  });
+  assert.equal(created.statusCode, 201);
+  const originalSecret = created.json().secret;
+  const originalKeyId = created.json().key.keyId;
+
+  // Verify original key works
+  const verify1 = await app.inject({
+    method: 'GET',
+    url: '/api/v1/secret/api-keys',
+    headers: { authorization: `ApiKey ${originalSecret}` }
+  });
+  assert.equal(verify1.statusCode, 200);
+
+  // Rotate key
+  const rotated = await app.inject({
+    method: 'POST',
+    url: `/api/v1/secret/api-keys/${originalKeyId}/rotate`,
+    headers: auth,
+    payload: {}
+  });
+  assert.equal(rotated.statusCode, 200);
+  const newSecret = rotated.json().secret;
+  const newKeyId = rotated.json().key.keyId;
+  assert.notEqual(newSecret, originalSecret);
+  assert.equal(rotated.json().previousKeyId, originalKeyId);
+
+  // Verify overlap: both old and new keys work during overlap window
+  const oldKeyWorks = await app.inject({
+    method: 'GET',
+    url: '/api/v1/secret/api-keys',
+    headers: { authorization: `ApiKey ${originalSecret}` }
+  });
+  assert.equal(oldKeyWorks.statusCode, 200);
+
+  const newKeyWorks = await app.inject({
+    method: 'GET',
+    url: '/api/v1/secret/api-keys',
+    headers: { authorization: `ApiKey ${newSecret}` }
+  });
+  assert.equal(newKeyWorks.statusCode, 200);
+
+  // Verify old key shows rotation_pending state
+  const keyList = await app.inject({
+    method: 'GET',
+    url: '/api/v1/secret/api-keys',
+    headers: auth
+  });
+  const oldKeyData = keyList.json().items.find(k => k.keyId === originalKeyId);
+  const newKeyData = keyList.json().items.find(k => k.keyId === newKeyId);
+  assert.equal(oldKeyData?.state, 'rotation_pending');
+  assert.equal(newKeyData?.state, 'active');
+
+  // Manually revoke old key to end overlap window
+  const revokeOld = await app.inject({
+    method: 'DELETE',
+    url: `/api/v1/secret/api-keys/${originalKeyId}`,
+    headers: auth
+  });
+  assert.equal(revokeOld.statusCode, 200);
+
+  // Verify old key no longer works after explicit revocation
+  const oldKeyRevoked = await app.inject({
+    method: 'GET',
+    url: '/api/v1/secret/api-keys',
+    headers: { authorization: `ApiKey ${originalSecret}` }
+  });
+  assert.equal(oldKeyRevoked.statusCode, 401);
+
+  // Verify new key still works
+  const newKeyStillWorks = await app.inject({
+    method: 'GET',
+    url: '/api/v1/secret/api-keys',
+    headers: { authorization: `ApiKey ${newSecret}` }
+  });
+  assert.equal(newKeyStillWorks.statusCode, 200);
+
+  await app.close();
+});
+
 test('V1-E2E-13 provider account connection controls reject SSRF and owner violations before enqueue', async () => {
   const audit = new InMemoryAuditRepository();
   const providerRepository = new InMemoryProviderRepository();

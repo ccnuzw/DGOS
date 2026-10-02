@@ -1,0 +1,56 @@
+{
+  "profile_id": "V1-STRESS-TEST-r1-production-readiness",
+  "status": "engineering_proposal_active",
+  "scope": "comprehensive stress testing for V1 production readiness validation",
+  "max_duration_seconds": 900,
+  "max_concurrency": 100,
+  "max_submissions": 500,
+  "request_timeout_ms": 10000,
+  "terminal_timeout_ms": 30000,
+  "sample_interval_ms": 500,
+  "critical_paths": [
+    "authentication",
+    "ai_task_submission",
+    "sse_streaming",
+    "package_operations",
+    "provider_connections",
+    "database_queries"
+  ],
+  "load_stages": [
+    { "name": "warmup", "duration_ms": 30000, "concurrency": 10, "description": "System warmup and cache priming" },
+    { "name": "steady_light", "duration_ms": 60000, "concurrency": 10, "description": "Baseline performance measurement" },
+    { "name": "ramp_moderate", "duration_ms": 60000, "concurrency": 50, "description": "Moderate load simulation" },
+    { "name": "steady_moderate", "duration_ms": 180000, "concurrency": 50, "description": "Sustained moderate load" },
+    { "name": "ramp_heavy", "duration_ms": 60000, "concurrency": 100, "description": "Heavy load ramp" },
+    { "name": "steady_heavy", "duration_ms": 180000, "concurrency": 100, "description": "Sustained heavy load" },
+    { "name": "burst_spike", "duration_ms": 30000, "concurrency": 100, "description": "Burst traffic simulation" },
+    { "name": "recovery", "duration_ms": 60000, "concurrency": 10, "description": "System recovery observation" }
+  ],
+  "workload_mix": {
+    "login": 5,
+    "system_settings_read": 15,
+    "usage_query": 10,
+    "task_submit": 30,
+    "task_status": 20,
+    "task_events": 15,
+    "provider_list": 5
+  },
+  "failure_scenarios": [
+    "database_connection_loss",
+    "redis_connection_loss",
+    "provider_timeout",
+    "memory_pressure",
+    "concurrent_writes"
+  ],
+  "metrics": {
+    "throughput_target_rps": 100,
+    "latency_p50_target_ms": 100,
+    "latency_p95_target_ms": 500,
+    "latency_p99_target_ms": 2000,
+    "error_rate_target_percent": 0.1,
+    "cpu_limit_percent": 80,
+    "memory_limit_mb": 2048,
+    "db_connection_limit": 50
+  },
+  "approval": "engineering_stress_test_v1"
+}

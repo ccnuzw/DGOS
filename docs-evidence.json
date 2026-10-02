@@ -36,6 +36,7 @@
   "reports": {
     "development": {
       "path": "docs/05-测试与发布/报告/V1-development-report.md",
+      "manifest": "docs/05-测试与发布/报告/V1-development-report-manifest.json",
       "environment": "local",
       "date": "2026-10-02",
       "commit": "72ab1cb98b064a6e27b9f60a9f8f00881a827a99",
@@ -43,6 +44,7 @@
     },
     "e2e": {
       "path": "docs/05-测试与发布/报告/V1-e2e-report.md",
+      "manifest": "docs/05-测试与发布/报告/V1-e2e-report-manifest.json",
       "environment": "local-mock",
       "date": "2026-10-02",
       "commit": "72ab1cb98b064a6e27b9f60a9f8f00881a827a99",
@@ -50,6 +52,7 @@
     },
     "release": {
       "path": "docs/05-测试与发布/报告/V1-release-report.md",
+      "manifest": "docs/05-测试与发布/报告/V1-release-report-manifest.json",
       "environment": "production-gate",
       "date": "2026-10-02",
       "commit": "72ab1cb98b064a6e27b9f60a9f8f00881a827a99",

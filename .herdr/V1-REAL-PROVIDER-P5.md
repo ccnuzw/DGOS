@@ -1,16 +1,16 @@
 # V1 Real Provider Integration Test (P5)
 
 **Status**: ✅ PASSED
-**Run ID**: V1-REAL-PROVIDER-P5-2026-10-02T11-33-24-844Z-3cd10953
-**Duration**: 4.31s
-**Date**: 2026-10-02T11:33:24.845Z
+**Run ID**: V1-REAL-PROVIDER-P5-2026-10-02T13-33-54-485Z-919f1668
+**Duration**: 15.18s
+**Date**: 2026-10-02T13:33:54.486Z
 
 ## Configuration
 
 - **Provider**: https://cc.nextcc.cc
 - **Protocol**: openai-compatible
 - **Test Model**: gpt-6-sol
-- **Database**: dgos_v1_real_provider_3cd1095380d6b1256ce79547a43a0f3a
+- **Database**: dgos_v1_real_provider_919f1668462b1da0b9fb1a9916e9d742
 - **Redis**: DB 7
 
 ## Costs
@@ -27,7 +27,7 @@
 **Facts**:
 ```json
 {
-  "database": "dgos_v1_real_provider_3cd1095380d6b1256ce79547a43a0f3a",
+  "database": "dgos_v1_real_provider_919f1668462b1da0b9fb1a9916e9d742",
   "migrationCount": 47,
   "latestVersion": "0051-proxy-provisioning"
 }
@@ -41,7 +41,7 @@
 ```json
 {
   "redisDb": "7",
-  "namespace": "v1-real-provider:3cd1095380d6b1256ce79547a43a0f3a"
+  "namespace": "v1-real-provider:919f1668462b1da0b9fb1a9916e9d742"
 }
 ```
 
@@ -63,7 +63,7 @@
 **Facts**:
 ```json
 {
-  "principalId": "b45474df-e73e-4ece-b842-537e2e9d52eb"
+  "principalId": "133c3177-bcbb-4bd9-ad4b-51f5420041b2"
 }
 ```
 
@@ -74,7 +74,7 @@
 **Facts**:
 ```json
 {
-  "accountId": "9f4d29de-f39b-4f37-bf60-f8d314eb0eb1",
+  "accountId": "f34d2b6d-ee46-4268-b218-b7bea3e82f08",
   "protocolType": "openai-compatible",
   "status": "credential_pending"
 }
@@ -87,7 +87,7 @@
 **Facts**:
 ```json
 {
-  "testId": "a1c4ad26-de87-4f14-8c98-3436be5b7c08",
+  "testId": "f3821141-7495-4450-bd2a-f80c70053e9a",
   "modelsCount": 20,
   "latencyMs": 200
 }
@@ -100,7 +100,7 @@
 **Facts**:
 ```json
 {
-  "accountId": "9f4d29de-f39b-4f37-bf60-f8d314eb0eb1"
+  "accountId": "f34d2b6d-ee46-4268-b218-b7bea3e82f08"
 }
 ```
 
@@ -111,7 +111,7 @@
 **Facts**:
 ```json
 {
-  "providerConfigId": "7830c05f-5c91-4fbf-a55d-39d6fd38f1ec"
+  "providerConfigId": "5d72af46-5733-4c3a-b068-91324d636afa"
 }
 ```
 
@@ -122,7 +122,7 @@
 **Facts**:
 ```json
 {
-  "providerConfigId": "7830c05f-5c91-4fbf-a55d-39d6fd38f1ec"
+  "providerConfigId": "5d72af46-5733-4c3a-b068-91324d636afa"
 }
 ```
 
@@ -171,10 +171,10 @@
 **Facts**:
 ```json
 {
-  "taskId": "7f59e312-c4e3-4395-a6c9-988032fd36de",
+  "taskId": "53c9be06-8486-48ee-987f-73b0b19c7a3a",
   "model": "gpt-6-sol",
   "outputLength": 10,
-  "latencyMs": 2067,
+  "latencyMs": 12963,
   "usage": {
     "inputTokens": 4398,
     "outputTokens": 7,
@@ -204,8 +204,8 @@
 **Facts**:
 ```json
 {
-  "originalTaskId": "7f59e312-c4e3-4395-a6c9-988032fd36de",
-  "replayTaskId": "7f59e312-c4e3-4395-a6c9-988032fd36de",
+  "originalTaskId": "53c9be06-8486-48ee-987f-73b0b19c7a3a",
+  "replayTaskId": "53c9be06-8486-48ee-987f-73b0b19c7a3a",
   "matched": true,
   "noAdditionalApiCall": true
 }
@@ -258,7 +258,7 @@
 ## Evidence
 
 - Report: /Users/apple/Progame/DGOS/.herdr/V1-REAL-PROVIDER-P5.md
-- Run ID: V1-REAL-PROVIDER-P5-2026-10-02T11-33-24-844Z-3cd10953
+- Run ID: V1-REAL-PROVIDER-P5-2026-10-02T13-33-54-485Z-919f1668
 
 ---
-Generated: 2026-10-02T11:33:29.155Z
+Generated: 2026-10-02T13:34:09.669Z

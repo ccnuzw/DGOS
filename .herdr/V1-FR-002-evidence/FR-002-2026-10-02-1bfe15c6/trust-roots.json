@@ -1,0 +1,17 @@
+[
+  {
+    "keyId": "official-3c0744a3-cce0-4b5c-b89a-295bd58e3cc4",
+    "source": "official",
+    "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEANE65BKUpBtkDRc/i377cwLIBfT4+6td4fA9s/MnMRPQ=\n-----END PUBLIC KEY-----\n"
+  },
+  {
+    "keyId": "admin-af508072-6170-4911-a791-3b3098853637",
+    "source": "admin",
+    "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAFeKXeRBtmRYobPWR572xu7X7CuiTb+u8M+lzwd41+BI=\n-----END PUBLIC KEY-----\n"
+  },
+  {
+    "keyId": "developer-c95d15af-a255-4c9b-8b1a-998c5812c666",
+    "source": "developer",
+    "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAWzZ0nt75hMOn7TLMQAzkwtVTOTd7MxfiNKZx6gwk6OI=\n-----END PUBLIC KEY-----\n"
+  }
+]

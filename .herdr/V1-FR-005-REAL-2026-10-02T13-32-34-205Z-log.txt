@@ -1,0 +1,8 @@
+2026-10-02T13:32:34.206Z === FR-005 Real Provider Validation Start ===
+2026-10-02T13:32:34.207Z Loading real provider configuration...
+2026-10-02T13:32:34.207Z Provider: https://cc.nextcc.cc
+2026-10-02T13:32:34.207Z Models available: gpt-6-sol, gpt-6, gpt-5.6-sol
+2026-10-02T13:32:34.207Z Connecting to database...
+2026-10-02T13:32:34.207Z FATAL ERROR: DGOS_DATABASE_URL environment variable required
+2026-10-02T13:32:34.208Z Error: DGOS_DATABASE_URL environment variable required
+    at main (file:///Users/apple/Progame/DGOS/scripts/v1-fr-005-real-provider-validation.mjs:100:13)

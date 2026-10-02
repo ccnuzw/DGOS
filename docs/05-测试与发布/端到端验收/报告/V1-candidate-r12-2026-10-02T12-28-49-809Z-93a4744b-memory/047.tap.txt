@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: integration destructive commands use a dedicated project and database
+ok 1 - integration destructive commands use a dedicated project and database
+  ---
+  duration_ms: 0.914458
+  type: 'test'
+  ...
+# Subtest: integration ports reject other workers, invalid values and collisions
+ok 2 - integration ports reject other workers, invalid values and collisions
+  ---
+  duration_ms: 0.129625
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 46.796291

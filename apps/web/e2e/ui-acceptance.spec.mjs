@@ -44,7 +44,9 @@ test('UI-AC001/006 theme, language and scale controls stay visible without overl
 test('UI-AC003 command dialog traps keyboard focus and restores it on Escape', async ({ page }) => {
   await page.goto('/desktop');
   await expect(page.locator('.dgos-top h1')).toBeVisible();
-  await page.getByRole('button', { name: /command palette|命令面板/ }).click();
+  const commandButton = page.locator('.command-button');
+  await expect(commandButton).toBeVisible({ timeout: 10000 });
+  await commandButton.click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();
   await expect(dialog.getByRole('button').first()).toBeFocused();
@@ -52,5 +54,5 @@ test('UI-AC003 command dialog traps keyboard focus and restores it on Escape', a
   await expect(dialog.getByRole('button').last()).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(dialog).toHaveCount(0);
-  await expect(page.locator('.command-button')).toBeFocused();
+  await expect(commandButton).toBeFocused();
 });

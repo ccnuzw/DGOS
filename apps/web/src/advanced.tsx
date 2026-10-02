@@ -5,6 +5,9 @@ import { allLabels } from "./i18n";
 import { useDialogKeyboard } from './dialog';
 import { displayDate } from './region';
 import { SkillManagement, McpManagement } from './management';
+import { ManualMcpConfig } from './mcp-manual-config';
+import { EnhancedMcpList } from './mcp-enhanced-list';
+import { ToolPermissionReview } from './permission-review';
 
 type Dict = Record<string, any>;
 type Resource = {
@@ -48,11 +51,12 @@ function Load({
   resource: Resource;
   children: (data: any) => React.ReactNode;
 }) {
-  if (resource.loading && !resource.data) return <p role="status">Loading…</p>;
+  const t = allLabels('en'); // Default to English for loading/retry messages
+  if (resource.loading && !resource.data) return <p role="status">{t.loading}</p>;
   if (resource.error && !resource.data)
     return (
       <Alert>
-        {resource.error} <Button onClick={resource.reload}>Retry</Button>
+        {resource.error} <Button onClick={resource.reload}>{t.retry}</Button>
       </Alert>
     );
   return (
@@ -459,7 +463,15 @@ export function ExtensionsV1({
       <Feedback op={op} />
       {kind === 'skills' && <SkillManagement t={t} onChanged={resource.reload} />}
       {kind === 'mcp' && <McpManagement t={t} selected={selected} onChanged={resource.reload} />}
-      <div className="two-col">
+      {kind === 'mcp' && <ManualMcpConfig t={t} onInstalled={resource.reload} />}
+      {kind === 'mcp' ? (
+        <EnhancedMcpList
+          t={t}
+          onSelectForConfig={(server) => setSelected(server)}
+          onSelectForTools={(server) => loadTools(server, true)}
+        />
+      ) : (
+        <div className="two-col">
         <Panel>
           <h2>{t[kind]}</h2>
           <form onSubmit={inspect}>
@@ -537,27 +549,7 @@ export function ExtensionsV1({
                         <Button onClick={() => mutate(x, "state")}>
                           {x.state === "enabled" ? t.disable : t.enable}
                         </Button>
-                        {kind === "mcp" && (
-                          <>
-                            <Button
-                              onClick={() =>
-                                mutate(
-                                  x,
-                                  x.connectionState === "connected"
-                                    ? "disconnect"
-                                    : "connect",
-                                )
-                              }
-                            >
-                              {x.connectionState === "connected"
-                                ? t.disconnect
-                                : t.connect}
-                            </Button>
-                            <Button onClick={() => loadTools(x)}>{t.tools}</Button>
-                          </>
-                        )}
-                        {kind === 'mcp' && <Button onClick={() => setSelected(x)}>{t.configureMcp}</Button>}
-                        {kind === 'skills' && <Button onClick={() => { document.querySelector<HTMLInputElement>('input[name="skillId"]')?.focus(); }}>{t.editDefinition}</Button>}
+                        <Button onClick={() => { document.querySelector<HTMLInputElement>('input[name="skillId"]')?.focus(); }}>{t.editDefinition}</Button>
                         <Button variant="danger" onClick={() => setConfirm(x)}>
                           {t.uninstall}
                         </Button>
@@ -572,6 +564,7 @@ export function ExtensionsV1({
           )}
         </Load>
       </div>
+      )}
       {kind === "mcp" && selected && (
         <Panel>
           <div className="row between">

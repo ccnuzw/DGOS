@@ -1,0 +1,321 @@
+{
+  "schema": "dgos/v1-candidate-group/v1",
+  "work_package": "V1-CANDIDATE-COVERAGE",
+  "revision": 15,
+  "run_id": "V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-pg",
+  "group": "pg",
+  "started_at": "2026-10-02T12:29:04.192Z",
+  "ended_at": "2026-10-02T12:29:04.306Z",
+  "candidate_id": "b67b68666a012f2cc2f1dc3911be3301cfe26dc88451c6c60e2bf25176bf1f24",
+  "build_sha256": "a576a9cf6ad34f073d248ce0d4419f9416854ff5705acd481630825e0acb3643",
+  "runtime_assets": {
+    "config": {
+      "id": "config-2c050aa7",
+      "files": {
+        "docker-compose.production.yml": "665075a6a0a14e222d37de62ab38ac2b87022bad7a0360793215b1ec24407aae",
+        "docker-compose.integration.yml": "4c5dec78651a9fce318e6eae6819b6b97dbb90bcef4b6b0d1c53d2d0a1e39e54",
+        "deployment/Dockerfile": "af655a07980dec7c52f80ea2dff0556639fd43eb4b1e9b3784c574bc5f95c7f4",
+        "deployment/Caddyfile": "c80ff0d71d0202128e69b5cb56415139c86a4f639f53185265682e4e3e255a69",
+        "scripts/v1-ops-api.mjs": "bd0277e16ba95d3c4e78fe46f11c8468ea927aec76e9b2f7d8e78aabe25f2ac7",
+        "scripts/v1-ops-worker.mjs": "5f35d9a6568ac7659c003751e7f40632b2645cd1726e177f8704026df235359a",
+        "apps/api/src/server.mjs": "87a7dacf9c4c75e9ce119bf80e6a2938aec2544a54cb5058138ec01d9a932cf0",
+        "apps/worker/src/worker.mjs": "e94c90888699b34a66632c77b8d5afea879734605e341423cf5cb821c58aa7e4",
+        "scripts/v1-ui-management-fixture.mjs": "e746a1a03e377a3f596df9f13773de266d08ba6a46c876c48c2f7b5ec0ad8922",
+        "src/extensions/v1-default-runtime.json": "bd239ddf74be47cd4b7334335148defec79417bf13315359c19de07296e2a064",
+        ".herdr/state/package-fixture-r9/trust-roots.json": "bad1036ed3b953108b9c7f785f1062ebe47d079bffe1ba5eca300057adfee1a0",
+        ".herdr/state/integration-trust-roots-r9.json": "1933e71b80dfd3c63ad93117d199bc9fef18a00597e510f5976c761af9f91ddc"
+      }
+    },
+    "envelope": {
+      "id": "envelope-102fb6ca",
+      "path": ".herdr/state/package-fixture-r9/ai-workbench-envelope.json",
+      "sha256": "102fb6cac8aa112f7d762ea7f4e0defceb9af0ea543f02de367d7694494451be"
+    },
+    "dist": {
+      "id": "dist-f809ef9d",
+      "root": "apps/web/dist",
+      "files": {
+        "apps/web/dist/assets/index-BFWr4XFs.css": "fa3cf098e7e1bf210a0960839de2472b8f6fe88dcdbad29210e3ad7e77627383",
+        "apps/web/dist/assets/index-CpUC1UQM.js": "d1ee371089424b92fa25396e2ac1e2178e011a461aaa9df661c816784927e583",
+        "apps/web/dist/index.html": "5eb7b42bdb6ed5c1bf95c863708fd6f21ef714a23250b25c5e606a999bb5b6a2"
+      }
+    },
+    "image": {
+      "id": "sha256:3b376cc7754ced0c9268c3c1a6033a7c1aaef30e2ebb1d7fc2b34fc3b5e79431",
+      "sha256": "3b376cc7754ced0c9268c3c1a6033a7c1aaef30e2ebb1d7fc2b34fc3b5e79431"
+    },
+    "native_app": {
+      "id": "native-app-9e91bbf7",
+      "root": "apps/desktop/src-tauri/target/debug/bundle/macos/DGOS.app",
+      "files": {
+        "apps/desktop/src-tauri/target/debug/bundle/macos/DGOS.app/Contents/Info.plist": "b791496769b5184c8d13524da10ed68f269fa356d26dfacf5cd7a6ba090b3100",
+        "apps/desktop/src-tauri/target/debug/bundle/macos/DGOS.app/Contents/MacOS/dgos-desktop": "42feaf6a63a97648172b24bb632087d14319cd1614caf670a1c5fbb28cae71eb",
+        "apps/desktop/src-tauri/target/debug/bundle/macos/DGOS.app/Contents/MacOS/dgos-keychain-fixture": "64e56a308ddb7208f28fa8202b10ca3342f2f1f7045e6ae26cc77fb35631ee8f",
+        "apps/desktop/src-tauri/target/debug/bundle/macos/DGOS.app/Contents/Resources/icon.icns": "56ade122620de621ccdbba5617500a4300f6b377ce1670de7bd893a12d546cf5"
+      }
+    }
+  },
+  "source_identity": {
+    "commit": null,
+    "head_commit": "65d6f581cf5cb066d56c45d7c434dbe36472fbfd",
+    "working_tree_sha256": "fde9b3782ab4d5713758ce1017fc641d6b4024be05647517cffe2d158e8d4516"
+  },
+  "source_identity_start": {
+    "commit": null,
+    "head_commit": "65d6f581cf5cb066d56c45d7c434dbe36472fbfd",
+    "working_tree_sha256": "5c5968fa9ea929945b6910dc475973073a61665f6f4cf9e9b31261a984a53c7c"
+  },
+  "source_identity_end": {
+    "commit": null,
+    "head_commit": "65d6f581cf5cb066d56c45d7c434dbe36472fbfd",
+    "working_tree_sha256": "5c5968fa9ea929945b6910dc475973073a61665f6f4cf9e9b31261a984a53c7c"
+  },
+  "source_drift": true,
+  "exit_code": 1,
+  "candidate_complete": false,
+  "environment": "local host Node with isolated resources; image is candidate artifact binding only",
+  "admin_database": "dgos_v1_integrated",
+  "child_database": null,
+  "redis_db": null,
+  "frozen_migrations": [
+    {
+      "file": "0001-v1-governance.sql",
+      "checksum": "4041158120cf8fc433117e217d41e483272e8c198e9813935d1f1ae567a833e3"
+    },
+    {
+      "file": "0002-connection-test-leases.sql",
+      "checksum": "556fae173bf3efe8b502ab715e1ac62364e978a8e5f989a1b6bd84e2388978f8"
+    },
+    {
+      "file": "0003-audit-outbox-leases.sql",
+      "checksum": "090a9ca7f251014e7dc8bd35544a4e71ca43c7e30b6ef2e41cdce338f70055bc"
+    },
+    {
+      "file": "0004-retention-jobs.sql",
+      "checksum": "0030ee08a56817e4d283913d6e55e5416478bc2ebc1e156b0e008fc8e75c8145"
+    },
+    {
+      "file": "0005-quota-usage.sql",
+      "checksum": "d037c22c993b91c64e0c54f12d78ed698e303f57fbd64ecbd027721869016e86"
+    },
+    {
+      "file": "0006-runtime.sql",
+      "checksum": "5537f89b8475c4546fe37f6d740a6a5d0300dea17e7095d9ee2df796863b792b"
+    },
+    {
+      "file": "0007-provider-config-ai-task.sql",
+      "checksum": "caf1f288f9f285026649ee61f0770034cedabd02439de4c6d742b9ed644a4229"
+    },
+    {
+      "file": "0009-quota-usage-dimensions.sql",
+      "checksum": "42a11b86d92e23f9d492b34e34a697f52d062e18388cce643f4eeafd3efc5a36"
+    },
+    {
+      "file": "0010-quota-usage-idempotency.sql",
+      "checksum": "87001b0cd6fe7dfa552f3eb278bac932ef0864af09b06cdc98c78bddd38ac5f2"
+    },
+    {
+      "file": "0011-runtime-persistence.sql",
+      "checksum": "bc3db9fa2b38de9817fa9a545bd89971112f22b9664622b652922c6aeca86eee"
+    },
+    {
+      "file": "0012-ai-task-leases.sql",
+      "checksum": "07c93eaa90919726c6d3384b44d0ff3c1e046434c870d0b64196e81600c19813"
+    },
+    {
+      "file": "0013-action-run-recovery.sql",
+      "checksum": "7dda51f53af4ebd624ebfaf1fccc2a1a6d626aefffc445dba31c6c217b939186"
+    },
+    {
+      "file": "0014-audit-runtime-targets.sql",
+      "checksum": "b837e3c5e3f7300b4dd964706b7418b3b19e2889086216eb84833986decb7f49"
+    },
+    {
+      "file": "0015-action-handler-claim.sql",
+      "checksum": "145866e6d23ab992c4fe2e4f11715f6948788a513fa34dfb6a3f16abbc410959"
+    },
+    {
+      "file": "0016-action-input-recovery.sql",
+      "checksum": "c084c94a7b676ef4d4fa9823decaf8d9174315ee8bad8096c38f5b7e314d9dfc"
+    },
+    {
+      "file": "0017-action-recovery-guard.sql",
+      "checksum": "a3fb760d103d5fbb3a31d67f4fa6973982d169bb19a10ab2c3e13bca9c57d8ad"
+    },
+    {
+      "file": "0018-action-cancel-guard.sql",
+      "checksum": "8a5d8b799e25fc219e42a935556e2429ff26609ee3fd05a233257bc6f4f0856c"
+    },
+    {
+      "file": "0019-ai-task-dispatch-fence.sql",
+      "checksum": "b99e6cd5488c9558929048bf8e41e3e9607e6e5fcbdd560791c5f3999b64cbb5"
+    },
+    {
+      "file": "0022-api-key-rotation.sql",
+      "checksum": "bc8e3d735e420ec34d9255807a90f48b559bd651a3ce5ac4511114aaf128c80c"
+    },
+    {
+      "file": "0023-governance-policy.sql",
+      "checksum": "0a19d322f1ff95d7f4db1a5cf427a75f440cff9c4c2e1862f79ad24ab4c757e5"
+    },
+    {
+      "file": "0024-admin-session-freshness.sql",
+      "checksum": "c476ba85c605640f8eea4ff4de5fc3617a12f12ecfb9ac4b33f45ac7a2befcdf"
+    },
+    {
+      "file": "0025-extension-registry.sql",
+      "checksum": "13282166e607b23321221d077ccc19f4185e672f94db928c00771d229eb7d8bd"
+    },
+    {
+      "file": "0026-extension-runs.sql",
+      "checksum": "21cc24eff1f399747864761049a4c4a19ceb765e52b856e589c4f35c7bd620bb"
+    },
+    {
+      "file": "0027-extension-run-events.sql",
+      "checksum": "94aaf8a510f48ea9d87e4cf98657996efb10c5f3026aa8dfc9c91ee287b99538"
+    },
+    {
+      "file": "0028-app-packages.sql",
+      "checksum": "08fae924e0e37d0999c4a43933a83177a5a0f215bac99e5368b73ab1d56b5f71"
+    },
+    {
+      "file": "0029-app-package-deployments.sql",
+      "checksum": "dcdd38cba9baee568bf1919289dfe1d20899abc9a569be380d526f87c3c4e794"
+    },
+    {
+      "file": "0030-app-package-operations.sql",
+      "checksum": "30e68b53884c70f0af4069616b73028019ab01c4a91c3cdcf9950bd94e19e4d6"
+    },
+    {
+      "file": "0031-provider-account-bindings.sql",
+      "checksum": "ea5bb76be51aac25ddd348e6be58f0ec0fef990155ff499745297673bd8e9a2e"
+    },
+    {
+      "file": "0032-provider-connection-recovery.sql",
+      "checksum": "0c8989a248fb373087afa9b1af8f8aa2110feb2303540752422543de44e66a5a"
+    },
+    {
+      "file": "0033-provider-admission.sql",
+      "checksum": "1cf8888eb6a554b4a7fe6a71e8b06b0b1daf80d91a6a3bfa997af27822337679"
+    },
+    {
+      "file": "0034-extension-recovery.sql",
+      "checksum": "9a6c2e429aa756435d2d8bc885277275c47a547851c1ae0ba60f2bda2c6ff81e"
+    },
+    {
+      "file": "0035-package-recovery.sql",
+      "checksum": "c73ff34b55493b548759560d8fb0cbe44fd15de081456069d282eabe91ba6750"
+    },
+    {
+      "file": "0036-provider-operations.sql",
+      "checksum": "24f5649da8b92b2d3ee9c63e9bbf9a7a5ed897180da761a6211c5c0ed8996aad"
+    },
+    {
+      "file": "0037-app-data-migration.sql",
+      "checksum": "554603eff3422d32e6249880a8f62268ef410f33ff1773dc40aab0cb4f12bb0c"
+    },
+    {
+      "file": "0038-permission-action-lifecycle.sql",
+      "checksum": "5542368a6fa955ac58440a3a223ef662fb1a54a62a883ae2fd8ffa2daf9608bd"
+    },
+    {
+      "file": "0039-provider-protocol-confirmations.sql",
+      "checksum": "07259111a3c3808c5e6070b0189bd0bf74dcd040623b137590b17bd452bd8b12"
+    },
+    {
+      "file": "0040-provider-profile-bindings.sql",
+      "checksum": "761b4b96d3a7c509198dbdd1cd1d958b92a28f6b8f4cee449ebf99b080050343"
+    },
+    {
+      "file": "0041-app-data-migration-package-digests.sql",
+      "checksum": "9ab4865298fab5f7be79f0906bf82ed176bf844a96e03b42daf8e5d579a09090"
+    },
+    {
+      "file": "0043-provider-protocol-receipts.sql",
+      "checksum": "2cbc7d81813a50c85393ae857b260c796e8a7ea4db8f7c122541ab0abf5266fb"
+    },
+    {
+      "file": "0044-system-projection.sql",
+      "checksum": "a95019d20a3d2e63678b23f14fb35929f65c0192b075b4d995d35c8fb067e647"
+    },
+    {
+      "file": "0045-network-route-activation.sql",
+      "checksum": "c2bc2a47a3360e47b02d4edd9880b88694ec3ab84cdf7613674cd2099d40040d"
+    },
+    {
+      "file": "0046-package-retention.sql",
+      "checksum": "7321916de0ddff31f40d48b837acada75d8ec893691c7c65f22d0b707d6a9a83"
+    },
+    {
+      "file": "0047-ai-task-parameters.sql",
+      "checksum": "22b6e9e886943f2b660de4d54989e0587c58cb67e373fbd45b7140849f6f15f6"
+    },
+    {
+      "file": "0048-network-route-fingerprint.sql",
+      "checksum": "7879e6cf17753fa82254675756fbeb1fdfb9ad67e11808aec8922cd2f10cd33d"
+    },
+    {
+      "file": "0049-extension-management.sql",
+      "checksum": "ba0bc80a0ccc74e05a5244b50e52e6a26df39ad854995ba038020b7d5d954f1b"
+    },
+    {
+      "file": "0050-session-management.sql",
+      "checksum": "8802fe3a02b0bf7364aeac96215da09454d0c53b48c06d2cb76c6f3d6b455d85"
+    },
+    {
+      "file": "0051-proxy-provisioning.sql",
+      "checksum": "778fddef654d67bc3ecfc01e11fd91f826f91d68a5b6c5c72568b5e35cca1939"
+    }
+  ],
+  "evidence_dirs": [
+    "docs/05-测试与发布/端到端验收/报告/V1-candidate-r12-2026-10-02T12-28-49-809Z-93a4744b-pg"
+  ],
+  "generated_files": [],
+  "generated_file_sha256": {},
+  "asset_sha256": {},
+  "results": [],
+  "failed_assets": [],
+  "unexecuted_assets": [
+    "tests/extensions/management-credential-pg.test.mjs",
+    "tests/extensions/management-custom-run-pg.test.mjs",
+    "tests/extensions/management-definition-pg.test.mjs",
+    "tests/extensions/management-online-pg.test.mjs",
+    "tests/extensions/management-routes-pg.test.mjs",
+    "tests/extensions/management-translation-pg.test.mjs",
+    "tests/integration/action-freshness.test.mjs",
+    "tests/integration/action-recovery.test.mjs",
+    "tests/integration/action-resolve-pg.test.mjs",
+    "tests/integration/audit-query.test.mjs",
+    "tests/integration/network-context-r7.test.mjs",
+    "tests/integration/permission-action-lifecycle.test.mjs",
+    "tests/integration/postgres-ai-task.test.mjs",
+    "tests/integration/postgres-app-packages.test.mjs",
+    "tests/integration/postgres-audit-outbox.test.mjs",
+    "tests/integration/postgres-governance-policy.test.mjs",
+    "tests/integration/postgres-identity.test.mjs",
+    "tests/integration/postgres-migration.test.mjs",
+    "tests/integration/postgres-package-retention.test.mjs",
+    "tests/integration/postgres-provider-lease.test.mjs",
+    "tests/integration/postgres-provider.test.mjs",
+    "tests/integration/postgres-quota.test.mjs",
+    "tests/integration/postgres-retention.test.mjs",
+    "tests/integration/postgres-runtime.test.mjs",
+    "tests/integration/proxy-provisioning-r7.test.mjs",
+    "tests/integration/runtime-api.test.mjs",
+    "tests/integration/system-cross-process.test.mjs",
+    "tests/integration/system-http-projection.test.mjs",
+    "tests/integration/system-permission-rules.test.mjs",
+    "tests/provider/provider-audit-atomic.test.mjs",
+    "tests/provider/provider-parameters-pg.test.mjs",
+    "tests/provider/provider-protocol-confirmations.test.mjs",
+    "tests/provider/provider-text-directory.test.mjs"
+  ],
+  "covered_cases": [],
+  "cleanup": [],
+  "error": "source drift after tests/tooling/v1-acceptance-tooling.test.mjs",
+  "limitations": [
+    "Local host execution only; browser/native and unresolved branch receipts remain pending.",
+    "Image field binds the candidate artifact and does not claim these tests ran in that image.",
+    "No E2E case is claimed without explicit passing business assertions."
+  ]
+}

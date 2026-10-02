@@ -1,0 +1,104 @@
+TAP version 13
+# Subtest: public ProviderConfig to text task API supports explicit refresh, idempotency, SSE resume and artifact authorization
+not ok 1 - public ProviderConfig to text task API supports explicit refresh, idempotency, SSE resume and artifact authorization
+  ---
+  duration_ms: 39.017833
+  type: 'test'
+  location: '/Users/apple/Progame/DGOS/tests/integration/ai-task-api.test.mjs:25:1'
+  failureType: 'testCodeFailure'
+  error: "Method 'GET' already declared for route '/api/v1/system/info'"
+  code: 'FST_ERR_DUPLICATED_ROUTE'
+  name: 'FastifyError'
+  stack: |-
+    Object.addNewRoute (/Users/apple/Progame/DGOS/node_modules/.pnpm/fastify@5.12.5/node_modules/fastify/lib/route.js:369:19)
+    Object.route (/Users/apple/Progame/DGOS/node_modules/.pnpm/fastify@5.12.5/node_modules/fastify/lib/route.js:269:19)
+    Object.prepareRoute (/Users/apple/Progame/DGOS/node_modules/.pnpm/fastify@5.12.5/node_modules/fastify/lib/route.js:168:18)
+    Object._get [as get] (/Users/apple/Progame/DGOS/node_modules/.pnpm/fastify@5.12.5/node_modules/fastify/fastify.js:185:34)
+    buildServer (file:///Users/apple/Progame/DGOS/apps/api/src/server.mjs:252:7)
+    TestContext.<anonymous> (file:///Users/apple/Progame/DGOS/tests/integration/ai-task-api.test.mjs:33:15)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: quota preflight rejection creates no task, attempt or reservation
+not ok 2 - quota preflight rejection creates no task, attempt or reservation
+  ---
+  duration_ms: 5.299291
+  type: 'test'
+  location: '/Users/apple/Progame/DGOS/tests/integration/ai-task-api.test.mjs:98:1'
+  failureType: 'testCodeFailure'
+  error: "Method 'GET' already declared for route '/api/v1/system/info'"
+  code: 'FST_ERR_DUPLICATED_ROUTE'
+  name: 'FastifyError'
+  stack: |-
+    Object.addNewRoute (/Users/apple/Progame/DGOS/node_modules/.pnpm/fastify@5.12.5/node_modules/fastify/lib/route.js:369:19)
+    Object.route (/Users/apple/Progame/DGOS/node_modules/.pnpm/fastify@5.12.5/node_modules/fastify/lib/route.js:269:19)
+    Object.prepareRoute (/Users/apple/Progame/DGOS/node_modules/.pnpm/fastify@5.12.5/node_modules/fastify/lib/route.js:168:18)
+    Object._get [as get] (/Users/apple/Progame/DGOS/node_modules/.pnpm/fastify@5.12.5/node_modules/fastify/fastify.js:185:34)
+    buildServer (file:///Users/apple/Progame/DGOS/apps/api/src/server.mjs:252:7)
+    TestContext.<anonymous> (file:///Users/apple/Progame/DGOS/tests/integration/ai-task-api.test.mjs:105:15)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: provider failure settles quota exactly once
+not ok 3 - provider failure settles quota exactly once
+  ---
+  duration_ms: 4.602875
+  type: 'test'
+  location: '/Users/apple/Progame/DGOS/tests/integration/ai-task-api.test.mjs:143:1'
+  failureType: 'testCodeFailure'
+  error: "Method 'GET' already declared for route '/api/v1/system/info'"
+  code: 'FST_ERR_DUPLICATED_ROUTE'
+  name: 'FastifyError'
+  stack: |-
+    Object.addNewRoute (/Users/apple/Progame/DGOS/node_modules/.pnpm/fastify@5.12.5/node_modules/fastify/lib/route.js:369:19)
+    Object.route (/Users/apple/Progame/DGOS/node_modules/.pnpm/fastify@5.12.5/node_modules/fastify/lib/route.js:269:19)
+    Object.prepareRoute (/Users/apple/Progame/DGOS/node_modules/.pnpm/fastify@5.12.5/node_modules/fastify/lib/route.js:168:18)
+    Object._get [as get] (/Users/apple/Progame/DGOS/node_modules/.pnpm/fastify@5.12.5/node_modules/fastify/fastify.js:185:34)
+    buildServer (file:///Users/apple/Progame/DGOS/apps/api/src/server.mjs:252:7)
+    setupTaskFixture (file:///Users/apple/Progame/DGOS/tests/integration/ai-task-api.test.mjs:130:15)
+    async TestContext.<anonymous> (file:///Users/apple/Progame/DGOS/tests/integration/ai-task-api.test.mjs:145:19)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: task cancellation releases quota exactly once
+not ok 4 - task cancellation releases quota exactly once
+  ---
+  duration_ms: 4.205208
+  type: 'test'
+  location: '/Users/apple/Progame/DGOS/tests/integration/ai-task-api.test.mjs:154:1'
+  failureType: 'testCodeFailure'
+  error: "Method 'GET' already declared for route '/api/v1/system/info'"
+  code: 'FST_ERR_DUPLICATED_ROUTE'
+  name: 'FastifyError'
+  stack: |-
+    Object.addNewRoute (/Users/apple/Progame/DGOS/node_modules/.pnpm/fastify@5.12.5/node_modules/fastify/lib/route.js:369:19)
+    Object.route (/Users/apple/Progame/DGOS/node_modules/.pnpm/fastify@5.12.5/node_modules/fastify/lib/route.js:269:19)
+    Object.prepareRoute (/Users/apple/Progame/DGOS/node_modules/.pnpm/fastify@5.12.5/node_modules/fastify/lib/route.js:168:18)
+    Object._get [as get] (/Users/apple/Progame/DGOS/node_modules/.pnpm/fastify@5.12.5/node_modules/fastify/fastify.js:185:34)
+    buildServer (file:///Users/apple/Progame/DGOS/apps/api/src/server.mjs:252:7)
+    setupTaskFixture (file:///Users/apple/Progame/DGOS/tests/integration/ai-task-api.test.mjs:130:15)
+    async TestContext.<anonymous> (file:///Users/apple/Progame/DGOS/tests/integration/ai-task-api.test.mjs:156:19)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: provider timeout settles quota with estimated usage exactly once
+not ok 5 - provider timeout settles quota with estimated usage exactly once
+  ---
+  duration_ms: 6.512667
+  type: 'test'
+  location: '/Users/apple/Progame/DGOS/tests/integration/ai-task-api.test.mjs:170:1'
+  failureType: 'testCodeFailure'
+  error: "Method 'GET' already declared for route '/api/v1/system/info'"
+  code: 'FST_ERR_DUPLICATED_ROUTE'
+  name: 'FastifyError'
+  stack: |-
+    Object.addNewRoute (/Users/apple/Progame/DGOS/node_modules/.pnpm/fastify@5.12.5/node_modules/fastify/lib/route.js:369:19)
+    Object.route (/Users/apple/Progame/DGOS/node_modules/.pnpm/fastify@5.12.5/node_modules/fastify/lib/route.js:269:19)
+    Object.prepareRoute (/Users/apple/Progame/DGOS/node_modules/.pnpm/fastify@5.12.5/node_modules/fastify/lib/route.js:168:18)
+    Object._get [as get] (/Users/apple/Progame/DGOS/node_modules/.pnpm/fastify@5.12.5/node_modules/fastify/fastify.js:185:34)
+    buildServer (file:///Users/apple/Progame/DGOS/apps/api/src/server.mjs:252:7)
+    setupTaskFixture (file:///Users/apple/Progame/DGOS/tests/integration/ai-task-api.test.mjs:130:15)
+    async TestContext.<anonymous> (file:///Users/apple/Progame/DGOS/tests/integration/ai-task-api.test.mjs:172:19)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...

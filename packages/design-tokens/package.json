@@ -1,1 +1,1 @@
-{"name":"@dgos/design-tokens","version":"0.1.0","type":"module","exports":{".":"./src/index.ts","./style.css":"./src/tokens.css"},"scripts":{"build":"node --check src/index.ts >/dev/null 2>&1 || true","check":"node -e \"process.exit(0)\""}}
+{"name":"@dgos/design-tokens","version":"0.1.0","type":"module","exports":{".":"./src/index.ts","./style.css":"./src/tokens.css","./colors":"./src/colors.ts","./typography":"./src/typography.ts","./spacing":"./src/spacing.ts"},"scripts":{"build":"node --check src/index.ts >/dev/null 2>&1 || true","check":"node -e \"process.exit(0)\""}}
