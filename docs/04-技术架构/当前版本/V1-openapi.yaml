@@ -24,6 +24,93 @@ tags:
   - name: usage
   - name: apps
 paths:
+  /api/v1/system/network/proxy-configurations:
+    post:
+      tags: [system]
+      operationId: provisionManualProxy
+      x-tag-feature: V1-FR-001
+      x-tag-implementation-status: planned
+      security: [{ dgosSession: [] }]
+      description: Fresh active administrator Session, system.settings.write and CSRF required; API Key and APP bridge access forbidden. Validate bounded endpoint against deployment proxy policy, then create a new server-generated network-proxy Secret reference with durable idempotency/audit and compensation. Endpoint/credentials are write-only. Does not connect, probe, change System settings, update an existing reference, acknowledge a runtime lease or activate any route. Caller explicitly PATCHes network settings with returned manualProxyRef and current baseVersion, then restarts affected services. Same subject/requestId plus protected canonical payload fingerprint returns original receipt; changed intent conflicts, in-progress never starts a second Secret write. See V1-手动代理秘密配置契约.md.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ManualProxyProvisionRequest' }
+      responses:
+        '201':
+          description: Stored proxy reference or identical committed receipt replay; no route activation or connectivity claim
+          headers:
+            Cache-Control: { schema: { type: string, enum: [no-store] } }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ManualProxyProvisionReceipt' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: permission_denied/insufficient_scope/step_up_required/csrf_failed; no Secret or settings mutation
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '409':
+          description: version_conflict for changed same-ID intent or request_conflict while original operation is pending/compensating; reuse original requestId, never create another reference to bypass an uncertain result
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '422':
+          description: invalid_request/proxy_configuration_invalid/policy_blocked; no usable reference, connection, settings or route change; no endpoint/credential details echoed
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+  /api/v1/skills/custom:
+    $ref: 'V1-extension-management.openapi.yaml#/paths/~1api~1v1~1skills~1custom'
+  /api/v1/skills/{skillId}/definition:
+    $ref: 'V1-extension-management.openapi.yaml#/paths/~1api~1v1~1skills~1{skillId}~1definition'
+  /api/v1/skills/{skillId}/translations:
+    $ref: 'V1-extension-management.openapi.yaml#/paths/~1api~1v1~1skills~1{skillId}~1translations'
+  /api/v1/skills/{skillId}/translations/apply:
+    $ref: 'V1-extension-management.openapi.yaml#/paths/~1api~1v1~1skills~1{skillId}~1translations~1apply'
+  /api/v1/mcp/templates:
+    $ref: 'V1-extension-management.openapi.yaml#/paths/~1api~1v1~1mcp~1templates'
+  /api/v1/mcp/{mcpId}/config:
+    $ref: 'V1-extension-management.openapi.yaml#/paths/~1api~1v1~1mcp~1{mcpId}~1config'
+  /api/v1/extensions/confirmations:
+    $ref: 'V1-extension.openapi.yaml#/paths/~1api~1v1~1extensions~1confirmations'
+  /api/v1/actions/resolve:
+    post:
+      operationId: resolveActionCandidates
+      x-tag-feature: V1-FR-009
+      x-tag-implementation-status: planned
+      x-dgos-contract-status: accepted-engineering-projection
+      description: Authenticated action.read projection for registered candidates only. No plan, confirmation, Run, target mutation or automatic execution. Resolver output is untrusted until registry/version/schema/permission filtering; execution remains plan then confirm then execute.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ActionResolveRequest' }
+      responses:
+        '200':
+          description: Authorized candidate list, empty when no unambiguous registered candidate exists
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ActionResolveResponse' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+  /api/v1/extensions/previews:
+    $ref: 'V1-extension.openapi.yaml#/paths/~1api~1v1~1extensions~1previews'
+  /api/v1/mcp/{mcpId}/connect:
+    $ref: 'V1-extension.openapi.yaml#/paths/~1api~1v1~1mcp~1{mcpId}~1connect'
+  /api/v1/mcp/{mcpId}/disconnect:
+    $ref: 'V1-extension.openapi.yaml#/paths/~1api~1v1~1mcp~1{mcpId}~1disconnect'
+  /api/v1/mcp/{mcpId}/tools:
+    $ref: 'V1-extension.openapi.yaml#/paths/~1api~1v1~1mcp~1{mcpId}~1tools'
+  /api/v1/extensions/runs:
+    $ref: 'V1-extension.openapi.yaml#/paths/~1api~1v1~1extensions~1runs'
+  /api/v1/extensions/runs/{runId}:
+    $ref: 'V1-extension.openapi.yaml#/paths/~1api~1v1~1extensions~1runs~1{runId}'
+  /api/v1/extensions/runs/{runId}/events:
+    $ref: 'V1-extension.openapi.yaml#/paths/~1api~1v1~1extensions~1runs~1{runId}~1events'
   /api/v1/apps:
     get:
       tags: [apps]
@@ -31,54 +118,219 @@ paths:
       x-tag-feature: V1-FR-002
       x-tag-implementation-status: implemented-local-contract
       responses:
-        '200': { description: Public app catalog }
+        '200':
+          description: Public app catalog, only verified official or administrator-approved packages
+          content:
+            application/json:
+              schema: { type: object, required: [items], properties: { items: { type: array, items: { $ref: '#/components/schemas/AppPackageRecord' } } } }
     post:
       tags: [apps]
       operationId: submitAppManifest
       x-tag-feature: V1-FR-002
       x-tag-implementation-status: implemented-local-contract
+      description: Verify real signed package bytes; caller cannot provide source, catalogState or effective trust. Scope app.catalog.manage; authentication and CSRF apply.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AppPackageEnvelope' }
       responses:
-        '201': { description: Manifest accepted for review }
+        '201':
+          description: Verified package staged for review or trusted official catalog
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AppPackageRecord' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '413': { description: Configured file-count or decoded/encoded request-size limit exceeded }
+        '422': { $ref: '#/components/responses/ValidationError' }
+  /api/v1/apps/{appId}:
+    parameters:
+      - { $ref: '#/components/parameters/AppId' }
+    get:
+      operationId: getApp
+      x-tag-feature: V1-FR-002
+      parameters:
+        - { in: query, name: version, schema: { type: string } }
+        - { in: query, name: build, schema: { type: integer, minimum: 0 } }
+      responses:
+        '200': { $ref: '#/components/responses/AppPackage' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/apps/{appId}/approve:
+    parameters:
+      - { $ref: '#/components/parameters/AppId' }
+    post:
+      operationId: approveApp
+      x-tag-feature: V1-FR-002
+      description: Administrator review of verified bytes; approval does not grant trusted/system capabilities.
+      requestBody: { $ref: '#/components/requestBodies/AppReleaseMutation' }
+      responses:
+        '200': { $ref: '#/components/responses/AppPackage' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /api/v1/apps/{appId}/reject:
+    parameters:
+      - { $ref: '#/components/parameters/AppId' }
+    post:
+      operationId: rejectApp
+      x-tag-feature: V1-FR-002
+      requestBody: { $ref: '#/components/requestBodies/AppReleaseMutation' }
+      responses:
+        '200': { $ref: '#/components/responses/AppPackage' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /api/v1/apps/{appId}/withdraw:
+    parameters:
+      - { $ref: '#/components/parameters/AppId' }
+    post:
+      operationId: withdrawApp
+      x-tag-feature: V1-FR-002
+      requestBody: { $ref: '#/components/requestBodies/AppReleaseMutation' }
+      responses:
+        '200': { $ref: '#/components/responses/AppPackage' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /api/v1/apps/{appId}/test-install:
+    parameters:
+      - { $ref: '#/components/parameters/AppId' }
+    post:
+      operationId: testInstallApp
+      x-tag-feature: V1-FR-002
+      description: Separate app.package.test_install permission; does not approve catalog entry.
+      requestBody: { $ref: '#/components/requestBodies/AppReleaseMutation' }
+      responses:
+        '200': { $ref: '#/components/responses/AppInstall' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
   /api/v1/apps/{appId}/install:
+    parameters:
+      - { $ref: '#/components/parameters/AppId' }
     post:
       tags: [apps]
       operationId: installApp
       x-tag-feature: V1-FR-002
       x-tag-implementation-status: implemented-local-contract
+      requestBody: { $ref: '#/components/requestBodies/AppReleaseMutation' }
       responses:
-        '200': { description: Installed app snapshot }
+        '200': { $ref: '#/components/responses/AppInstall' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
   /api/v1/apps/{appId}/launch:
+    parameters:
+      - { $ref: '#/components/parameters/AppId' }
     post:
       tags: [apps]
       operationId: launchApp
       x-tag-feature: V1-FR-001
       x-tag-implementation-status: implemented-local-contract
+      requestBody: { $ref: '#/components/requestBodies/AppMutation' }
       responses:
-        '200': { description: Active app snapshot }
+        '200':
+          description: Authenticated subject/session-bound isolated launch instance; declarations are not runtime grants
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AppLaunchReceipt' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /api/v1/apps/{appId}/deployment:
+    parameters:
+      - { $ref: '#/components/parameters/AppId' }
+    get:
+      operationId: getAppDeployment
+      x-tag-feature: V1-FR-002
+      x-tag-implementation-status: planned
+      description: app.catalog.read plus authenticated subject ownership; no subjectId override. Sole deployment lookup; /apps/installations is not a public alternative. Distinct from catalog reviewVersion. Return retained uninstalled record with activeRelease=null if present, otherwise 404 without enumerating other subjects. D uses versionNumber as update/uninstall baseVersion.
+      responses:
+        '200':
+          description: Current subject deployment and optimistic concurrency revision
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AppDeployment' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/apps/{appId}/bridge:
+    parameters:
+      - { $ref: '#/components/parameters/AppId' }
+    post:
+      operationId: invokeAppCapability
+      security: [{ dgosSession: [] }]
+      x-tag-feature: V1-FR-002
+      x-tag-implementation-status: planned
+      description: Authenticated host Session and CSRF only; recheck session/subject/instance/app/digest, installed declarations and current broker before registered handler. Capability inputs follow V1-app-bridge.schema.json call definitions. SDK names are not HTTP scopes; use the fixed mapping in the SDK contract. No arbitrary URL/method/headers or caller identity forwarding.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AppCapabilityRequest' }
+      responses:
+        '200':
+          description: Selected capability-specific redacted public response
+          content:
+            application/json:
+              schema: { type: object }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /api/v1/apps/{appId}/resources/{resourcePath}:
+    parameters:
+      - { $ref: '#/components/parameters/AppId' }
+      - { in: path, name: resourcePath, required: true, schema: { type: string }, description: Package-relative decoded path captured by runtime wildcard; reject traversal/symlink/absolute paths }
+    get:
+      operationId: readAppResource
+      x-tag-feature: V1-FR-002
+      x-tag-implementation-status: planned
+      security:
+        - appLaunchTicket: []
+        - dgosSession: []
+      description: Verified static bytes for bound active package only. Ticket checks session/subject/instance/digest/expiry, never grants API access. No-store/no-referrer/nosniff and sandbox CSP required.
+      responses:
+        '200':
+          description: Verified resource with actual media type
+          content:
+            application/octet-stream:
+              schema: { type: string, format: binary }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
   /api/v1/apps/{appId}/update:
+    parameters:
+      - { $ref: '#/components/parameters/AppId' }
     post:
       tags: [apps]
       operationId: updateApp
       x-tag-feature: V1-FR-002
       x-tag-implementation-status: implemented-local-contract
+      requestBody: { $ref: '#/components/requestBodies/AppReleaseMutation' }
       responses:
-        '200': { description: Updated app snapshot }
+        '200': { $ref: '#/components/responses/AppInstall' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
   /api/v1/apps/{appId}/uninstall:
+    parameters:
+      - { $ref: '#/components/parameters/AppId' }
     post:
       tags: [apps]
       operationId: uninstallApp
       x-tag-feature: V1-FR-002
       x-tag-implementation-status: implemented-local-contract
+      description: Removes registration/code pointer only, retains user data. No deleteData override is accepted.
+      requestBody: { $ref: '#/components/requestBodies/AppMutation' }
       responses:
-        '200': { description: Uninstalled app snapshot with retained data }
+        '200': { $ref: '#/components/responses/AppInstall' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
   /api/v1/apps/{appId}/health:
+    parameters:
+      - { $ref: '#/components/parameters/AppId' }
     get:
       tags: [apps]
       operationId: checkAppHealth
       x-tag-feature: V1-FR-002
       x-tag-implementation-status: implemented-local-contract
       responses:
-        '200': { description: Health snapshot }
+        '200':
+          description: Actual health snapshot, no state-only success assertion
+          content:
+            application/json:
+              schema: { type: object, required: [appId, healthy], properties: { appId: { type: string }, healthy: { type: boolean }, state: { type: string }, version: { type: string }, build: { type: integer, minimum: 0 }, reasonCode: { type: string } } }
   /api/v1/actions:
     get:
       tags: [assistant]
@@ -248,6 +500,7 @@ paths:
     get:
       tags: [providers]
       operationId: listProviderProtocols
+      description: Authenticated provider.config.read (or existing registry read capability); returns only published adapters. Public adapterVersion maps internal protocolVersion, and schemas use stable DGOS references, never internal URLs.
       x-tag-feature: V1-FR-007
       x-tag-implementation-status: planned
       responses:
@@ -280,6 +533,7 @@ paths:
     get:
       tags: [providers]
       operationId: listCapabilityProtocols
+      description: Authenticated provider.config.read; returns persisted active V1 text.chat protocol versions only. Read does not refresh models or enable policy.
       x-tag-feature: V1-FR-007
       x-tag-implementation-status: planned
       responses:
@@ -297,13 +551,15 @@ paths:
     post:
       tags: [providers]
       operationId: validateCapabilityProtocol
+      security: [{ dgosSession: [] }]
+      description: Validation only, no publish/enable/upstream request. Requires provider.protocol.write and a fresh authorized administrator/developer session; request fields validated against the V1 text-only declaration.
       x-tag-feature: V1-FR-007
       x-tag-implementation-status: planned
       requestBody:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/CapabilityProtocolRegistration' }
+            schema: { $ref: '#/components/schemas/CapabilityProtocolValidationRequest' }
       responses:
         '200':
           description: Canonical validated protocol
@@ -312,6 +568,78 @@ paths:
               schema: { $ref: '#/components/schemas/CapabilityProtocolRegistration' }
         '422':
           description: Protocol schema or safety validation failed
+  /api/v1/provider/capability-protocols/confirmations:
+    post:
+      tags: [providers]
+      operationId: issueCapabilityProtocolConfirmation
+      x-tag-feature: V1-FR-007
+      x-tag-implementation-status: planned
+      security: [{ dgosSession: [] }]
+      description: Explicit review/confirm action; requires CSRF, provider.protocol.write, fresh administrator session and server-derived session ID. No API Key authentication. Issues a five-minute single-use ticket only; does not publish or change state. Same subject/requestId and identical session/operation/protocolId/version/payload digest return the original ticket without extending expiry; changed binding conflicts. Publication/state must reuse this requestId. Client echoes server validationDigest and never computes or supplies identity/digest for state changes.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CapabilityProtocolConfirmationRequest' }
+      responses:
+        '201':
+          description: Issued or identically replayed ticket; no declaration/state mutation
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CapabilityProtocolConfirmationReceipt' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+  /api/v1/provider/capability-protocols/{protocolId}/versions:
+    parameters:
+      - { in: path, name: protocolId, required: true, schema: { type: string } }
+    post:
+      operationId: registerCapabilityProtocolVersion
+      security: [{ dgosSession: [] }]
+      x-tag-feature: V1-FR-007
+      x-tag-implementation-status: planned
+      description: Controlled immutable publication. Requires CSRF, provider.protocol.write, fresh administrator Session and ticket from issueCapabilityProtocolConfirmation with the same requestId. Bind subject/session/operation/id/version/validated digest. An authorized identical completed request returns its stored result before checking ticket consumption/expiry; changed binding conflicts. For a new operation, commit declaration, operation result, audit/outbox and ticket consumption atomically; rollback consumes nothing. Never changes existing ProviderConfig or model policy.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CapabilityProtocolPublishRequest' }
+      responses:
+        '201':
+          description: Persisted registered version
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CapabilityProtocolRegistration' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '428': { $ref: '#/components/responses/ConfirmationRequired' }
+  /api/v1/provider/capability-protocols/{protocolId}/versions/{version}/state:
+    parameters:
+      - { in: path, name: protocolId, required: true, schema: { type: string } }
+      - { in: path, name: version, required: true, schema: { type: string } }
+    post:
+      operationId: setCapabilityProtocolState
+      security: [{ dgosSession: [] }]
+      x-tag-feature: V1-FR-007
+      x-tag-implementation-status: planned
+      description: CSRF, provider.protocol.write and fresh administrator Session required. Use the issuance requestId and ticket bound to protocolId/version/baseVersion/state; baseVersion is registryVersion, not SemVer. Authorized identical completed replay returns its saved result without another increment/consumption; changed payload conflicts. New mutation commits state revision, operation result, audit/outbox and ticket consumption atomically. Disabling prevents new tasks, retains existing taskId/history, no automatic config migration.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CapabilityProtocolStateRequest' }
+      responses:
+        '200':
+          description: Updated registry state, declaration bytes unchanged
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CapabilityProtocolRegistration' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '428': { $ref: '#/components/responses/ConfirmationRequired' }
   /api/v1/provider/configs:
     get:
       tags: [providers]
@@ -561,13 +889,7 @@ paths:
           description: Sanitized task artifact content
           content:
             application/json:
-              schema:
-                type: object
-                required: [artifactId, mimeType, content]
-                properties:
-                  artifactId: { type: string }
-                  mimeType: { type: string }
-                  content: { type: string }
+              schema: { $ref: '#/components/schemas/ArtifactContent' }
   /api/v1/skills:
     get:
       tags: [skills]
@@ -623,6 +945,11 @@ paths:
       x-tag-implementation-status: planned
       parameters:
         - { $ref: '#/components/parameters/SkillId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: 'V1-extension.openapi.yaml#/components/schemas/MutationRequest' }
       responses:
         '202':
           description: Skill uninstall accepted
@@ -684,6 +1011,11 @@ paths:
       x-tag-implementation-status: planned
       parameters:
         - { $ref: '#/components/parameters/McpId' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: 'V1-extension.openapi.yaml#/components/schemas/MutationRequest' }
       responses:
         '202':
           description: MCP uninstall accepted
@@ -767,16 +1099,44 @@ paths:
               schema: { $ref: '#/components/schemas/AdminSessionReceipt' }
         '401': { $ref: '#/components/responses/Unauthorized' }
         '409': { $ref: '#/components/responses/Conflict' }
+    delete:
+      operationId: logoutAdminSession
+      x-tag-feature: V1-FR-010
+      x-tag-implementation-status: planned
+      security: [{ dgosSession: [] }]
+      description: Authenticated current-session logout with CSRF, no target identifier and no fresh-session requirement. Revoke only caller session, clear its cookie and invalidate bound launch tickets; other devices remain unchanged. Invalid/expired caller may clear local cookie but cannot mutate another session.
+      responses:
+        '204': { description: Current session revoked and cookie cleared }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /api/v1/identity/admin/sessions:
+    get:
+      operationId: listAdminSessions
+      x-tag-feature: V1-FR-010
+      x-tag-implementation-status: planned
+      security: [{ dgosSession: [] }]
+      description: Active administrator Session only; list only its principal devices/sessions. Reuses current administrator session authorization, no new API-key scope. No fresh authentication needed for own redacted list. No owner override, bearer sessionId, Cookie, credential, full IP or raw User-Agent. No-store and read audit; pagination order createdAt plus management ID is stable.
+      parameters:
+        - { in: query, name: limit, schema: { type: integer, minimum: 1, maximum: 100, default: 50 } }
+        - { in: query, name: cursor, schema: { type: string, maxLength: 512 }, description: Opaque owner-bound pagination cursor, not authentication token }
+      responses:
+        '200':
+          description: Own device sessions without authentication material
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AdminSessionList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
   /api/v1/identity/admin/sessions/{sessionId}:
     delete:
       tags: [identity]
       operationId: revokeAdminSession
+      description: Path sessionId is the NON-authenticating sessionManagementId from listAdminSessions, never the bearer credential currently used internally as sessionId. Requires active fresh administrator Session, CSRF and same-principal target lookup under transaction. Unknown/cross-owner returns 404 without enumeration. Revocation and audit/outbox atomic; same requestId returns same redacted receipt, already-revoked target is idempotent, other devices unchanged. Use DELETE /identity/admin/session for ordinary self logout.
       x-tag-feature: V1-FR-010
       x-tag-implementation-status: planned
       security:
         - dgosSession: []
       parameters:
-        - { $ref: '#/components/parameters/SessionId' }
+        - { in: path, name: sessionId, required: true, schema: { type: string, pattern: '^sm_[A-Za-z0-9_-]{32,128}$' }, description: Non-authenticating management ID; legacy parameter name retained, bearer session IDs rejected }
       requestBody:
         required: true
         content:
@@ -784,12 +1144,13 @@ paths:
             schema: { $ref: '#/components/schemas/RequestEnvelope' }
       responses:
         '200':
-          description: Revoked administrator session
+          description: Revoked same-principal device session, no bearer material
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/AdminSessionReceipt' }
+              schema: { $ref: '#/components/schemas/AdminSessionRevocationReceipt' }
         '401': { $ref: '#/components/responses/Unauthorized' }
         '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
   /api/v1/secret/api-keys:
     get:
       tags: [secrets]
@@ -1065,6 +1426,19 @@ paths:
         '403': { $ref: '#/components/responses/Forbidden' }
         '409': { $ref: '#/components/responses/Conflict' }
         '422': { $ref: '#/components/responses/ValidationError' }
+  /api/v1/admin/governance/retention-preview:
+    get:
+      operationId: getRetentionPreview
+      x-tag-feature: V1-FR-014
+      x-tag-implementation-status: planned
+      description: retention.read; read-only classified preview under current policy. packageRetention counts participate in previewDigest. No paths, secrets or deletions; execution must recheck age, references and confirmed digest.
+      responses:
+        '200':
+          description: Current classified preview
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RetentionPreview' }
+        '403': { $ref: '#/components/responses/Forbidden' }
   /api/v1/admin/governance/retention-sweeps:
     post:
       tags: [governance]
@@ -1208,7 +1582,23 @@ paths:
         '403': { $ref: '#/components/responses/Forbidden' }
         '409': { $ref: '#/components/responses/Conflict' }
 components:
+  requestBodies:
+    AppReleaseMutation:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/AppReleaseMutation' }
+    AppMutation:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/AppMutation' }
   securitySchemes:
+    appLaunchTicket:
+      type: apiKey
+      in: query
+      name: launchTicket
+      description: Opaque short-lived session/subject/app/package/instance-bound static ticket, redacted from logs; no bridge authority.
     dgosSession:
       type: apiKey
       in: cookie
@@ -1220,6 +1610,21 @@ components:
       bearerFormat: DGOS-API-Key
       description: DGOS API Key; the secret is never returned after creation.
   responses:
+    ConfirmationRequired:
+      description: confirmation_required; ticket missing, expired, consumed by another intent or mismatched. No protected mutation; fresh authentication failures use 403 step_up_required.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    AppPackage:
+      description: Verified package metadata with platform-computed trust and catalog state
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/AppPackageRecord' }
+    AppInstall:
+      description: Authorized install snapshot; no host filesystem path is exposed
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/AppInstallRecord' }
     Unauthorized:
       description: Authentication missing, expired, or revoked
       content:
@@ -1261,6 +1666,7 @@ components:
         application/json:
           schema: { $ref: '#/components/schemas/ErrorResponse' }
   parameters:
+    AppId: { in: path, name: appId, required: true, schema: { type: string } }
     ProviderId: { in: path, name: providerId, required: true, schema: { type: string } }
     TaskId: { in: path, name: taskId, required: true, schema: { type: string } }
     SkillId: { in: path, name: skillId, required: true, schema: { type: string } }
@@ -1274,6 +1680,250 @@ components:
     JobId: { in: path, name: jobId, required: true, schema: { type: string } }
     ReservationId: { in: path, name: reservationId, required: true, schema: { type: string } }
   schemas:
+    ManualProxyProvisionRequest:
+      type: object
+      additionalProperties: false
+      required: [requestId, displayName, endpoint]
+      properties:
+        requestId: { type: string, format: uuid }
+        displayName: { type: string, minLength: 1, maxLength: 128, description: Non-secret human label; trimmed, reject control characters and credential/URL-like content, never derive it from endpoint or username }
+        endpoint: { type: string, format: uri, minLength: 1, maxLength: 2048, writeOnly: true, description: HTTPS proxy origin only, optional root slash; no userinfo/query/fragment/non-root path/control characters. Host/port/CIDR and TLS policy comes from deployment, not this input. HTTP accepted only by explicit isolated local test policy, never enabled by request body. }
+        username: { type: string, minLength: 1, maxLength: 128, writeOnly: true, description: Optional Basic authentication pair; reject colon and control characters. Username and password must both be supplied or both omitted. Combined UTF-8 username:password at most 384 bytes and base64 at most 512 characters. }
+        password: { type: string, minLength: 1, maxLength: 128, writeOnly: true, description: Paired write-only proxy password; reject control characters, preserve other bytes, never trim/coerce/log/echo. Not a DGOS account credential. }
+      oneOf:
+        - required: [username, password]
+        - not:
+            anyOf:
+              - required: [username]
+              - required: [password]
+    ManualProxyProvisionReceipt:
+      type: object
+      additionalProperties: false
+      required: [requestId, manualProxyRef, displayName, status, credentialStatus]
+      properties:
+        requestId: { type: string, format: uuid }
+        manualProxyRef: { type: string, pattern: '^proxy_[A-Za-z0-9_-]{32,128}$', description: Server-generated immutable-purpose reference, not a bearer capability; accepted only through authorized network settings and runtime Secret boundary }
+        displayName: { type: string, minLength: 1, maxLength: 128 }
+        status: { type: string, enum: [stored], description: Receipt of durable Secret provisioning only; not connected, validated upstream, active or current readiness }
+        credentialStatus: { type: string, enum: [not_required, configured], description: Authentication material storage state at commit, not verification of proxy authentication }
+    AppDeployment:
+      type: object
+      additionalProperties: false
+      required: [appId, state, versionNumber, dataRetained, activeRelease]
+      properties:
+        appId: { type: string }
+        state: { type: string, enum: [installed, active, update_pending, health_check_failed, rolled_back, uninstall_requested, uninstalled] }
+        versionNumber: { type: integer, minimum: 1, description: Deployment revision used as update/uninstall baseVersion; never catalog reviewVersion or package build }
+        dataRetained: { type: boolean }
+        activeRelease:
+          type: object
+          nullable: true
+          required: [version, build, releaseChannel, digest, dataVersion]
+          properties:
+            version: { type: string }
+            build: { type: integer, minimum: 0 }
+            releaseChannel: { type: string, enum: [stable, beta, dev] }
+            digest: { type: string }
+            dataVersion: { type: integer, minimum: 0 }
+        updatedAt: { type: string, format: date-time }
+    AppLaunchReceipt:
+      type: object
+      required: [appId, instanceId, bridgeVersion, entrypoint, isolation, declaredCapabilities, expiresAt]
+      properties:
+        appId: { type: string }
+        instanceId: { type: string, format: uuid }
+        bridgeVersion: { type: integer, enum: [1] }
+        entrypoint: { type: string, description: Controlled relative resource route; optional launchTicket is sensitive, do not log or persist }
+        isolation: { type: string, enum: [opaque-origin-sandbox] }
+        declaredCapabilities: { type: array, uniqueItems: true, items: { type: string }, description: Declared ceiling only, not runtime grants }
+        expiresAt: { type: string, format: date-time }
+        digest: { type: string }
+    AppCapabilityRequest:
+      type: object
+      additionalProperties: false
+      required: [instanceId, requestId, capability, input]
+      properties:
+        instanceId: { type: string, format: uuid }
+        requestId: { type: string, format: uuid }
+        capability: { type: string, enum: [dgos.model.list, dgos.model.resolve, dgos.aiTask.submit, dgos.aiTask.get, dgos.aiTask.events, dgos.aiTask.cancel, dgos.artifact.read, dgos.system.context.read, dgos.system.context.events] }
+        input: { type: object, description: Strict selected capability schema; no caller owner/session/app or transport URL/handler }
+      x-dgos-call-schema: 'V1-app-bridge.schema.json#/$defs/call'
+      x-dgos-capability-mapping:
+        dgos.model.list: { scopes: [provider.model.read], response: ModelSelectionList }
+        dgos.model.resolve: { scopes: [provider.model.read], response: ModelResolution }
+        dgos.aiTask.submit: { scopes: [ai_task.submit], operationId: submitAiTask, response: AITaskReceipt }
+        dgos.aiTask.get: { scopes: [ai_task.read], operationId: getAiTask, response: AITaskSnapshot }
+        dgos.aiTask.events: { scopes: [ai_task.read], operationId: streamAiTaskEvents, response: AppTaskEventBatch }
+        dgos.aiTask.cancel: { scopes: [ai_task.cancel], operationId: cancelAiTask, response: AITaskSnapshot }
+        dgos.artifact.read: { scopes: [artifact.read], operationId: readArtifact, response: ArtifactContent }
+        dgos.system.context.read: { scopes: [dgos.system.context.read], response: AppSystemContext }
+        dgos.system.context.events: { scopes: [dgos.system.context.events, dgos.system.context.read], response: AppContextEventBatch }
+    AppSystemContext:
+      type: object
+      additionalProperties: false
+      required: [contextVersion, instanceId, appId, appearance, locale, grid, networkSummary, issuedAt]
+      properties:
+        contextVersion: { type: string, pattern: '^[1-9][0-9]*$' }
+        instanceId: { type: string, format: uuid }
+        appId: { type: string }
+        appearance: { $ref: '#/components/schemas/AppearanceSettings' }
+        locale: { $ref: '#/components/schemas/LocaleSettings' }
+        grid: { $ref: '#/components/schemas/GridSettings' }
+        networkSummary: { $ref: '#/components/schemas/NetworkProxySummary' }
+        issuedAt: { type: string, format: date-time }
+      description: Instance-bound read-only application projection of authoritative System settings. No global appPermissions, other subjects, secret/manualProxyRef/endpoint or fabricated native window state. Host applies window material/scale; APP consumes content tokens and effective locale. appId/instanceId derived from authenticated launch binding.
+    AppContextEventBatch:
+      type: object
+      additionalProperties: false
+      required: [items, cursor, reset]
+      properties:
+        cursor: { type: string, pattern: '^(0|[1-9][0-9]*)$' }
+        reset: { type: boolean, description: True when retained change history cannot satisfy cursor; return latest snapshot and replace local context }
+        items:
+          type: array
+          maxItems: 1
+          items: { $ref: '#/components/schemas/AppSystemContext' }
+      description: Finite read-only subscription polling through existing bridge request/result. Return latest coherent snapshot if version advanced, else empty items and unchanged cursor. May coalesce intermediate settings changes; not Task delta semantics. No raw SSE URL or new push message.
+    ModelSelectionList:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [providerConfigId, modelId, displayName, intent]
+            properties:
+              providerConfigId: { type: string }
+              modelId: { type: string }
+              displayName: { type: string }
+              intent: { type: string, enum: [text.chat] }
+    ModelResolution:
+      type: object
+      additionalProperties: false
+      required: [providerConfigId, modelId, intent, descriptorVersion, profile, workflow, defaults, limits, uiSchemas, assets]
+      properties:
+        providerConfigId: { type: string }
+        modelId: { type: string }
+        intent: { type: string, enum: [text.chat] }
+        descriptorVersion: { type: string }
+        profile: { type: string, enum: [chat.completions, responses] }
+        workflow: { type: string, enum: [text.chat] }
+        defaults: { $ref: '#/components/schemas/TextProfileDefaults' }
+        limits: { $ref: '#/components/schemas/TextProfileLimits' }
+        uiSchemas: { $ref: '#/components/schemas/TextProfileUi' }
+        assets: { type: object, additionalProperties: false, maxProperties: 0 }
+        protocolId: { type: string, description: Present with protocolVersion when an explicit registered declaration was selected }
+        protocolVersion: { type: string }
+    AppTaskEventBatch:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items: { type: array, items: { $ref: '#/components/schemas/AITaskEvent' } }
+    ArtifactContent:
+      type: object
+      additionalProperties: false
+      required: [artifactId, mimeType, content]
+      properties:
+        artifactId: { type: string }
+        mimeType: { type: string }
+        content: { type: string }
+    ActionResolveRequest:
+      type: object
+      additionalProperties: false
+      required: [requestId, text]
+      properties:
+        requestId: { type: string, format: uuid }
+        text: { type: string, minLength: 1, maxLength: 4096, description: User intent, never interpreted as code, path or arbitrary handler URL }
+    ActionResolveResponse:
+      type: object
+      additionalProperties: false
+      required: [requestId, candidates]
+      properties:
+        requestId: { type: string }
+        candidates:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [actionId, actionVersion, input, risk, permission, executable]
+            properties:
+              actionId: { type: string, description: Existing authorized registered action only }
+              actionVersion: { type: string }
+              input: { type: object, description: Validated registered input schema, redacted; no secret material }
+              risk: { type: string, enum: [read, write, external, destructive] }
+              permission: { type: string, enum: [allow, ask], description: Denied candidates are omitted; ask still requires consent before execution }
+              executable: { type: boolean, enum: [false] }
+    ActionNavigation:
+      type: object
+      additionalProperties: false
+      required: [target]
+      properties:
+        target: { type: string, enum: [system.settings, provider.settings, skill.management, mcp.management, app.catalog] }
+    AppPackageEnvelope:
+      type: object
+      additionalProperties: false
+      required: [requestId, manifest, files, resourceDigests, keyId, signature]
+      description: Ed25519 signature over UTF-8 canonical JSON of manifest and resourceDigests. Operator-configured limits default to 1000 files and 32 MiB decoded content. HTTP encoded-body limit must account for base64 overhead and reject excess before processing.
+      properties:
+        requestId: { type: string, format: uuid }
+        manifest:
+          type: object
+          description: Must validate against V1-app-manifest.schema.json (JSON Schema 2020-12); this object does not grant trust or catalog approval.
+          externalDocs: { url: 'V1-app-manifest.schema.json' }
+        files: { type: object, additionalProperties: { type: string, format: byte }, description: Normalized package-relative POSIX path to strict base64 bytes; no traversal, absolute paths, symlinks or installer scripts }
+        resourceDigests: { type: object, additionalProperties: { type: string, pattern: '^sha256:[0-9a-f]{64}$' }, description: Exactly the files key set, each digest recomputed from decoded bytes }
+        keyId: { type: string, minLength: 1, description: Selects an already provisioned non-revoked operator trust root; cannot supply a root }
+        signature: { type: string, format: byte, description: Ed25519 signature, strict base64 of 64 bytes }
+    AppPackageRecord:
+      type: object
+      required: [appId, version, build, releaseChannel, digest, source, catalogState, trustLevel, uninstallPolicy]
+      properties:
+        appId: { type: string }
+        version: { type: string }
+        build: { type: integer, minimum: 0 }
+        releaseChannel: { type: string, enum: [stable, beta, dev] }
+        digest: { type: string, pattern: '^sha256:[0-9a-f]{64}$' }
+        source: { type: string, enum: [official, admin, developer], readOnly: true }
+        catalogState: { type: string, enum: [official, pending_review, approved, rejected, withdrawn], readOnly: true }
+        trustLevel: { type: string, enum: [standard, trusted, system], readOnly: true, description: Effective platform grant, never copied from requested manifest trust }
+        uninstallPolicy: { type: string, enum: [user-removable, protected-preinstall], readOnly: true }
+        manifest: { type: object, description: Original signed manifest; trustLevel inside is only the requested value }
+        reviewVersion: { type: integer, minimum: 1 }
+    AppReleaseMutation:
+      type: object
+      additionalProperties: false
+      required: [requestId, version, build, releaseChannel]
+      properties:
+        requestId: { type: string, format: uuid }
+        version: { type: string }
+        build: { type: integer, minimum: 0 }
+        releaseChannel: { type: string, enum: [stable, beta, dev] }
+        baseVersion: { type: integer, minimum: 1, description: Required when mutating an existing versioned install/review record; checked again under the installation/review lock }
+        reason: { type: string, description: Redacted administrator review rationale }
+    AppMutation:
+      type: object
+      additionalProperties: false
+      required: [requestId]
+      properties:
+        requestId: { type: string, format: uuid }
+        baseVersion: { type: integer, minimum: 1 }
+    AppInstallRecord:
+      type: object
+      required: [appId, state, dataRetained]
+      properties:
+        appId: { type: string }
+        version: { type: string }
+        build: { type: integer, minimum: 0 }
+        releaseChannel: { type: string, enum: [stable, beta, dev] }
+        state: { type: string, enum: [discovered, installed, active, update_pending, health_check_failed, rolled_back, uninstall_requested, uninstalled] }
+        dataRetained: { type: boolean }
+        digest: { type: string }
+        previousDigest: { type: string, nullable: true }
+        versionNumber: { type: integer, minimum: 1 }
     ErrorResponse:
       type: object
       required: [errorKey, message, requestId]
@@ -1323,6 +1973,45 @@ components:
             createdAt: { type: string, format: date-time }
             lastActiveAt: { type: string, format: date-time }
             deviceSummary: { type: object, additionalProperties: true }
+    AdminSessionList:
+      type: object
+      additionalProperties: false
+      required: [requestId, items]
+      properties:
+        requestId: { type: string }
+        items: { type: array, maxItems: 100, items: { $ref: '#/components/schemas/AdminSessionDevice' } }
+        nextCursor: { type: string, description: Absent on last page }
+    AdminSessionDevice:
+      type: object
+      additionalProperties: false
+      required: [sessionManagementId, current, state, createdAt, expiresAt, sessionVersion, deviceSummary]
+      properties:
+        sessionManagementId: { type: string, pattern: '^sm_[A-Za-z0-9_-]{32,128}$', description: Stable opaque random management reference mapped server-side to same-owner session; cannot authenticate or derive credential }
+        current: { type: boolean }
+        state: { type: string, enum: [active, revoked, expired] }
+        createdAt: { type: string, format: date-time }
+        lastActiveAt: { type: string, format: date-time }
+        expiresAt: { type: string, format: date-time }
+        revokedAt: { type: string, format: date-time }
+        sessionVersion: { type: string, pattern: '^[1-9][0-9]*$' }
+        deviceSummary:
+          type: object
+          additionalProperties: false
+          required: [host]
+          properties:
+            host: { type: string, enum: [web, macos, unknown] }
+            label: { type: string, maxLength: 128, description: Sanitized coarse device/browser label, not raw User-Agent or asserted identity }
+      description: Derive expired from server time even if stored state remains active. Device hints never confer authorization; missing historic hints use unknown, never fabricate device facts.
+    AdminSessionRevocationReceipt:
+      type: object
+      additionalProperties: false
+      required: [requestId, sessionManagementId, state, revokedAt, sessionVersion]
+      properties:
+        requestId: { type: string }
+        sessionManagementId: { type: string, pattern: '^sm_[A-Za-z0-9_-]{32,128}$' }
+        state: { type: string, enum: [revoked] }
+        revokedAt: { type: string, format: date-time }
+        sessionVersion: { type: string, pattern: '^[1-9][0-9]*$' }
     ApiKeyMetadata:
       type: object
       required: [keyId, ownerId, name, prefix, scopes, status, createdAt]
@@ -1419,6 +2108,7 @@ components:
         version: { type: string }
         state: { type: string, enum: [active, unbound] }
     ProviderAccountStateRequest:
+      description: ready requires a successful controlled ConnectionTest for the same current accountVersion, matching protocol/config snapshot and caller scope. Creating credentials produces credential_pending; probe success alone does not activate account or ProviderConfig. Explicit state ready remains version-checked and audited. Changing credentials/account version invalidates old probe eligibility.
       allOf:
         - $ref: '#/components/schemas/RequestEnvelope'
         - $ref: '#/components/schemas/VersionedRequest'
@@ -1426,7 +2116,9 @@ components:
           required: [state]
           properties:
             state: { type: string, enum: [ready, disabled, revoked] }
+            connectionTestId: { type: string, description: Required for ready; server verifies succeeded and current accountVersion, never trusts caller state }
     StartConnectionTestRequest:
+      description: Controlled diagnostic accepts credential_pending or ready account with usable credentials and valid owner/config/protocol authorization; it does not grant Task admission. A successful version-bound result can be referenced by explicit account state ready.
       allOf:
         - $ref: '#/components/schemas/RequestEnvelope'
         - type: object
@@ -1495,6 +2187,31 @@ components:
             cacheRetentionDays: { type: integer, minimum: 1 }
             revokedSessionRetentionDays: { type: integer, minimum: 1 }
             reason: { type: string, minLength: 1 }
+    RetentionPreview:
+      type: object
+      required: [previewDigest, policyVersion, cutoffAt, eligibleCount, revokedSessionCount, packageRetention]
+      properties:
+        previewDigest: { type: string, description: Server digest covers policy/cutoffs and all category counts including packageRetention }
+        policyVersion: { type: string }
+        cutoffAt: { type: string, format: date-time }
+        revokedSessionCutoffAt: { type: string, format: date-time }
+        eligibleCount: { type: integer, minimum: 0, description: Existing audit category count; do not silently redefine as aggregate }
+        revokedSessionCount: { type: integer, minimum: 0 }
+        packageRetention:
+          type: object
+          additionalProperties: false
+          required: [failedInstall, stagedPackage]
+          properties:
+            failedInstall: { $ref: '#/components/schemas/RetentionCategoryCounts' }
+            stagedPackage: { $ref: '#/components/schemas/RetentionCategoryCounts' }
+      description: Package categories use frozen 30-day lifecycle timestamps; protected candidates are separate from eligible candidates. Never infer authorization to remove active releases, rollback assets, user data, referenced Artifacts or unresolved receipts from counts alone. RetentionJob deleted/skipped/failure counts retain existing semantics.
+    RetentionCategoryCounts:
+      type: object
+      additionalProperties: false
+      required: [eligibleCount, protectedCount]
+      properties:
+        eligibleCount: { type: integer, minimum: 0 }
+        protectedCount: { type: integer, minimum: 0 }
     RetentionSweepRequest:
       allOf:
         - $ref: '#/components/schemas/RequestEnvelope'
@@ -1552,7 +2269,7 @@ components:
         taskId: { type: string }
         attemptId: { type: string }
         reservedAmount: { type: number, minimum: 0 }
-        state: { type: string, enum: [reserved, settled, released, expired, reconciliation_required] }
+        state: { type: string, enum: [reserved, settled, released, expired, reconciliation_required, needs_review], description: needs_review retains uncertain dispatched usage for evidence-based reconciliation; never blindly re-dispatch Provider }
         expiresAt: { type: string, format: date-time }
     UsageSettlementRequest:
       allOf:
@@ -1578,7 +2295,7 @@ components:
       properties:
         reservationId: { type: string }
         requestId: { type: string }
-        state: { type: string, enum: [settled, released, reconciliation_required] }
+        state: { type: string, enum: [settled, released, reconciliation_required, needs_review] }
         usageEventId: { type: string }
         usageStatus: { type: string, enum: [final, unavailable, estimated] }
     UsagePage:
@@ -1699,6 +2416,7 @@ components:
         source: { type: string, enum: [manifest, user, admin, system] }
     SystemSettingsSnapshot:
       type: object
+      additionalProperties: false
       required: [settingsVersion, appearance, locale, network, grid, restartRequired]
       properties:
         settingsVersion: { type: string }
@@ -1711,14 +2429,15 @@ components:
         restartRequired: { type: boolean }
         affectedServices: { type: array, items: { type: string } }
     SystemSettingsPatch:
-      allOf:
-        - $ref: '#/components/schemas/RequestEnvelope'
-        - type: object
-          required: [baseVersion, domain, patch]
-          properties:
-            baseVersion: { type: string }
-            domain: { type: string, enum: [appearance, locale, network, grid, privacy, appPermissions] }
-            patch: { type: object, additionalProperties: true }
+      type: object
+      additionalProperties: false
+      required: [requestId, baseVersion, domain, patch]
+      description: Unique HTTP projection. Domain fields only in patch; reject old nested patch.domain/value. Merge and validate the full domain under versioned transaction; no partial writes.
+      properties:
+        requestId: { type: string }
+        baseVersion: { type: string }
+        domain: { type: string, enum: [appearance, locale, network, grid, privacy, appPermissions] }
+        patch: { type: object, additionalProperties: true, description: Only declared writable fields of selected domain, no derived effective-value override }
     SystemContextSnapshot:
       type: object
       required: [contextVersion, appId, appearance, locale, networkSummary, grid, windowState, lifecycleState]
@@ -1755,19 +2474,23 @@ components:
       properties:
         requestId: { type: string }
     ProviderConfigInput:
-      allOf:
-        - $ref: '#/components/schemas/RequestEnvelope'
-        - type: object
-          required: [displayName, protocolType, baseUrl, providerAccountId]
-          properties:
-            displayName: { type: string, minLength: 1 }
-            protocolType: { type: string, example: openai-compatible }
-            baseUrl: { type: string, format: uri }
-            providerAccountId: { type: string, description: Existing ProviderAccount reference; credentials remain in SecretService }
-            enabled: { type: boolean, default: true }
+      type: object
+      additionalProperties: false
+      required: [requestId, displayName, protocolType, baseUrl, providerAccountId]
+      properties:
+        requestId: { type: string, format: uuid }
+        displayName: { type: string, minLength: 1 }
+        protocolType: { type: string, example: openai-compatible }
+        baseUrl: { type: string, format: uri }
+        providerAccountId: { type: string, minLength: 1, description: Existing authorized ProviderAccount; credentials remain in SecretService }
+        enabled: { type: boolean, default: true }
+        capabilityProtocolId: { type: string, minLength: 1 }
+        capabilityProtocolVersion: { $ref: '#/components/schemas/ExactProtocolVersion' }
+      allOf: [{ $ref: '#/components/schemas/PairedProtocolBinding' }]
+      description: Explicit immutable capability protocol binding. Supply both ID/version or omit both to use the installed Adapter built-in profile. Validate ownership, active exact version and protocol compatibility; never bind latest implicitly. No credentials in this request.
     ProviderConfig:
       type: object
-      required: [id, protocolType, validationState, adapterVersion]
+      required: [id, protocolType, validationState, adapterVersion, version]
       properties:
         id: { type: string }
         protocolType: { type: string }
@@ -1775,16 +2498,37 @@ components:
         baseUrl: { type: string, format: uri }
         credentialStatus: { type: string, enum: [missing, configured, invalid, unknown] }
         validationState: { type: string, enum: [draft, validating, active, ready, error, disabled, revoked] }
-        adapterVersion: { type: string }
+        adapterVersion: { type: string, minLength: 1, description: Actual bound published Adapter version persisted or verified by reference; no fabricated default or latest-version substitution }
+        version: { type: string, pattern: '^[1-9][0-9]*$', description: Configuration CAS revision, distinct from Adapter version and declaration SemVer }
+        capabilityProtocolId: { type: string, minLength: 1 }
+        capabilityProtocolVersion: { $ref: '#/components/schemas/ExactProtocolVersion' }
+      allOf: [{ $ref: '#/components/schemas/PairedProtocolBinding' }]
     ProviderConfigUpdate:
-      allOf:
-        - $ref: '#/components/schemas/RequestEnvelope'
-        - type: object
-          properties:
-            displayName: { type: string, minLength: 1 }
-            protocolType: { type: string }
-            baseUrl: { type: string, format: uri }
-            enabled: { type: boolean }
+      type: object
+      additionalProperties: false
+      required: [requestId, baseVersion]
+      properties:
+        requestId: { type: string, format: uuid }
+        baseVersion: { type: string, pattern: '^[1-9][0-9]*$' }
+        displayName: { type: string, minLength: 1 }
+        protocolType: { type: string, minLength: 1 }
+        baseUrl: { type: string, format: uri }
+        enabled: { type: boolean }
+        capabilityProtocolId: { type: string, minLength: 1 }
+        capabilityProtocolVersion: { $ref: '#/components/schemas/ExactProtocolVersion' }
+      allOf: [{ $ref: '#/components/schemas/PairedProtocolBinding' }]
+      description: CAS against ProviderConfig.version. Omitted pair preserves binding; supplied pair explicitly selects another active immutable version and requires revalidation before new tasks. Half-pair, null, empty or latest alias rejected. Declaration publication never migrates configs. Body identity/account reassignment not accepted.
+    ExactProtocolVersion:
+      type: string
+      pattern: '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$'
+    PairedProtocolBinding:
+      description: Both explicit references or neither; never infer the missing half from current configuration.
+      oneOf:
+        - required: [capabilityProtocolId, capabilityProtocolVersion]
+        - not:
+            anyOf:
+              - required: [capabilityProtocolId]
+              - required: [capabilityProtocolVersion]
     ProtocolAdapterRegistration:
       type: object
       required: [protocolType, adapterVersion, configSchemaRef, capabilityDescriptorSchemaVersion, status]
@@ -1820,29 +2564,147 @@ components:
         limits: { type: object, additionalProperties: true }
     CapabilityProtocolRegistration:
       type: object
-      required: [schemaVersion, kind, id, executor, capabilities, operations, workflows, modelProfiles]
+      additionalProperties: false
+      required: [schemaVersion, kind, id, version, executor, capabilities, operations, workflows, modelProfiles]
       properties:
         schemaVersion: { type: string, enum: [dgos-capability/v1] }
         kind: { type: string, enum: [model] }
         id: { type: string, pattern: '^[a-z0-9][a-z0-9._-]*$' }
+        version: { type: string, pattern: '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$', description: Immutable exact declaration SemVer, not numeric registry revision }
+        registryVersion: { type: integer, minimum: 1, readOnly: true, description: State concurrency revision incremented on every successful mutation, distinct from declaration version }
+        digest: { type: string, readOnly: true }
         label: { type: string }
         summary: { type: string }
         executor:
           type: object
+          additionalProperties: false
           required: [type, engine]
           properties:
             type: { type: string, enum: [declarative] }
-            engine: { type: string }
-        capabilities: { type: array, items: { type: string } }
-        operations: { type: object, additionalProperties: true }
-        workflows: { type: object, additionalProperties: true }
-        modelProfiles: { type: object, additionalProperties: true }
-        defaults: { type: object, additionalProperties: true }
-        limits: { type: object, additionalProperties: true }
-        uiSchemas: { type: object, additionalProperties: true }
-        assets: { type: object, additionalProperties: true }
-        status: { type: string, enum: [draft, validating, active, rejected, disabled] }
-        sourceRef: { type: string }
+            engine: { type: string, enum: [dgos-text-v1] }
+        capabilities: { type: array, minItems: 1, maxItems: 1, items: { type: string, enum: [text.chat] } }
+        operations: { type: object, minProperties: 1, additionalProperties: { $ref: '#/components/schemas/TextProtocolOperation' } }
+        workflows:
+          type: object
+          additionalProperties: false
+          required: [text.chat]
+          properties:
+            text.chat:
+              type: object
+              additionalProperties: false
+              required: [submit]
+              properties:
+                submit: { type: string, description: Key of a declared text operation; no poll/download/upload or arbitrary workflow }
+        modelProfiles: { type: object, minProperties: 1, additionalProperties: { $ref: '#/components/schemas/TextModelProfile' } }
+        defaults: { $ref: '#/components/schemas/TextProfileDefaults' }
+        limits: { $ref: '#/components/schemas/TextProfileLimits' }
+        uiSchemas: { $ref: '#/components/schemas/TextProfileUi' }
+        assets: { type: object, maxProperties: 0, additionalProperties: false }
+        status: { type: string, enum: [draft, validating, active, rejected, disabled], readOnly: true }
+        sourceRef: { type: string, readOnly: true, description: Controlled provenance assigned by registry, never a fetchable caller URL }
+    TextProtocolOperation:
+      type: object
+      additionalProperties: false
+      required: [profile, method, path]
+      properties:
+        profile: { type: string, enum: [chat.completions, responses] }
+        method: { type: string, enum: [POST] }
+        path: { type: string, enum: [/chat/completions, /responses], description: Must match profile; host/credentials/headers only from installed adapter and ProviderConfig }
+    TextModelProfile:
+      type: object
+      additionalProperties: false
+      required: [modelNames, workflow]
+      properties:
+        modelNames: { type: array, minItems: 1, uniqueItems: true, items: { type: string, minLength: 1 }, description: Exact model IDs or explicitly declared compatible aliases; no guessing or wildcard fallback }
+        workflow: { type: string, enum: [text.chat] }
+        defaults: { $ref: '#/components/schemas/TextProfileDefaults' }
+        limits: { $ref: '#/components/schemas/TextProfileLimits' }
+        uiSchemas: { $ref: '#/components/schemas/TextProfileUi' }
+    TextProfileDefaults:
+      $ref: '#/components/schemas/TextTaskParameters'
+    TextTaskParameters:
+      type: object
+      additionalProperties: false
+      description: Only text parameters recognized by the bound Adapter/model may be sent. Defaults merge by key; tighter descriptor/Profile/platform limits apply server-side. Unsupported parameter, non-finite number or bound violation rejects before Task/reservation/upstream side effects; no clamping/coercion.
+      properties:
+        temperature: { type: number, minimum: 0, maximum: 2 }
+        maxOutputTokens: { type: integer, minimum: 1, maximum: 9007199254740991 }
+    TextProfileLimits:
+      type: object
+      additionalProperties: false
+      properties:
+        maxInputCharacters: { type: integer, minimum: 1 }
+        maxOutputTokens: { type: integer, minimum: 1 }
+    TextProfileUi:
+      type: object
+      additionalProperties: false
+      properties:
+        parameters: { type: array, uniqueItems: true, items: { type: string, enum: [temperature, maxOutputTokens] }, description: Parameters must also be supported by the installed adapter/model descriptor; no script/HTML or arbitrary schema execution }
+    CapabilityProtocolValidationRequest:
+      type: object
+      additionalProperties: false
+      required: [requestId, declaration]
+      properties:
+        requestId: { type: string, format: uuid }
+        declaration: { $ref: '#/components/schemas/CapabilityProtocolRegistration' }
+    CapabilityProtocolPublishRequest:
+      type: object
+      additionalProperties: false
+      required: [requestId, declaration, validationDigest, confirmationId]
+      properties:
+        requestId: { type: string, format: uuid }
+        declaration: { $ref: '#/components/schemas/CapabilityProtocolRegistration' }
+        validationDigest: { type: string, description: Recomputed by server; must bind identical validated declaration }
+        confirmationId: { type: string, format: uuid, description: Ticket from issueCapabilityProtocolConfirmation; same requestId and full binding required }
+    CapabilityProtocolConfirmationRequest:
+      oneOf:
+        - $ref: '#/components/schemas/CapabilityProtocolPublishConfirmation'
+        - $ref: '#/components/schemas/CapabilityProtocolStateConfirmation'
+      discriminator:
+        propertyName: operation
+        mapping:
+          provider.protocol.publish: '#/components/schemas/CapabilityProtocolPublishConfirmation'
+          provider.protocol.state: '#/components/schemas/CapabilityProtocolStateConfirmation'
+    CapabilityProtocolPublishConfirmation:
+      type: object
+      additionalProperties: false
+      required: [requestId, operation, protocolId, version, declaration, validationDigest]
+      properties:
+        requestId: { type: string, format: uuid }
+        operation: { type: string, enum: [provider.protocol.publish] }
+        protocolId: { type: string, description: Must equal declaration.id }
+        version: { type: string, description: Must equal declaration.version; immutable exact SemVer }
+        declaration: { $ref: '#/components/schemas/CapabilityProtocolRegistration' }
+        validationDigest: { type: string, pattern: '^[a-f0-9]{64}$', description: Echo validation digest; server recomputes from validated declaration }
+    CapabilityProtocolStateConfirmation:
+      type: object
+      additionalProperties: false
+      required: [requestId, operation, protocolId, version, baseVersion, state]
+      properties:
+        requestId: { type: string, format: uuid }
+        operation: { type: string, enum: [provider.protocol.state] }
+        protocolId: { type: string, minLength: 1 }
+        version: { type: string, description: Immutable exact declaration SemVer }
+        baseVersion: { type: integer, minimum: 1 }
+        state: { type: string, enum: [active, disabled] }
+    CapabilityProtocolConfirmationReceipt:
+      type: object
+      additionalProperties: false
+      required: [confirmationId, requestId, expiresAt, digest]
+      properties:
+        confirmationId: { type: string, format: uuid }
+        requestId: { type: string, format: uuid }
+        expiresAt: { type: string, format: date-time, description: Five minutes after first issuance; identical reissue never extends it }
+        digest: { type: string, pattern: '^[a-f0-9]{64}$', description: Server-bound declaration digest or state payload digest; no subject/session/secret projection }
+    CapabilityProtocolStateRequest:
+      type: object
+      additionalProperties: false
+      required: [requestId, baseVersion, state, confirmationId]
+      properties:
+        requestId: { type: string, format: uuid }
+        baseVersion: { type: integer, minimum: 1 }
+        state: { type: string, enum: [active, disabled] }
+        confirmationId: { type: string, format: uuid }
     ProviderValidationResult:
       type: object
       required: [provider, descriptor]
@@ -1889,15 +2751,29 @@ components:
       pattern: '^[a-z][a-z0-9-]*$'
       description: Registered DGOS model capability. The registry may describe text, image-generation, video-generation, audio-generation, understanding and embedding capabilities; V1 task execution exposes text only, while media execution requires a later version gate.
     AITaskSubmitRequest:
-      allOf:
-        - $ref: '#/components/schemas/RequestEnvelope'
-        - type: object
-          required: [target, intent, input]
+      type: object
+      additionalProperties: false
+      required: [requestId, target, intent, input, options]
+      properties:
+        requestId: { type: string, format: uuid }
+        target: { type: string, minLength: 1, description: Registered authorized text target; never caller URL }
+        intent: { type: string, enum: [text.chat] }
+        input:
+          type: object
+          additionalProperties: false
+          required: [text]
           properties:
-            target: { type: string }
-            intent: { type: string, description: V1 executable intent is text.chat; media intents require a later version gate }
-            input: { type: object, additionalProperties: true }
-            options: { type: object, additionalProperties: true }
+            text: { type: string, description: Count Unicode scalar values against effective maxInputCharacters; do not silently truncate }
+        options: { $ref: '#/components/schemas/TextTaskOptions' }
+      description: Server normalizes parameters and persists a versioned resolved execution snapshot atomically with admission, Task/Attempt, reservation and audit. Same authorized requestId/input replays the original task before resolving current defaults. Dispatch rechecks current admission but executes the saved parameters/Profile snapshot; no mutable-default reread. See V1-Provider绑定与文本参数契约.md.
+    TextTaskOptions:
+      type: object
+      additionalProperties: false
+      required: [providerConfigId, modelId]
+      properties:
+        providerConfigId: { type: string, minLength: 1 }
+        modelId: { type: string, minLength: 1 }
+        parameters: { $ref: '#/components/schemas/TextTaskParameters' }
     AITaskReceipt:
       type: object
       required: [taskId, requestId, status]
@@ -1914,7 +2790,12 @@ components:
         status: { type: string, enum: [accepted, queued, running, succeeded, completed, failed, cancel_requested, cancelled, timed_out] }
         text: { type: string, description: Current sanitized text summary }
         artifactIds: { type: array, items: { type: string } }
-        error: { type: object, additionalProperties: true }
+        error:
+          type: object
+          properties:
+            errorKey: { type: string, description: upstream_outcome_unknown means an attempted dispatch cannot be proven complete after recovery; Task stays failed and no automatic Provider resend is permitted }
+            message: { type: string }
+            retryable: { type: boolean, description: false for upstream_outcome_unknown }
     AITaskEvent:
       type: object
       required: [eventId, taskId, sequence, type, createdAt]
@@ -1927,31 +2808,11 @@ components:
         snapshot: { $ref: '#/components/schemas/AITaskSnapshot' }
         createdAt: { type: string, format: date-time }
     ExtensionStateRequest:
-      allOf:
-        - $ref: '#/components/schemas/RequestEnvelope'
-        - type: object
-          required: [desiredState]
-          properties:
-            desiredState: { type: string, enum: [enabled, disabled, configured, disconnected] }
-            config: { type: object, additionalProperties: true }
+      $ref: 'V1-extension.openapi.yaml#/components/schemas/StateRequest'
     ExtensionInstallRequest:
-      allOf:
-        - $ref: '#/components/schemas/RequestEnvelope'
-        - type: object
-          required: [source]
-          properties:
-            source: { type: string, description: Registry or local package reference; not an executable command }
-            version: { type: string }
-            config: { type: object, additionalProperties: true }
+      $ref: 'V1-extension.openapi.yaml#/components/schemas/InstallRequest'
     ExtensionRecord:
-      type: object
-      required: [id, kind, state]
-      properties:
-        id: { type: string }
-        kind: { type: string, enum: [skill, mcp] }
-        state: { type: string }
-        version: { type: string }
-        credentialStatus: { type: string, enum: [not_required, missing, configured, invalid] }
+      $ref: 'V1-extension.openapi.yaml#/components/schemas/Record'
     ExtensionList:
       type: object
       required: [items]
@@ -2016,6 +2877,10 @@ components:
         taskId: { type: string }
         status: { type: string, enum: [planned, awaiting-confirmation, authorized, running, succeeded, denied, cancelled, failed, expired, missing] }
         result: { type: object, additionalProperties: true }
+        resultSummary:
+          type: object
+          properties:
+            navigation: { $ref: '#/components/schemas/ActionNavigation' }
         error: { type: object, additionalProperties: true }
 x-dgos-implementation-status: planned
 x-dgos-contract-authority: "docs/04-技术架构/当前版本/V1-接口契约.md"

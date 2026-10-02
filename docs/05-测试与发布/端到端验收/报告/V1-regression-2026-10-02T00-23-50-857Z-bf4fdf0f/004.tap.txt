@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: same MCP ID is isolated across subjects and disconnects
+ok 1 - same MCP ID is isolated across subjects and disconnects
+  ---
+  duration_ms: 72.253833
+  type: 'test'
+  ...
+# Subtest: API connect records intent without pretending another process owns transport
+ok 2 - API connect records intent without pretending another process owns transport
+  ---
+  duration_ms: 3.549625
+  type: 'test'
+  ...
+# Subtest: audit failure keeps connection intent and terminal Run uncommitted
+ok 3 - audit failure keeps connection intent and terminal Run uncommitted
+  ---
+  duration_ms: 1.728791
+  type: 'test'
+  ...
+# Subtest: G deployment adapter requires active release, dependency, and capability
+ok 4 - G deployment adapter requires active release, dependency, and capability
+  ---
+  duration_ms: 0.25425
+  type: 'test'
+  ...
+# Subtest: cancel from API instance aborts handler running in another service instance
+ok 5 - cancel from API instance aborts handler running in another service instance
+  ---
+  duration_ms: 52.186875
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 185.898708

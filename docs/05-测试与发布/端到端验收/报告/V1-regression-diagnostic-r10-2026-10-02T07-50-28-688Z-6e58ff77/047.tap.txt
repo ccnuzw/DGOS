@@ -1,0 +1,100 @@
+TAP version 13
+# Subtest: provider workflow harness rejects a nonrandom Verify parent before database work
+ok 1 - provider workflow harness rejects a nonrandom Verify parent before database work
+  ---
+  duration_ms: 185.744083
+  type: 'test'
+  ...
+# Subtest: candidate plan classifies root tests without worktree discovery or unsafe DB fallback
+ok 2 - candidate plan classifies root tests without worktree discovery or unsafe DB fallback
+  ---
+  duration_ms: 11.238833
+  type: 'test'
+  ...
+# Subtest: five-group child environment removes inherited storage URLs and uses workflow CHILD
+ok 3 - five-group child environment removes inherited storage URLs and uses workflow CHILD
+  ---
+  duration_ms: 0.46875
+  type: 'test'
+  ...
+# Subtest: frozen migration selection and TAP failures stay strict
+ok 4 - frozen migration selection and TAP failures stay strict
+  ---
+  duration_ms: 0.652666
+  type: 'test'
+  ...
+# Subtest: requirement registry preserves 62 AC, 12 E2E, 7 NFR and 3 RG and defaults to uncovered
+ok 5 - requirement registry preserves 62 AC, 12 E2E, 7 NFR and 3 RG and defaults to uncovered
+  ---
+  duration_ms: 4.467292
+  type: 'test'
+  ...
+# Subtest: Provider receipt must name one exact report/log/manifest stem
+ok 6 - Provider receipt must name one exact report/log/manifest stem
+  ---
+  duration_ms: 0.538834
+  type: 'test'
+  ...
+# memory tests/tooling/v1-acceptance-tooling.test.mjs: exit=2 tests=1 pass=0 fail=1 skip=0
+# memory tests/tooling/verify-release.test.mjs: exit=0 tests=1 pass=1 fail=0 skip=0
+# pg tests/tooling/v1-acceptance-tooling.test.mjs: exit=0 tests=1 pass=1 fail=0 skip=0
+# redis tests/tooling/v1-acceptance-tooling.test.mjs: exit=0 tests=1 pass=1 fail=0 skip=0
+# tls tests/tooling/v1-acceptance-tooling.test.mjs: exit=0 tests=1 pass=1 fail=0 skip=0
+# guarded tests/tooling/v1-acceptance-tooling.test.mjs: exit=0 tests=1 pass=1 fail=0 skip=0
+# Subtest: five groups write paired manifests, continue independent failures and drop exact PG children
+ok 7 - five groups write paired manifests, continue independent failures and drop exact PG children
+  ---
+  duration_ms: 34.303333
+  type: 'test'
+  ...
+# Subtest: skipped or excluded tests and source drift cannot complete a candidate
+ok 8 - skipped or excluded tests and source drift cannot complete a candidate
+  ---
+  duration_ms: 0.153833
+  type: 'test'
+  ...
+# Subtest: candidate groups compose only with complete matching source, build, assets and cases
+ok 9 - candidate groups compose only with complete matching source, build, assets and cases
+  ---
+  duration_ms: 2.474291
+  type: 'test'
+  ...
+# Subtest: candidate file bindings detect changed logs and runtime assets
+ok 10 - candidate file bindings detect changed logs and runtime assets
+  ---
+  duration_ms: 17.745042
+  type: 'test'
+  ...
+# Subtest: a hashed replacement log without a business assertion does not cover the placeholder
+ok 11 - a hashed replacement log without a business assertion does not cover the placeholder
+  ---
+  duration_ms: 12.349625
+  type: 'test'
+  ...
+# Subtest: unchanged HTML cannot hide changed or omitted dist JavaScript
+ok 12 - unchanged HTML cannot hide changed or omitted dist JavaScript
+  ---
+  duration_ms: 15.313875
+  type: 'test'
+  ...
+# Subtest: optional native app binding checks actual bundle files
+ok 13 - optional native app binding checks actual bundle files
+  ---
+  duration_ms: 13.081208
+  type: 'test'
+  ...
+# Subtest: command registry contains only actual narrow entries and keeps release binding enabled
+ok 14 - command registry contains only actual narrow entries and keeps release binding enabled
+  ---
+  duration_ms: 0.4665
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 448.213

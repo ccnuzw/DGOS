@@ -1,6 +1,6 @@
 # V1 DGOS 应用清单与运行时契约
 
-> 状态：设计基线，待 ADR 和字段级 schema 冻结。本文定义 DGOS 应用平台的公共语义，不代表当前仓库已经有对应实现。
+> 状态：设计基线；2026-10-02 P0-DOC r1 收敛FR-002字段，机器权威为 [manifest schema](V1-app-manifest.schema.json) 和 [OpenAPI](V1-openapi.yaml)。未覆盖的宿主/发行验证仍需证据。本文不声明实现完成。
 
 ## 1. 目标与范围
 
@@ -26,9 +26,17 @@ example.dgosapp/
 
 包校验必须确认：manifest 可解析、`appId`/版本合法、入口和资源存在、声明的依赖可解析、权限和能力白名单格式正确、包内容未超出允许路径、签名/来源校验（启用时）通过。未知安装脚本不得在校验或安装阶段自动执行。
 
+### 2.1 V1 首批签名 envelope（2026-10-02）
+
+Lead已确认工程方案：OpenAPI `AppPackageEnvelope`承载requestId及`{manifest, files, resourceDigests, keyId, signature}`。files是规范化包内相对路径到严格base64字节；resourceDigests与files键集合完全相同，逐项为重算的`sha256:<hex>`。Ed25519签名覆盖UTF-8 canonical JSON `{manifest,resourceDigests}`；对象键逐层按Unicode代码单元排序，数组顺序不变，使用无空格JSON序列化，字符串不做Unicode归一化，拒绝重复键、非有限数、非安全整数及非JSON值。实现不可依赖数字样式对象键的枚举重排；必须按排序结果输出键。包digest为这些签名字节的SHA-256，requestId/files/base64表示方式不参与签名；解码后资源摘要必须一致。
+
+可信根由operator在请求之外配置：`keyId → {publicKey, source, revoked}`，source只有official/admin/developer；有效信任与受保护预装另由平台授权策略授予。body不能提供公钥、source、catalogState或有效信任。official签名可进入官方目录，admin/developer仍需审核；测试安装独立授权。旧本地fixture使用测试密钥和显式fixture升级，不能冒充生产可信根。
+
+首批工程默认限制1000文件、总解码32 MiB，均可由operator配置并在启动时固定；网关/API还须设含base64开销的编码体限制。超限413；签名/摘要/路径失败422或来源拒绝403；版本冲突409。受控错误使用ErrorResponse，不泄露宿主路径。该配置限制不是新增业务承诺。真实签名发行、撤销/轮换和生产根配置仍须独立留证。
+
 ## 3. Manifest 设计基线
 
-以下示例是 DGOS 自有字段草案。字段名在 ADR 冻结前可以调整，但语义不能被省略或改成隐式约定。
+以下示例使用DGOS自有manifest v1；字段约束以机器schema为准。来源、审核状态与有效信任是安装平台事实，不能由开发者提交值授予。最小迁移边界见[工程核查](V1-应用与扩展工程契约核查.md)。
 
 ```json
 {
@@ -43,6 +51,7 @@ example.dgosapp/
   "description": { "zh-CN": "应用说明", "en-US": "Application description" },
   "category": "creative",
   "trustLevel": "standard",
+  "uninstallPolicy": "user-removable",
   "entrypoints": {
     "main": "entries/main.html"
   },
@@ -67,7 +76,7 @@ example.dgosapp/
   "agent": null,
   "dataMigration": {
     "from": [0],
-    "entry": "migrations/1.js"
+    "entry": "migrations/1.json"
   }
 }
 ```
@@ -81,13 +90,13 @@ example.dgosapp/
 | `version` | 是 | SemVer 兼容版本；同一渠道不得覆盖已发布版本 |
 | `build` | 是 | 同一 `version` 内单调递增的不可覆盖构建号 |
 | `releaseChannel` | 是 | `stable`、`beta` 或待冻结的开发渠道；必须与发布目标一致 |
-| 目录准入语义（示例字段 `catalogApprovalState`，名称/类型 Draft） | 是，语义必需 | 普通用户目录仅展示 DGOS 官方发行或管理员批准版本；待审核/拒绝/撤回版本不可安装 |
-| 预装卸载策略语义（示例字段 `uninstallPolicy`，名称/类型 Draft） | 预装包必需 | 区分可卸载与受保护预装；策略由发行方/管理员控制，应用不能自行放宽 |
+| `catalogState`（平台记录，非manifest输入） | 平台必需 | `official/pending_review/approved/rejected/withdrawn`；来源验证或管理员审核产生，普通用户仅可安装official/approved |
+| `uninstallPolicy` | 是 | `user-removable/protected-preinstall`；声明须发行策略授权，有效策略由平台记录；开发者不能自行将应用设为不可卸载 |
 | `minRuntimeVersion` | 是 | 能运行此包的最低 DGOS 运行时版本 |
 | `dataVersion` | 是 | 应用持久数据 schema 版本；变化必须有迁移或明确拒绝升级 |
 | `name`/`description` | 是 | 至少提供 `zh-CN` 和 `en-US`，运行时根据系统 locale 选择回退 |
 | `category` | 是 | 应用目录分类；枚举由 DGOS 目录服务维护 |
-| `trustLevel` | 是 | `standard`、`trusted`、`system`；不能由应用自行提升 |
+| `trustLevel` | 是 | manifest中为请求值`standard/trusted/system`；平台根据签名来源和明确授权计算有效值，目录响应的trustLevel为有效值，不能从声明直接复制 |
 | `entrypoints` | 是 | 命名入口到包内相对路径的映射；路径不能越出包根目录 |
 | `defaultWindow` | 是 | 默认窗口边界；系统仍可最小化、最大化和恢复窗口 |
 | `backgroundPolicy` | 是 | `release` 或 `keep-alive`；后台驻留须有权限和资源预算 |
@@ -168,6 +177,8 @@ V1 逻辑能力命名沿用现有 DGOS 约定：
 应用卸载、停用、删除应用数据、删除项目数据是四个不同操作。默认卸载只移除代码和运行注册，不删除项目、Artifact 或用户设置；危险删除必须单独确认并写审计记录。普通用户只能从 `official` 或 `approved` 目录安装、更新和卸载；开发者未审核包仅可由有权限主体测试安装。`protected-preinstall` 应用的普通用户卸载请求在副作用前拒绝并记录原因；`user-removable` 预装应用可按普通用户策略卸载。
 
 ## 7. 安装、更新、迁移与回滚
+
+P0-DOC r2：entry是签名包资源路径；原.js为示例而非强制JS执行。D030/D033/D035及ADR-0006要求受控迁移、可恢复和数据保留，并未批准通用脚本系统。首批[JSON迁移schema](V1-app-data-migration.schema.json)采用签名moves声明；备份/journal/回滚及实例SDK、actions/dependencies的精确约束见[实例契约](V1-应用实例与SDK桥接契约.md)。无法表达的升级拒绝并保留旧数据，不默认执行任意代码。
 
 1. `discover`：读取包元数据和来源。
 2. `validate`：校验 manifest、资源、依赖、权限、签名/来源和运行时兼容性。
@@ -257,9 +268,9 @@ V1 只预留协作能力边界，不交付多人项目。后续协作版本必�
 | AI 边界 | 应用拿不到供应商密钥、endpoint、轮询地址和临时下载地址 | V1-E2E-05/07 |
 | 扩展审计 | Skill/MCP/Agent 调用、权限和失败原因可追踪 | V1-E2E-03/07 |
 
-## 10. 待 ADR 冻结
+## 10. 后续工程与验证边界
 
-- manifest 的最终格式版本、签名和来源信任链。
+- manifest格式与核心字段以本页机器schema为准；签名封装、可信根配置及真实发行验证由包工作包提交并在公开前登记。源码或本地fixture不能自称官方信任根。
 - `permissions`、`capabilityAllowlist`、`backgroundPolicy` 和 `trustLevel` 的公开枚举。
 - 桌面与 HTTPS Web 的容器隔离方式和能力差异。
 - SDK 入口、事件订阅、错误包体、requestId/correlationId 和版本协商。

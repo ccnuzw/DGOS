@@ -2,13 +2,28 @@
   "name": "@dgos/web",
   "private": true,
   "type": "module",
+  "dependencies": {
+    "@dgos/app-shell": "workspace:*",
+    "@dgos/design-tokens": "workspace:*",
+    "@dgos/dgos-ui": "workspace:*",
+    "@dgos/host-adapter-web": "workspace:*",
+    "lucide-react": "^0.468.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
   "devDependencies": {
-    "@playwright/test": "^1.63.0"
+    "@playwright/test": "^1.63.0",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "@types/node": "^22.15.30",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.5"
   },
   "scripts": {
-    "build": "node --check src/main.js && node -e \"const fs=require('fs'); for (const f of ['index.html','src/style.css']) if (!fs.existsSync(f)) process.exit(1)\"",
-    "check": "node --check src/main.js",
+    "build": "tsc --noEmit && vite build",
+    "check": "tsc --noEmit",
     "start": "node scripts/serve.mjs",
+    "dev": "vite --host 127.0.0.1",
     "e2e": "playwright test -c playwright.config.mjs"
   }
 }

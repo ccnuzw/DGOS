@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:dgos:app-data-migration:v1",
+  "title": "V1 bounded reversible application JSON data migration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["moves"],
+  "properties": {
+    "moves": {
+      "type": "array", "maxItems": 100,
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["from", "to"],
+        "properties": {
+          "from": { "$ref": "#/$defs/key" }, "to": { "$ref": "#/$defs/key" }
+        }
+      },
+      "description": "Move existing top-level JSON fields, preserving values exactly. Sources and destinations must each be unique, distinct and non-overlapping across moves. Existing destination conflicts reject the whole migration; missing source is a no-op. No destructive delete, expressions, filesystem path or external IO."
+    }
+  },
+  "$defs": { "key": { "type": "string", "pattern": "^[a-z][a-z0-9_]{0,63}$", "not": { "enum": ["constructor", "prototype", "__proto__"] } } }
+}

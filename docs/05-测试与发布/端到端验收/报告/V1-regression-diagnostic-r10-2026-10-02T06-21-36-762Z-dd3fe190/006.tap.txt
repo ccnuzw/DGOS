@@ -1,0 +1,58 @@
+TAP version 13
+# Subtest: server-owned stdio profile keeps MCP process through calls and stops on disconnect
+ok 1 - server-owned stdio profile keeps MCP process through calls and stops on disconnect
+  ---
+  duration_ms: 37.750958
+  type: 'test'
+  ...
+# Subtest: server-owned stdio credential field reaches child without caller env control
+ok 2 - server-owned stdio credential field reaches child without caller env control
+  ---
+  duration_ms: 34.769708
+  type: 'test'
+  ...
+# Subtest: stdio sandbox rejects workspace-wide and secret profile roots before process start
+ok 3 - stdio sandbox rejects workspace-wide and secret profile roots before process start
+  ---
+  duration_ms: 2.022459
+  type: 'test'
+  ...
+# Subtest: macOS sandbox profile executes fixture while denying filesystem writes
+ok 4 - macOS sandbox profile executes fixture while denying filesystem writes
+  ---
+  duration_ms: 45.037708
+  type: 'test'
+  ...
+# Subtest: server-owned HTTP endpoint completes MCP initialize, discovery, call, and disconnect
+ok 5 - server-owned HTTP endpoint completes MCP initialize, discovery, call, and disconnect
+  ---
+  duration_ms: 22.107209
+  type: 'test'
+  ...
+# Subtest: server-owned HTTP credential header reaches MCP and is required
+ok 6 - server-owned HTTP credential header reaches MCP and is required
+  ---
+  duration_ms: 9.898542
+  type: 'test'
+  ...
+# Subtest: HTTP MCP egress rejects private HTTPS addresses before transport
+ok 7 - HTTP MCP egress rejects private HTTPS addresses before transport
+  ---
+  duration_ms: 0.615667
+  type: 'test'
+  ...
+# Subtest: service invokes persisted run through persistent stdio MCP transport
+ok 8 - service invokes persisted run through persistent stdio MCP transport
+  ---
+  duration_ms: 38.435292
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 254.352375

@@ -1,0 +1,17 @@
+.git
+.herdr
+.worktrees
+node_modules
+**/node_modules
+**/dist
+apps/desktop/src-tauri/target
+apps/desktop/src-tauri/gen
+docs
+tests
+*.md
+*.log
+*.key
+*.pem
+*.backup
+*.tar
+*.tgz

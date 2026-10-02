@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: permission ignores caller declared list, deny wins, and failed audit does not publish memory state
+ok 1 - permission ignores caller declared list, deny wins, and failed audit does not publish memory state
+  ---
+  duration_ms: 1.893791
+  type: 'test'
+  ...
+# Subtest: server-owned system declaration remains available without caller declared input
+ok 2 - server-owned system declaration remains available without caller declared input
+  ---
+  duration_ms: 0.834
+  type: 'test'
+  ...
+# Subtest: package declaration requires manifest capability and registered handler
+ok 3 - package declaration requires manifest capability and registered handler
+  ---
+  duration_ms: 0.466625
+  type: 'test'
+  ...
+# Subtest: public declaration preserves frozen enums and body appId cannot replace action owner
+ok 4 - public declaration preserves frozen enums and body appId cannot replace action owner
+  ---
+  duration_ms: 1.591416
+  type: 'test'
+  ...
+# Subtest: PostgreSQL permission transaction and package action lifecycle isolate subjects
+ok 5 - PostgreSQL permission transaction and package action lifecycle isolate subjects
+  ---
+  duration_ms: 103.395709
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 160.674833

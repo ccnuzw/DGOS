@@ -1,0 +1,7 @@
+# V1 proxy credential input proposal to Planner (read-only contract request)
+
+1. `POST /api/v1/system/network/proxy-credentials`: fresh admin session, CSRF, `system.settings.write`; body `{requestId, endpoint, username?, password?}`. Require HTTPS proxy endpoint and validate host, port and credential form through existing proxy policy. Do not accept a caller-chosen `secretRef`.
+2. Store canonical JSON `{url, authorization?}` through Secret Service `put({secretRef: generatedOpaqueRef, value: JSON.stringify(config), purpose: 'network-proxy', subjectId: 'system'})`; never return or log input credentials. Return `{manualProxyRef, status: 'stored'}` only.
+3. For retry, bind `requestId` to an HMAC of canonical input plus actor and operation in durable receipt storage; exact retry returns the same ref, changed payload yields conflict. Avoid plaintext or raw hashes of low-entropy passwords in receipts/audit.
+4. On write failure return unavailable without a ref; on receipt failure after secret put, revoke the newly generated ref before returning failure, and reconcile failed revocation through an outbox. Rotation creates a new ref; define retention/revoke of the old ref after settings switch and restart acknowledgement.
+5. Provisioning alone must not change routing. A separate Settings PATCH sets `proxyMode: 'manual'` and `manualProxyRef`; restart activation remains required. Planner should freeze DTO, permission, error codes, TTL/rotation and compensation semantics before route implementation.

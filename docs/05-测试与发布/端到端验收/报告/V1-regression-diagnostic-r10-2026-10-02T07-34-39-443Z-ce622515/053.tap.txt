@@ -1,0 +1,58 @@
+TAP version 13
+# Subtest: manifest validation and digest
+ok 1 - manifest validation and digest
+  ---
+  duration_ms: 1.867541
+  type: 'test'
+  ...
+# Subtest: catalog visibility and developer test install
+ok 2 - catalog visibility and developer test install
+  ---
+  duration_ms: 1.435459
+  type: 'test'
+  ...
+# Subtest: health failure rolls back and uninstall retains data
+ok 3 - health failure rolls back and uninstall retains data
+  ---
+  duration_ms: 0.59925
+  type: 'test'
+  ...
+# Subtest: permission deny precedence and revoke
+ok 4 - permission deny precedence and revoke
+  ---
+  duration_ms: 0.576083
+  type: 'test'
+  ...
+# Subtest: permission request transitions are expiring, idempotent and race-safe
+ok 5 - permission request transitions are expiring, idempotent and race-safe
+  ---
+  duration_ms: 0.689542
+  type: 'test'
+  ...
+# Subtest: action plan has no handler side effect and executes once
+ok 6 - action plan has no handler side effect and executes once
+  ---
+  duration_ms: 4.208083
+  type: 'test'
+  ...
+# Subtest: action run lease heartbeat and reclaim preserve exactly-once execution
+ok 7 - action run lease heartbeat and reclaim preserve exactly-once execution
+  ---
+  duration_ms: 83.849333
+  type: 'test'
+  ...
+# Subtest: settings optimistic concurrency and context redaction
+ok 8 - settings optimistic concurrency and context redaction
+  ---
+  duration_ms: 2.316709
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 145.564583

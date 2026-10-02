@@ -1,0 +1,20 @@
+{
+  "format": "dgos-app/v1",
+  "appId": "dgos.ai-workbench",
+  "version": "1.0.1",
+  "build": 2,
+  "releaseChannel": "stable",
+  "minRuntimeVersion": "1.0.0",
+  "dataVersion": 1,
+  "name": { "zh-CN": "DGOS AI 工作台", "en-US": "DGOS AI Workbench" },
+  "description": { "zh-CN": "AI 任务工作台", "en-US": "AI task workbench" },
+  "category": "productivity",
+  "icon": "icon.svg",
+  "defaultWindow": { "width": 920, "height": 720, "minWidth": 640, "minHeight": 480, "resizable": true, "maximizable": true },
+  "entrypoints": { "web": "index.html" },
+  "permissions": ["dgos.model.list", "dgos.model.resolve", "dgos.aiTask.submit", "dgos.aiTask.get", "dgos.aiTask.events", "dgos.aiTask.cancel", "dgos.artifact.read", "dgos.system.context.read", "dgos.system.context.events"],
+  "capabilityAllowlist": ["dgos.model.list", "dgos.model.resolve", "dgos.aiTask.submit", "dgos.aiTask.get", "dgos.aiTask.events", "dgos.aiTask.cancel", "dgos.artifact.read", "dgos.system.context.read", "dgos.system.context.events"],
+  "trustLevel": "standard",
+  "uninstallPolicy": "user-removable",
+  "backgroundPolicy": "release"
+}

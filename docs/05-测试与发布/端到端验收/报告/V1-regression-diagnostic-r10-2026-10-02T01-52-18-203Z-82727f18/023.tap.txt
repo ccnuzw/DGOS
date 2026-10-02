@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: passive expiry and recovery emit one context event and audit under concurrent API reads
+ok 1 - passive expiry and recovery emit one context event and audit under concurrent API reads # SKIP isolated network database required
+  ---
+  duration_ms: 0.469959
+  type: 'test'
+  ...
+# Subtest: in-memory repository reconciles expiry and recovery without duplicate events
+ok 2 - in-memory repository reconciles expiry and recovery without duplicate events
+  ---
+  duration_ms: 0.592875
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 1
+# todo 0
+# duration_ms 65.223875

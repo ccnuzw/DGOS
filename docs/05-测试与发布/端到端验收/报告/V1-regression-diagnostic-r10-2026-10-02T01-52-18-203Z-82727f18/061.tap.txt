@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: candidate plan classifies root tests without worktree discovery or unsafe DB fallback
+ok 1 - candidate plan classifies root tests without worktree discovery or unsafe DB fallback
+  ---
+  duration_ms: 3.494208
+  type: 'test'
+  ...
+# Subtest: skipped or excluded tests and source drift cannot complete a candidate
+ok 2 - skipped or excluded tests and source drift cannot complete a candidate
+  ---
+  duration_ms: 0.199083
+  type: 'test'
+  ...
+# Subtest: candidate groups compose only with complete matching source, build, assets and cases
+ok 3 - candidate groups compose only with complete matching source, build, assets and cases
+  ---
+  duration_ms: 3.002666
+  type: 'test'
+  ...
+# Subtest: candidate file bindings detect changed logs and runtime assets
+ok 4 - candidate file bindings detect changed logs and runtime assets
+  ---
+  duration_ms: 8.400292
+  type: 'test'
+  ...
+# Subtest: command registry contains only actual narrow entries and keeps release binding enabled
+ok 5 - command registry contains only actual narrow entries and keeps release binding enabled
+  ---
+  duration_ms: 0.469792
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 77.930083

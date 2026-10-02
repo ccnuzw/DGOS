@@ -1,0 +1,24 @@
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { createHash, createPrivateKey, randomUUID, sign } from 'node:crypto';
+import { resolve, join } from 'node:path';
+import { canonicalJson, verifyPackage } from '../src/apps/package-service.mjs';
+import { createPublicKey } from 'node:crypto';
+
+const option = (name) => { const index = process.argv.indexOf(name); return index < 0 ? undefined : process.argv[index + 1]; };
+const source = resolve(option('--source') ?? 'apps/ai-workbench-package');
+const positionalOutput = process.argv.slice(2).find((value, index, args) => value !== '--source' && value !== '--output' && args[index - 1] !== '--source' && args[index - 1] !== '--output');
+const output = resolve(option('--output') ?? positionalOutput ?? 'apps/ai-workbench-package/dist');
+const privateKeyPath = process.env.DGOS_BUNDLE_SIGNING_KEY_FILE;
+const keyId = process.env.DGOS_BUNDLE_SIGNING_KEY_ID;
+if (!privateKeyPath || !keyId) throw new Error('operator_signing_key_required');
+const privateKey = createPrivateKey(await readFile(privateKeyPath));
+if (privateKey.asymmetricKeyType !== 'ed25519') throw new Error('ed25519_signing_key_required');
+const manifest = JSON.parse(await readFile(join(source, 'manifest.json'), 'utf8'));
+const paths = ['index.html', 'tokens.css', 'workbench.css', 'workbench.js', 'icon.svg'];
+const files = Object.fromEntries(await Promise.all(paths.map(async (path) => [path, (await readFile(path === 'tokens.css' ? resolve('packages/design-tokens/src/tokens.css') : join(source, path))).toString('base64')])));
+const resourceDigests = Object.fromEntries(paths.map((path) => [path, `sha256:${createHash('sha256').update(Buffer.from(files[path], 'base64')).digest('hex')}`]));
+const signature = sign(null, Buffer.from(canonicalJson({ manifest, resourceDigests })), privateKey).toString('base64');
+verifyPackage({ manifest, files, resourceDigests, keyId, signature }, new Map([[keyId, { publicKey: createPublicKey(privateKey), source: 'official' }]]));
+await mkdir(output, { recursive: true });
+await writeFile(join(output, 'ai-workbench-envelope.json'), JSON.stringify({ requestId: randomUUID(), manifest, files, resourceDigests, keyId, signature }, null, 2));
+console.log(join(output, 'ai-workbench-envelope.json'));

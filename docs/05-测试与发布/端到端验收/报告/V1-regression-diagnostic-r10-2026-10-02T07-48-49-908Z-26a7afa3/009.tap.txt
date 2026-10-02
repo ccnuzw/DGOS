@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: public ProviderConfig to text task API supports explicit refresh, idempotency, SSE resume and artifact authorization
+ok 1 - public ProviderConfig to text task API supports explicit refresh, idempotency, SSE resume and artifact authorization
+  ---
+  duration_ms: 93.333875
+  type: 'test'
+  ...
+# Subtest: quota preflight rejection creates no task, attempt or reservation
+ok 2 - quota preflight rejection creates no task, attempt or reservation
+  ---
+  duration_ms: 13.73875
+  type: 'test'
+  ...
+# Subtest: provider failure settles quota exactly once
+ok 3 - provider failure settles quota exactly once
+  ---
+  duration_ms: 33.785792
+  type: 'test'
+  ...
+# Subtest: task cancellation releases quota exactly once
+ok 4 - task cancellation releases quota exactly once
+  ---
+  duration_ms: 54.008542
+  type: 'test'
+  ...
+# Subtest: provider timeout settles quota with estimated usage exactly once
+ok 5 - provider timeout settles quota with estimated usage exactly once
+  ---
+  duration_ms: 33.196792
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 429.047958

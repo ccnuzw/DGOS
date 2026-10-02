@@ -1,0 +1,51 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { randomUUID } from 'node:crypto';
+import Fastify from '../../apps/api/node_modules/fastify/fastify.js';
+import { registerExtensionRoutes } from '../../apps/api/src/extension-routes.mjs';
+import { ExtensionSourceResolver } from '../../src/extensions/source-resolver.mjs';
+import { InMemoryExtensionRepository } from '../../src/extensions/repository.mjs';
+import { InMemoryAuditRepository } from '../../src/audit/outbox.mjs';
+
+test('extension route projection injects auth subject and exposes SSE run events', async()=>{
+  const app=Fastify(); const subjectId=randomUUID(); const repository=new InMemoryExtensionRepository(); const resolver=new ExtensionSourceResolver();
+  resolver.register('bundled:http_fixture',{trustState:'trusted',manifest:{kind:'mcp',id:'http_fixture',version:'1.0.0',operations:[{operationId:'echo',permission:'mcp.tool.invoke',risk:'low',sideEffects:false,inputSchema:{type:'object',required:['value'],properties:{value:{type:'string'}}}}]}});
+  const service=registerExtensionRoutes(app,{repository,audit:new InMemoryAuditRepository(),permissions:{check:async()=>({decision:'allow'})},sourceResolver:resolver,runner:{connect:async()=>[{operationId:'echo'}],invoke:async({input})=>({value:input.value}),disconnect:async()=>({stopped:true})},requireScope:async()=>({subjectId}),validateCsrf:async()=>{},appAccess:async()=>true,verifyConfirmation:async({confirmationId,requestId})=>confirmationId===`${requestId}:test`});
+  const post=(url,body)=>app.inject({method:'POST',url,payload:body});
+  try {
+    const previewResponse=await post('/api/v1/extensions/previews',{kind:'mcp',source:'bundled:http_fixture',requestId:randomUUID()});
+    assert.equal(previewResponse.statusCode,200); const preview=previewResponse.json(); assert.equal(preview.trustState,'verified');
+    const installedResponse=await post('/api/v1/mcp',{requestId:randomUUID(),source:'bundled:http_fixture',previewId:preview.previewId,previewDigest:preview.digest,confirmed:true});
+    assert.equal(installedResponse.statusCode,202); const installed=installedResponse.json(); assert.equal(installed.stateVersion,1);
+    const enabled=(await post('/api/v1/mcp/http_fixture/state',{requestId:randomUUID(),baseVersion:1,desiredState:'enabled'})).json();
+    const connected=(await post('/api/v1/mcp/http_fixture/connect',{requestId:randomUUID(),baseVersion:enabled.stateVersion})).json();
+    assert.equal(connected.connectionState,'connecting');
+    await service.processConnectionIntents();
+    const conflict=await post('/api/v1/mcp/http_fixture/connect',{requestId:randomUUID(),baseVersion:enabled.stateVersion,id:'other'});
+    assert.equal(conflict.statusCode,422);
+    const wrongKind=await post('/api/v1/mcp',{requestId:randomUUID(),source:'bundled:http_fixture',previewId:preview.previewId,previewDigest:preview.digest,confirmed:true,kind:'skill'});
+    assert.equal(wrongKind.statusCode,422);
+    const wrongSubject=await post('/api/v1/mcp/http_fixture/state',{requestId:randomUUID(),baseVersion:connected.stateVersion,desiredState:'disabled',subjectId:randomUUID()});
+    assert.equal(wrongSubject.statusCode,422);
+    assert.ok(Number.isSafeInteger(connected.stateVersion)&&connected.stateVersion>0);
+    const tools=(await app.inject({method:'GET',url:'/api/v1/mcp/http_fixture/tools'})).json();
+    assert.equal(tools.items[0].permission,'mcp.tool.invoke');
+    const requestId=randomUUID(); const response=await post('/api/v1/extensions/runs',{requestId,appId:'dgos.extensions',kind:'mcp',extensionId:'http_fixture',operationId:'echo',extensionVersion:'1.0.0',input:{value:'ok'},confirmationId:`${requestId}:test`});
+    assert.equal(response.statusCode,202); const run=response.json(); assert.equal(run.state,'queued');
+    assert.deepEqual(Object.keys(run).sort(),['extensionId','extensionVersion','kind','operationId','requestId','runId','sequence','state'].sort());
+    assert.equal(run.sequence,1);
+    const consentRequestId=randomUUID(); const ticketResponse=await post('/api/v1/extensions/confirmations',{requestId:consentRequestId,appId:'dgos.extensions',kind:'mcp',extensionId:'http_fixture',operationId:'echo',extensionVersion:'1.0.0',input:{value:'consented'}});
+    assert.equal(ticketResponse.statusCode,201); const ticket=ticketResponse.json(); assert.equal(ticket.executable,false);
+    assert.deepEqual(Object.keys(ticket).sort(),['requestId','confirmationId','appId','kind','extensionId','operationId','extensionVersion','inputDigest','expiresAt','executable'].sort());
+    const consented=await post('/api/v1/extensions/runs',{requestId:consentRequestId,appId:'dgos.extensions',kind:'mcp',extensionId:'http_fixture',operationId:'echo',extensionVersion:'1.0.0',input:{value:'consented'},confirmationId:ticket.confirmationId});
+    assert.equal(consented.statusCode,202);
+    await service.process(consented.json().runId);
+    await service.process(run.runId);
+    const events=await app.inject({method:'GET',url:`/api/v1/extensions/runs/${run.runId}/events`,headers:{'last-event-id':'1'}});
+    assert.equal(events.statusCode,200); assert.match(events.headers['content-type'],/text\/event-stream/); assert.match(events.body,/id: 3/);
+    const other=await service.getRun({runId:run.runId,subjectId}); assert.equal(other.resultSummary.value,'ok');
+    const current=(await service.list({kind:'mcp',subjectId})).items[0];
+    const stopped=await post('/api/v1/mcp/http_fixture/disconnect',{requestId:randomUUID(),baseVersion:current.stateVersion});
+    assert.equal(stopped.json().connectionState,'stopping'); await service.processConnectionIntents();
+  } finally { await app.close(); }
+});

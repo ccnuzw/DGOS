@@ -1,0 +1,33 @@
+name: dgos-ops-r7-caddy-fixture
+services:
+  api:
+    image: node:22-bookworm-slim
+    command:
+      - node
+      - -e
+      - >-
+        require('node:http').createServer((req,res)=>{res.setHeader('content-type','application/json');
+        res.end(JSON.stringify({peer:req.socket.remoteAddress,host:req.headers.host,
+        proto:req.headers['x-forwarded-proto'],forwardedHost:req.headers['x-forwarded-host'],
+        forwardedPort:req.headers['x-forwarded-port'],forwardedSsl:req.headers['x-forwarded-ssl']}));
+        }).listen(3000,'0.0.0.0')
+    networks: [backend]
+  gateway:
+    image: caddy:2-alpine
+    environment:
+      DGOS_PUBLIC_HOST: localhost
+    ports: ['127.0.0.1:15311:443']
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on: [api]
+    networks:
+      backend:
+        ipv4_address: 192.168.241.10
+      edge:
+networks:
+  backend:
+    internal: true
+    ipam:
+      config:
+        - subnet: 192.168.241.0/24
+  edge:

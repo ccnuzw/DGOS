@@ -23,7 +23,27 @@
     "technical",
     "release_manager"
   ],
-  "commandRegistry": null,
+  "commandRegistry": [
+    "node scripts/check-docs.mjs",
+    "node scripts/docs-gate.mjs --phase release --json",
+    "pnpm run check",
+    "pnpm -r build",
+    "pnpm run migrate:check",
+    "pnpm run test:release",
+    "pnpm run test:web:e2e",
+    "pnpm --filter @dgos/desktop e2e:macos",
+    "node --test tests/e2e/assistant-settings-actions.spec.mjs",
+    "node --test tests/unit/runtime.test.mjs",
+    "node --test tests/integration/ai-task-api.test.mjs",
+    "node --test tests/integration/identity-api.test.mjs",
+    "node --test tests/integration/provider-api.test.mjs",
+    "node --test tests/integration/provider-worker.test.mjs",
+    "node --test tests/security/provider-egress.test.mjs",
+    "node --test tests/security/provider-egress-transport.test.mjs",
+    "node --test tests/security/v1-governance-e2e.test.mjs",
+    "node scripts/v1-regression-sweep.mjs --plan",
+    "env -u DGOS_DATABASE_URL node --test tests/unit/runtime.test.mjs tests/integration/usage-settlement.spec.mjs"
+  ],
   "requireCommitBinding": true,
   "requireManifest": true,
   "release": {

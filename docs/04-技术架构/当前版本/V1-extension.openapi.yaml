@@ -1,0 +1,370 @@
+openapi: 3.0.3
+info:
+  title: DGOS V1 extension lifecycle projection
+  version: '1.0.0'
+  description: P0-DOC r5 lifecycle contract; management additions in V1-extension-management.openapi.yaml are referenced by the sole V1-openapi.yaml. Not implementation evidence.
+security:
+  - dgosSession: []
+  - dgosApiKey: []
+paths:
+  /api/v1/extensions/confirmations:
+    post:
+      operationId: createExtensionConfirmation
+      x-tag-feature: V1-FR-003
+      x-tag-implementation-status: planned
+      description: Explicit user consent after reviewing the installed tool, version, input summary, permission, risk and side effects. Requires authenticated subject, bound app context and kind.execute scope plus current resource permission. Issues a server ticket only; no Run, process or upstream call. Installation preview confirmation is separate and cannot authorize execution.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ConfirmationRequest' }
+      responses:
+        '201':
+          description: Opaque server consent ticket bound to authenticated subject, app, kind, tool, extension version and canonical input digest
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ConfirmationReceipt' }
+        default: { $ref: 'V1-openapi.yaml#/components/responses/Forbidden' }
+  /api/v1/extensions/previews:
+    post:
+      operationId: previewExtension
+      x-tag-feature: V1-FR-003
+      x-tag-implementation-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PreviewRequest' }
+      responses:
+        '200':
+          description: Source inspected, no installation, enablement or process start
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Preview' }
+        default: { $ref: 'V1-openapi.yaml#/components/responses/ValidationError' }
+  /api/v1/mcp/{mcpId}/connect:
+    parameters:
+      - { $ref: 'V1-openapi.yaml#/components/parameters/McpId' }
+    post:
+      operationId: connectMcp
+      x-tag-feature: V1-FR-003
+      x-tag-implementation-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MutationRequest' }
+      responses:
+        '202':
+          description: Unique connection attempt, not a promise of connected state
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Record' }
+        default: { $ref: 'V1-openapi.yaml#/components/responses/Conflict' }
+  /api/v1/mcp/{mcpId}/disconnect:
+    parameters:
+      - { $ref: 'V1-openapi.yaml#/components/parameters/McpId' }
+    post:
+      operationId: disconnectMcp
+      x-tag-feature: V1-FR-003
+      x-tag-implementation-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MutationRequest' }
+      responses:
+        '202':
+          description: Stop requested; only confirmed process termination produces stopped
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Record' }
+        default: { $ref: 'V1-openapi.yaml#/components/responses/Conflict' }
+  /api/v1/mcp/{mcpId}/tools:
+    parameters:
+      - { $ref: 'V1-openapi.yaml#/components/parameters/McpId' }
+    get:
+      operationId: listMcpTools
+      x-tag-feature: V1-FR-003
+      x-tag-implementation-status: planned
+      responses:
+        '200':
+          description: Authorized tool catalog from the last confirmed discovery
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ToolList' }
+        default: { $ref: 'V1-openapi.yaml#/components/responses/Forbidden' }
+    post:
+      operationId: discoverMcpTools
+      x-tag-feature: V1-FR-003
+      x-tag-implementation-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MutationRequest' }
+      responses:
+        '200':
+          description: Discovery snapshot from an authorized connected service
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ToolList' }
+        default: { $ref: 'V1-openapi.yaml#/components/responses/Conflict' }
+  /api/v1/extensions/runs:
+    post:
+      operationId: invokeExtensionTool
+      x-tag-feature: V1-FR-003
+      x-tag-implementation-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/InvokeRequest' }
+      responses:
+        '202':
+          description: Persisted run before dispatch; authorization and confirmation are prerequisites
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Run' }
+        default: { $ref: 'V1-openapi.yaml#/components/responses/Forbidden' }
+  /api/v1/extensions/runs/{runId}:
+    parameters:
+      - { in: path, name: runId, required: true, schema: { type: string } }
+    get:
+      operationId: getExtensionRun
+      x-tag-feature: V1-FR-003
+      x-tag-implementation-status: planned
+      responses:
+        '200':
+          description: Owner-authorized persistent run snapshot
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Run' }
+        default: { $ref: 'V1-openapi.yaml#/components/responses/NotFound' }
+    delete:
+      operationId: cancelExtensionRun
+      x-tag-feature: V1-FR-003
+      x-tag-implementation-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CancelRequest' }
+      responses:
+        '202':
+          description: cancel_requested until downstream cancellation is confirmed
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Run' }
+        default: { $ref: 'V1-openapi.yaml#/components/responses/Conflict' }
+  /api/v1/extensions/runs/{runId}/events:
+    parameters:
+      - { in: path, name: runId, required: true, schema: { type: string } }
+    get:
+      operationId: streamExtensionRunEvents
+      x-tag-feature: V1-FR-003
+      x-tag-implementation-status: planned
+      parameters:
+        - { in: header, name: Last-Event-ID, schema: { type: string }, description: Last acknowledged sequence }
+      responses:
+        '200':
+          description: Ordered redacted SSE events; reconnect uses the same runId
+          content:
+            text/event-stream:
+              schema: { type: string }
+        default: { $ref: 'V1-openapi.yaml#/components/responses/NotFound' }
+components:
+  securitySchemes:
+    dgosSession:
+      $ref: 'V1-openapi.yaml#/components/securitySchemes/dgosSession'
+    dgosApiKey:
+      $ref: 'V1-openapi.yaml#/components/securitySchemes/dgosApiKey'
+  schemas:
+    ConfirmationRequest:
+      type: object
+      description: requestId identifies one execution intent and must be reused in InvokeRequest. Same-ID issuance replay compares full subject/app/tool/version/input binding; mismatch is conflict.
+      additionalProperties: false
+      required: [requestId, appId, kind, extensionId, operationId, extensionVersion, input]
+      properties:
+        requestId: { type: string, format: uuid }
+        appId: { type: string }
+        kind: { type: string, enum: [skill, mcp] }
+        extensionId: { type: string }
+        operationId: { type: string }
+        extensionVersion: { type: string }
+        input: { type: object, description: Must validate against the registered tool schema; no secret material. Same canonical input must be used at invocation. }
+        options: { $ref: 'V1-openapi.yaml#/components/schemas/TextTaskOptions' }
+      x-dgos-custom-skill: options required only for custom text Skill; current model/Task authorization and quota preflight apply. Include normalized client options and current immutable definition revision in inputDigest, and repeat identical options in InvokeRequest. Ticket issuance itself creates no Task or reservation.
+    ConfirmationReceipt:
+      type: object
+      additionalProperties: false
+      required: [requestId, confirmationId, appId, kind, extensionId, operationId, extensionVersion, inputDigest, expiresAt, executable]
+      properties:
+        requestId: { type: string }
+        confirmationId: { type: string, description: Opaque unforgeable ticket; stored server-side or authenticated, scoped to the issuing subject and consumed atomically with Run creation }
+        appId: { type: string }
+        kind: { type: string, enum: [skill, mcp] }
+        extensionId: { type: string }
+        operationId: { type: string }
+        extensionVersion: { type: string }
+        inputDigest: { type: string }
+        expiresAt: { type: string, format: date-time }
+        executable: { type: boolean, enum: [false] }
+    PreviewRequest:
+      type: object
+      additionalProperties: false
+      required: [requestId, kind, source]
+      properties:
+        requestId: { type: string, format: uuid }
+        kind: { type: string, enum: [skill, mcp] }
+        source: { type: string, minLength: 1, maxLength: 2048, description: Controlled registry/bundled/system/local key or HTTPS URL accepted by deployment source policy. Server fetches only through shared egress, verifies trust/signature/digest and binds immutable preview. Install command text is never executed; only a registered parser may resolve an exact trusted source, otherwise reject. No shell, file URL, arbitrary local path, redirect or credential-bearing URL. }
+        version: { type: string }
+    Preview:
+      type: object
+      additionalProperties: false
+      required: [requestId, previewId, kind, digest, expiresAt, trustState, summary]
+      properties:
+        requestId: { type: string }
+        previewId: { type: string }
+        kind: { type: string, enum: [skill, mcp] }
+        digest: { type: string }
+        expiresAt: { type: string, format: date-time }
+        trustState: { type: string, enum: [verified, rejected] }
+        summary:
+          type: object
+          required: [id, version, permissions]
+          properties:
+            id: { type: string }
+            packageId: { type: string }
+            version: { type: string }
+            permissions: { type: array, items: { type: string } }
+            childSkillIds: { type: array, items: { type: string } }
+            risks: { type: array, items: { type: string } }
+            name: { type: string }
+            description: { type: string }
+            requiresCredential: { type: boolean }
+            templateId: { type: string }
+            templateVersion: { type: string }
+    InstallRequest:
+      type: object
+      additionalProperties: false
+      required: [requestId, source, previewId, previewDigest, confirmed]
+      properties:
+        requestId: { type: string, format: uuid }
+        source: { type: string, description: Must equal the preview's controlled source }
+        version: { type: string }
+        previewId: { type: string }
+        previewDigest: { type: string }
+        confirmed: { type: boolean, enum: [true], description: Explicit user intent; server must also verify preview owner, expiry, source and digest }
+        config: { $ref: '#/components/schemas/Config' }
+        templateId: { type: string, description: Optional exact trusted MCP template selected in preview; requires templateVersion }
+        templateVersion: { type: string, description: Exact template version, not latest; paired with templateId }
+        credentials: { $ref: 'V1-extension-management.openapi.yaml#/components/schemas/CredentialInput' }
+      description: User installation of a credential-required template rejects missing required credentials before saving/connecting. Existing bundled discovery may retain needs-credentials without launch. Preview identity/source/template/digest/expiry must match; credentials go only through SecretService, omitted in all responses and ordinary receipt/audit bodies. No automatic enable/connect from ordinary install.
+      oneOf:
+        - required: [templateId, templateVersion]
+        - not:
+            anyOf:
+              - required: [templateId]
+              - required: [templateVersion]
+    Config:
+      type: object
+      additionalProperties: false
+      properties:
+        transport: { type: string, enum: [stdio, streamable-http] }
+        runnerProfileId: { type: string, description: Platform-controlled executable/args/cwd and resource limits; never a raw user command }
+        endpointRef: { type: string, description: Reference to a validated egress destination, not an arbitrary URL }
+        settings: { type: object, additionalProperties: true, description: Non-secret settings must pass the selected manifest/config schema before persistence or execution }
+    MutationRequest:
+      type: object
+      additionalProperties: false
+      required: [requestId, baseVersion]
+      properties:
+        requestId: { type: string, format: uuid }
+        baseVersion: { type: integer, minimum: 1 }
+    CancelRequest:
+      type: object
+      additionalProperties: false
+      required: [requestId]
+      properties:
+        requestId: { type: string, format: uuid }
+    StateRequest:
+      type: object
+      additionalProperties: false
+      required: [requestId, baseVersion, desiredState]
+      properties:
+        requestId: { type: string, format: uuid }
+        baseVersion: { type: integer, minimum: 1 }
+        desiredState: { type: string, enum: [enabled, disabled, configured, disconnected] }
+        config: { $ref: '#/components/schemas/Config' }
+    Record:
+      type: object
+      additionalProperties: false
+      required: [id, kind, state, version, stateVersion, credentialStatus]
+      properties:
+        id: { type: string }
+        packageId: { type: string }
+        kind: { type: string, enum: [skill, mcp] }
+        state: { type: string, enum: [installed, enabled, disabled, removed] }
+        version: { type: string }
+        stateVersion: { type: integer, minimum: 1 }
+        credentialStatus: { type: string, enum: [not_required, missing, configured, invalid] }
+        connectionState: { type: string, enum: [disconnected, needs-credentials, connecting, connected, stopping, stopped, failed] }
+        connectionAttemptId: { type: string }
+        toolCount: { type: integer, minimum: 0 }
+        reasonCode: { type: string }
+        name: { type: string }
+        description: { type: string }
+        sourceType: { type: string, enum: [custom, package] }
+        config: { $ref: '#/components/schemas/Config', description: Authorized non-secret projection only; settings filtered by schema }
+    ToolList:
+      type: object
+      required: [sourceId, catalogVersion, items]
+      properties:
+        sourceId: { type: string }
+        catalogVersion: { type: integer, minimum: 1 }
+        items:
+          type: array
+          items:
+            type: object
+            required: [operationId, inputSchema, outputSchema, permission, risk, sideEffects]
+            properties:
+              operationId: { type: string }
+              inputSchema: { type: object }
+              outputSchema: { type: object }
+              permission: { type: string }
+              risk: { type: string, enum: [low, medium, high] }
+              sideEffects: { type: boolean }
+    InvokeRequest:
+      type: object
+      description: Reuse the confirmation requestId. Exact existing-Run replay is returned before rejecting an already consumed/expired ticket; changed binding conflicts. First Run, event, audit and ticket consumption commit atomically.
+      additionalProperties: false
+      required: [requestId, appId, kind, extensionId, operationId, extensionVersion, input]
+      properties:
+        requestId: { type: string, format: uuid }
+        appId: { type: string, description: Bound to authenticated installation/capability context, not a caller-supplied privilege }
+        kind: { type: string, enum: [skill, mcp] }
+        extensionId: { type: string, description: MCP sourceId or stable Skill id from declared dependencies }
+        operationId: { type: string }
+        extensionVersion: { type: string }
+        input: { type: object, description: Validated against the registered tool schema; persisted securely for recovery, never included verbatim in audit }
+        confirmationId: { type: string, description: Server-bound consent to owner/app/tool/version/input digest; required by permission/risk policy }
+        options: { $ref: 'V1-openapi.yaml#/components/schemas/TextTaskOptions' }
+      x-dgos-custom-skill: For custom text Skill invocation only, options required; registered operationId=text.chat input={text}. Requires skill.execute AND ai_task.submit and current installed APP dependency/Skill permission, model admission and quota. Saved prompt and source revision become a server-owned text Task input snapshot, not caller roles/commands. Other tools reject options. Include options and definition revision in execution/confirmation binding.
+    Run:
+      type: object
+      additionalProperties: false
+      required: [runId, requestId, kind, extensionId, operationId, extensionVersion, state, sequence]
+      properties:
+        runId: { type: string }
+        requestId: { type: string }
+        kind: { type: string, enum: [skill, mcp] }
+        extensionId: { type: string }
+        operationId: { type: string }
+        extensionVersion: { type: string }
+        state: { type: string, enum: [accepted, queued, running, cancel_requested, succeeded, failed, timed_out, cancelled, blocked] }
+        sequence: { type: integer, minimum: 1 }
+        resultSummary: { type: object, description: Validated redacted output, no credentials or host paths }
+        reasonCode: { type: string }
+        artifactIds: { type: array, items: { type: string } }
+        taskId: { type: string, description: Existing authorized AI Task for custom Skill text execution; closing page does not stop ownership/recovery }

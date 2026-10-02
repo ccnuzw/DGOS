@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: durable ciphertext survives restart and never stores plaintext
+ok 1 - durable ciphertext survives restart and never stores plaintext
+  ---
+  duration_ms: 28.32225
+  type: 'test'
+  ...
+# Subtest: read checks authoritative version, revoke and scope every time
+ok 2 - read checks authoritative version, revoke and scope every time
+  ---
+  duration_ms: 43.628542
+  type: 'test'
+  ...
+# Subtest: authenticated control metadata cannot be flipped to revive or rescope a record
+ok 3 - authenticated control metadata cannot be flipped to revive or rescope a record
+  ---
+  duration_ms: 175.951167
+  type: 'test'
+  ...
+# Subtest: legacy ciphertext requires explicit reviewed offline migration
+ok 4 - legacy ciphertext requires explicit reviewed offline migration
+  ---
+  duration_ms: 16.948042
+  type: 'test'
+  ...
+# Subtest: verification tolerates an active writer lock and rejects orphan lock or temp
+ok 5 - verification tolerates an active writer lock and rejects orphan lock or temp
+  ---
+  duration_ms: 1167.208167
+  type: 'test'
+  ...
+# Subtest: production audit records anonymous digests and failure blocks read
+ok 6 - production audit records anonymous digests and failure blocks read
+  ---
+  duration_ms: 21.454208
+  type: 'test'
+  ...
+# Subtest: TTL, missing key and storage failure fail closed
+ok 7 - TTL, missing key and storage failure fail closed
+  ---
+  duration_ms: 23.155292
+  type: 'test'
+  ...
+# Subtest: parallel instances increment versions and stale CAS cannot overwrite
+ok 8 - parallel instances increment versions and stale CAS cannot overwrite
+  ---
+  duration_ms: 26.343166
+  type: 'test'
+  ...
+# Subtest: tampered ciphertext and unavailable durable directory fail closed
+ok 9 - tampered ciphertext and unavailable durable directory fail closed
+  ---
+  duration_ms: 20.285917
+  type: 'test'
+  ...
+# Subtest: backup, restore and rewrap use independent key directory
+ok 10 - backup, restore and rewrap use independent key directory
+  ---
+  duration_ms: 167.797375
+  type: 'test'
+  ...
+# Subtest: restore rejects modified ciphertext backup
+ok 11 - restore rejects modified ciphertext backup
+  ---
+  duration_ms: 84.648791
+  type: 'test'
+  ...
+# Subtest: production config rejects fixtures and defaults; controlled handle can initialize
+ok 12 - production config rejects fixtures and defaults; controlled handle can initialize
+  ---
+  duration_ms: 4.477833
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1832.7425

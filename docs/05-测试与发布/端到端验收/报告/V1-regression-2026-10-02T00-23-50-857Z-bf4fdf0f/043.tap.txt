@@ -1,0 +1,60 @@
+TAP version 13
+# Subtest: admin URL rejects missing or original business database before opening a pool
+ok 1 - admin URL rejects missing or original business database before opening a pool
+  ---
+  duration_ms: 0.875709
+  type: 'test'
+  ...
+# node broken: 2
+# Subtest: nonzero child exit is recorded and only the generated child database is dropped
+ok 2 - nonzero child exit is recorded and only the generated child database is dropped
+  ---
+  duration_ms: 5.987167
+  type: 'test'
+  ...
+# Subtest: migration failure still drops only the created child database
+ok 3 - migration failure still drops only the created child database
+  ---
+  duration_ms: 1.70925
+  type: 'test'
+  ...
+# Subtest: timeout and signal produce non-success even without numeric exit code
+ok 4 - timeout and signal produce non-success even without numeric exit code
+  ---
+  duration_ms: 25.979917
+  type: 'test'
+  ...
+# node first: null (timeout)
+# Subtest: null child exit is recorded as failure and halts later commands
+ok 5 - null child exit is recorded as failure and halts later commands
+  ---
+  duration_ms: 3.0925
+  type: 'test'
+  ...
+# Subtest: dirty source identity does not pretend HEAD is the tested commit
+ok 6 - dirty source identity does not pretend HEAD is the tested commit
+  ---
+  duration_ms: 0.329
+  type: 'test'
+  ...
+# Subtest: test discovery stays in the root tests tree
+ok 7 - test discovery stays in the root tests tree
+  ---
+  duration_ms: 1.3955
+  type: 'test'
+  ...
+# Subtest: source identity is exported and detects this dirty verification script
+ok 8 - source identity is exported and detects this dirty verification script
+  ---
+  duration_ms: 67.456667
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 176.36525

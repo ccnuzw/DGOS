@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: public System projection initializes, patches one domain, replays, and streams context
+ok 1 - public System projection initializes, patches one domain, replays, and streams context
+  ---
+  duration_ms: 49.028041
+  type: 'test'
+  ...
+# Subtest: System legacy JSON projection omits unregistered fields and proxy credentials
+ok 2 - System legacy JSON projection omits unregistered fields and proxy credentials
+  ---
+  duration_ms: 2.852958
+  type: 'test'
+  ...
+# Subtest: System HTTP context permission failure returns no snapshot or events
+ok 3 - System HTTP context permission failure returns no snapshot or events
+  ---
+  duration_ms: 2.848084
+  type: 'test'
+  ...
+# Subtest: public System projection rejects a failed audit without changing settings
+ok 4 - public System projection rejects a failed audit without changing settings
+  ---
+  duration_ms: 2.715458
+  type: 'test'
+  ...
+# Subtest: System appPermissions delegates authenticated rules to a transaction adapter
+ok 5 - System appPermissions delegates authenticated rules to a transaction adapter
+  ---
+  duration_ms: 2.711542
+  type: 'test'
+  ...
+# Subtest: PostgreSQL System HTTP replay across service instances persists one audited change
+ok 6 - PostgreSQL System HTTP replay across service instances persists one audited change
+  ---
+  duration_ms: 52.456167
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 201.808584

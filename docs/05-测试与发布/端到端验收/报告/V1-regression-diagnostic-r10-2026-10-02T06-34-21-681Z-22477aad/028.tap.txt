@@ -1,0 +1,16 @@
+TAP version 13
+# Subtest: public Task uses bound responses operation once and stores the text artifact
+ok 1 - public Task uses bound responses operation once and stores the text artifact
+  ---
+  duration_ms: 91.9295
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 315.805375

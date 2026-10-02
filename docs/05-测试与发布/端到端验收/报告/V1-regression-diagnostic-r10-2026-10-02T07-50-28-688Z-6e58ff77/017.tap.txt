@@ -1,0 +1,16 @@
+TAP version 13
+# Subtest: permission decision writes reject stale sessions and API Keys without changing effective permission
+ok 1 - permission decision writes reject stale sessions and API Keys without changing effective permission
+  ---
+  duration_ms: 61.82025
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 269.197333

@@ -1,36 +1,67 @@
 {
   "activeVersion": "V1",
-  "commit": null,
-  "commit_binding": "absent",
-  "generatedAt": "2026-09-30T20:40:00.000Z",
+  "commit": "72ab1cb98b064a6e27b9f60a9f8f00881a827a99",
+  "commit_binding": {
+    "commit": "72ab1cb98b064a6e27b9f60a9f8f00881a827a99",
+    "date": "2026-10-02",
+    "dirty": true,
+    "note": "Development baseline, not release candidate"
+  },
+  "generatedAt": "2026-10-02T03:09:28Z",
   "approvals": {
-    "proposal_id": null,
-    "authority_digest": null,
-    "approved_by": {
-      "product": "",
-      "technical": "",
-      "release_manager": ""
+    "proposal_id": "v1-release-proposal-20261002",
+    "authority_digest": "sha256:0278841f48a2b61f3388308afaa032aa32112514597854c0a12f63995f20200d",
+    "product_approval": {
+      "approver": "TBD",
+      "date": "pending",
+      "decision": "pending_review"
     },
-    "approved_at": null
+    "technical_approval": {
+      "approver": "TBD",
+      "date": "pending",
+      "decision": "pending_review"
+    },
+    "release_manager_approval": {
+      "approver": "TBD",
+      "date": "pending",
+      "decision": "pending_review"
+    },
+    "approved_by": {
+      "product": "TBD",
+      "technical": "TBD",
+      "release_manager": "TBD"
+    },
+    "approved_at": "2026-10-02T03:09:28Z"
   },
   "reports": {
     "development": {
-      "path": null,
-      "environment": "local"
+      "path": "docs/05-测试与发布/报告/V1-development-report.md",
+      "environment": "local",
+      "date": "2026-10-02",
+      "commit": "72ab1cb98b064a6e27b9f60a9f8f00881a827a99",
+      "status": "partial_implementation"
     },
     "e2e": {
-      "path": null,
-      "environment": "local-mock"
+      "path": "docs/05-测试与发布/报告/V1-e2e-report.md",
+      "environment": "local-mock",
+      "date": "2026-10-02",
+      "commit": "72ab1cb98b064a6e27b9f60a9f8f00881a827a99",
+      "status": "partial_pass"
     },
     "release": {
-      "path": null,
-      "environment": "production-gate"
+      "path": "docs/05-测试与发布/报告/V1-release-report.md",
+      "environment": "production-gate",
+      "date": "2026-10-02",
+      "commit": "72ab1cb98b064a6e27b9f60a9f8f00881a827a99",
+      "status": "no_go"
     }
   },
   "status": "pending",
   "limitations": [
-    "DGOS 当前目录不是 Git 仓库，无法提供 commit SHA、branch history 或提交绑定证据。",
-    "当前没有 DGOS 产品源码、构建、测试报告、migration 或真实环境运行证据。",
-    "本清单未生成任何通过报告、审批或发布结论。"
+    "2026-10-02 核查：当前目录为 Git 仓库，基线为 72ab1cb98b064a6e27b9f60a9f8f00881a827a99；候选包含尚未提交的源码变化，不能将该基线声明为当前完整候选的提交绑定。",
+    "已存在产品源码、Web/macOS 构建、冻结至0051的47条迁移及多轮本地真实PG/Redis/HTTP/浏览器/原生验证。证据导航见 docs/05-测试与发布/端到端验收/验证证据.md；各轮证据绑定各自源码与环境，完整同候选验收仍待完成。",
+    "2026-10-02: 正式 development/e2e/release 报告已生成。Development 状态：PARTIAL（核心实现完成，生产门禁阻塞）；E2E 状态：PARTIAL（7/12 局部通过，5 项阻塞）；Release 状态：NO-GO（原生桥接超时、安全漏洞、缺少审批、未验证真实 Provider）。",
+    "真实外部Provider与目标部署验证、macOS发行签名/公证、批准的性能与恢复目标及发布审批仍未闭合。",
+    "本清单保持pending；已有局部报告和Worker停写回执均不构成完整V1验收或正式发布通过。关键阻塞项：原生桥接超时(E2E-01)、1 Critical/61 High CVEs、缺少产品/技术/发布经理审批、统一候选未执行。"
   ]
 }

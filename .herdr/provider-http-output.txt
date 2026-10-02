@@ -1,0 +1,10 @@
+PASS isolated_frozen_schema
+PASS public_api_and_independent_worker
+PASS public_profile_account_config_quota_setup
+PASS responses_snapshot_early_delta_artifact_replay
+PASS chat_snapshot_independent_worker_restart
+PASS invalid_parameters_zero_side_effect
+PASS pre_dispatch_config_mutation_denies_network
+PASS sigkill_sent_unknown_no_repeat
+PASS pre_dispatch_policy_mutation_denies_network
+{"status":"passed","cases":9,"reportPath":"/Users/apple/Progame/DGOS/tests/provider/evidence/V1-PROVIDER-r6-2026-10-02T11-19-44-637Z-c9e7255e.json","logPath":"/Users/apple/Progame/DGOS/tests/provider/evidence/V1-PROVIDER-r6-2026-10-02T11-19-44-637Z-c9e7255e.log","manifestPath":"/Users/apple/Progame/DGOS/tests/provider/evidence/V1-PROVIDER-r6-2026-10-02T11-19-44-637Z-c9e7255e-manifest.json"}

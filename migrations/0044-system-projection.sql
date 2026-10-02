@@ -1,0 +1,14 @@
+-- Upgrade existing System JSON to the V1 public projection without changing versions.
+-- Defaults are persisted so a process restart reads the same initialized values.
+UPDATE system_settings
+SET settings = jsonb_strip_nulls(
+  jsonb_build_object(
+    'appearance', (jsonb_build_object('appearanceMode', COALESCE(settings #> '{appearance,appearanceMode}', settings #> '{appearance,mode}', '"system"'::jsonb), 'windowMaterial', 'solid', 'interfaceMode', 'standard', 'displayScale', 1, 'wallpaperFollowsAppearance', true) || COALESCE(settings->'appearance', '{}'::jsonb)) - 'mode',
+    'locale', ((jsonb_build_object('uiLocale', COALESCE(settings #> '{locale,uiLocale}', settings #> '{locale,language}', '"en-US"'::jsonb), 'regionFormat', 'en-US', 'assistantLanguage', 'en-US', 'projectContentLanguage', 'en-US') || COALESCE(settings->'locale', '{}'::jsonb)) - 'language') || jsonb_build_object('effectiveLocale', CASE WHEN COALESCE(settings #>> '{locale,uiLocale}', settings #>> '{locale,language}', 'en-US') IN ('en-US','zh-CN') THEN COALESCE(settings #>> '{locale,uiLocale}', settings #>> '{locale,language}', 'en-US') ELSE 'en-US' END, 'fallbackState', CASE WHEN COALESCE(settings #>> '{locale,uiLocale}', settings #>> '{locale,language}', 'en-US') IN ('en-US','zh-CN') THEN 'none' ELSE 'full' END),
+    'network', ((jsonb_build_object('proxyMode', 'system', 'affectedServices', jsonb_build_array()) || COALESCE(settings->'network', '{}'::jsonb)) - 'proxyUrl' - 'token' - 'proxySecret' - 'proxySecretRef') || jsonb_build_object('effectiveRoute', CASE WHEN settings #>> '{network,effectiveRoute}' ~ '^[a-zA-Z0-9._-]{1,64}$' THEN settings #>> '{network,effectiveRoute}' WHEN COALESCE(settings #>> '{network,proxyMode}', 'system') = 'system' THEN 'system' ELSE 'unavailable' END, 'restartRequired', COALESCE((settings #>> '{network,restartRequired}')::boolean, false) OR (COALESCE(settings #>> '{network,proxyMode}', 'system') <> 'system' AND NOT (settings #>> '{network,effectiveRoute}' ~ '^[a-zA-Z0-9._-]{1,64}$'))),
+    'grid', jsonb_build_object('enabled', true, 'style', 'dot', 'spacing', 24, 'majorLineEvery', 5, 'showAxes', false, 'snapEnabled', true, 'snapTolerance', 8, 'colorToken', 'grid.default', 'opacity', 0.35) || COALESCE(settings->'grid', '{}'::jsonb),
+    'privacy', jsonb_build_object('telemetry', false) || COALESCE(settings->'privacy', '{}'::jsonb),
+    'appPermissions', CASE WHEN jsonb_typeof(settings->'appPermissions') = 'array' THEN settings->'appPermissions' ELSE '[]'::jsonb END
+  ) || CASE WHEN settings ? '_requestReceipts' THEN jsonb_build_object('_requestReceipts', settings->'_requestReceipts') ELSE '{}'::jsonb END
+)
+WHERE settings ? 'appearance' OR settings ? 'locale' OR settings ? 'network' OR settings ? 'grid' OR settings ? 'privacy' OR settings ? 'appPermissions';

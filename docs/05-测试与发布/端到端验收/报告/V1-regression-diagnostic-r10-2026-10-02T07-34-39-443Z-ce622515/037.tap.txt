@@ -1,0 +1,16 @@
+TAP version 13
+# Subtest: identity audit failures leave session state unchanged and never retain secret values
+ok 1 - identity audit failures leave session state unchanged and never retain secret values
+  ---
+  duration_ms: 2.254959
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 54.896708

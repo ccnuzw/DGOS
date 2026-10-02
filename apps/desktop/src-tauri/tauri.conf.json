@@ -4,26 +4,16 @@
   "version": "0.1.0",
   "identifier": "com.dgos.desktop",
   "build": {
-    "devUrl": "http://127.0.0.1:4173",
-    "frontendDist": "../../web",
-    "beforeDevCommand": "pnpm --filter @dgos/web start",
+    "devUrl": "http://127.0.0.1:15151",
+    "frontendDist": "../../web/dist",
+    "beforeDevCommand": "PORT=15151 pnpm --filter @dgos/web dev",
     "beforeBuildCommand": "pnpm --filter @dgos/web build"
   },
   "app": {
-    "withGlobalTauri": false,
-    "windows": [
-      {
-        "title": "DGOS AI Workbench",
-        "width": 1280,
-        "height": 840,
-        "minWidth": 960,
-        "minHeight": 640,
-        "resizable": true,
-        "fullscreen": false
-      }
-    ],
+    "withGlobalTauri": true,
+    "windows": [],
     "security": {
-      "csp": "default-src 'self' http://127.0.0.1:3000; connect-src 'self' http://127.0.0.1:3000 ws://127.0.0.1:3000; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'"
+      "csp": "default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'"
     }
   },
   "bundle": {
@@ -32,6 +22,6 @@
     "macOS": {
       "minimumSystemVersion": "13.0"
     },
-    "icon": ["icons/icon.png"]
+    "icon": ["icons/icon.icns", "icons/icon.png"]
   }
 }

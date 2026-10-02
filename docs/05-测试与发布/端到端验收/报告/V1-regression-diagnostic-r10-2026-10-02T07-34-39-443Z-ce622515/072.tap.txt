@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: package retention protects references, removes expired failed records, and resumes disk failure
+ok 1 - package retention protects references, removes expired failed records, and resumes disk failure
+  ---
+  duration_ms: 95.485083
+  type: 'test'
+  ...
+# Subtest: audit failure after disk removal retains prepared intent and restart completes it
+ok 2 - audit failure after disk removal retains prepared intent and restart completes it
+  ---
+  duration_ms: 31.9885
+  type: 'test'
+  ...
+# Subtest: app lifecycle lock blocks cleanup and startup settles interrupted staging
+ok 3 - app lifecycle lock blocks cleanup and startup settles interrupted staging
+  ---
+  duration_ms: 65.987708
+  type: 'test'
+  ...
+# Subtest: confirmed preview rejects drift and failed install records continue across bounded batches
+ok 4 - confirmed preview rejects drift and failed install records continue across bounded batches
+  ---
+  duration_ms: 50.613916
+  type: 'test'
+  ...
+# Subtest: unpublished failure audit protects record and cleanup writes transactional outbox
+ok 5 - unpublished failure audit protects record and cleanup writes transactional outbox
+  ---
+  duration_ms: 40.660709
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 352.749208

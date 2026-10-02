@@ -1,0 +1,16 @@
+TAP version 13
+# Subtest: provider management has no import/export route and redacts credentials
+ok 1 - provider management has no import/export route and redacts credentials
+  ---
+  duration_ms: 62.293959
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 266.93225

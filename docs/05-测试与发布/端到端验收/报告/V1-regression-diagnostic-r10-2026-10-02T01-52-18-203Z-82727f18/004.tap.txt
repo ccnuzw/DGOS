@@ -1,0 +1,112 @@
+TAP version 13
+# Subtest: permission and confirmation reject before install or process start
+ok 1 - permission and confirmation reject before install or process start
+  ---
+  duration_ms: 3.587708
+  type: 'test'
+  ...
+# Subtest: managed MCP connection and run use one process, idempotent request, and redacted snapshot
+not ok 2 - managed MCP connection and run use one process, idempotent request, and redacted snapshot
+  ---
+  duration_ms: 0.542833
+  type: 'test'
+  location: '/Users/apple/Progame/DGOS/tests/extensions/extension-service.test.mjs:39:1'
+  failureType: 'testCodeFailure'
+  error: 'invalid_package_json'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    fail (file:///Users/apple/Progame/DGOS/src/apps/package-service.mjs:6:55)
+    canonicalJson (file:///Users/apple/Progame/DGOS/src/apps/package-service.mjs:13:9)
+    file:///Users/apple/Progame/DGOS/src/apps/package-service.mjs:12:172
+    Array.map (<anonymous>)
+    canonicalJson (file:///Users/apple/Progame/DGOS/src/apps/package-service.mjs:12:133)
+    digest (file:///Users/apple/Progame/DGOS/src/extensions/validation.mjs:4:62)
+    ExtensionService.install (file:///Users/apple/Progame/DGOS/src/extensions/service.mjs:69:14)
+    async ready (file:///Users/apple/Progame/DGOS/tests/extensions/extension-service.test.mjs:25:19)
+    async TestContext.<anonymous> (file:///Users/apple/Progame/DGOS/tests/extensions/extension-service.test.mjs:40:55)
+    async Test.run (node:internal/test_runner/test:1054:7)
+  ...
+# Subtest: cancel queued and timeout running do not retry handler
+not ok 3 - cancel queued and timeout running do not retry handler
+  ---
+  duration_ms: 0.432125
+  type: 'test'
+  location: '/Users/apple/Progame/DGOS/tests/extensions/extension-service.test.mjs:52:1'
+  failureType: 'testCodeFailure'
+  error: 'invalid_package_json'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    fail (file:///Users/apple/Progame/DGOS/src/apps/package-service.mjs:6:55)
+    canonicalJson (file:///Users/apple/Progame/DGOS/src/apps/package-service.mjs:13:9)
+    file:///Users/apple/Progame/DGOS/src/apps/package-service.mjs:12:172
+    Array.map (<anonymous>)
+    canonicalJson (file:///Users/apple/Progame/DGOS/src/apps/package-service.mjs:12:133)
+    digest (file:///Users/apple/Progame/DGOS/src/extensions/validation.mjs:4:62)
+    ExtensionService.install (file:///Users/apple/Progame/DGOS/src/extensions/service.mjs:69:14)
+    async ready (file:///Users/apple/Progame/DGOS/tests/extensions/extension-service.test.mjs:25:19)
+    async TestContext.<anonymous> (file:///Users/apple/Progame/DGOS/tests/extensions/extension-service.test.mjs:53:205)
+    async Test.run (node:internal/test_runner/test:1054:7)
+  ...
+# Subtest: recovery marks uncertain claimed execution and never dispatches it again
+not ok 4 - recovery marks uncertain claimed execution and never dispatches it again
+  ---
+  duration_ms: 0.369167
+  type: 'test'
+  location: '/Users/apple/Progame/DGOS/tests/extensions/extension-service.test.mjs:62:1'
+  failureType: 'testCodeFailure'
+  error: 'invalid_package_json'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    fail (file:///Users/apple/Progame/DGOS/src/apps/package-service.mjs:6:55)
+    canonicalJson (file:///Users/apple/Progame/DGOS/src/apps/package-service.mjs:13:9)
+    file:///Users/apple/Progame/DGOS/src/apps/package-service.mjs:12:172
+    Array.map (<anonymous>)
+    canonicalJson (file:///Users/apple/Progame/DGOS/src/apps/package-service.mjs:12:133)
+    digest (file:///Users/apple/Progame/DGOS/src/extensions/validation.mjs:4:62)
+    ExtensionService.install (file:///Users/apple/Progame/DGOS/src/extensions/service.mjs:69:14)
+    async ready (file:///Users/apple/Progame/DGOS/tests/extensions/extension-service.test.mjs:25:19)
+    async TestContext.<anonymous> (file:///Users/apple/Progame/DGOS/tests/extensions/extension-service.test.mjs:63:84)
+    async Test.run (node:internal/test_runner/test:1054:7)
+  ...
+# Subtest: preview is owner and digest bound; raw process fields are rejected
+ok 5 - preview is owner and digest bound; raw process fields are rejected
+  ---
+  duration_ms: 0.603833
+  type: 'test'
+  ...
+# Subtest: concurrent connect uses one attempt and cancellation reaches live child
+not ok 6 - concurrent connect uses one attempt and cancellation reaches live child
+  ---
+  duration_ms: 0.2645
+  type: 'test'
+  location: '/Users/apple/Progame/DGOS/tests/extensions/extension-service.test.mjs:82:1'
+  failureType: 'testCodeFailure'
+  error: 'invalid_package_json'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    fail (file:///Users/apple/Progame/DGOS/src/apps/package-service.mjs:6:55)
+    canonicalJson (file:///Users/apple/Progame/DGOS/src/apps/package-service.mjs:13:9)
+    file:///Users/apple/Progame/DGOS/src/apps/package-service.mjs:12:172
+    Array.map (<anonymous>)
+    canonicalJson (file:///Users/apple/Progame/DGOS/src/apps/package-service.mjs:12:133)
+    digest (file:///Users/apple/Progame/DGOS/src/extensions/validation.mjs:4:62)
+    ExtensionService.install (file:///Users/apple/Progame/DGOS/src/extensions/service.mjs:69:14)
+    async TestContext.<anonymous> (file:///Users/apple/Progame/DGOS/tests/extensions/extension-service.test.mjs:85:19)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: skill package and child IDs remain distinct; untrusted preview cannot install
+ok 7 - skill package and child IDs remain distinct; untrusted preview cannot install
+  ---
+  duration_ms: 1.198542
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 3
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 69.339833

@@ -1,0 +1,16 @@
+TAP version 13
+# Subtest: PostgreSQL repository persists identity, key digest, and audit outbox
+ok 1 - PostgreSQL repository persists identity, key digest, and audit outbox
+  ---
+  duration_ms: 61.01225
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 123.532084

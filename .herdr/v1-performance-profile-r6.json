@@ -1,0 +1,33 @@
+{
+  "profile_id": "V1-PERFORMANCE-r6-local-calibration-proposal",
+  "status": "engineering_proposal_unapproved",
+  "scope": "local isolated PostgreSQL, Redis DB8, API, worker and synthetic Provider fixture",
+  "max_duration_seconds": 45,
+  "max_concurrency": 8,
+  "max_submissions": 16,
+  "request_timeout_ms": 5000,
+  "terminal_timeout_ms": 15000,
+  "sample_interval_ms": 1000,
+  "mix": {
+    "system_settings_read": 7,
+    "usage_query": 2,
+    "task_submit": 1
+  },
+  "stages": [
+    { "name": "ramp", "duration_ms": 2500, "concurrency": 2 },
+    { "name": "short_steady", "duration_ms": 3000, "concurrency": 4 },
+    { "name": "bounded_overload_probe", "duration_ms": 2500, "concurrency": 8 },
+    { "name": "recovery", "duration_ms": 2000, "concurrency": 2 }
+  ],
+  "review_proposal_only": {
+    "deployment": "single API, single worker, local PostgreSQL; remeasure for the selected release topology",
+    "settings_read_p95_ms": 300,
+    "usage_query_p95_ms": 400,
+    "task_admission_p95_ms": 800,
+    "task_terminal_p95_ms": 5000,
+    "unexpected_error_rate_percent": 0.5,
+    "recovery_window_seconds": 30,
+    "rationale": "Initial review bands for a local single-node fixture. Require target workload, deployment, observation window and owner approval before any acceptance comparison."
+  },
+  "approval": null
+}

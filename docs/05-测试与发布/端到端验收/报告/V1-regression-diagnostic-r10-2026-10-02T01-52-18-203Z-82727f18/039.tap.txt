@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: memory permission settings use authoritative rules and extra manage scope
+ok 1 - memory permission settings use authoritative rules and extra manage scope
+  ---
+  duration_ms: 46.019333
+  type: 'test'
+  ...
+# Subtest: memory permission receipts stay public and replay after earlier System writes
+ok 2 - memory permission receipts stay public and replay after earlier System writes
+  ---
+  duration_ms: 6.018916
+  type: 'test'
+  ...
+# Subtest: PostgreSQL permission receipts survive history and preserve atomic replay
+ok 3 - PostgreSQL permission receipts survive history and preserve atomic replay # SKIP dedicated governance database required
+  ---
+  duration_ms: 0.24975
+  type: 'test'
+  ...
+# Subtest: PostgreSQL permission settings batch and System versions commit atomically
+ok 4 - PostgreSQL permission settings batch and System versions commit atomically # SKIP dedicated governance database required
+  ---
+  duration_ms: 0.187333
+  type: 'test'
+  ...
+# Subtest: PostgreSQL permission settings accept a declared installed package at version 10
+ok 5 - PostgreSQL permission settings accept a declared installed package at version 10 # SKIP dedicated governance database required
+  ---
+  duration_ms: 0.176708
+  type: 'test'
+  ...
+# Subtest: main API accepts the installed workbench permission form against PostgreSQL
+ok 6 - main API accepts the installed workbench permission form against PostgreSQL # SKIP dedicated governance database required
+  ---
+  duration_ms: 0.153167
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 4
+# todo 0
+# duration_ms 248.198417

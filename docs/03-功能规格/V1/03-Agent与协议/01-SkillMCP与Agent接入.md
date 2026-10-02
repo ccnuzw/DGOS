@@ -142,12 +142,25 @@ V1 只承诺 Skill/MCP 基础管理、Agent Tool 受控调用和文本任务协�
 | 业务能力 | operationId | 当前状态 |
 | --- | --- | --- |
 | Skill 列表 | `listSkills` | V1 OpenAPI 已声明 |
+| 自定义Skill/定义编辑 | `createCustomSkill`、`getSkillDefinition`、`updateSkillDefinition` | r5主OpenAPI引用管理投影；身份与展示覆盖分离，Prompt仅授权管理端可读 |
+| 显式翻译/审阅应用 | `translateSkill`、`applySkillTranslation` | 复用Task/Quota/Artifact及现有scope，绑定源版本；不自动执行或伪造译文 |
+| MCP模板/受控配置 | `listMcpTemplates`、`updateMcpConfig` | 模板需求与实际连接状态分离，凭据writeOnly，CAS/Secret补偿 |
 | 安装/启停/卸载 Skill | `installSkill`、`setSkillState`、`uninstallSkill` | V1 OpenAPI 已声明 |
 | MCP 列表/安装/启停/卸载 | `listMcpServices`、`installMcp`、`setMcpState`、`uninstallMcp` | V1 OpenAPI 已声明 |
+| 来源预览 | `previewExtension` | 主OpenAPI引用扩展投影；仅预览不安装 |
+| 执行确认出票 | `createExtensionConfirmation` | 用户审阅已安装工具/版本/输入摘要/风险后显式请求；只出票、不执行 |
+| MCP连接/断开/工具目录 | `connectMcp`、`disconnectMcp`、`listMcpTools`、`discoverMcpTools` | 主OpenAPI引用扩展投影；连接与启用独立 |
+| 工具调用与持久Run | `invokeExtensionTool`、`getExtensionRun`、`cancelExtensionRun`、`streamExtensionRunEvents` | 主OpenAPI引用扩展投影；先落盘、授权确认后执行 |
 
 ### 逐操作契约约束
 
 HTTP 字段和响应 schema 只以 [V1-openapi.yaml](../../../04-技术架构/当前版本/V1-openapi.yaml) 为权威；本表补充扩展管理动作的业务规则。
+
+r5既有AC03–08补全工程输入见[扩展管理补全契约](../../../04-技术架构/当前版本/V1-扩展管理补全工程契约.md)，含上述新增操作的逐项scope、schema、确认、幂等、事务/恢复和E/H/D/G实施边界。自定义与翻译不是通用Agent授权；在线source不执行shell。AC原文不变，规格Ready不代表这些操作已经通过运行验收。
+
+2026-10-02工程投影由主OpenAPI引用`V1-extension.openapi.yaml`，统一previewId/digest绑定、stateVersion、连接/工具目录及Run。机器字段不在本表重复定义；[工程核查](../../../04-技术架构/当前版本/V1-应用与扩展工程契约核查.md)列出可实施边界。来源/配置不是任意进程授权；管理表单的连接字段必须转为受控runner profile或目标引用。公开Record不返回SecretRef、命令环境秘密或私有路径。
+
+安装预览确认只授权安装，不授权工具执行。执行链为读取已注册工具/schema与风险→用户审阅输入摘要/副作用→显式POST confirmations出票→POST runs携confirmationId；出票接口使用对应kind.execute及资源权限，不启动进程/创建Run。票据绑定认证主体、APP、kind、工具、扩展版本、输入digest和expiry；执行时重检授权，按同requestId重放返回原Run，票据与Run创建原子消费，跨主体/改输入/过期/已消费的新请求均拒绝。恒true hook或自造票据不是确认。Cookie写操作保持CSRF/Origin约束。
 
 | operationId | 前置条件 | 成功终态 | 关键失败与无副作用 | 幂等 | 并发 | 重试/超时 | 观测/恢复 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -286,20 +299,20 @@ Then 无需凭据且健康检查通过的服务才可自动启动；需要凭据
 
 | AC 范围 | 自动化重点 | 建议测试文件 | 建议命令 | 当前状态 |
 | --- | --- | --- | --- | --- |
-| AC01–AC08 | 权限、schema、超时、取消、MCP 配置/模板/连接生命周期、bundled MCP 凭据边界、持久 Task/Run 和 Skill 创建/导入/调用生命周期 | `tests/e2e/agent-tools.spec.ts`、`tests/e2e/mcp-management.spec.ts`、`tests/e2e/mcp-quick-config.spec.ts`、`tests/e2e/mcp-lifecycle.spec.ts`、`tests/e2e/mcp-persistent-run.spec.ts`、`tests/e2e/skill-management.spec.ts`、`tests/e2e/skill-import-preview.spec.ts` | `npm test -- agent-tools`、`npm test -- mcp-management`、`npm test -- mcp-quick-config`、`npm test -- mcp-lifecycle`、`npm test -- mcp-persistent-run`、`npm test -- skill-management`、`npm test -- skill-import-preview` | 规划中 |
+| AC01–AC08 | 权限、输入、MCP/Skill管理及持久Run | `tests/extensions/extension-service.test.mjs`、`tests/extensions/management-routes-pg.test.mjs`、`tests/extensions/management-translation-pg.test.mjs`、`scripts/v1-extension-http.mjs` | DGOS_EXTENSION_TEST_DATABASE_URL="$DGOS_EXTENSION_ISOLATED_URL" node --test tests/extensions/*.test.mjs | E r6独占已迁移extensions测试库33/33；旧公开Run链12/12，新增管理HTTP H在途；GUI/Linux另验 |
 
 ### AC 逐项测试设计
 
 | AC | 验收重点 | 测试层级 | 目标资产 | 目标命令 | 初始资产状态 |
 | --- | --- | --- | --- | --- | --- |
-| AC01 | 权限拒绝 | Integration | `tests/fixtures/agent-tools-invalid.json` | `npm test -- agent-permission` | 未创建 |
-| AC02 | 超时恢复 | E2E | `tests/e2e/agent-timeout.spec.ts` | `npm test -- agent-timeout` | 未创建 |
-| AC03 | MCP 配置校验、秘密脱敏、启停/连接状态和重试 | E2E/Integration | `tests/e2e/mcp-management.spec.ts` | `npm test -- mcp-management` | 未创建 |
-| AC04 | Skill 导入、权限校验、调用语法和移除引用保护 | E2E/Integration | `tests/e2e/skill-management.spec.ts` | `npm test -- skill-management` | 未创建 |
-| AC05 | MCP 快速配置、模板状态、非秘密自动填充和凭据脱敏 | E2E/Integration | `tests/e2e/mcp-quick-config.spec.ts` | `npm test -- mcp-quick-config` | 未创建 |
-| AC06 | 服务器列表、工具数量、连接中/失败、幂等重连和删除引用保护 | E2E/Integration | `tests/e2e/mcp-lifecycle.spec.ts` | `npm test -- mcp-lifecycle` | 未创建 |
-| AC07 | 自定义 Skill 字段、稳定 ID、在线导入预览、来源/权限校验和单项启用 | E2E/Integration | `tests/e2e/skill-import-preview.spec.ts` | `npm test -- skill-import-preview` | 未创建 |
-| AC08 | bundled MCP 凭据边界、页面关闭语义和 Task/Run 查询取消恢复 | E2E/Integration | `tests/e2e/mcp-persistent-run.spec.ts` | `npm test -- mcp-persistent-run` | 未创建 |
+| AC01 | 权限拒绝 | API/Service | `tests/extensions/extension-service.test.mjs`、`tests/extensions/extension-routes.test.mjs` | node --test tests/extensions/extension-service.test.mjs tests/extensions/extension-routes.test.mjs | 已有拒绝子集；真实安装声明/精确依赖版本仍待验 |
+| AC02 | 超时恢复 | Service/PG | `tests/extensions/extension-service.test.mjs`、`tests/extensions/postgres-extension.test.mjs` | node --test tests/extensions/extension-service.test.mjs tests/extensions/postgres-extension.test.mjs | 有超时/claimed不重发/重启子集，不等于业务E2E |
+| AC03 | 配置、脱敏、连接 | Service/Transport | `tests/extensions/extension-service.test.mjs`、`tests/extensions/mcp-transport.test.mjs` | node --test tests/extensions/extension-service.test.mjs tests/extensions/mcp-transport.test.mjs | 受控进程/HTTP fixture；生产出站隔离与UI待验 |
+| AC04 | Skill管理与引用保护 | PG/注入路由 | `tests/extensions/management-definition-pg.test.mjs`、`tests/extensions/management-translation-pg.test.mjs` | DGOS_EXTENSION_TEST_DATABASE_URL="$DGOS_EXTENSION_ISOLATED_URL" node --test tests/extensions/management-definition-pg.test.mjs tests/extensions/management-translation-pg.test.mjs | E r6已纳33/33：稳定身份/Prompt/翻译Task及apply；完整浏览器管理仍待D |
+| AC05 | 快速配置与凭据状态 | PG/注入路由/受控transport | `tests/extensions/management-routes-pg.test.mjs`、`tests/extensions/management-credential-pg.test.mjs` | DGOS_EXTENSION_TEST_DATABASE_URL="$DGOS_EXTENSION_ISOLATED_URL" node --test tests/extensions/management-routes-pg.test.mjs tests/extensions/management-credential-pg.test.mjs | 同目的真实资产替换旧缺失目标；模板needs-credentials/写入脱敏/幂等补偿已有，双样本完整GUI与Linux目标OS待验 |
+| AC06 | 工具发现/幂等连接/删除 | Transport/PG | `tests/extensions/mcp-transport.test.mjs`、`tests/extensions/hardening-r3.test.mjs`、`tests/extensions/postgres-extension.test.mjs` | node --test tests/extensions/mcp-transport.test.mjs tests/extensions/hardening-r3.test.mjs tests/extensions/postgres-extension.test.mjs | 连接/工具数/多主体子集；活跃依赖删除完整分支待补 |
+| AC07 | Skill预览/身份/启用 | PG/HTTPS fixture | `tests/extensions/management-definition-pg.test.mjs`、`tests/extensions/management-online-pg.test.mjs`、`tests/extensions/management-custom-run-pg.test.mjs` | DGOS_EXTENSION_TEST_DATABASE_URL="$DGOS_EXTENSION_ISOLATED_URL" node --test tests/extensions/management-definition-pg.test.mjs tests/extensions/management-online-pg.test.mjs tests/extensions/management-custom-run-pg.test.mjs | E r6已含自定义Prompt/受信签名预览/字节固定；公开管理HTTP和导入UI待验 |
+| AC08 | bundled凭据/跨页面Run | PG/独立daemon | `tests/extensions/management-credential-pg.test.mjs`、`tests/extensions/daemon-r3.test.mjs`、`scripts/v1-extension-http.mjs` | DGOS_EXTENSION_TEST_DATABASE_URL="$DGOS_EXTENSION_ISOLATED_URL" node --test tests/extensions/management-credential-pg.test.mjs tests/extensions/daemon-r3.test.mjs | E r6凭据/进程恢复子集，旧公开Run链12/12；页面关闭/reload及Linux生产隔离待验 |
 
 ### 回归要求
 
@@ -308,7 +321,9 @@ Then 无需凭据且健康检查通过的服务才可自动启动；需要凭据
 
 ## 实现与验证
 
-当前只有参考视频、DX OS 外部研究资料和截图证据；无 DGOS 工具清单或运行证据。此功能为高风险，开发前必须完成 DGOS 自有契约和技术设计。
+2026-10-02 / r7回写：E r6报告记录`DGOS_EXTENSION_TEST_DATABASE_URL=.../dgos_v1_extensions_r3final node --test tests/extensions/*.test.mjs`最终33通过/0失败/0跳过，无PG命令为23通过/10跳过。涵盖自定义Skill、definition/Prompt保护、真实Task/Quota翻译、apply、可信在线来源、模板凭据、Secret补偿与Run恢复；早期32/33及配额拒绝后intent漏绑Task的修复经过保留，不能只报最终数字抹去失败。
+
+旧公开Skill/MCP/Run脚本在macOS、真实API listener/PG/独立daemon下12/12，配对批次V1-EXT-http-2026-10-02T02-03-53-948Z的脚本SHA256为8c00ef67be3e097f4f2a20bce355b3ee1b291200e7abe191f65b48feaa5549e2；精确命令/manifest见[本轮证据索引](../V1-AC资产核对-2026-10-02.md#r7-证据回写2026-10-02)。这12项不包含新增管理HTTP全覆盖，Fastify注入也不等于外部HTTP。H独立管理链、D管理交互、B Linux非特权sandbox在途；生产在线trust roots/模板需部署配置，公开双有效主体同库证据仍缺。Verify r10的10个扩展失败保留为诊断历史，E33/33仅是随后定向结果。
 
 ## 技术设计
 

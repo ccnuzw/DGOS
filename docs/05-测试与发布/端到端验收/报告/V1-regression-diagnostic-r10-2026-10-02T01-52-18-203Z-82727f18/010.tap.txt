@@ -1,0 +1,67 @@
+TAP version 13
+# Subtest: server-owned stdio profile keeps MCP process through calls and stops on disconnect
+ok 1 - server-owned stdio profile keeps MCP process through calls and stops on disconnect
+  ---
+  duration_ms: 38.656292
+  type: 'test'
+  ...
+# Subtest: server-owned stdio credential field reaches child without caller env control
+ok 2 - server-owned stdio credential field reaches child without caller env control
+  ---
+  duration_ms: 34.4225
+  type: 'test'
+  ...
+# Subtest: macOS sandbox profile executes fixture while denying filesystem writes
+ok 3 - macOS sandbox profile executes fixture while denying filesystem writes
+  ---
+  duration_ms: 44.0345
+  type: 'test'
+  ...
+# Subtest: server-owned HTTP endpoint completes MCP initialize, discovery, call, and disconnect
+ok 4 - server-owned HTTP endpoint completes MCP initialize, discovery, call, and disconnect
+  ---
+  duration_ms: 22.443333
+  type: 'test'
+  ...
+# Subtest: server-owned HTTP credential header reaches MCP and is required
+ok 5 - server-owned HTTP credential header reaches MCP and is required
+  ---
+  duration_ms: 11.06725
+  type: 'test'
+  ...
+# Subtest: HTTP MCP egress rejects private HTTPS addresses before transport
+ok 6 - HTTP MCP egress rejects private HTTPS addresses before transport
+  ---
+  duration_ms: 0.593042
+  type: 'test'
+  ...
+# Subtest: service invokes persisted run through persistent stdio MCP transport
+not ok 7 - service invokes persisted run through persistent stdio MCP transport
+  ---
+  duration_ms: 1.294917
+  type: 'test'
+  location: '/Users/apple/Progame/DGOS/tests/extensions/mcp-transport.test.mjs:59:1'
+  failureType: 'testCodeFailure'
+  error: 'invalid_package_json'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    fail (file:///Users/apple/Progame/DGOS/src/apps/package-service.mjs:6:55)
+    canonicalJson (file:///Users/apple/Progame/DGOS/src/apps/package-service.mjs:13:9)
+    file:///Users/apple/Progame/DGOS/src/apps/package-service.mjs:12:172
+    Array.map (<anonymous>)
+    canonicalJson (file:///Users/apple/Progame/DGOS/src/apps/package-service.mjs:12:133)
+    digest (file:///Users/apple/Progame/DGOS/src/extensions/validation.mjs:4:62)
+    ExtensionService.install (file:///Users/apple/Progame/DGOS/src/extensions/service.mjs:69:14)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async TestContext.<anonymous> (file:///Users/apple/Progame/DGOS/tests/extensions/mcp-transport.test.mjs:64:19)
+    async Test.run (node:internal/test_runner/test:1054:7)
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 6
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 238.003

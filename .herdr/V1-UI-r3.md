@@ -1,0 +1,28 @@
+# V1-UI r3 交付回报
+
+- status: partial, ready for Lead integration; UI source/build and isolated browser flows pass, real API/browser acceptance remains pending.
+- work_package: V1-UI revision 3, DGOS-V1-IMPLEMENT-20261002; owner Worker-D; main workspace authorized UI paths only.
+- files_changed: `apps/web/src/main.tsx`, `apps/web/src/advanced.tsx`, `apps/web/src/hardening.tsx`, `apps/web/src/catalog.tsx`, `apps/web/src/i18n.ts`, `apps/web/src/style.css`, `apps/web/e2e/workbench.spec.mjs`, `apps/web/e2e/real-workbench.spec.mjs`. Preexisting r2 UI/root files were preserved. `apps/web/dist` is generated output, not source delivery.
+- tests_added: fixture Playwright checks for permission request/explicit allow/replan, provider version-bound connection test and ready, extension confirmation ticket/input/requestId binding, bilingual developer/MCP controls, selected app release and sandbox bridge refusal. Updated the real API workbench scenario for explicit Provider activation, but did not execute it.
+- commands_run:
+  - `pnpm --filter @dgos/web check`: exit 0.
+  - `pnpm --filter @dgos/web build`: exit 0; Vite built 1587 modules and production `apps/web/dist`.
+  - `WEB_BASE_URL=http://127.0.0.1:15133 pnpm --filter @dgos/web e2e`: exit 0; 14 fixture browser tests passed, 1 real API test skipped because `API_BASE_URL` was unset.
+  - `git diff --check -- apps/web`: exit 0.
+- implementation_facts:
+  - Assistant resolver only selects registered version-matched candidates. Plans freeze parsed input. Permission `ask` shows POST `/permissions/request`, then an explicit administrator PATCH `/permissions` `allow`; execute stays blocked until a fresh plan reports `allow`. `deny` stays blocked. Five navigation targets remain allowlisted.
+  - Provider account activation requires a succeeded ConnectionTest with matching `accountId` and `accountVersion`; the explicit `ready` request carries `connectionTestId` and account `baseVersion`. Validate and catalog refresh remain separate actions.
+  - Extension tool invocation reviews selected tool, app, version, risk, side effects and input before POST `/extensions/confirmations`; the returned ticket binds a frozen input and the same requestId for POST `/extensions/runs`. Editing tool/app/input drops the ticket. API errors remain visible.
+  - Key, session step-up/logout, retention preview/start/run, quota forms, developer signed envelope, extension lifecycle and bilingual controls are wired to the existing paths. Session errors other than 401 show retry rather than first-time setup.
+  - Catalog groups actual public releases, reads `/apps/{appId}/deployment` for the current subject, and uses deployment `versionNumber` for update/uninstall. Launch requires a valid instance receipt, mounts an `allow-scripts` opaque iframe, restricts bridge messages to its `contentWindow`/instance/declared capability, and forwards only to authenticated `/apps/{appId}/bridge`. Bridge 403 is returned as an error. A reloaded frame requires a new launch.
+- contract_changes_proposed: []
+- open_risks:
+  - At report time `apps/api/src/package-routes.mjs` has no GET `/api/v1/apps/{appId}/deployment` implementation, although main OpenAPI now defines it. The UI surfaces 404/unavailable and disables update/uninstall without a server deployment revision. Lead/G must wire the route and retest.
+  - The package bridge route exists, but main `server.mjs` has not visibly supplied `bridgeAuthorize` and `bridgeHandlers`. Real packaged app capability calls may return `capability_unavailable`; no success is claimed.
+  - The official `apps/ai-workbench-package` still submits a prompt-only `dgos.aiTask.submit` input and lacks model handshake/task resume/results. This is outside D's authorized paths; real package Task completion is not claimed.
+  - `V1-openapi.yaml` projects `PermissionRule.scope` as an object, whereas the currently implemented PermissionBroker uses `scope='*'`. UI follows the running broker for the explicit approval flow. Planner/Lead should align the public DTO; no parallel UI permission store was added.
+  - Current sandbox bridge has only fixture browser evidence. It needs a real signed package, real deployment, session/broker wiring, Chromium verification of resources/opaque origin, and cross-instance/session denial evidence.
+- docs_to_update: Lead/Planner should mark V1 implementation status and acceptance matrix only after real deployment/API/browser evidence; this report is a handoff, not product acceptance.
+- unfinished_items: Real API workbench and app bridge acceptance; server deployment projection; full official packaged workbench Task flow; remaining scattered English literals in old compatibility views and some generic error text.
+- limitations: B owns isolated Compose/core HTTP ports, so this worker did not start or mutate API/DB services. All Playwright responses above were fixture routes except the explicitly skipped real API test. Ports used: 15133 only. No commit, push, delegation, or desktop/macos edits.
+- decisions_needed_from_lead_or_planner: Confirm permission `scope` public representation; integrate deployment GET and bridge authorizer/handlers; assign official package Task workflow ownership and real browser environment for follow-up acceptance.

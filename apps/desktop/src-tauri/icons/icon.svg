@@ -1,0 +1,141 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Background gradient for rounded square -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#007AFF;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#5856D6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#BF5AF2;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Sphere gradient -->
+    <radialGradient id="sphereGradient" cx="45%" cy="35%">
+      <stop offset="0%" style="stop-color:#5AC8FA;stop-opacity:1" />
+      <stop offset="40%" style="stop-color:#007AFF;stop-opacity:1" />
+      <stop offset="80%" style="stop-color:#5856D6;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#5856D6;stop-opacity:0.7" />
+    </radialGradient>
+
+    <!-- Highlight gradient -->
+    <radialGradient id="highlightGradient" cx="40%" cy="30%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.6" />
+      <stop offset="50%" style="stop-color:#FFFFFF;stop-opacity:0.2" />
+      <stop offset="100%" style="stop-color:#FFFFFF;stop-opacity:0" />
+    </radialGradient>
+
+    <!-- Node glow -->
+    <radialGradient id="nodeGlow">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#5AC8FA;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#5AC8FA;stop-opacity:0" />
+    </radialGradient>
+
+    <!-- Connection line gradient -->
+    <linearGradient id="connectionGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#5AC8FA;stop-opacity:0.3" />
+      <stop offset="50%" style="stop-color:#FFFFFF;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#5AC8FA;stop-opacity:0.3" />
+    </linearGradient>
+
+    <!-- Shadow filter -->
+    <filter id="softShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
+      <feOffset dx="0" dy="8" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Glow filter for nodes -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background rounded square (macOS superellipse approximation) -->
+  <path d="M 256 64
+           C 140 64, 64 140, 64 256
+           L 64 768
+           C 64 884, 140 960, 256 960
+           L 768 960
+           C 884 960, 960 884, 960 768
+           L 960 256
+           C 960 140, 884 64, 768 64
+           Z"
+        fill="url(#bgGradient)"/>
+
+  <!-- Main sphere -->
+  <circle cx="512" cy="512" r="280" fill="url(#sphereGradient)" filter="url(#softShadow)"/>
+
+  <!-- Neural network connections (lines between nodes) -->
+  <!-- Outer ring connections -->
+  <line x1="280" y1="380" x2="420" y2="320" stroke="url(#connectionGradient)" stroke-width="3" opacity="0.6"/>
+  <line x1="420" y1="320" x2="604" y2="320" stroke="url(#connectionGradient)" stroke-width="3" opacity="0.6"/>
+  <line x1="604" y1="320" x2="744" y2="380" stroke="url(#connectionGradient)" stroke-width="3" opacity="0.6"/>
+  <line x1="744" y1="380" x2="744" y2="644" stroke="url(#connectionGradient)" stroke-width="3" opacity="0.6"/>
+  <line x1="744" y1="644" x2="604" y2="704" stroke="url(#connectionGradient)" stroke-width="3" opacity="0.6"/>
+  <line x1="604" y1="704" x2="420" y2="704" stroke="url(#connectionGradient)" stroke-width="3" opacity="0.6"/>
+  <line x1="420" y1="704" x2="280" y2="644" stroke="url(#connectionGradient)" stroke-width="3" opacity="0.6"/>
+  <line x1="280" y1="644" x2="280" y2="380" stroke="url(#connectionGradient)" stroke-width="3" opacity="0.6"/>
+
+  <!-- Inner connections to center -->
+  <line x1="280" y1="380" x2="450" y2="450" stroke="url(#connectionGradient)" stroke-width="2.5" opacity="0.5"/>
+  <line x1="420" y1="320" x2="512" y2="440" stroke="url(#connectionGradient)" stroke-width="2.5" opacity="0.5"/>
+  <line x1="604" y1="320" x2="574" y2="450" stroke="url(#connectionGradient)" stroke-width="2.5" opacity="0.5"/>
+  <line x1="744" y1="380" x2="574" y2="450" stroke="url(#connectionGradient)" stroke-width="2.5" opacity="0.5"/>
+  <line x1="744" y1="644" x2="574" y2="574" stroke="url(#connectionGradient)" stroke-width="2.5" opacity="0.5"/>
+  <line x1="604" y1="704" x2="512" y2="584" stroke="url(#connectionGradient)" stroke-width="2.5" opacity="0.5"/>
+  <line x1="420" y1="704" x2="450" y2="574" stroke="url(#connectionGradient)" stroke-width="2.5" opacity="0.5"/>
+  <line x1="280" y1="644" x2="450" y2="574" stroke="url(#connectionGradient)" stroke-width="2.5" opacity="0.5"/>
+
+  <!-- Cross connections between inner nodes -->
+  <line x1="450" y1="450" x2="574" y2="450" stroke="url(#connectionGradient)" stroke-width="2.5" opacity="0.4"/>
+  <line x1="574" y1="450" x2="574" y2="574" stroke="url(#connectionGradient)" stroke-width="2.5" opacity="0.4"/>
+  <line x1="574" y1="574" x2="450" y2="574" stroke="url(#connectionGradient)" stroke-width="2.5" opacity="0.4"/>
+  <line x1="450" y1="574" x2="450" y2="450" stroke="url(#connectionGradient)" stroke-width="2.5" opacity="0.4"/>
+  <line x1="450" y1="450" x2="574" y2="574" stroke="url(#connectionGradient)" stroke-width="2.5" opacity="0.4"/>
+  <line x1="574" y1="450" x2="450" y2="574" stroke="url(#connectionGradient)" stroke-width="2.5" opacity="0.4"/>
+
+  <!-- Center connections -->
+  <line x1="450" y1="450" x2="512" y2="512" stroke="url(#connectionGradient)" stroke-width="3" opacity="0.6"/>
+  <line x1="574" y1="450" x2="512" y2="512" stroke="url(#connectionGradient)" stroke-width="3" opacity="0.6"/>
+  <line x1="574" y1="574" x2="512" y2="512" stroke="url(#connectionGradient)" stroke-width="3" opacity="0.6"/>
+  <line x1="450" y1="574" x2="512" y2="512" stroke="url(#connectionGradient)" stroke-width="3" opacity="0.6"/>
+  <line x1="512" y1="440" x2="512" y2="512" stroke="url(#connectionGradient)" stroke-width="3" opacity="0.6"/>
+  <line x1="512" y1="584" x2="512" y2="512" stroke="url(#connectionGradient)" stroke-width="3" opacity="0.6"/>
+
+  <!-- Outer ring nodes -->
+  <circle cx="280" cy="380" r="12" fill="#5AC8FA" filter="url(#glow)"/>
+  <circle cx="420" cy="320" r="12" fill="#5AC8FA" filter="url(#glow)"/>
+  <circle cx="604" cy="320" r="12" fill="#5AC8FA" filter="url(#glow)"/>
+  <circle cx="744" cy="380" r="12" fill="#5AC8FA" filter="url(#glow)"/>
+  <circle cx="744" cy="644" r="12" fill="#5AC8FA" filter="url(#glow)"/>
+  <circle cx="604" cy="704" r="12" fill="#5AC8FA" filter="url(#glow)"/>
+  <circle cx="420" cy="704" r="12" fill="#5AC8FA" filter="url(#glow)"/>
+  <circle cx="280" cy="644" r="12" fill="#5AC8FA" filter="url(#glow)"/>
+
+  <!-- Inner ring nodes -->
+  <circle cx="450" cy="450" r="14" fill="#FFFFFF" filter="url(#glow)"/>
+  <circle cx="574" cy="450" r="14" fill="#FFFFFF" filter="url(#glow)"/>
+  <circle cx="574" cy="574" r="14" fill="#FFFFFF" filter="url(#glow)"/>
+  <circle cx="450" cy="574" r="14" fill="#FFFFFF" filter="url(#glow)"/>
+  <circle cx="512" cy="440" r="14" fill="#FFFFFF" filter="url(#glow)"/>
+  <circle cx="512" cy="584" r="14" fill="#FFFFFF" filter="url(#glow)"/>
+
+  <!-- Central node (brightest) -->
+  <circle cx="512" cy="512" r="20" fill="#FFFFFF" filter="url(#glow)"/>
+  <circle cx="512" cy="512" r="20" fill="url(#nodeGlow)" opacity="0.8"/>
+
+  <!-- Sphere highlight overlay -->
+  <ellipse cx="480" cy="450" rx="180" ry="150" fill="url(#highlightGradient)" opacity="0.5"/>
+
+  <!-- Subtle inner glow on sphere edge -->
+  <circle cx="512" cy="512" r="280" fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.1"/>
+</svg>

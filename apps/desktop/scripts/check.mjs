@@ -13,6 +13,8 @@ for (const file of required) {
   if (!fs.existsSync(path.join(desktop, file))) throw new Error(`Missing desktop host file: ${file}`);
 }
 const config = JSON.parse(fs.readFileSync(path.join(desktop, 'src-tauri/tauri.conf.json'), 'utf8'));
-if (config.build?.frontendDist !== '../../web') throw new Error('Tauri must load the shared apps/web asset directory');
-if (config.build?.devUrl !== 'http://127.0.0.1:4173') throw new Error('Tauri devUrl must use the shared Web server');
+if (config.build?.frontendDist !== '../../web/dist') throw new Error('Tauri must package the shared apps/web/dist build');
+if (config.build?.devUrl !== 'http://127.0.0.1:15151') throw new Error('Tauri devUrl must use the assigned Web port');
+if (config.app?.security?.csp?.includes('127.0.0.1:3000')) throw new Error('Packaged CSP must not expose API origin');
+if (!config.app?.withGlobalTauri) throw new Error('Native host bridge must be available to Host Adapter');
 console.log('DGOS desktop host configuration is complete');

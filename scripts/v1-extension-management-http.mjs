@@ -1,0 +1,265 @@
+import assert from 'node:assert/strict';
+import { createHash, generateKeyPairSync, randomBytes, randomUUID, sign } from 'node:crypto';
+import { execFileSync, fork } from 'node:child_process';
+import { createServer } from 'node:https';
+import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
+import pg from '../apps/api/node_modules/pg/lib/index.js';
+import { createClient } from '../apps/api/node_modules/redis/dist/index.js';
+import { buildServer } from '../apps/api/src/server.mjs';
+import { createPostgresWorker } from '../apps/worker/src/worker.mjs';
+import { ExtensionRunDaemon } from '../apps/extension-runner/src/daemon.mjs';
+import { ExtensionService } from '../src/extensions/service.mjs';
+import { PostgresExtensionRepository } from '../src/extensions/repository.mjs';
+import { PostgresExtensionManagementRepository } from '../src/extensions/management-repository.mjs';
+import { loadExtensionRuntime } from '../src/extensions/runtime.mjs';
+import { PostgresPackageRepository } from '../src/apps/postgres-package-repository.mjs';
+import { PostgresAuditRepository } from '../src/audit/outbox.mjs';
+import { DiskPackageStore, canonicalJson } from '../src/apps/package-service.mjs';
+import { ProviderEgress } from '../src/security/provider-egress.mjs';
+import { createNetworkRouteFactory } from '../src/security/network-route.mjs';
+import { RedisSecretService } from '../src/security/secret-service.mjs';
+import { discoverMigrations, buildMigrationSql } from './migrate.mjs';
+
+const adminUrl = new URL(process.env.DGOS_EXT_PUBLIC_ADMIN_DATABASE_URL ?? 'postgresql://dgos:dgos@127.0.0.1:5432/dgos_v1_provider');
+if (adminUrl.hostname !== '127.0.0.1' || adminUrl.port !== '5432' || adminUrl.pathname !== '/dgos_v1_provider') throw new Error('dedicated_provider_database_required');
+const redisUrl = process.env.DGOS_EXT_PUBLIC_REDIS_URL ?? 'redis://127.0.0.1:6379/5';
+if (new URL(redisUrl).pathname !== '/5') throw new Error('extension_redis_db5_required');
+const suffix = randomBytes(16).toString('hex');
+const database = `dgos_v1_ext_public_${suffix}`;
+const databaseUrl = new URL(adminUrl); databaseUrl.pathname = `/${database}`;
+const namespace = `v1-ext-public:${suffix}`;
+const apiPort = 15173; const fixturePort = 15174;
+const providerEndpoint = `https://provider.fixture.test:${fixturePort}/v1`;
+const onlineSource = `https://extension.fixture.test:${fixturePort}/manifest.json`;
+const workerMode = process.argv.includes('--worker');
+const root = workerMode ? null : await mkdtemp(join(tmpdir(), 'dgos-ext-public-'));
+const evidenceDir = resolve('tests/extensions/evidence');
+const runId = `V1-EXT-PUBLIC-r7-${new Date().toISOString().replaceAll(/[:.]/g, '-')}-${suffix.slice(0, 8)}`;
+const paths = { report: join(evidenceDir, `${runId}.json`), log: join(evidenceDir, `${runId}.log`), manifest: join(evidenceDir, `${runId}-manifest.json`) };
+const assets = ['scripts/v1-extension-management-http.mjs', 'apps/api/src/server.mjs', 'apps/api/src/extension-routes.mjs', 'apps/worker/src/worker.mjs', 'src/extensions/service.mjs', 'src/extensions/management-service.mjs', 'src/extensions/runtime.mjs', 'src/ai-task/service.mjs', 'migrations/0049-extension-management.sql'];
+const sha = (bytes) => createHash('sha256').update(bytes).digest('hex');
+const assetHashes = async () => Object.fromEntries(await Promise.all(assets.map(async (path) => [path, sha(await readFile(path))])));
+const before = workerMode ? null : await assetHashes();
+const report = { runId, workPackage: 'V1-EXT-PUBLIC r7', startedAt: new Date().toISOString(), database, redisDb: 5, namespace, apiPort, fixturePort, parentPid: process.pid, cases: [], limitations: ['Controlled local HTTPS Provider and signed extension fixtures, not external production endpoints.', 'Scoped public HTTP chain; final V1 release candidate remains separate.'] };
+const log = [];
+const record = (name, facts = {}) => { report.cases.push({ name, result: 'passed', facts }); log.push(`${new Date().toISOString()} PASS ${name}`); console.log(`PASS ${name}`); };
+const pause = (ms) => new Promise((done) => setTimeout(done, ms));
+const waitFor = async (name, read, predicate, timeoutMs = 15000) => { const deadline = Date.now() + timeoutMs; while (Date.now() < deadline) { const value = await read(); if (predicate(value)) return value; await pause(50); } throw new Error(`${name}_timeout`); };
+const fixtureHosts = ['provider.fixture.test', 'extension.fixture.test'];
+const routeFor = (secret, ca) => createNetworkRouteFactory({ egress: new ProviderEgress({ internalHosts: fixtureHosts, lookup: async () => [{ address: '127.0.0.1' }], ca }), secretService: secret, allowLocalFixture: true, fixtureLookup: async () => [{ address: '127.0.0.1' }], fixtureCa: ca });
+const profile = { schemaVersion: 'dgos-capability/v1', kind: 'model', id: `fixture.ext.${suffix}`, version: '1.0.0', executor: { type: 'declarative', engine: 'dgos-text-v1' }, capabilities: ['text.chat'], operations: { submit: { profile: 'responses', method: 'POST', path: '/responses' } }, workflows: { 'text.chat': { submit: 'submit' } }, defaults: { temperature: 0.4 }, limits: { maxInputCharacters: 8192, maxOutputTokens: 128 }, uiSchemas: { parameters: ['temperature', 'maxOutputTokens'] }, modelProfiles: { exact: { modelNames: ['fixture-model'], workflow: 'text.chat' } }, assets: {} };
+const providerToken = `fixture-${randomUUID()}`;
+const mcpCredential = 'fixture-secret';
+const appKeys = generateKeyPairSync('ed25519');
+const onlineKeys = generateKeyPairSync('ed25519');
+const customId = `custom_${suffix}`;
+const mcpId = `mcp_${suffix}`;
+const onlineId = `online_${suffix}`;
+const appId = `com.example.extpublic${suffix}`;
+const mcpSource = `system:ext_public_${suffix}`;
+const mcpConfig = { transport: 'stdio', runnerProfileId: 'ext_public' };
+const mcpManifest = { kind: 'mcp', id: mcpId, version: '1.0.0', requiresCredential: true, operations: ['echo', 'credential'].map((operationId) => ({ operationId, permission: 'mcp.tool.invoke', risk: 'low', sideEffects: false, inputSchema: { type: 'object', properties: {} } })) };
+const onlineManifest = { kind: 'skill', id: onlineId, packageId: `pkg_${onlineId}`, version: '1.0.0', name: 'Online fixture', operations: [{ operationId: 'format', permission: 'skill.execute', risk: 'low', sideEffects: false, inputSchema: { type: 'object', properties: { text: { type: 'string' } } } }] };
+const signedOnline = (manifest, key = onlineKeys.privateKey) => ({ manifest, keyId: 'ext-public', signature: sign(null, Buffer.from(canonicalJson(manifest)), key).toString('base64') });
+const packageEnvelope = (manifest) => { const html = Buffer.from('<html><body>Extension management fixture</body></html>'); const icon = Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"/>'); const resourceDigests = { 'index.html': `sha256:${sha(html)}`, 'icon.svg': `sha256:${sha(icon)}` }; return { requestId: randomUUID(), manifest, files: { 'index.html': html.toString('base64'), 'icon.svg': icon.toString('base64') }, resourceDigests, keyId: 'ext-public', signature: sign(null, Buffer.from(canonicalJson({ manifest, resourceDigests })), appKeys.privateKey).toString('base64') }; };
+let session;
+const http = async (path, { method = 'GET', body, status = 200, auth = session, untrusted = false } = {}) => { const response = await fetch(`http://127.0.0.1:${apiPort}/api/v1${path}`, { method, headers: { ...(auth ? { authorization: `Bearer ${auth}` } : {}), ...(body ? { 'content-type': 'application/json', 'x-dgos-csrf': 'ext-public' } : {}), ...(untrusted ? { 'x-forwarded-proto': 'https' } : {}) }, body: body ? JSON.stringify(body) : undefined, signal: AbortSignal.timeout(12000) }); const raw = await response.text(); let value; try { value = raw ? JSON.parse(raw) : null; } catch { value = raw; } assert.equal(response.status, status, `${method} ${path}: HTTP ${response.status}, expected ${status}, errorKey=${value?.errorKey ?? 'none'}`); return value; };
+const post = (path, body, status = 200) => http(path, { method: 'POST', body, status });
+const permission = (targetApp, capability, scope = '*', decision = 'allow') => http('/permissions', { method: 'PATCH', body: { requestId: randomUUID(), appId: targetApp, capability, scope, decision } });
+const taskState = (taskId) => http(`/ai-tasks/${taskId}`);
+const terminalTask = (taskId) => waitFor('task_terminal', () => taskState(taskId), (task) => ['succeeded', 'failed', 'cancelled', 'timed_out'].includes(task.status));
+let pool, redis, api, fixture, child, created = false, previousDatabaseUrl, previousNodeEnv;
+let onlineBody = signedOnline(onlineManifest);
+const providerRequests = [];
+const workerCommand = (action) => new Promise((done, fail) => { const target = child; const id = randomUUID(); const timer = setTimeout(() => { cleanup(); fail(new Error(`worker_${action}_timeout`)); }, 20000); const cleanup = () => { clearTimeout(timer); target.off('message', onMessage); target.off('exit', onExit); }; const onExit = (code) => { cleanup(); fail(new Error(`worker_${action}_exit_${code}`)); }; const onMessage = (message) => { if (message.id !== id) return; cleanup(); message.error ? fail(new Error(message.error)) : done(message.result); }; target.on('message', onMessage); target.once('exit', onExit); target.send({ id, action }); });
+const startWorker = async () => { const spawned = fork(new URL(import.meta.url), ['--worker'], { env: { ...process.env, DGOS_EXT_PUBLIC_CHILD_DATABASE_URL: databaseUrl.href, DGOS_EXT_PUBLIC_REDIS_URL: redisUrl, DGOS_EXT_PUBLIC_NAMESPACE: namespace, DGOS_EXT_PUBLIC_CONFIG_FILE: join(root, 'extensions.json'), DGOS_EXT_PUBLIC_CA_FILE: join(root, 'cert.pem') }, stdio: ['ignore', 'ignore', 'pipe', 'ipc'] }); spawned.stderr.on('data', (bytes) => { log.push(`${new Date().toISOString()} CHILD_STDERR ${String(bytes).replace(/fixture-[A-Za-z0-9-]+/g, '<redacted>').slice(0, 250)}`); }); await new Promise((done, fail) => { const timer = setTimeout(() => fail(new Error('worker_start_timeout')), 10000); spawned.on('message', (message) => { if (message.ready) { clearTimeout(timer); done(); } }); spawned.once('exit', (code) => { clearTimeout(timer); fail(new Error(`worker_start_exit_${code}`)); }); }); child = spawned; return spawned; };
+const stopWorker = async () => { if (!child) return; const stopping = child; child = null; if (stopping.exitCode !== null || stopping.signalCode) return; stopping.kill('SIGTERM'); await new Promise((done) => { const timer = setTimeout(() => { stopping.kill('SIGKILL'); done(); }, 5000); stopping.once('exit', () => { clearTimeout(timer); done(); }); }); };
+
+if (workerMode) {
+  const childUrl = new URL(process.env.DGOS_EXT_PUBLIC_CHILD_DATABASE_URL ?? '');
+  if (!/^dgos_v1_ext_public_[0-9a-f]{32}$/.test(childUrl.pathname.slice(1)) || new URL(process.env.DGOS_EXT_PUBLIC_REDIS_URL).pathname !== '/5') throw new Error('worker_isolation_required');
+  const childRedis = createClient({ url: process.env.DGOS_EXT_PUBLIC_REDIS_URL }); childRedis.on('error', () => {}); await childRedis.connect();
+  const secret = new RedisSecretService(childRedis, { keyPrefix: `${process.env.DGOS_EXT_PUBLIC_NAMESPACE}:secret:` });
+  const ca = await readFile(process.env.DGOS_EXT_PUBLIC_CA_FILE);
+  const route = routeFor(secret, ca);
+  const runtime = createPostgresWorker({ env: { DGOS_DATABASE_URL: childUrl.href }, secretService: secret, networkOptions: { route } });
+  await runtime.actionRuntime.ready;
+  await runtime.actionRuntime.system.activateNetworkRoute(route, { role: 'worker', instanceId: runtime.worker.workerId, leaseMs: 30000 });
+  const heartbeat = setInterval(() => runtime.actionRuntime.system.renewNetworkRoute(route, { role: 'worker', instanceId: runtime.worker.workerId, leaseMs: 30000 }).catch(() => {}), 5000);
+  const audit = new PostgresAuditRepository(runtime.pool);
+  const extensionOptions = await loadExtensionRuntime({ configPath: process.env.DGOS_EXT_PUBLIC_CONFIG_FILE, packageRepository: new PostgresPackageRepository(runtime.pool), pool: runtime.pool, audit, permissions: runtime.actionRuntime.permissions, secretService: secret, networkRoute: route, networkFixtureHosts: fixtureHosts });
+  const extensions = new ExtensionService({ ...extensionOptions, repository: new PostgresExtensionRepository(runtime.pool), managementRepository: new PostgresExtensionManagementRepository(runtime.pool, audit), aiTasks: runtime.taskService });
+  const daemon = new ExtensionRunDaemon({ service: extensions, onError: (error) => process.send({ workerError: error.message }) });
+  process.send({ ready: true, pid: process.pid });
+  process.on('message', async ({ id, action }) => { try { const result = action === 'connection' ? await runtime.providerTestWorker.runOnce() : action === 'task' ? await runtime.worker.runOnce() : await daemon.tick(); process.send({ id, result: result ? { status: result.status ?? result.state, taskId: result.taskId, runId: result.runId } : null }); } catch (error) { process.send({ id, error: error.errorKey ?? error.message }); } });
+  process.on('SIGTERM', async () => { clearInterval(heartbeat); await daemon.stop(); await runtime.actionRuntime.system.releaseNetworkRoute(runtime.worker.workerId).catch(() => {}); await runtime.pool.end(); await childRedis.quit(); process.exit(0); });
+} else {
+  let phase = 'preflight';
+  const admin = new pg.Pool({ connectionString: adminUrl.href });
+  try {
+    await admin.query(`CREATE DATABASE ${database}`); created = true;
+    pool = new pg.Pool({ connectionString: databaseUrl.href });
+    const migrations = (await discoverMigrations()).filter(({ version }) => Number(version.slice(0, 4)) <= 51);
+    const frozen = { '0045-network-route-activation': 'c2bc2a47a3360e47b02d4edd9880b88694ec3ab84cdf7613674cd2099d40040d', '0046-package-retention': '7321916de0ddff31f40d48b837acada75d8ec893691c7c65f22d0b707d6a9a83', '0047-ai-task-parameters': '22b6e9e886943f2b660de4d54989e0587c58cb67e373fbd45b7140849f6f15f6', '0048-network-route-fingerprint': '7879e6cf17753fa82254675756fbeb1fdfb9ad67e11808aec8922cd2f10cd33d', '0049-extension-management': 'ba0bc80a0ccc74e05a5244b50e52e6a26df39ad854995ba038020b7d5d954f1b', '0050-session-management': '8802fe3a02b0bf7364aeac96215da09454d0c53b48c06d2cb76c6f3d6b455d85', '0051-proxy-provisioning': '778fddef654d67bc3ecfc01e11fd91f826f91d68a5b6c5c72568b5e35cca1939' };
+    for (const [version, checksum] of Object.entries(frozen)) assert.equal(migrations.find((entry) => entry.version === version)?.checksum, checksum);
+    await pool.query(buildMigrationSql(migrations));
+    record('isolated_frozen_schema', { migrationCount: migrations.length, versions: migrations.map((item) => item.version) });
+
+    phase = 'fixtures';
+    execFileSync('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', join(root, 'key.pem'), '-out', join(root, 'cert.pem'), '-days', '1', '-subj', '/CN=provider.fixture.test', '-addext', 'subjectAltName=DNS:provider.fixture.test,DNS:extension.fixture.test'], { stdio: 'ignore' });
+    const ca = await readFile(join(root, 'cert.pem'));
+    fixture = createServer({ key: await readFile(join(root, 'key.pem')), cert: ca }, async (req, res) => {
+      if (req.url === '/manifest.json') { res.setHeader('content-type', 'application/json'); res.end(JSON.stringify(onlineBody)); return; }
+      if (req.headers.authorization !== `Bearer ${providerToken}`) { res.writeHead(401).end(); return; }
+      let body = ''; for await (const chunk of req) body += chunk;
+      providerRequests.push({ path: req.url, body: body ? JSON.parse(body) : null });
+      if (req.url === '/v1/models') { res.setHeader('content-type', 'application/json'); res.end(JSON.stringify({ data: [{ id: 'fixture-model', name: 'Fixture model' }] })); return; }
+      if (req.url === '/v1/responses') { const input = JSON.parse(body).input; const match = /\n(\{.*\})$/s.exec(input); const source = match ? JSON.parse(match[1]) : null; const text = source ? JSON.stringify(Object.fromEntries(Object.entries(source).map(([key, value]) => [key, `${value} translated`]))) : 'custom fixture answer'; res.setHeader('content-type', 'text/event-stream'); res.end(`data: ${JSON.stringify({ type: 'response.output_text.delta', delta: text })}\n\ndata: {"type":"response.completed"}\n\n`); return; }
+      res.writeHead(404).end();
+    });
+    await new Promise((done) => fixture.listen(fixturePort, '127.0.0.1', done));
+    const runtimeConfig = JSON.parse(await readFile(new URL('../src/extensions/v1-default-runtime.json', import.meta.url), 'utf8'));
+    runtimeConfig.sources.push({ source: mcpSource, trustState: 'trusted', manifest: mcpManifest });
+    runtimeConfig.runnerProfiles.ext_public = { command: process.execPath, cwd: resolve('tests/extensions'), args: [resolve('tests/extensions/stdio-mcp-fixture.mjs')], sandbox: process.platform === 'darwin' ? 'macos-restricted' : 'linux-bwrap', timeoutMs: 4000, credentialEnv: { apiKey: 'DGOS_MCP_TEST_CREDENTIAL' } };
+    runtimeConfig.mcpTemplates = [{ templateId: 'ext_public', version: '1.0.0', source: mcpSource, name: 'Fixture MCP', config: mcpConfig, credentialFields: [{ name: 'apiKey', label: 'API key', required: true }] }];
+    runtimeConfig.onlineSources = { allowedHosts: ['extension.fixture.test'], trustRoots: [{ keyId: 'ext-public', publicKey: onlineKeys.publicKey.export({ type: 'spki', format: 'pem' }) }] };
+    await writeFile(join(root, 'extensions.json'), JSON.stringify(runtimeConfig));
+    redis = createClient({ url: redisUrl }); redis.on('error', () => {}); await redis.connect();
+    const secret = new RedisSecretService(redis, { keyPrefix: `${namespace}:secret:` });
+    previousDatabaseUrl = process.env.DGOS_DATABASE_URL; previousNodeEnv = process.env.NODE_ENV;
+    process.env.DGOS_DATABASE_URL = databaseUrl.href; process.env.NODE_ENV = 'test';
+    api = buildServer({ logger: false, closeDatabasePools: true, secretService: secret, providerEgress: new ProviderEgress({ internalHosts: fixtureHosts, lookup: async () => [{ address: '127.0.0.1' }], ca }), networkOptions: { allowLocalFixture: true, fixtureLookup: async () => [{ address: '127.0.0.1' }], ca, fixtureHosts }, transportOptions: { nativeLocalOrigin: `http://127.0.0.1:${apiPort}` }, packageOptions: { store: new DiskPackageStore(join(root, 'packages')), trustRoots: new Map([['ext-public', { source: 'official', publicKey: appKeys.publicKey }]]) }, extensionOptions: { configPath: join(root, 'extensions.json') } });
+    await api.listen({ host: '127.0.0.1', port: apiPort });
+    await startWorker(); assert.notEqual(child.pid, process.pid);
+    record('public_api_independent_worker', { apiPort, parentPid: process.pid, workerPid: child.pid });
+
+    phase = 'public_setup';
+    const boot = await post('/identity/admin/bootstrap', { displayName: 'EXT public', credential: `fixture-admin-${randomUUID()}` }, 201); session = boot.sessionId;
+    const ownerId = boot.principalId;
+    const validated = await post('/provider/capability-protocols', { requestId: randomUUID(), declaration: profile });
+    const publishRequestId = randomUUID();
+    const ticket = await post('/provider/capability-protocols/confirmations', { requestId: publishRequestId, operation: 'provider.protocol.publish', protocolId: profile.id, version: profile.version, declaration: profile, validationDigest: validated.digest }, 201);
+    await post(`/provider/capability-protocols/${profile.id}/versions`, { requestId: publishRequestId, declaration: profile, validationDigest: validated.digest, confirmationId: ticket.confirmationId }, 201);
+    const account = await post('/provider/accounts', { requestId: randomUUID(), protocolType: 'openai-compatible', displayName: 'EXT fixture', credential: providerToken, scope: { endpoint: providerEndpoint } }, 201);
+    const connection = await post('/provider/connection-tests', { requestId: randomUUID(), accountId: account.accountId, protocolVersion: 'v1' }, 202); await workerCommand('connection');
+    assert.equal((await http(`/provider/connection-tests/${connection.testId}`)).status, 'succeeded');
+    await post(`/provider/accounts/${account.accountId}/state`, { requestId: randomUUID(), baseVersion: account.version, state: 'ready', connectionTestId: connection.testId });
+    const config = await post('/provider/configs', { requestId: randomUUID(), providerAccountId: account.accountId, protocolType: 'openai-compatible', displayName: 'EXT fixture', baseUrl: providerEndpoint, capabilityProtocolId: profile.id, capabilityProtocolVersion: profile.version }, 201);
+    await post(`/provider/configs/${config.id}/validate`, { requestId: randomUUID() });
+    await post(`/provider/configs/${config.id}/models`, { requestId: randomUUID() });
+    await post(`/provider/configs/${config.id}/model-policies`, { requestId: randomUUID(), modelId: 'fixture-model', enabled: true, assignedCapabilities: ['text'], defaultFor: [], baseVersion: '0' });
+    await http('/quota/policies', { method: 'PUT', body: { requestId: randomUUID(), metric: 'requests', scopeType: 'subject', scopeId: ownerId, hardLimit: 8, softLimit: 8, windowSeconds: 3600, effectiveAt: new Date().toISOString() } });
+    const modelOptions = { providerConfigId: config.id, modelId: 'fixture-model', parameters: { temperature: 0.3 } };
+    record('public_provider_and_quota_setup', { ownerId, providerConfigId: config.id, connectionTestId: connection.testId });
+
+    phase = 'custom_and_app';
+    for (const capability of ['skill.install', 'skill.manage', 'skill.read', 'skill.execute', 'mcp.install', 'mcp.manage', 'mcp.read', 'mcp.connect', 'mcp.execute', 'extension.run.read']) await permission('dgos.extensions', capability);
+    const createdSkill = await post('/skills/custom', { requestId: randomUUID(), skillId: customId, content: { name: 'Private custom', description: 'Fixture', systemPrompt: 'Answer briefly' }, confirmed: true }, 201);
+    assert.equal(createdSkill.state, 'installed');
+    const appManifest = { format: 'dgos-app/v1', appId, version: '1.0.0', build: 1, releaseChannel: 'stable', minRuntimeVersion: '1.0.0', dataVersion: 1, name: { 'zh-CN': 'EXT fixture', 'en-US': 'EXT fixture' }, description: { 'zh-CN': 'Fixture', 'en-US': 'Fixture' }, category: 'productivity', icon: 'icon.svg', defaultWindow: { width: 800, height: 600 }, entrypoints: { web: 'index.html' }, permissions: ['skill.execute', 'mcp.tool.invoke'], capabilityAllowlist: ['skill.execute', 'mcp.tool.invoke'], dependencies: { apps: [], skills: [{ packageId: createdSkill.packageId, skillId: customId, version: '1.0.0', operationIds: ['text.chat'] }], mcp: [{ sourceId: mcpId, version: '1.0.0', operationIds: ['credential'] }] }, trustLevel: 'standard', uninstallPolicy: 'user-removable', backgroundPolicy: 'release' };
+    await post('/apps', packageEnvelope(appManifest), 201);
+    await post(`/apps/${appId}/install`, { requestId: randomUUID(), version: '1.0.0', build: 1, releaseChannel: 'stable' });
+    await permission(appId, 'skill.execute', `skill:${customId}:text.chat`);
+    await permission(appId, 'mcp.tool.invoke', `mcp:${mcpId}:credential`);
+    const renamed = await http(`/skills/${customId}/definition`, { method: 'PATCH', body: { requestId: randomUUID(), baseVersion: createdSkill.stateVersion, patch: { name: 'Renamed local display' } } });
+    assert.equal(renamed.skillId, customId); assert.equal(renamed.packageId, createdSkill.packageId);
+    const enabled = await post(`/skills/${customId}/state`, { requestId: randomUUID(), baseVersion: renamed.stateVersion, desiredState: 'enabled' });
+    assert.equal(enabled.state, 'enabled');
+    record('custom_skill_rename_stable_identity', { skillId: customId, packageId: createdSkill.packageId, stateVersion: enabled.stateVersion });
+
+    phase = 'custom_run';
+    const runInput = { requestId: randomUUID(), appId, kind: 'skill', extensionId: customId, operationId: 'text.chat', extensionVersion: '1.0.0', input: { text: 'hello' }, options: modelOptions };
+    const runTicket = await post('/extensions/confirmations', runInput, 201);
+    const run = await post('/extensions/runs', { ...runInput, confirmationId: runTicket.confirmationId }, 202);
+    await workerCommand('extension');
+    const taskIntent = await waitFor('custom_task_intent', async () => (await pool.query('SELECT task_id FROM extension_task_intents WHERE run_id=$1', [run.runId])).rows[0], (value) => Boolean(value?.task_id));
+    await workerCommand('task'); await workerCommand('extension');
+    const finishedRun = await waitFor('custom_run_terminal', () => http(`/extensions/runs/${run.runId}`), (value) => value.state === 'succeeded');
+    const finishedTask = await terminalTask(taskIntent.task_id); assert.equal(finishedTask.status, 'succeeded');
+    assert.equal(finishedRun.taskId, taskIntent.task_id);
+    assert.ok(finishedTask.artifactIds.length > 0);
+    const customQuota = (await pool.query('SELECT state FROM quota_reservations WHERE task_id=$1', [taskIntent.task_id])).rows[0];
+    const customUsage = (await pool.query('SELECT count(*)::int AS n FROM usage_events WHERE task_id=$1', [taskIntent.task_id])).rows[0].n;
+    assert.equal(customQuota.state, 'settled'); assert.equal(customUsage, 1);
+    assert.equal((await post('/extensions/runs', { ...runInput, confirmationId: runTicket.confirmationId }, 202)).runId, run.runId);
+    record('confirmed_custom_run_real_task_quota_artifact', { runId: run.runId, taskId: taskIntent.task_id, artifactId: finishedTask.artifactIds[0], quotaState: customQuota.state, usageEvents: customUsage, providerCalls: providerRequests.filter((request) => request.path === '/v1/responses').length });
+
+    phase = 'translation';
+    const definition = await http(`/skills/${customId}/definition`);
+    const translation = await post(`/skills/${customId}/translations`, { requestId: randomUUID(), baseVersion: definition.stateVersion, targetLocale: 'en-US', fields: ['name'], options: modelOptions, confirmed: true }, 202);
+    await workerCommand('task');
+    const translatedTask = await terminalTask(translation.taskId); assert.equal(translatedTask.status, 'succeeded');
+    const translationQuota = (await pool.query('SELECT state FROM quota_reservations WHERE task_id=$1', [translation.taskId])).rows[0];
+    assert.equal(translationQuota.state, 'settled');
+    assert.equal((await pool.query('SELECT count(*)::int AS n FROM usage_events WHERE task_id=$1', [translation.taskId])).rows[0].n, 1);
+    const translatedArtifact = await http(`/artifacts/${translatedTask.artifactIds[0]}`);
+    assert.deepEqual(Object.keys(JSON.parse(translatedArtifact.content)), ['name']);
+    const applied = await post(`/skills/${customId}/translations/apply`, { requestId: randomUUID(), baseVersion: definition.stateVersion, taskId: translation.taskId, artifactId: translatedTask.artifactIds[0], confirmed: true });
+    assert.equal(applied.localizedDisplay['en-US'].name, 'Renamed local display translated');
+    assert.equal((await post(`/skills/${customId}/translations/apply`, { requestId: randomUUID(), baseVersion: definition.stateVersion, taskId: translation.taskId, artifactId: translatedTask.artifactIds[0], confirmed: true }, 409)).errorKey, 'version_conflict');
+    record('translation_task_artifact_apply_source_cas', { taskId: translation.taskId, artifactId: translatedTask.artifactIds[0], quotaState: translationQuota.state, usageEvents: 1, stateVersion: applied.stateVersion });
+
+    phase = 'template';
+    const templates = await http('/mcp/templates'); assert.ok(templates.items.some((item) => item.templateId === 'ext_public' && item.setupState === 'needs-credentials'));
+    const mcpPreview = await post('/extensions/previews', { requestId: randomUUID(), kind: 'mcp', source: mcpSource });
+    const installInput = { requestId: randomUUID(), source: mcpSource, previewId: mcpPreview.previewId, previewDigest: mcpPreview.digest, confirmed: true, config: mcpConfig, templateId: 'ext_public', templateVersion: '1.0.0', credentials: { apiKey: mcpCredential } };
+    const mcpInstallsBefore = (await pool.query("SELECT count(*)::int AS n FROM extension_installs WHERE subject_id=$1 AND kind='mcp' AND extension_id=$2", [ownerId, mcpId])).rows[0].n;
+    assert.equal((await http('/mcp', { method: 'POST', body: installInput, untrusted: true, status: 422 })).errorKey, 'invalid_request');
+    assert.equal((await pool.query("SELECT count(*)::int AS n FROM extension_installs WHERE subject_id=$1 AND kind='mcp' AND extension_id=$2", [ownerId, mcpId])).rows[0].n, mcpInstallsBefore);
+    const installed = await http('/mcp', { method: 'POST', body: installInput, status: 202 });
+    assert.equal(installed.credentialStatus, 'configured');
+    const enabledMcp = await post(`/mcp/${mcpId}/state`, { requestId: randomUUID(), baseVersion: installed.stateVersion, desiredState: 'enabled' });
+    await post(`/mcp/${mcpId}/connect`, { requestId: randomUUID(), baseVersion: enabledMcp.stateVersion }, 202);
+    await workerCommand('extension');
+    const connected = (await http('/mcp')).items.find((item) => item.id === mcpId);
+    if (connected.connectionState !== 'connected') {
+      const lastConnection = await pool.query("SELECT action,summary FROM audit_events WHERE actor_id=$1 AND action LIKE 'extension.connect.%' ORDER BY created_at DESC LIMIT 1", [ownerId]);
+      throw new Error(`mcp_connection_${connected.connectionState}:${JSON.stringify(lastConnection.rows[0] ?? {})}`);
+    }
+    assert.ok((await http(`/mcp/${mcpId}/tools`)).items.some((item) => item.operationId === 'credential'));
+    const mcpRunInput = { requestId: randomUUID(), appId, kind: 'mcp', extensionId: mcpId, operationId: 'credential', extensionVersion: '1.0.0', input: {} };
+    const mcpTicket = await post('/extensions/confirmations', mcpRunInput, 201);
+    const mcpRun = await post('/extensions/runs', { ...mcpRunInput, confirmationId: mcpTicket.confirmationId }, 202);
+    await workerCommand('extension');
+    const mcpDone = await waitFor('mcp_run_terminal', () => http(`/extensions/runs/${mcpRun.runId}`), (value) => value.state === 'succeeded');
+    assert.deepEqual(mcpDone.resultSummary, { accepted: true });
+    record('template_credential_connect_discovery_invoke', { mcpId, runId: mcpRun.runId, credentialStatus: connected.credentialStatus, toolCount: (await http(`/mcp/${mcpId}/tools`)).items.length });
+
+    phase = 'online';
+    const preview = await post('/extensions/previews', { requestId: randomUUID(), kind: 'skill', source: onlineSource });
+    assert.equal(preview.trustState, 'verified');
+    onlineBody = signedOnline({ ...onlineManifest, version: '2.0.0' });
+    const onlineInstalled = await post('/skills', { requestId: randomUUID(), source: onlineSource, previewId: preview.previewId, previewDigest: preview.digest, confirmed: true }, 202);
+    assert.equal(onlineInstalled.version, '1.0.0');
+    const untrusted = await post('/extensions/previews', { requestId: randomUUID(), kind: 'skill', source: onlineSource });
+    onlineBody = signedOnline({ ...onlineManifest, id: `bad_${onlineId}` }, generateKeyPairSync('ed25519').privateKey);
+    const rejected = await post('/extensions/previews', { requestId: randomUUID(), kind: 'skill', source: onlineSource });
+    assert.equal(rejected.trustState, 'rejected');
+    const installsBeforeReject = (await pool.query('SELECT count(*)::int AS n FROM extension_installs WHERE subject_id=$1 AND kind=$2', [ownerId, 'skill'])).rows[0].n;
+    assert.equal((await post('/skills', { requestId: randomUUID(), source: onlineSource, previewId: rejected.previewId, previewDigest: rejected.digest, confirmed: true }, 403)).errorKey, 'source_untrusted');
+    assert.equal((await pool.query('SELECT count(*)::int AS n FROM extension_installs WHERE subject_id=$1 AND kind=$2', [ownerId, 'skill'])).rows[0].n, installsBeforeReject);
+    record('trusted_https_online_preview_immutable_bytes', { installedVersion: onlineInstalled.version, changedRemoteVersion: untrusted.summary.version, rejectedUntrusted: true });
+
+    report.status = 'passed';
+  } catch (error) { report.status = 'failed'; report.failure = { phase, message: String(error.message).replaceAll(providerToken, '<redacted>').replaceAll(mcpCredential, '<redacted>') }; log.push(`${new Date().toISOString()} FAIL ${phase} ${report.failure.message}`); console.error(`FAIL ${phase}: ${report.failure.message}`); process.exitCode = 1; }
+  finally {
+    await stopWorker().catch(() => {});
+    await api?.close().catch(() => {});
+    if (fixture) { fixture.closeAllConnections(); await new Promise((done) => fixture.close(done)); }
+    await redis?.quit().catch(() => {});
+    await pool?.end().catch(() => {});
+    if (created) await admin.query(`DROP DATABASE IF EXISTS ${database}`).catch((error) => { report.cleanupError = error.message; });
+    await admin.end();
+    if (previousDatabaseUrl === undefined) delete process.env.DGOS_DATABASE_URL; else process.env.DGOS_DATABASE_URL = previousDatabaseUrl;
+    if (previousNodeEnv === undefined) delete process.env.NODE_ENV; else process.env.NODE_ENV = previousNodeEnv;
+    await rm(root, { recursive: true, force: true });
+    report.finishedAt = new Date().toISOString(); report.sourceBefore = before; report.sourceAfter = await assetHashes(); report.sourceStable = JSON.stringify(before) === JSON.stringify(report.sourceAfter);
+    await mkdir(evidenceDir, { recursive: true });
+    await writeFile(paths.report, `${JSON.stringify(report, null, 2)}\n`, { flag: 'wx' });
+    await writeFile(paths.log, `${log.join('\n')}\n`, { flag: 'wx' });
+    await writeFile(paths.manifest, `${JSON.stringify({ runId, status: report.status, reportPath: paths.report, logPath: paths.log, reportSha256: sha(await readFile(paths.report)), logSha256: sha(await readFile(paths.log)), sourceBefore: before, sourceAfter: report.sourceAfter, sourceStable: report.sourceStable, cases: report.cases.length, limitations: report.limitations }, null, 2)}\n`, { flag: 'wx' });
+    console.log(JSON.stringify({ status: report.status, cases: report.cases.length, ...paths }));
+  }
+}

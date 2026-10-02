@@ -65,7 +65,7 @@ delivery_slice: V1-platform
 
 ### 前置依赖与执行边界
 
-本功能依赖 DGOS manifest/schema、包签名与来源校验、应用安装服务、健康检查运行时、管理员审核主体、受信目录和版本化安装记录。校验、审核、测试安装、普通用户安装/更新/卸载和发布必须先建立调用主体、目标渠道和当前安装版本；操作前必须确认包的 appId、version/build、dataVersion、来源/签名和预装卸载策略。当前没有冻结的公共 HTTP operationId，不能把本地包服务动作当成已实现接口；字段权威来自 [V1 DGOS 应用清单与运行时契约](../../../04-技术架构/当前版本/V1-DGOS应用清单与运行时契约.md)，待 manifest/catalog schema 与发布服务 ADR 冻结后再登记机器契约。
+本功能依赖manifest/schema、真实包签名/来源校验、安装/健康检查、管理员审核和版本化安装记录。操作前建立主体、渠道、当前安装版本，校验appId/version/build/dataVersion及卸载策略。2026-10-02公共投影已登记OpenAPI与[V1应用契约](../../../04-技术架构/当前版本/V1-DGOS应用清单与运行时契约.md)引用的manifest schema；新字段唯一语义与旧数据一次迁移见[工程核查](../../../04-技术架构/当前版本/V1-应用与扩展工程契约核查.md)。登记不等于Worker产物已整合。
 
 ### 主流程
 
@@ -99,17 +99,33 @@ delivery_slice: V1-platform
 
 ### 接口清单
 
-V1 OpenAPI 当前没有冻结开发者中心、包校验和发布服务的公开 operationId；本功能先以本地包服务与应用清单契约实施，具体 HTTP 接口不适用，待发布服务 ADR 冻结后补录。
+包提交/验证使用submitAppManifest，目录查询listApps/getApp，管理员准入approveApp/rejectApp/withdrawApp，开发者测试testInstallApp，普通生命周期installApp/launchApp/updateApp/uninstallApp/checkAppHealth。所有写入重新授权并审计，字段以OpenAPI为准。
 
 ### OpenAPI operation 映射
 
-不适用理由：当前版本只冻结了运行时和平台控制面 OpenAPI，开发者中心的本地包校验、测试安装、健康检查和发布服务尚未形成公共 HTTP 契约；不得在此文档中虚构 operationId。接口边界由 [V1 DGOS 应用清单与运行时契约](../../../04-技术架构/当前版本/V1-DGOS应用清单与运行时契约.md) 维护，待发布服务 ADR 冻结后再补录 operationId。
+| 业务能力 | operationId | 字段权威与限制 |
+| --- | --- | --- |
+| 包验证/提交 | `submitAppManifest` | 真实字节/签名验证，请求不授予来源或信任 |
+| 目录读取 | `listApps`、`getApp` | 普通主体只见官方或批准目录 |
+| 审核准入 | `approveApp`、`rejectApp`、`withdrawApp` | 准入不自动提升信任等级 |
+| 测试安装 | `testInstallApp` | 独立开发者能力，不能变成公开批准 |
+| 安装/启动/更新/卸载/健康 | `installApp`、`launchApp`、`updateApp`、`uninstallApp`、`checkAppHealth` | OpenAPI AppInstallRecord；真实执行/回滚证据独立验证 |
 
-共享平台前置映射：开发者中心执行安装、更新或卸载前，沿用平台权限检查 `checkPermission`；该 operationId 只代表共享权限前置，不代表开发者中心包校验、安装、健康检查或发布服务已经拥有公共 operationId。
+共享权限前置使用`checkPermission`，每次副作用仍重算来源、批准状态、主体与范围；前端隐藏按钮不能代替执行层校验。
 
 ### 本地生命周期动作约束
 
-下列动作当前没有公共 HTTP operationId；`manifest/catalog schema` 和安装服务契约是字段权威。以下约束是 planning 输入，不表示本地服务或安装服务已经实现。
+### 字段规则
+
+请求、响应字段的类型/必填/枚举仅由OpenAPI的AppPackageEnvelope、AppReleaseMutation、AppMutation、AppPackageRecord、AppInstallRecord及manifest schema定义。渠道与版本共同定位不可覆盖发行，所有权来自认证上下文；来源、批准状态及有效信任不是调用者输入。字段非法、版本冲突或信任不足须在副作用前拒绝。
+
+### 成功响应
+
+提交成功返回已验证包摘要及平台计算的来源/准入信息；生命周期成功返回安装状态与数据保留结果；真实健康与回滚结果不能用状态模拟代替。完整响应形状引用OpenAPI，不在主文档复制schema。
+
+### 生命周期操作治理
+
+下列动作通过上述operation映射执行；HTTP/manifest字段只维护在机器契约。本表是语义不变量，不代表真实包或宿主已经验收。
 
 | 动作 | 前置条件 | 成功终态 | 关键失败与无副作用 | 幂等/并发 | 重试/超时 | 观测/恢复 |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -153,7 +169,7 @@ V1 OpenAPI 当前没有冻结开发者中心、包校验和发布服务的公开
 
 ### 物理约束与迁移
 
-应用发行契约必须表达 appId、版本/build、渠道、数据版本、来源/审核准入和预装卸载策略；D030 冻结其业务语义，但属性名称、字段类型、必填规则和审核记录 schema 均为 Draft，须由 manifest/catalog schema 与 OpenAPI 冻结后才能作为字段级实现输入。`dataVersion` 变化必须绑定迁移说明，安装回滚需保留旧代码包。物理约束待 migration 冻结。
+应用发行字段以OpenAPI/manifest schema为准；D030语义不变。2026-10-02统一format、trustLevel及来源/批准分层，旧枚举仅一次迁移。dataVersion变化需迁移说明，安装回滚保留旧包；实际物理约束以增量migration为准，旧checksum不改。
 
 ### 数据所有权
 
@@ -199,15 +215,15 @@ Then 发布被拒绝，或安装回滚到旧代码且项目数据保留。
 
 | AC 范围 | 自动化重点 | 建议测试文件 | 建议命令 | 当前状态 |
 | --- | --- | --- | --- | --- |
-| AC01–AC03 | 包校验、审核目录、普通用户生命周期、不可覆盖发布、回滚 | `tests/e2e/developer-center.spec.ts` | `npm test -- developer-center` | 规划中 |
+| AC01–AC03 | 包校验、审核目录、生命周期、不可覆盖发布与回滚 | `tests/unit/runtime.test.mjs`、`tests/integration/runtime-api.test.mjs` | node --test tests/unit/runtime.test.mjs tests/integration/runtime-api.test.mjs | 已有状态/API子集；真实包及完整AC待验 |
 
 ### AC 逐项测试设计
 
 | AC | 验收重点 | 测试层级 | 目标资产 | 目标命令 | 初始资产状态 |
 | --- | --- | --- | --- | --- | --- |
-| AC01 | 文件/权限错误 | Integration | `tests/fixtures/app-invalid.zip` | `npm test -- app-validation` | 未创建 |
-| AC02 | release 原子性 | E2E | `tests/e2e/release-rollback.spec.ts` | `npm test -- release-rollback` | 未创建 |
-| AC03 | 审核准入、安装/更新/卸载和预装保护 | E2E | `tests/e2e/app-catalog-lifecycle.spec.ts` | `npm test -- app-catalog-lifecycle` | 未创建 |
+| AC01 | 文件/权限错误 | Unit/公开HTTP | `tests/unit/app-packages.test.mjs`、`tests/integration/app-package-routes.test.mjs`、`scripts/v1-package-http.mjs` | env -u DGOS_DATABASE_URL node --test tests/unit/app-packages.test.mjs tests/integration/app-package-routes.test.mjs；node scripts/v1-package-http.mjs | G r11 16/16与公开12阶段；签名fixture非生产根 |
+| AC02 | release原子性 | PG/公开HTTP | `tests/integration/postgres-app-packages.test.mjs`、`scripts/v1-package-http.mjs` | DGOS_DATABASE_URL="$DGOS_PACKAGE_TEST_URL" node --test --test-concurrency=1 tests/integration/postgres-app-packages.test.mjs；node scripts/v1-package-http.mjs | G r11 PG3/3；公开并发锁/不健康回滚通过，跨进程锁压力与目标宿主发布待验；旧release-rollback skip不作证据 |
+| AC03 | 审核准入、生命周期和预装保护 | HTTP/签名包浏览器 | `scripts/v1-package-http.mjs`、`tests/integration/app-package-browser.test.mjs`、`apps/web/e2e/real-workbench.spec.mjs` | node scripts/v1-package-http.mjs；env -u DGOS_DATABASE_URL node --test tests/integration/app-package-browser.test.mjs | G r11/A r9本地子集；D当前签名包真实浏览器流程在途 |
 
 ### 回归要求
 
@@ -216,9 +232,9 @@ Then 发布被拒绝，或安装回滚到旧代码且项目数据保留。
 
 ## 实现与验证
 
-本轮已实现 `src/apps/manifest-validator.mjs`、`src/apps/catalog-service.mjs`、`src/apps/runtime-service.mjs` 与 API `/api/v1/apps*` 生命周期入口；manifest digest、版本/build 唯一、审核状态、普通目录隔离、测试安装、健康检查回滚和数据保留由 `tests/unit/runtime.test.mjs` 覆盖。真实包执行器、签名验证和桌面宿主仍属于后续运行证据。
+2026-10-02 / r7回写：G r11已交主目录签名包生命周期、严格输入与服务端锁边界；`node scripts/v1-package-http.mjs`在15161、随机PG子库及临时签名根下12阶段通过，含非法override无副作用、并发更新、健康失败回滚、Task/Artifact保留和context桥。该批sourceBefore/After同为0aac82c22930007e07ddb563c18c7f40617060fbfadd1ebc07643dfdc4138590；unit/route 16/16、PG3/3属于另两条命令。报告与配对manifest见[本轮证据索引](../V1-AC资产核对-2026-10-02.md#r7-证据回写2026-10-02)。
 
-当前只有 DX OS 外部研究资料和视频证据；没有 DGOS APP 包或发布运行证据。此功能为高风险，开发前必须完成 DGOS 自有契约和技术设计。
+A r9签名工作台1.0.1/build2在opaque Chromium桥fixture 1/1，包digest为sha256:0440088ded07140699950453704a5328b4a48e7046564216b6408d3d8a852eef；Lead integration r9记录该包实际升级和九项授权。真实包执行/签名验证不再是“无资产”，但临时签名根、单API并发锁测试、受控浏览器fixture均不证明生产信任链或完整双宿主发布；D当前浏览器验收和B Linux运行拓扑在途。脚本须按G报告独占15161及自建子库，不能指向共享业务库。
 
 ## 技术设计
 

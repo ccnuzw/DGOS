@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: deployment loader supplies trusted first-party source and controlled handler
+ok 1 - deployment loader supplies trusted first-party source and controlled handler
+  ---
+  duration_ms: 49.771083
+  type: 'test'
+  ...
+# Subtest: quick MCP config loads server-owned profile and completes a real tool call
+ok 2 - quick MCP config loads server-owned profile and completes a real tool call
+  ---
+  duration_ms: 52.686542
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 157.332167

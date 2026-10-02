@@ -1,0 +1,16 @@
+TAP version 13
+# Subtest: local assistant resolve yields only authorized registered candidates and never executes
+ok 1 - local assistant resolve yields only authorized registered candidates and never executes
+  ---
+  duration_ms: 58.804334
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 259.765584

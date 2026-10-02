@@ -1,0 +1,97 @@
+{
+  "workPackage": "V1-IDENTITY-r12",
+  "result": "passed",
+  "databaseName": "dgos_v1_identity_3da645810e7b4814bfec4ccbe838569e",
+  "redisDb": 3,
+  "namespace": "v1-gov-r12:3da645810e7b4814bfec4ccbe838569e",
+  "cases": [
+    {
+      "name": "isolated_frozen_schema",
+      "result": "passed",
+      "migrationCount": 47,
+      "migrationSetSha256": "0cb6df60c0bbd5527bc6c8f1314be67fed7dbe6de7f1de30bb8681771af2744d"
+    },
+    {
+      "name": "two_independent_http_instances",
+      "result": "passed",
+      "ports": [
+        15121,
+        15122
+      ]
+    },
+    {
+      "name": "concurrent_bootstrap_single_principal_and_loser_secret_compensation",
+      "result": "passed",
+      "activeBootstrapCredentials": 1
+    },
+    {
+      "name": "shared_subject_and_source_backoff_no_failed_session",
+      "result": "passed"
+    },
+    {
+      "name": "one_principal_multiple_independent_sessions",
+      "result": "passed"
+    },
+    {
+      "name": "management_projection_pagination_redaction_and_non_authentication_domain",
+      "result": "passed"
+    },
+    {
+      "name": "management_http_list_no_store_redaction_and_pagination",
+      "result": "passed"
+    },
+    {
+      "name": "management_cross_owner_404_without_side_effect",
+      "result": "passed"
+    },
+    {
+      "name": "management_stale_freshness_and_csrf_no_target_mutation",
+      "result": "passed"
+    },
+    {
+      "name": "stale_system_and_action_public_http_pg_no_state_change",
+      "result": "passed"
+    },
+    {
+      "name": "same_owner_other_device_revoke_does_not_touch_unrelated_session",
+      "result": "passed"
+    },
+    {
+      "name": "renew_revoke_race_finally_revoked",
+      "result": "passed"
+    },
+    {
+      "name": "managed_revoke_audit_failure_transaction_rollback",
+      "result": "passed"
+    },
+    {
+      "name": "expired_session_cannot_renew_or_regain_access",
+      "result": "passed"
+    },
+    {
+      "name": "key_once_scope_and_cross_instance_authentication",
+      "result": "passed"
+    },
+    {
+      "name": "cross_instance_finite_rotation_overlap",
+      "result": "passed"
+    },
+    {
+      "name": "cross_instance_expiry_and_revoke",
+      "result": "passed"
+    },
+    {
+      "name": "audit_store_contains_no_login_or_key_secret",
+      "result": "passed"
+    },
+    {
+      "name": "unknown_subject_matches_bad_credential_without_session",
+      "result": "passed"
+    },
+    {
+      "name": "stale_current_session_logout_csrf_cookie_and_cross_instance_rejection",
+      "result": "passed"
+    }
+  ]
+}
+{"workPackage":"V1-IDENTITY-r12","cleanup":"passed","databaseDropped":true,"redisPrefixRemoved":true,"packageRootRemoved":true}

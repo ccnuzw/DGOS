@@ -5,7 +5,8 @@ import { InMemoryIdentityRepository } from '../../src/identity/repository.mjs';
 import { InMemoryAuditRepository } from '../../src/audit/outbox.mjs';
 
 test('identity and API key lifecycle exposes redacted contract', async () => {
-  const app = buildServer({ logger: false, repository: new InMemoryIdentityRepository(), auditRepository: new InMemoryAuditRepository() });
+  let now = Date.now();
+  const app = buildServer({ logger: false, repository: new InMemoryIdentityRepository(), auditRepository: new InMemoryAuditRepository(), clock: () => now });
   const bootstrap = await app.inject({ method: 'POST', url: '/api/v1/identity/admin/bootstrap', payload: { displayName: 'Admin', credential: 'correct horse battery staple' } });
   assert.equal(bootstrap.statusCode, 201);
   const receipt = bootstrap.json();
@@ -13,7 +14,8 @@ test('identity and API key lifecycle exposes redacted contract', async () => {
   assert.match(bootstrap.headers['set-cookie'], /HttpOnly/);
   const session = await app.inject({ method: 'GET', url: '/api/v1/identity/admin/session', headers: { authorization: `Bearer ${receipt.sessionId}` } });
   assert.equal(session.statusCode, 200);
-  const key = await app.inject({ method: 'POST', url: '/api/v1/secret/api-keys', headers: { authorization: `Bearer ${receipt.sessionId}` }, payload: { name: 'CI', scopes: ['audit.read'] } });
+  const writeHeaders = { authorization: `Bearer ${receipt.sessionId}`, cookie: `dgos_session=${receipt.sessionId}`, 'x-dgos-csrf': 'test-token' };
+  const key = await app.inject({ method: 'POST', url: '/api/v1/secret/api-keys', headers: writeHeaders, payload: { name: 'CI', scopes: ['audit.read'] } });
   assert.equal(key.statusCode, 201);
   assert.match(key.json().secret, /^dgos_/);
   const list = await app.inject({ method: 'GET', url: '/api/v1/secret/api-keys', headers: { authorization: `Bearer ${receipt.sessionId}` } });
@@ -23,7 +25,7 @@ test('identity and API key lifecycle exposes redacted contract', async () => {
   assert.equal(csrfDenied.statusCode, 403);
   const keyDenied = await app.inject({ method: 'GET', url: '/api/v1/secret/api-keys', headers: { authorization: `ApiKey ${key.json().secret}` } });
   assert.equal(keyDenied.statusCode, 403);
-  const manageKey = await app.inject({ method: 'POST', url: '/api/v1/secret/api-keys', headers: { authorization: `Bearer ${receipt.sessionId}` }, payload: { name: 'manage-ci', scopes: ['apiKey.read', 'apiKey.manage'] } });
+  const manageKey = await app.inject({ method: 'POST', url: '/api/v1/secret/api-keys', headers: writeHeaders, payload: { name: 'manage-ci', scopes: ['apiKey.read', 'apiKey.manage'] } });
   const keyAllowed = await app.inject({ method: 'GET', url: '/api/v1/secret/api-keys', headers: { authorization: `ApiKey ${manageKey.json().secret}` } });
   assert.equal(keyAllowed.statusCode, 200);
   const auditDenied = await app.inject({ method: 'GET', url: '/api/v1/audit/events', headers: { authorization: `ApiKey ${manageKey.json().secret}` } });
@@ -31,13 +33,17 @@ test('identity and API key lifecycle exposes redacted contract', async () => {
   const audit = await app.inject({ method: 'GET', url: '/api/v1/audit/events', headers: { authorization: `Bearer ${receipt.sessionId}` } });
   assert.equal(audit.statusCode, 200);
   assert.ok(Array.isArray(audit.json().items));
-  const loginFailures = await Promise.all(Array.from({ length: 5 }, () => app.inject({ method: 'POST', url: '/api/v1/identity/admin/login', payload: { principalHint: receipt.principalId, credential: 'wrong' } })));
-  assert.equal(loginFailures.every((response) => response.statusCode === 401), true);
-  const rateLimited = await app.inject({ method: 'POST', url: '/api/v1/identity/admin/login', payload: { principalHint: receipt.principalId, credential: 'wrong' } });
+  const loginInput = { principalHint: receipt.principalId, credential: 'wrong' };
+  const firstFailure = await app.inject({ method: 'POST', url: '/api/v1/identity/admin/login', payload: loginInput });
+  assert.equal(firstFailure.statusCode, 401);
+  const rateLimited = await app.inject({ method: 'POST', url: '/api/v1/identity/admin/login', payload: loginInput });
   assert.equal(rateLimited.statusCode, 429);
+  now += 1_000;
+  const retried = await app.inject({ method: 'POST', url: '/api/v1/identity/admin/login', payload: loginInput });
+  assert.equal(retried.statusCode, 401);
   const csfrRenewed = await app.inject({ method: 'POST', url: '/api/v1/identity/admin/session', headers: { authorization: `Bearer ${receipt.sessionId}`, cookie: `dgos_session=${receipt.sessionId}`, 'x-dgos-csrf': 'test-token' }, payload: { baseVersion: '1' } });
   assert.equal(csfrRenewed.statusCode, 200);
-  const rotated = await app.inject({ method: 'POST', url: `/api/v1/secret/api-keys/${key.json().key.keyId}/rotate`, headers: { authorization: `Bearer ${receipt.sessionId}` }, payload: { requestId: 'rotate-1', baseVersion: '1' } });
+  const rotated = await app.inject({ method: 'POST', url: `/api/v1/secret/api-keys/${key.json().key.keyId}/rotate`, headers: writeHeaders, payload: { requestId: 'rotate-1', baseVersion: '1' } });
   assert.equal(rotated.statusCode, 200);
   assert.equal(rotated.json().previousKeyId, key.json().key.keyId);
   assert.equal(rotated.json().secret === key.json().secret, false);

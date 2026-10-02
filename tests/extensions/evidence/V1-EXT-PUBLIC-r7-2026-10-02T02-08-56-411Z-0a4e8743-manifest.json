@@ -1,0 +1,36 @@
+{
+  "runId": "V1-EXT-PUBLIC-r7-2026-10-02T02-08-56-411Z-0a4e8743",
+  "status": "failed",
+  "reportPath": "/Users/apple/Progame/DGOS/tests/extensions/evidence/V1-EXT-PUBLIC-r7-2026-10-02T02-08-56-411Z-0a4e8743.json",
+  "logPath": "/Users/apple/Progame/DGOS/tests/extensions/evidence/V1-EXT-PUBLIC-r7-2026-10-02T02-08-56-411Z-0a4e8743.log",
+  "reportSha256": "c0640d1bf94ff0035081c4d215544cdf8bb2700a9d2e6fc10da22ef58e2e160a",
+  "logSha256": "2cdd4a74453caa19f4660ffb29848c30d201101e0c54c2880f99b83e698da748",
+  "sourceBefore": {
+    "scripts/v1-extension-management-http.mjs": "e0e6552cae8cd3f1c9d345f89ea424d77d7cde461b3ec47ae95a11828db46887",
+    "apps/api/src/server.mjs": "b058a8719d87d87a9e25b58d425e420cad7d9361767806a722ffa5c5a5b65c9f",
+    "apps/api/src/extension-routes.mjs": "6fd65b099d9f1c9d41303796b40285ebfa39bde9f3e8fe7e1584382bd5c4e83d",
+    "apps/worker/src/worker.mjs": "e94c90888699b34a66632c77b8d5afea879734605e341423cf5cb821c58aa7e4",
+    "src/extensions/service.mjs": "6856cbdcdd3e26a85ec4ff5613d41984e62ba7c548881024117c092bc8d600da",
+    "src/extensions/management-service.mjs": "17dc33bf1b00fb1e6b6bb4bd03210c22f14bc15661813fc4ffcc7e033a098c13",
+    "src/extensions/runtime.mjs": "613f6fcc010382e0a2c936a6520f85ffac3f7a7609c5c26042da7392ad621b9c",
+    "src/ai-task/service.mjs": "979006a7ea95762e6949491ecdab5c4c79f5b056cd2841b00ca92a9b5c82f689",
+    "migrations/0049-extension-management.sql": "ba0bc80a0ccc74e05a5244b50e52e6a26df39ad854995ba038020b7d5d954f1b"
+  },
+  "sourceAfter": {
+    "scripts/v1-extension-management-http.mjs": "e0e6552cae8cd3f1c9d345f89ea424d77d7cde461b3ec47ae95a11828db46887",
+    "apps/api/src/server.mjs": "b058a8719d87d87a9e25b58d425e420cad7d9361767806a722ffa5c5a5b65c9f",
+    "apps/api/src/extension-routes.mjs": "6fd65b099d9f1c9d41303796b40285ebfa39bde9f3e8fe7e1584382bd5c4e83d",
+    "apps/worker/src/worker.mjs": "e94c90888699b34a66632c77b8d5afea879734605e341423cf5cb821c58aa7e4",
+    "src/extensions/service.mjs": "6856cbdcdd3e26a85ec4ff5613d41984e62ba7c548881024117c092bc8d600da",
+    "src/extensions/management-service.mjs": "17dc33bf1b00fb1e6b6bb4bd03210c22f14bc15661813fc4ffcc7e033a098c13",
+    "src/extensions/runtime.mjs": "613f6fcc010382e0a2c936a6520f85ffac3f7a7609c5c26042da7392ad621b9c",
+    "src/ai-task/service.mjs": "979006a7ea95762e6949491ecdab5c4c79f5b056cd2841b00ca92a9b5c82f689",
+    "migrations/0049-extension-management.sql": "ba0bc80a0ccc74e05a5244b50e52e6a26df39ad854995ba038020b7d5d954f1b"
+  },
+  "sourceStable": true,
+  "cases": 6,
+  "limitations": [
+    "Controlled local HTTPS Provider and signed extension fixtures, not external production endpoints.",
+    "Scoped public HTTP chain; final V1 release candidate remains separate."
+  ]
+}

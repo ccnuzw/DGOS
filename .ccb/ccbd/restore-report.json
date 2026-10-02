@@ -1,0 +1,14 @@
+{
+  "schema_version": 2,
+  "record_type": "ccbd_restore_report",
+  "api_version": 2,
+  "project_id": "5b40b5bdda7a29d418a6f8d6ee8b4226c938aa5d24641c374bcf2b0058d0e76a",
+  "generated_at": "2026-10-02T02:09:48.446797Z",
+  "running_job_count": 0,
+  "restored_execution_count": 0,
+  "replay_pending_count": 0,
+  "terminal_pending_count": 0,
+  "abandoned_execution_count": 0,
+  "already_active_count": 0,
+  "entries": []
+}

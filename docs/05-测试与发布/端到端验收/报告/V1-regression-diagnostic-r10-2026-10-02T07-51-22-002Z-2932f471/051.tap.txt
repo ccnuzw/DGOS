@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: quota preflight and reservation are bounded and idempotent
+ok 1 - quota preflight and reservation are bounded and idempotent
+  ---
+  duration_ms: 2.346791
+  type: 'test'
+  ...
+# Subtest: settlement handles terminal states, missing usage and replay
+ok 2 - settlement handles terminal states, missing usage and replay
+  ---
+  duration_ms: 1.433209
+  type: 'test'
+  ...
+# Subtest: usage query is subject isolated and reconciliation expires reservations
+ok 3 - usage query is subject isolated and reconciliation expires reservations
+  ---
+  duration_ms: 0.555125
+  type: 'test'
+  ...
+# Subtest: quota rejects unbounded values and cross-subject settlement without mutation
+ok 4 - quota rejects unbounded values and cross-subject settlement without mutation
+  ---
+  duration_ms: 0.956916
+  type: 'test'
+  ...
+# Subtest: quota policy update and reserve share a lock and use the newest effective policy
+ok 5 - quota policy update and reserve share a lock and use the newest effective policy
+  ---
+  duration_ms: 0.230917
+  type: 'test'
+  ...
+# Subtest: quota audit failure rolls back reservation and policy; uncertain reservation holds capacity
+ok 6 - quota audit failure rolls back reservation and policy; uncertain reservation holds capacity
+  ---
+  duration_ms: 0.428833
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 57.839958

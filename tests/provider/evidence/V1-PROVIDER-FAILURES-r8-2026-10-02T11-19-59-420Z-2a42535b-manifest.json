@@ -1,0 +1,44 @@
+{
+  "runId": "V1-PROVIDER-FAILURES-r8-2026-10-02T11-19-59-420Z-2a42535b",
+  "status": "passed",
+  "reportPath": "/Users/apple/Progame/DGOS/tests/provider/evidence/V1-PROVIDER-FAILURES-r8-2026-10-02T11-19-59-420Z-2a42535b.json",
+  "logPath": "/Users/apple/Progame/DGOS/tests/provider/evidence/V1-PROVIDER-FAILURES-r8-2026-10-02T11-19-59-420Z-2a42535b.log",
+  "reportSha256": "b9057685968f51b4587bdc4769d5ad4828ef53c6496be0528ce930e08780bb54",
+  "logSha256": "ec57b4f6e9c4969f6fb8436cdf9395946c2c801d5e12fdcafabf8d562a1ae493",
+  "sourceBefore": {
+    "scripts/v1-provider-failures-http.mjs": "8da2554f528e42312a40d0a75ac7d47b33e629f789f439ed97478e0b4eea8cb0",
+    "apps/api/src/provider-service.mjs": "6be98c6fcfbdea7e60885c63d01746d4a7c33bbf9b103bbe9c76f672c833aeae",
+    "apps/api/src/server.mjs": "817de931008a26870e7363e10778e22d5a7abae22796595d94dc6d46c9e80546",
+    "apps/worker/src/provider-test-worker.mjs": "54282d45567350a3ac3578946623764ea9a711968d59b93d956127c4103d1864",
+    "apps/worker/src/worker.mjs": "e94c90888699b34a66632c77b8d5afea879734605e341423cf5cb821c58aa7e4",
+    "src/provider/repository.mjs": "85d1c1378f359b1e5592fda148498c10fad6b29c3e84cd0e516f87c68c623016",
+    "src/security/provider-egress.mjs": "105a1e300fda47035c166227a9b5dab351d57b78f20b400c8529fda4c7be77ac"
+  },
+  "sourceAfter": {
+    "scripts/v1-provider-failures-http.mjs": "8da2554f528e42312a40d0a75ac7d47b33e629f789f439ed97478e0b4eea8cb0",
+    "apps/api/src/provider-service.mjs": "6be98c6fcfbdea7e60885c63d01746d4a7c33bbf9b103bbe9c76f672c833aeae",
+    "apps/api/src/server.mjs": "817de931008a26870e7363e10778e22d5a7abae22796595d94dc6d46c9e80546",
+    "apps/worker/src/provider-test-worker.mjs": "54282d45567350a3ac3578946623764ea9a711968d59b93d956127c4103d1864",
+    "apps/worker/src/worker.mjs": "e94c90888699b34a66632c77b8d5afea879734605e341423cf5cb821c58aa7e4",
+    "src/provider/repository.mjs": "85d1c1378f359b1e5592fda148498c10fad6b29c3e84cd0e516f87c68c623016",
+    "src/security/provider-egress.mjs": "105a1e300fda47035c166227a9b5dab351d57b78f20b400c8529fda4c7be77ac"
+  },
+  "sourceStable": true,
+  "migrations": {
+    "count": 47,
+    "finalVersion": "0051-proxy-provisioning",
+    "frozen": {
+      "0045-network-route-activation": "c2bc2a47a3360e47b02d4edd9880b88694ec3ab84cdf7613674cd2099d40040d",
+      "0046-package-retention": "7321916de0ddff31f40d48b837acada75d8ec893691c7c65f22d0b707d6a9a83",
+      "0047-ai-task-parameters": "22b6e9e886943f2b660de4d54989e0587c58cb67e373fbd45b7140849f6f15f6",
+      "0048-network-route-fingerprint": "7879e6cf17753fa82254675756fbeb1fdfb9ad67e11808aec8922cd2f10cd33d",
+      "0049-extension-management": "ba0bc80a0ccc74e05a5244b50e52e6a26df39ad854995ba038020b7d5d954f1b",
+      "0050-session-management": "8802fe3a02b0bf7364aeac96215da09454d0c53b48c06d2cb76c6f3d6b455d85",
+      "0051-proxy-provisioning": "778fddef654d67bc3ecfc01e11fd91f826f91d68a5b6c5c72568b5e35cca1939"
+    }
+  },
+  "limitations": [
+    "Controlled local TLS fixture; no paid or production Provider.",
+    "Current source only; final candidate replay requires source identity comparison."
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "run_id": "V1-UI-r5-2026-10-02T02-32Z",
+  "environment": "local Chromium fixture on 15133; integrated API/Web/Provider fixture on 15202/15203/15204",
+  "code_version": "r5 main working tree, aggregate sorted source SHA-256 c68ce12a2bdc646813462044325e22219683678eb7e445fc3edd6bfed978a534",
+  "commit": "72ab1cb98b064a6e27b9f60a9f8f00881a827a99 (base only; r5 source is uncommitted)",
+  "command": [
+    "REAL_PARAMETER_TASK=1 WEB_EXTERNAL=1 WEB_BASE_URL=http://127.0.0.1:15203 pnpm --filter @dgos/web exec playwright test -c playwright.config.mjs e2e/real-workbench.spec.mjs -g 'real signed workbench submits one parameter task' (administrator environment values omitted)",
+    "pnpm --filter @dgos/web build",
+    "WEB_BASE_URL=http://127.0.0.1:15133 pnpm --filter @dgos/web exec playwright test -c playwright.config.mjs --workers=1",
+    "git diff --check"
+  ],
+  "working_directory": "/Users/apple/Progame/DGOS",
+  "exit_code": 0,
+  "stats": {
+    "real_parameter_case": "1 passed, 0 failed",
+    "final_local_browser": "30 passed, 5 real-environment cases skipped",
+    "final_build": "TypeScript and Vite passed",
+    "ui_ac_screenshots": 40
+  },
+  "started_at": "2026-10-02T02:20:00Z",
+  "test_report": ".herdr/V1-UI-r5.md",
+  "asset_sha256": {
+    "source_listing": "c68ce12a2bdc646813462044325e22219683678eb7e445fc3edd6bfed978a534",
+    "apps/web/src/main.tsx": "a26aefcffacebff358968e41adab33ee6cd10d831b77ecfa5d8b035fa79f0d7c",
+    "apps/web/src/hardening.tsx": "7970eae22e37c10fa7c5750d12559becd6eb2278fc23b24c1e7ae1d4fd2b1cfb",
+    "apps/web/e2e/real-workbench.spec.mjs": "ef822f03f9ecb5d29b5a96d277960348bb0b22448591f5b51b311c6729da47b6",
+    "packages/app-shell/src/index.tsx": "cfd8946bae7a62477fbc5f4fbb2a640c4dea9e788b1a721112640a1f2401c6bb",
+    "apps/web/dist/index.html": "27977508412c1c0dbff9445c9074ec269a5658f568c24273bac310ed966d5d7d",
+    "apps/web/dist/assets/index-CL2kyaG-.js": "c9105be080a49e3b70ba1958169db4ef845faddbb56020de1533ac1ed18914f8",
+    "apps/web/dist/assets/index-BFWr4XFs.css": "fa3cf098e7e1bf210a0960839de2472b8f6fe88dcdbad29210e3ad7e77627383",
+    "screenshot_listing": "95d9a40f3637b6711119fd634815c50b6713bbaa0c7804191b4a97839f1afd2d"
+  },
+  "screenshots": {
+    "base": "apps/web/evidence/ui-r5/",
+    "pattern": "settings-{1280,390}-{light,dark}-{en,zh}-{75,100,125,150,175}.png",
+    "sha256": {
+      "settings-1280-dark-en-100.png": "1cdd2c42488ab1358f81df7782bcf91cc9ccfcfa46ec8cb1581aea13a26135d3",
+      "settings-1280-dark-en-125.png": "94048320bbeaa50e9c3d662bd232ad16f2baef5afbb80c7065711e47044c8d91",
+      "settings-1280-dark-en-150.png": "291a18d8497319237bb453d21785b6d4419890363f90639316c58160ae5e1833",
+      "settings-1280-dark-en-175.png": "a452164e1c91986fac78495f63076891c79565f6301c202e26962ca0c586d313",
+      "settings-1280-dark-en-75.png": "2a985b9da9ae5c3c15e32062a4cb6d38e954ae97a6fc5115b5380d0ceacfb0a5",
+      "settings-1280-dark-zh-100.png": "c3c310926aa647eda873d1f56f31fda106cbe0760d1f5513a0f06602c3ef5f4e",
+      "settings-1280-dark-zh-125.png": "cf247f7db5b1f73653537836e83d87be8545690be1f654b68c50840789423a2a",
+      "settings-1280-dark-zh-150.png": "95638bd69c3d6347880d114666c987427d35d68080e68fd3ee9112ccf54f0b30",
+      "settings-1280-dark-zh-175.png": "e7e2b5d4af065ea54df618a282522f1d5ffaa9b19c0caba7510ecd9a4a2e7639",
+      "settings-1280-dark-zh-75.png": "0e194cf5d5a2afcf0854c47bfdff00c4f39c02039e242aef5295eb57e140e76c",
+      "settings-1280-light-en-100.png": "eb2b59d1842a7edbca42fc79ced183b4d5fdc93e10c97a6b15ee9f289058ddd0",
+      "settings-1280-light-en-125.png": "6932201ca854a04a36304ffd73ecfbefe528ef32090867fb0e977c5527097bbc",
+      "settings-1280-light-en-150.png": "4c98d17aca6f8a529647efee484286400745c1ee4d21f5bf94efad4e41936407",
+      "settings-1280-light-en-175.png": "06f64c5f0e624fdc5864ed07af3daa25b9e422a1ac716087fcb771aa7c5181c9",
+      "settings-1280-light-en-75.png": "10189f8d0c7b3c2beb7c0709504fd6e1316eaf95567a79bb391f14181114811f",
+      "settings-1280-light-zh-100.png": "cbcc2f5f13c43b7b6d61b6ae182e9ba7e22f0f936bc002b45b51c82dc0937e07",
+      "settings-1280-light-zh-125.png": "981326425f43a090172c3da761526ce085ea4ec32ffe7814d427d4767ae40076",
+      "settings-1280-light-zh-150.png": "74e6b658c340020e0155310208744c9840556462da247115d8ec1e351425fd28",
+      "settings-1280-light-zh-175.png": "1703aa30cda2b869f968307672e6c6a25641171bfda52193f8a3507e8ea0d3d2",
+      "settings-1280-light-zh-75.png": "34fc066c899c0294e66cd86a04322489746691c32f17fa549355f016843805a3",
+      "settings-390-dark-en-100.png": "33a0b5d69b7c391c6e732c6afbbfed4384a98a47739dd93a37dd4dc2a749c7aa",
+      "settings-390-dark-en-125.png": "f61e1964e3eb2028abbf0797fef8e9e233de52e8556dc3c212a7ab57539a1cbe",
+      "settings-390-dark-en-150.png": "3352c635604633290c09c26380722c13791c58ab4b8189d13a081aae0601ba20",
+      "settings-390-dark-en-175.png": "cd46b3ebf4de9410819a02c8c7125ea60b33ab11f76b5af2cb0162a8d99a311d",
+      "settings-390-dark-en-75.png": "ddac2c04314646ad3c849a2a7f94f73c1225a2eca6ae1a83cc7603d4b3e7b3dd",
+      "settings-390-dark-zh-100.png": "388fe5c3828c5f1b1b7bc7c0f1e05369a53f7a3b348395c86663ac65d4db2caa",
+      "settings-390-dark-zh-125.png": "3df34f8c2d005579e446cdb3420ee35e12a63c9922310513e2f86c9153a958ef",
+      "settings-390-dark-zh-150.png": "fe5645ef2cfbafa40052148d55c2a4820e2ea27e9ef5c438941a24214f64654c",
+      "settings-390-dark-zh-175.png": "e8eb9637e6123f96294d9453ed1a1683e1d77e6c4cf0a76e5ab93907bf9f7549",
+      "settings-390-dark-zh-75.png": "e55955226873f73ba4e66adf685875b4b10066ec3e87bbaf3890d97e02aabc7b",
+      "settings-390-light-en-100.png": "9e8b94f89247a7864bac1501250ff2dc67497d72a6b8f2b5f87cc78067251d27",
+      "settings-390-light-en-125.png": "5fb9f4a0566f0c9e7f69cff80347b02bf3e5041cc7f61c9c3dfc0d6a9502a5b1",
+      "settings-390-light-en-150.png": "c88b768871b19f8d7c327a56e40da7a9cb5c56391279db2cc8df2dc74d7f5e7e",
+      "settings-390-light-en-175.png": "292b15f0635f38d963cb2f34bdd783a34f69f62aa60519362ec3f0d97d029c63",
+      "settings-390-light-en-75.png": "85fee2b14aa350631dfc6c0ad6690da7873d893d69523ca76b157182923be48f",
+      "settings-390-light-zh-100.png": "01db5f9b60173bbc7514cc9c05e9d1e4ce11e8d3434fe911cf850b28dcb35724",
+      "settings-390-light-zh-125.png": "cb11dd2d308f3c79077f69210150a3089c44e55ada86ca661e40a26a859cdfbb",
+      "settings-390-light-zh-150.png": "964e7f92bd72e6977719447b29deb1f41fe0c49b533d3046b0233b622179c014",
+      "settings-390-light-zh-175.png": "eed78be56f9742fadb49ac0d6adf7ccd3c260f04ecdc186a570311c4a020ddaa",
+      "settings-390-light-zh-75.png": "edef9e3c3b3a3dd4df92850f02a90632587efc9312caa2a82abec9aec85cda8d"
+    }
+  },
+  "cleanup": "No shared-service restart or Task resubmission after the live parameter case; UI source frozen after final build and browser fixture batch.",
+  "sanitization": "No credential, launch ticket, prompt text, secret or signed URL recorded.",
+  "scope": "V1-UI r5 source and local/live browser acceptance evidence only",
+  "limitations": [
+    "The live parameter case ran on the pre-focus-fix JS bundle; the final JS bundle was verified by fixture browser tests, not by a repeat Task submission.",
+    "Management UI HTTP browser operations still require the later unified maintenance window.",
+    "The 40 screenshots are local route fixtures; no manual VoiceOver or production service assertion follows from them."
+  ],
+  "prior_attempts": [
+    "Complete fixture runs before the shell focus fix each had 29 passed, 1 UI-AC003 failed and 5 real cases skipped; a standalone UI-AC003 run passed. These attempts remain documented in .herdr/V1-UI-r5.md."
+  ]
+}

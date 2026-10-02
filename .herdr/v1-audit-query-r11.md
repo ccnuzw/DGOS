@@ -1,0 +1,7 @@
+# V1-GOV r11 — audited query
+
+Worker-C; r10 stopped; main workspace. FR014 AC02/03/05 authority and current OpenAPI. Own `src/audit/outbox.mjs`, new `apps/api/src/audit-routes.mjs`, own governance tests/new `tests/integration/audit-query.test.mjs`, report `.herdr/V1-GOV-r11.md`. Lead integrates replacement for existing inline GET /audit/events; no server edits by C. Retention belongs next separate package.
+
+Implement query self-audit without recursion, minimal safe query summary (no raw filters/secrets), fail closed on audit failure, query/input validation and scoped pagination. Preserve current API-Key actor restriction and Session authorization. Ensure standalone PostgresAuditRepository.record makes event+outbox atomic when caller didn't supply transaction client; caller-supplied transaction remains atomic with business writes. Add failure injection proving no orphan events. Check existing summary projection excludes secrets/private paths and strengthen with precise bounded projection where needed. Real PG dedicated governance DB only. Also verify governance policy concurrent same-version public writes one winner, both authenticated through current freshness gate; no direct service-only evidence masquerading as API.
+
+Tests commands/exit/source identity and limits, stop writing. Existing C permission fix preserved, System network I and Actions A are independent. No D15200; no migration without Lead number.

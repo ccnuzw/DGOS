@@ -1,0 +1,26 @@
+# V1-RUNTIME-REGRESSION r6 / Worker-A
+
+- status: delivered; stop writing after this report
+- work_package: V1-RUNTIME-REGRESSION-r6
+- workspace: `/Users/apple/Progame/DGOS`
+- files_changed: `tests/integration/runtime-api.test.mjs`, `.herdr/V1-RUNTIME-REGRESSION-r6.md`
+- tests_added: none; upgraded the three existing runtime API integration cases
+- implementation_facts:
+  - The runtime API fixture now submits an Ed25519 signed `dgos-app/v1` envelope with resource digests, developer trust root and a disk package store. Review and install use the current release fields and review version.
+  - The permission test checks that a request body declaration cannot grant an uninstalled app a capability, then checks the installed manifest declaration, `ask` and explicit `deny`. It retains CSRF, catalog visibility, System version conflict and invalid patch, Action listing, and API Key subject isolation assertions.
+  - The PostgreSQL restart test creates a random `dgos_v1_runtime_<hex32>` child database only when the parent URL names `dgos_v1_actions`, `dgos_v1_integrated` or `dgos_v1_verify_<hex32>`. It applies current migrations to that child, shares the disk package store across two server instances, checks package deployment and System locale after restart, then drops only that random child database. No full-table DELETE remains in the test.
+- commands_run:
+  - `pwd` -> `/Users/apple/Progame/DGOS`.
+  - `env -u DGOS_DATABASE_URL node --test tests/integration/runtime-api.test.mjs` -> 2 pass, 0 fail, 1 skipped (the PG case requires a URL).
+  - `DGOS_DATABASE_URL=postgresql://dgos:dgos@127.0.0.1:5432/dgos_v1_actions node --test tests/integration/runtime-api.test.mjs` -> final run 3 pass, 0 fail, 0 skipped.
+  - `node --check tests/integration/runtime-api.test.mjs` -> exit 0.
+  - `git diff --check -- tests/integration/runtime-api.test.mjs` -> exit 0.
+  - A read-only query after the final run found 0 child databases matching `dgos_v1_runtime_%`.
+- test_failure_recovery: An intermediate PG run accidentally let an in-memory case use the parent database because `buildServer` consults `DGOS_DATABASE_URL`. The final fixture masks that URL while constructing in-memory servers. The intermediate run's one random appId was removed from the dedicated actions database using its exact appId/subject IDs, including 2 package operations, 1 deployment, 1 release, and 4 corresponding audit/outbox records. Follow-up query found 0 parent releases matching `com.example.runtime%`.
+- contract_changes_proposed: []
+- open_risks:
+  - The PG case requires a PostgreSQL role that may create and drop a random test database. It is skipped with no URL and rejects a URL outside the explicit V1 parent database allowlist.
+  - This package covers runtime API integration only; cross-domain regression remains with Lead/Verify.
+- docs_to_update: []
+- incomplete_items: []
+- lead_or_planner_decisions_needed: []

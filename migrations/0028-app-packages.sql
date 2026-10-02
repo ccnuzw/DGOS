@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS app_package_releases (
+  package_id uuid PRIMARY KEY,
+  app_id text NOT NULL,
+  version text NOT NULL,
+  build bigint NOT NULL CHECK (build >= 0),
+  release_channel text NOT NULL,
+  manifest jsonb NOT NULL,
+  package_digest text NOT NULL CHECK (package_digest ~ '^sha256:[0-9a-f]{64}$'),
+  source text NOT NULL CHECK (source IN ('official','admin','developer')),
+  key_id text NOT NULL,
+  request_id uuid NOT NULL UNIQUE,
+  effective_trust_level text NOT NULL CHECK (effective_trust_level IN ('standard','trusted','system')),
+  uninstall_policy text NOT NULL CHECK (uninstall_policy IN ('user-removable','protected-preinstall')),
+  catalog_state text NOT NULL CHECK (catalog_state IN ('official','pending_review','approved','rejected','withdrawn')),
+  review_version bigint NOT NULL DEFAULT 1,
+  reviewer_id uuid,
+  review_request_id uuid,
+  review_reason text,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE(app_id,release_channel,version,build)
+);

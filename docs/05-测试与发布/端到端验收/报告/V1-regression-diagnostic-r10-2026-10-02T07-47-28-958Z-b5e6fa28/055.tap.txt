@@ -1,0 +1,16 @@
+TAP version 13
+# Subtest: custom Skill Run stores a single Task intent and resumes to terminal after worker restart
+ok 1 - custom Skill Run stores a single Task intent and resumes to terminal after worker restart
+  ---
+  duration_ms: 63.999333
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 128.000834

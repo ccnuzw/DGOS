@@ -1,0 +1,9 @@
+# V1-PACKAGES r8 / G：bridge业务JSON回执
+
+r7停写，D真实包链越过401后出现invalid_package_json。授权原G域只修准确复现原因与单元/路由/浏览器测试。当前DiskPackageStore.writeReceipt用签名canonicalJson（只safe integer、不容undefined），但模型defaults合法float、Task内部safe对象可有undefined可选字段，普通JSON响应语义不该变manifest错误。
+
+区分签名canonical算法与公共JSON边界：保留签名manifest既有算法不偷偷改摘要；桥输入/结果按注册schema先校验/清理为JSON语义（undefined对象可选字段不发出、非法NaN/Infinity/cycles/type拒），支持有限float；业务receipt使用独立确定性序列化并bounded大小，原始敏感字段仍不得出返回。不能为了过测试吞掉真实必填字段。
+
+已创建prepared但只序列化结果失败后不能盲重跑副作用；当前D重新launch新实例的只读model.resolve可安全重试，Task写必须沿原requestId查询收敛。报告给D准确恢复方法。源码产品边界只G，Lead app-capabilities与H模型域只读；具体errorKey先和D核验。
+
+报告.herdr/V1-PACKAGES-r8.md并停写，勿改D环境/安装包字节或签名根，D协调restart。

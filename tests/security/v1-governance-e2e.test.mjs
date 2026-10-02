@@ -22,7 +22,7 @@ test('V1-E2E-11 authentication session, expiry, origin and high-risk authorizati
   const auth = { authorization: `Bearer ${receipt.sessionId}` };
   assert.equal((await app.inject({ method: 'GET', url: '/api/v1/identity/admin/session', headers: auth })).statusCode, 200);
   assert.equal((await app.inject({ method: 'POST', url: '/api/v1/identity/admin/session', headers: { ...auth, cookie: `dgos_session=${receipt.sessionId}`, origin: 'https://evil.example', 'x-dgos-csrf': 'x' }, payload: {} })).json().errorKey, 'csrf_failed');
-  assert.equal((await app.inject({ method: 'DELETE', url: `/api/v1/identity/admin/sessions/${receipt.sessionId}`, headers: { ...auth, cookie: `dgos_session=${receipt.sessionId}`, 'x-dgos-csrf': 'x' } })).statusCode, 200);
+  assert.equal((await app.inject({ method: 'DELETE', url: '/api/v1/identity/admin/session', headers: { ...auth, cookie: `dgos_session=${receipt.sessionId}`, 'x-dgos-csrf': 'x' } })).statusCode, 204);
   assert.equal((await app.inject({ method: 'GET', url: '/api/v1/identity/admin/session', headers: auth })).json().errorKey, 'session_invalid');
   const bad = await app.inject({ method: 'POST', url: '/api/v1/identity/admin/login', payload: { principalHint: receipt.principalId, credential: 'bad' } });
   assert.equal(bad.statusCode, 401);
@@ -38,23 +38,39 @@ test('V1-E2E-12 API key one-time secret, isolation, overlap, revoke and expiry',
   assert.equal(listed.statusCode, 200); assert.equal(listed.json().items[0].secret, undefined);
   const rotated = await app.inject({ method: 'POST', url: `/api/v1/secret/api-keys/${body.key.keyId}/rotate`, headers: auth, payload: {} });
   assert.equal(rotated.statusCode, 200); assert.notEqual(rotated.json().secret, body.secret); assert.equal(rotated.json().previousKeyId, body.key.keyId);
-  assert.equal((await app.inject({ method: 'GET', url: '/api/v1/secret/api-keys', headers: { authorization: `ApiKey ${body.secret}` } })).statusCode, 401);
+  assert.equal((await app.inject({ method: 'GET', url: '/api/v1/secret/api-keys', headers: { authorization: `ApiKey ${body.secret}` } })).statusCode, 200);
   assert.equal((await app.inject({ method: 'GET', url: '/api/v1/secret/api-keys', headers: { authorization: `ApiKey ${rotated.json().secret}` } })).statusCode, 200);
   const auditRows = [...audit.events.values()]; assert.ok(auditRows.every((e) => !JSON.stringify(e).includes(body.secret)));
   const revoked = await app.inject({ method: 'DELETE', url: `/api/v1/secret/api-keys/${rotated.json().key.keyId}`, headers: auth });
   assert.equal(revoked.statusCode, 200); assert.equal((await app.inject({ method: 'GET', url: '/api/v1/secret/api-keys', headers: { authorization: `ApiKey ${rotated.json().secret}` } })).statusCode, 401);
+  const oldRevoked = await app.inject({ method: 'DELETE', url: `/api/v1/secret/api-keys/${body.key.keyId}`, headers: auth });
+  assert.equal(oldRevoked.statusCode, 200); assert.equal((await app.inject({ method: 'GET', url: '/api/v1/secret/api-keys', headers: { authorization: `ApiKey ${body.secret}` } })).statusCode, 401);
   await app.close();
 });
 
 test('V1-E2E-13 provider account connection controls reject SSRF and owner violations before enqueue', async () => {
-  const { app, receipt, providerRepository } = await setup('V1-E2E-13');
+  const audit = new InMemoryAuditRepository();
+  const providerRepository = new InMemoryProviderRepository();
+  const app = buildServer({ logger: false, repository: new InMemoryIdentityRepository(), providerRepository, auditRepository: audit, retentionRepository: new InMemoryRetentionRepository(audit), providerEgress: { async validateTarget(value) { const url = new URL(value); if (url.hostname !== 'provider.fixture.test') throw Object.assign(new Error('policy_blocked'), { errorKey: 'policy_blocked', statusCode: 422 }); return url; } } });
+  const bootstrap = await app.inject({ method: 'POST', url: '/api/v1/identity/admin/bootstrap', payload: { displayName: 'E2E provider', credential: 'correct-secret' } });
+  assert.equal(bootstrap.statusCode, 201);
+  const receipt = bootstrap.json();
   const auth = { authorization: `Bearer ${receipt.sessionId}` };
-  const account = await app.inject({ method: 'POST', url: '/api/v1/provider/accounts', headers: auth, payload: { protocolType: 'openai-compatible', displayName: 'e2e-provider', credential: 'provider-secret', scope: { endpoint: 'https://api.example.com' } } });
+  const account = await app.inject({ method: 'POST', url: '/api/v1/provider/accounts', headers: auth, payload: { protocolType: 'openai-compatible', displayName: 'e2e-provider', credential: 'provider-secret', scope: { endpoint: 'https://provider.fixture.test/v1' } } });
   assert.equal(account.statusCode, 201); assert.equal(account.json().credential, undefined);
+  const blocked = await app.inject({ method: 'POST', url: '/api/v1/provider/connection-tests', headers: auth, payload: { accountId: account.json().accountId, protocolVersion: 'v1' } });
+  assert.equal(blocked.statusCode, 202, blocked.body);
+  await providerRepository.finishConnectionTest(blocked.json().testId, 'succeeded', undefined, 1);
+  const ready = await app.inject({ method: 'POST', url: `/api/v1/provider/accounts/${account.json().accountId}/state`, headers: auth, payload: { baseVersion: '1', state: 'ready', connectionTestId: blocked.json().testId } });
+  assert.equal(ready.statusCode, 200, ready.body);
   const strangerKey = await app.inject({ method: 'POST', url: '/api/v1/secret/api-keys', headers: auth, payload: { name: 'provider-reader', scopes: ['provider.connection_test'] } });
   assert.equal(strangerKey.statusCode, 201);
-  const forbidden = await app.inject({ method: 'POST', url: '/api/v1/provider/connection-tests', headers: { authorization: `ApiKey ${strangerKey.json().secret}` }, payload: { accountId: account.json().accountId } });
-  assert.equal(forbidden.statusCode, 202); assert.equal(providerRepository.tests.size, 1);
+  const forbidden = await app.inject({ method: 'POST', url: '/api/v1/provider/connection-tests', headers: { authorization: `ApiKey ${strangerKey.json().secret}` }, payload: { accountId: account.json().accountId, protocolVersion: 'v1' } });
+  assert.equal(forbidden.statusCode, 202, forbidden.body); assert.equal(providerRepository.tests.size, 2);
+  const ssrf = await app.inject({ method: 'POST', url: '/api/v1/provider/accounts', headers: auth, payload: { protocolType: 'openai-compatible', displayName: 'blocked-provider', credential: 'provider-secret', scope: { endpoint: 'https://127.0.0.1' } } });
+  assert.equal(ssrf.statusCode, 201);
+  const denied = await app.inject({ method: 'POST', url: '/api/v1/provider/connection-tests', headers: auth, payload: { accountId: ssrf.json().accountId, protocolVersion: 'v1' } });
+  assert.equal(denied.json().errorKey, 'policy_blocked'); assert.equal(providerRepository.tests.size, 2);
   await app.close();
 });
 
@@ -69,7 +85,9 @@ test('V1-E2E-14 audit correlation, redaction, outbox retry and retention recover
   assert.ok(!JSON.stringify(storedEvents).includes(key.json().secret));
   const eventId = await audit.record({ requestId, action: 'e2e.retry', targetType: 'fixture', summary: { safe: true } });
   const claimed = await audit.claim('V1-E2E-14-job'); assert.ok(claimed?.eventId); await audit.markFailed(claimed.eventId, 'V1-E2E-14-job', 0); const reclaimed = await audit.claim('V1-E2E-14-job'); assert.equal(reclaimed.eventId, claimed.eventId); assert.equal((await audit.markPublished(reclaimed.eventId, 'V1-E2E-14-job')).eventId, reclaimed.eventId);
-  const start = await app.inject({ method: 'POST', url: '/api/v1/admin/governance/retention-sweeps', headers: { ...auth, cookie: `dgos_session=${receipt.sessionId}`, 'x-dgos-csrf': 'x' }, payload: {} });
+  const preview = await app.inject({ method: 'GET', url: '/api/v1/admin/governance/retention-preview', headers: auth });
+  assert.equal(preview.statusCode, 200);
+  const start = await app.inject({ method: 'POST', url: '/api/v1/admin/governance/retention-sweeps', headers: { ...auth, cookie: `dgos_session=${receipt.sessionId}`, 'x-dgos-csrf': 'x' }, payload: { previewDigest: preview.json().previewDigest } });
   assert.equal(start.statusCode, 202); assert.ok(start.json().jobId); const run = await app.inject({ method: 'POST', url: `/api/v1/admin/governance/retention-sweeps/${start.json().jobId}/run`, headers: { ...auth, 'x-dgos-csrf': 'x' }, payload: {} }); assert.equal(run.statusCode, 200);
   await app.close();
 });

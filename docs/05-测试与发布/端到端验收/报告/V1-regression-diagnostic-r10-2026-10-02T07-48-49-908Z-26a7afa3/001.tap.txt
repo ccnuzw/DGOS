@@ -1,0 +1,16 @@
+TAP version 13
+# Subtest: V1-FR-009/V1-E2E-09 assistant action workflow enforces permission, confirmation, versions, cancel and audit
+ok 1 - V1-FR-009/V1-E2E-09 assistant action workflow enforces permission, confirmation, versions, cancel and audit
+  ---
+  duration_ms: 241.409958
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 452.310084

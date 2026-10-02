@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: server-owned stdio profile keeps MCP process through calls and stops on disconnect
+ok 1 - server-owned stdio profile keeps MCP process through calls and stops on disconnect
+  ---
+  duration_ms: 39.41225
+  type: 'test'
+  ...
+# Subtest: macOS sandbox profile executes fixture while denying filesystem writes
+ok 2 - macOS sandbox profile executes fixture while denying filesystem writes
+  ---
+  duration_ms: 43.553916
+  type: 'test'
+  ...
+# Subtest: server-owned HTTP endpoint completes MCP initialize, discovery, call, and disconnect
+ok 3 - server-owned HTTP endpoint completes MCP initialize, discovery, call, and disconnect
+  ---
+  duration_ms: 26.023334
+  type: 'test'
+  ...
+# Subtest: HTTP MCP egress rejects private HTTPS addresses before transport
+ok 4 - HTTP MCP egress rejects private HTTPS addresses before transport
+  ---
+  duration_ms: 1.394333
+  type: 'test'
+  ...
+# Subtest: service invokes persisted run through persistent stdio MCP transport
+ok 5 - service invokes persisted run through persistent stdio MCP transport
+  ---
+  duration_ms: 40.173833
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 214.172875

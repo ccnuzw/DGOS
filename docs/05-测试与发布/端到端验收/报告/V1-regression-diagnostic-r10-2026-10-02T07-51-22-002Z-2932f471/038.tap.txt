@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: key scopes cannot widen an API key caller and owner cannot change
+ok 1 - key scopes cannot widen an API key caller and owner cannot change
+  ---
+  duration_ms: 2.819625
+  type: 'test'
+  ...
+# Subtest: API key expiry and rotation cutoff are checked at authentication time
+ok 2 - API key expiry and rotation cutoff are checked at authentication time
+  ---
+  duration_ms: 0.174042
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 53.727375

@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: resolve PostgreSQL parent guard accepts Actions and exact Verify child URLs only
+ok 1 - resolve PostgreSQL parent guard accepts Actions and exact Verify child URLs only
+  ---
+  duration_ms: 0.578458
+  type: 'test'
+  ...
+# Subtest: resolve uses the authenticated request context for PostgreSQL permission audit and fails closed
+ok 2 - resolve uses the authenticated request context for PostgreSQL permission audit and fails closed
+  ---
+  duration_ms: 663.447458
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 867.168583

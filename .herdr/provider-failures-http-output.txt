@@ -1,0 +1,9 @@
+PASS authentication_failed
+PASS rate_limited
+PASS protocol_mismatch
+PASS tls_invalid
+PASS network_unreachable
+PASS timed_out
+PASS running_cancel
+PASS two_workers_restart_terminal_unique
+{"status":"passed","cases":8,"reportPath":"/Users/apple/Progame/DGOS/tests/provider/evidence/V1-PROVIDER-FAILURES-r8-2026-10-02T11-19-59-420Z-2a42535b.json","logPath":"/Users/apple/Progame/DGOS/tests/provider/evidence/V1-PROVIDER-FAILURES-r8-2026-10-02T11-19-59-420Z-2a42535b.log","manifestPath":"/Users/apple/Progame/DGOS/tests/provider/evidence/V1-PROVIDER-FAILURES-r8-2026-10-02T11-19-59-420Z-2a42535b-manifest.json"}

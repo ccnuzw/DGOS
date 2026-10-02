@@ -1,0 +1,68 @@
+TAP version 13
+# Subtest: manifest validation and digest
+ok 1 - manifest validation and digest
+  ---
+  duration_ms: 1.796291
+  type: 'test'
+  ...
+# Subtest: catalog visibility and developer test install
+ok 2 - catalog visibility and developer test install
+  ---
+  duration_ms: 1.868042
+  type: 'test'
+  ...
+# Subtest: health failure rolls back and uninstall retains data
+ok 3 - health failure rolls back and uninstall retains data
+  ---
+  duration_ms: 0.647417
+  type: 'test'
+  ...
+# Subtest: permission deny precedence and revoke
+ok 4 - permission deny precedence and revoke
+  ---
+  duration_ms: 0.621083
+  type: 'test'
+  ...
+# Subtest: permission request transitions are expiring, idempotent and race-safe
+ok 5 - permission request transitions are expiring, idempotent and race-safe
+  ---
+  duration_ms: 0.706792
+  type: 'test'
+  ...
+# Subtest: action plan has no handler side effect and executes once
+ok 6 - action plan has no handler side effect and executes once
+  ---
+  duration_ms: 4.15525
+  type: 'test'
+  ...
+# Subtest: action run lease heartbeat and reclaim preserve exactly-once execution
+ok 7 - action run lease heartbeat and reclaim preserve exactly-once execution
+  ---
+  duration_ms: 82.658375
+  type: 'test'
+  ...
+# Subtest: settings optimistic concurrency and context redaction
+not ok 8 - settings optimistic concurrency and context redaction
+  ---
+  duration_ms: 1.080916
+  type: 'test'
+  location: '/Users/apple/Progame/DGOS/tests/unit/runtime.test.mjs:42:1'
+  failureType: 'testCodeFailure'
+  error: 'invalid_request'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    invalid (file:///Users/apple/Progame/DGOS/src/system/service.mjs:4:37)
+    SystemService.patch (file:///Users/apple/Progame/DGOS/src/system/service.mjs:101:45)
+    async TestContext.<anonymous> (file:///Users/apple/Progame/DGOS/tests/unit/runtime.test.mjs:42:127)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 7
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 145.09525

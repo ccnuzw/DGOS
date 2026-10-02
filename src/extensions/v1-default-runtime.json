@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "source": "system:dgos_text_format",
+      "trustState": "trusted",
+      "manifest": {
+        "kind": "skill",
+        "id": "text_format",
+        "packageId": "dgos_official_skills",
+        "childSkillIds": ["text_format"],
+        "version": "1.0.0",
+        "name": "Text format",
+        "operations": [
+          {
+            "operationId": "format",
+            "permission": "skill.execute",
+            "risk": "low",
+            "sideEffects": false,
+            "inputSchema": {
+              "type": "object",
+              "required": ["text"],
+              "properties": { "text": { "type": "string" } }
+            },
+            "outputSchema": { "type": "object" }
+          }
+        ]
+      }
+    }
+  ],
+  "runnerProfiles": {},
+  "endpointProfiles": {}
+}

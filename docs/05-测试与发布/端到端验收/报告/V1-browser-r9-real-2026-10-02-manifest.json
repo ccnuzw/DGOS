@@ -1,0 +1,72 @@
+{
+  "run_id": "V1-browser-r9-real-2026-10-02-live-H-fresh",
+  "environment": "local real Chromium browser; H isolated API/Web/PostgreSQL/Redis/worker/controlled TLS fixture on 15175-15177",
+  "code_version": "dirty working tree based on 72ab1cb98b064a6e27b9f60a9f8f00881a827a99; not a release candidate commit",
+  "commit": "72ab1cb98b064a6e27b9f60a9f8f00881a827a99 (baseline only)",
+  "command": "REAL_MANAGEMENT_FIXTURE=1 WEB_EXTERNAL=1 WEB_BASE_URL=http://127.0.0.1:15176 pnpm --filter @dgos/web exec playwright test -c playwright.config.mjs e2e/real-context.spec.mjs e2e/real-management-fixture.spec.mjs --workers=1 --output=../../.herdr/state/browser-r9-fresh",
+  "working_directory": "/Users/apple/Progame/DGOS",
+  "exit_code": 0,
+  "started_at": null,
+  "finished_at_observed": "2026-10-02T05:20:20Z",
+  "stats": {
+    "tests": 5,
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "branch_receipts": 11
+  },
+  "test_report": ".herdr/state/browser-r9-fresh/.last-run.json",
+  "raw_output_transcription": "docs/05-测试与发布/端到端验收/报告/V1-browser-r9-real-2026-10-02.log.md",
+  "raw_output_sha256": "4e76f736776769748699c64fb429eeea1bc1a4db8799a13d67140f9dc94ce8f6",
+  "asset_sha256": {
+    "apps/web/e2e/real-context.spec.mjs": "4c94b81750f24cb89bc7746ab2eec3cb57fedfe8d21b87a6150fbb54d9308609",
+    "apps/web/e2e/real-management-fixture.spec.mjs": "3abcb6980d77bc5f80bd4693fac1a14d712f3297c7d13ce4f1962747835ea13b",
+    "apps/web/src/main.tsx": "3ad654ea8782c1cd15a9787b024da58f3b8040c8b3270bc60c2b8a0bcbee9a01",
+    "apps/web/src/advanced.tsx": "6cf386c2eb579e5b1379ab6bb41e29e1f7145dba2d5126ed58c05435fb5141b5",
+    "apps/web/src/management.tsx": "90372246e7116ff49be08557597860f680e6231c9e05f3da6f3f04ed9195bca5",
+    "apps/web/src/sessions.tsx": "408f605c534445f6afd9bbc7417e9f54444d154ef3088277b513a85aafebcc09",
+    "apps/api/src/server.mjs": "bfdb2d97bdcedf9acd1f518e77644117de70a8c98f4d68bc4cf08cf784c33988",
+    "apps/api/src/extension-routes.mjs": "6fd65b099d9f1c9d41303796b40285ebfa39bde9f3e8fe7e1584382bd5c4e83d",
+    "apps/worker/src/worker.mjs": "e94c90888699b34a66632c77b8d5afea879734605e341423cf5cb821c58aa7e4",
+    "scripts/v1-ui-management-fixture.mjs": "e746a1a03e377a3f596df9f13773de266d08ba6a46c876c48c2f7b5ec0ad8922",
+    "src/extensions/service.mjs": "6856cbdcdd3e26a85ec4ff5613d41984e62ba7c548881024117c092bc8d600da",
+    "src/security/provider-egress.mjs": "105a1e300fda47035c166227a9b5dab351d57b78f20b400c8529fda4c7be77ac",
+    "apps/web/dist/index.html": "550b23358dbf1324c1cdf67456242e4d7c64368468790a1940edb1201aeb835f",
+    "apps/web/dist/assets/index-NFqsGjYo.js": "360c42b6cc5d9e96c4e3354e4fa846865dc51c97133a901f40487f719752ce1c",
+    "apps/web/dist/assets/index-BFWr4XFs.css": "fa3cf098e7e1bf210a0960839de2472b8f6fe88dcdbad29210e3ad7e77627383"
+  },
+  "covered_branches": [
+    "ui.system.appearance_context",
+    "ui.system.locale_context",
+    "ui.system.grid_context",
+    "ui.system.cas_conflict",
+    "ui.system.restore",
+    "ui.skill.translation_apply",
+    "ui.skill.translation_stale_rejected",
+    "ui.mcp.first_install",
+    "ui.mcp.connect_invoke",
+    "ui.assistant.ask_request",
+    "ui.assistant.allow_replan_navigation"
+  ],
+  "cleanup": "Per-test System appearance/locale/grid values were restored and read back; MCP first-install state and translated Skill remain only in the fresh scoped H fixture database; H fixture retained by Lead for follow-up.",
+  "sanitization": "Reports and manifest contain no credentials, prompts, tokens or private fixture files. The persisted log is a transcription of the terminal output; Playwright itself retained only aggregate .last-run.json.",
+  "scope": [
+    "Real Web GUI and public System Settings/context HTTP",
+    "Skill translation Task, Artifact, confirmed apply and stale CAS rejection",
+    "MCP absence precondition, first credential install, connect, discovery and confirmed invoke",
+    "Assistant ask request, explicit System allow, replan and navigation"
+  ],
+  "limitations": [
+    "Local controlled TLS Provider/MCP fixtures, not an external production Provider.",
+    "Web System context is verified; signed APP consumption, macOS sandbox bridge and native host consistency remain unproved.",
+    "This is a dirty-tree local run and does not bind all candidate source, migration, native app, image or release configuration.",
+    "Exact test start timestamp was not captured."
+  ],
+  "prior_attempts": [
+    {
+      "run_id": "V1-browser-r9-live-existing-H",
+      "exit_code": 1,
+      "result": "4 passed, 1 failed because the first-install test correctly found the target MCP already installed; branch was not counted."
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+# V1-EXT-PUBLIC r7 / Worker-H
+
+H Provider r6 complete/stopped; E management r6 retains all product/extensions/tests ownership. H writes only new `scripts/v1-extension-management-http.mjs`, optional new harness helper under test-support unique name, `.herdr/V1-EXT-PUBLIC-r7.md` and append-only evidence. Coordinate E constructor but do not edit E product or tests.
+
+Objective independently integrate current real main API/PG/Redis + OS worker/extension daemon to validate custom create/edit/enable→explicit APP dependency/Broker→confirmed custom Run→real Task/Quota/Artifact, rename stable IDs, translation submit/query/apply source version bounds, MCP template install credentials→connect/discovery/invoke, trusted HTTPS online preview immutable bytes. E already has PG/factory/router tests, do not repeat internal-only proof. Use bounded local fixture Provider returns appropriate structured translation JSON. No fake successful Task from direct repository writes. Inputs can explicit disposable test-signed extension/package; do not touch A business package or D installed roots. Credentials only Secret injection through accepted trustedTransport.
+
+H15171–79 and Redis DB5 unique `v1-ext-public` prefix/new random `dgos_v1_ext_public_<hex>` database, local tmp roots. Frozen<=0051 exact board SHAs, no later drafts. Construct real runtime with E factories and Lead current composition. Bootstrap one administrator, authenticated public APIs, sessions and scopes. No arbitrary caller env or shell. Record genuine negative paths and no side effects, source before/after, process identities, results and cleanup.
+
+If E product error discovered send exact sanitized evidence to E/Lead; E fixes, H retests only failed scenarios. Do not both write same script. Freeze-ready when full public fixture chain passes and evidence limitations named. This is local proof, not external production or final candidate.

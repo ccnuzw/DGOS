@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: fixture exposes OpenAI models structure
+ok 1 - fixture exposes OpenAI models structure
+  ---
+  duration_ms: 18.653375
+  type: 'test'
+  ...
+# Subtest: fixture emits parseable chat completion SSE
+ok 2 - fixture emits parseable chat completion SSE
+  ---
+  duration_ms: 8.380459
+  type: 'test'
+  ...
+# Subtest: fixture rejects missing or invalid authorization and supports forbidden scenario
+ok 3 - fixture rejects missing or invalid authorization and supports forbidden scenario
+  ---
+  duration_ms: 5.371708
+  type: 'test'
+  ...
+# Subtest: adapter can list models and stream from the real fixture
+ok 4 - adapter can list models and stream from the real fixture
+  ---
+  duration_ms: 5.526291
+  type: 'test'
+  ...
+# Subtest: adapter maps timeout, disconnect, malformed and empty streams
+ok 5 - adapter maps timeout, disconnect, malformed and empty streams
+  ---
+  duration_ms: 43.392041
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 139.616167

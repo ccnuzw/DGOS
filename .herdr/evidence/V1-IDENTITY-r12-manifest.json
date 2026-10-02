@@ -1,0 +1,177 @@
+{
+  "work_package": "V1-IDENTITY-r12",
+  "date": "2026-10-02",
+  "baseline_commit": "72ab1cb",
+  "source_before_after": [
+    {
+      "path": "apps/api/src/identity-service.mjs",
+      "before_sha256": "2cb0b2de5ab92a2dd531ba13e3c11a1e0562f2955ad1ef46ae21b9cb2da1d6a7",
+      "after_sha256": "0f67437f4e9912729aa350497393b87d56498fbc84510000792c7f004f63c691"
+    },
+    {
+      "path": "src/identity/repository.mjs",
+      "before_sha256": "be97bb9d42a0fb22cc53e98bf4ca3cd0a2649f0ce79e5bae94d578a16bb80564",
+      "after_sha256": "0e6d9d5637269ff76629cd4c9246e63e4a3ad21543eb78b021224fe867628975"
+    },
+    {
+      "path": "apps/api/src/identity-routes.mjs",
+      "before_sha256": null,
+      "after_sha256": "94c73bf5a27b62688a4b9ee47d99b8256f5044cd28c5a89a50b655d55d75e384"
+    },
+    {
+      "path": "migrations/0050-session-management.sql",
+      "before_sha256": null,
+      "after_sha256": "8802fe3a02b0bf7364aeac96215da09454d0c53b48c06d2cb76c6f3d6b455d85"
+    },
+    {
+      "path": "scripts/v1-identity-http.mjs",
+      "before_sha256": null,
+      "after_sha256": "40adc1dc27e356923015f85d6a792fd229dc9ba2f1423c68c4c7a95efdf3f7a0"
+    },
+    {
+      "path": "tests/security/v1-governance-e2e.test.mjs",
+      "before_sha256": "09dcce45b3258a2747553ae88c525489d5e75c1e487c38e5ba9cad199483e7ac",
+      "after_sha256": "d81f7eaa0dab94d90aff6e198a14aeb2ec80a0774aa99438bdf50e667ead0749"
+    },
+    {
+      "path": "apps/api/src/server.mjs",
+      "before_sha256": "9a71d9c1a9832ed20023e84b38517d00ea089ceef3bdd9d13d3547a74e5042fb",
+      "after_sha256": "ff57563817b7bf24841745e6fb211827ff309bfc6b3b5a8a625cd4eedf0e9353"
+    }
+  ],
+  "environment": {
+    "postgres": "random dgos_v1_identity_<hex> child of dgos_v1_governance on 127.0.0.1:5432",
+    "redis": "DB3 unique v1-gov-r12:<run> prefix",
+    "api_ports": [
+      15121,
+      15122
+    ],
+    "migration_count": 44,
+    "migrations": "<=0046 plus frozen 0048-network-route-fingerprint and 0050-session-management; exclude unfinished 0047 and draft 0049"
+  },
+  "commands": [
+    {
+      "command": "node --check scripts/v1-identity-http.mjs apps/api/src/identity-routes.mjs apps/api/src/identity-service.mjs src/identity/repository.mjs (sequential)",
+      "exit_code": 0
+    },
+    {
+      "command": "node --test tests/integration/identity-api.test.mjs tests/security/key-delegation.test.mjs tests/security/v1-governance-e2e.test.mjs tests/integration/action-freshness.test.mjs",
+      "exit_code": 0,
+      "passed": 8,
+      "skipped": 1
+    },
+    {
+      "command": "set -o pipefail; node scripts/v1-identity-http.mjs 2>&1 | tee .herdr/evidence/V1-IDENTITY-r12-live.log",
+      "exit_code": 0,
+      "case_count": 20,
+      "case_results": [
+        {
+          "name": "isolated_frozen_schema",
+          "result": "passed"
+        },
+        {
+          "name": "two_independent_http_instances",
+          "result": "passed"
+        },
+        {
+          "name": "concurrent_bootstrap_single_principal_and_loser_secret_compensation",
+          "result": "passed"
+        },
+        {
+          "name": "shared_subject_and_source_backoff_no_failed_session",
+          "result": "passed"
+        },
+        {
+          "name": "one_principal_multiple_independent_sessions",
+          "result": "passed"
+        },
+        {
+          "name": "management_projection_pagination_redaction_and_non_authentication_domain",
+          "result": "passed"
+        },
+        {
+          "name": "management_http_list_no_store_redaction_and_pagination",
+          "result": "passed"
+        },
+        {
+          "name": "management_cross_owner_404_without_side_effect",
+          "result": "passed"
+        },
+        {
+          "name": "management_stale_freshness_and_csrf_no_target_mutation",
+          "result": "passed"
+        },
+        {
+          "name": "stale_system_and_action_public_http_pg_no_state_change",
+          "result": "passed"
+        },
+        {
+          "name": "same_owner_other_device_revoke_does_not_touch_unrelated_session",
+          "result": "passed"
+        },
+        {
+          "name": "renew_revoke_race_finally_revoked",
+          "result": "passed"
+        },
+        {
+          "name": "managed_revoke_audit_failure_transaction_rollback",
+          "result": "passed"
+        },
+        {
+          "name": "expired_session_cannot_renew_or_regain_access",
+          "result": "passed"
+        },
+        {
+          "name": "key_once_scope_and_cross_instance_authentication",
+          "result": "passed"
+        },
+        {
+          "name": "cross_instance_finite_rotation_overlap",
+          "result": "passed"
+        },
+        {
+          "name": "cross_instance_expiry_and_revoke",
+          "result": "passed"
+        },
+        {
+          "name": "audit_store_contains_no_login_or_key_secret",
+          "result": "passed"
+        },
+        {
+          "name": "unknown_subject_matches_bad_credential_without_session",
+          "result": "passed"
+        },
+        {
+          "name": "stale_current_session_logout_csrf_cookie_and_cross_instance_rejection",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "command": "git diff --check -- apps/api/src/identity-service.mjs src/identity/repository.mjs tests/security/v1-governance-e2e.test.mjs",
+      "exit_code": 0
+    }
+  ],
+  "evidence": {
+    "log": ".herdr/evidence/V1-IDENTITY-r12-live.log",
+    "log_sha256": "56159e7e0c229034f0d0896ad73d940888a88e95367dc1d90b0a8fbe555a22b7",
+    "cleanup": "database dropped, Redis prefix removed, temporary package root removed"
+  },
+  "failed_intermediate_runs": [
+    {
+      "command": "node scripts/v1-identity-http.mjs",
+      "exit_code": 1,
+      "error": "42703 route_fingerprint missing: initial frozen migration selection omitted 0048"
+    },
+    {
+      "command": "node scripts/v1-identity-http.mjs",
+      "exit_code": 1,
+      "error": "script SyntaxError from await in synchronous predicate; corrected before final run"
+    }
+  ],
+  "limitations": [
+    "Uses isolated local PG/Redis and RedisSecretService test backend; no production Secret backend or Provider call",
+    "No second active administrator; cross-owner 404 verified at domain repository boundary using another actor ID",
+    "Action/System elevated stale gate exercised over live PG HTTP; broader production E2E remains Lead/Verify gate"
+  ]
+}

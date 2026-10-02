@@ -1,0 +1,28 @@
+TAP version 13
+# Subtest: Fastify runtime API enforces CSRF, catalog visibility and settings concurrency
+ok 1 - Fastify runtime API enforces CSRF, catalog visibility and settings concurrency
+  ---
+  duration_ms: 73.046959
+  type: 'test'
+  ...
+# Subtest: Fastify runtime API isolates API key subject fields
+ok 2 - Fastify runtime API isolates API key subject fields
+  ---
+  duration_ms: 9.508834
+  type: 'test'
+  ...
+# Subtest: Fastify runtime API uses PostgreSQL repositories across server restart
+ok 3 - Fastify runtime API uses PostgreSQL repositories across server restart # SKIP
+  ---
+  duration_ms: 0.132541
+  type: 'test'
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 1
+# todo 0
+# duration_ms 265.566458

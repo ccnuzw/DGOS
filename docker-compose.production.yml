@@ -1,0 +1,143 @@
+name: dgos-production
+x-runtime: &runtime
+  NODE_ENV: production
+  DGOS_SECRET_BACKEND: encrypted-file
+  DGOS_SECRET_DIRECTORY: /var/lib/dgos/ciphertext
+  DGOS_ROOT_KEY_DIRECTORY: /run/dgos-root-keys
+  DGOS_PACKAGE_ROOT: /var/lib/dgos/packages
+  DGOS_PACKAGE_TRUST_ROOTS_FILE: /run/dgos-package-trust-roots.json
+  DGOS_EXTENSION_CONFIG_FILE: /workspace/src/extensions/v1-default-runtime.json
+  DGOS_DATABASE_URL: ${DGOS_DATABASE_URL:?set a non-default database URL}
+  REDIS_URL: redis://redis:6379
+  DGOS_PUBLIC_ORIGIN: ${DGOS_PUBLIC_ORIGIN:?set an HTTPS origin}
+  DGOS_TRUSTED_PROXY_CIDRS: 192.168.240.10/32
+x-app: &app
+  build:
+    context: .
+    dockerfile: deployment/Dockerfile
+  environment: *runtime
+  depends_on:
+    postgres: {condition: service_healthy}
+    redis: {condition: service_healthy}
+  restart: unless-stopped
+  networks: [backend, egress]
+services:
+  secret-init:
+    image: busybox:1.36
+    command: ['sh', '-c', 'mkdir -p /ciphertext /packages && chown 1000:1000 /ciphertext /packages && chmod 700 /ciphertext /packages']
+    volumes:
+      - secret-ciphertext:/ciphertext
+      - package-data:/packages
+    restart: 'no'
+    networks: [backend]
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${DGOS_POSTGRES_USER:?required}
+      POSTGRES_DB: ${DGOS_POSTGRES_DB:?required}
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    secrets: [postgres_password]
+    volumes: [postgres-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+    networks: [backend]
+  redis:
+    image: redis:7-alpine
+    command: ['redis-server', '--save', '', '--appendonly', 'no']
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+    networks: [backend]
+  migrate:
+    <<: *app
+    command: ['node', 'scripts/v1-ops-migrate.mjs']
+    restart: 'no'
+    networks: [backend]
+  api:
+    <<: *app
+    command: ['node', 'scripts/v1-ops-api.mjs']
+    security_opt: [no-new-privileges:true, seccomp:./deployment/seccomp-bwrap.json]
+    cap_drop: [ALL]
+    volumes:
+      - secret-ciphertext:/var/lib/dgos/ciphertext
+      - ${DGOS_ROOT_KEY_HOST_DIR:?provision an independent root key directory}:/run/dgos-root-keys:ro
+      - package-data:/var/lib/dgos/packages
+      - ${DGOS_PACKAGE_TRUST_ROOTS_HOST_FILE:?provision operator package trust roots}:/run/dgos-package-trust-roots.json:ro
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+      secret-init: {condition: service_completed_successfully}
+    healthcheck:
+      test: ['CMD', 'node', '-e', "fetch('http://127.0.0.1:3000/ready').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  worker:
+    <<: *app
+    command: ['node', 'scripts/v1-ops-worker.mjs']
+    security_opt: [no-new-privileges:true, seccomp:./deployment/seccomp-bwrap.json]
+    cap_drop: [ALL]
+    volumes:
+      - secret-ciphertext:/var/lib/dgos/ciphertext
+      - ${DGOS_ROOT_KEY_HOST_DIR:?provision an independent root key directory}:/run/dgos-root-keys:ro
+      - package-data:/var/lib/dgos/packages
+      - ${DGOS_PACKAGE_TRUST_ROOTS_HOST_FILE:?provision operator package trust roots}:/run/dgos-package-trust-roots.json:ro
+    depends_on:
+      api: {condition: service_healthy}
+  web:
+    <<: *app
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: '4173'
+      API_BASE_URL: http://api:3000
+    command: ['node', 'apps/web/scripts/serve.mjs']
+    depends_on:
+      api: {condition: service_healthy}
+    networks: [backend]
+    healthcheck:
+      test: ['CMD', 'node', '-e', "fetch('http://127.0.0.1:4173/').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  gateway:
+    image: caddy:2-alpine
+    environment:
+      DGOS_PUBLIC_HOST: ${DGOS_PUBLIC_HOST:?set a public DNS name}
+    ports: ['80:80', '443:443']
+    volumes:
+      - ./deployment/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      api: {condition: service_healthy}
+      web: {condition: service_healthy}
+    restart: unless-stopped
+    networks:
+      backend:
+        ipv4_address: 192.168.240.10
+      edge:
+secrets:
+  postgres_password:
+    file: ${DGOS_POSTGRES_PASSWORD_FILE:?provision database password file}
+volumes:
+  postgres-data:
+  secret-ciphertext:
+  package-data:
+  caddy-data:
+  caddy-config:
+networks:
+  backend:
+    internal: true
+    ipam:
+      config:
+        - subnet: 192.168.240.0/24
+  egress:
+  edge:

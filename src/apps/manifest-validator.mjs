@@ -1,8 +1,8 @@
 import { createHash } from 'node:crypto';
 
-const required = ['appId', 'version', 'build', 'releaseChannel', 'minRuntimeVersion', 'entrypoints', 'permissions', 'capabilityAllowlist', 'trustLevel', 'uninstallPolicy', 'backgroundPolicy'];
+const required = ['format', 'appId', 'version', 'build', 'releaseChannel', 'minRuntimeVersion', 'dataVersion', 'name', 'description', 'category', 'icon', 'defaultWindow', 'entrypoints', 'permissions', 'capabilityAllowlist', 'trustLevel', 'uninstallPolicy', 'backgroundPolicy'];
 const channels = new Set(['stable', 'beta', 'dev']);
-const trustLevels = new Set(['official', 'admin_approved', 'developer', 'approved']);
+const trustLevels = new Set(['standard', 'trusted', 'system']);
 
 function containsForbidden(value, path = '') {
   if (typeof value === 'string') {
@@ -15,21 +15,27 @@ function containsForbidden(value, path = '') {
 
 export function validateManifest(manifest) {
   const errors = [];
-  if (!manifest || typeof manifest !== 'object') return { valid: false, errors: ['manifest must be an object'] };
-  if (manifest.format && manifest.format !== 'dgos.app') errors.push('format is incompatible');
-  if (manifest.manifestVersion && !/^1(?:\.\d+)?$/.test(String(manifest.manifestVersion))) errors.push('manifestVersion is incompatible');
+  if (!manifest || typeof manifest !== 'object' || Array.isArray(manifest)) return { valid: false, errors: ['manifest must be an object'] };
+  if (manifest.format !== 'dgos-app/v1') errors.push('format is incompatible');
+  const allowed = new Set([...required, 'networkAllowlist', 'dependencies', 'actions', 'agent', 'dataMigration', 'displayName', 'accentColor', 'preferredWindow', 'minWindowSize', 'routes', 'deepLinks', 'supportedLocales', 'commands', 'settingsSections', 'uiCapabilities']);
+  for (const key of Object.keys(manifest)) if (!allowed.has(key)) errors.push(`unknown ${key}`);
   for (const key of required) if (manifest[key] === undefined) errors.push(`missing ${key}`);
   if (manifest.appId && !/^[a-z][a-z0-9.-]{1,63}$/.test(manifest.appId)) errors.push('appId must be a stable lowercase identifier');
-  if (manifest.version && !/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(manifest.version)) errors.push('version must be semver');
-  if (manifest.build !== undefined && !/^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/.test(String(manifest.build))) errors.push('build is invalid');
+  if (manifest.version && !/^[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/.test(manifest.version)) errors.push('version must be semver');
+  for (const key of ['build', 'dataVersion']) if (!Number.isSafeInteger(manifest[key]) || manifest[key] < 0) errors.push(`${key} must be a nonnegative safe integer`);
   if (manifest.releaseChannel && !channels.has(manifest.releaseChannel)) errors.push('releaseChannel is invalid');
   if (manifest.trustLevel && !trustLevels.has(manifest.trustLevel)) errors.push('trustLevel is invalid');
-  if (manifest.entrypoints && typeof manifest.entrypoints !== 'object') errors.push('entrypoints must be an object');
-  if (manifest.entrypoints && Object.values(manifest.entrypoints).some((entry) => String(entry).startsWith('/'))) errors.push('entrypoints must be relative paths');
-  if (manifest.entrypoints && !Object.values(manifest.entrypoints).length) errors.push('at least one entrypoint is required');
-  for (const key of ['permissions', 'capabilityAllowlist']) if (manifest[key] && !Array.isArray(manifest[key])) errors.push(`${key} must be an array`);
+  if (!['user-removable', 'protected-preinstall'].includes(manifest.uninstallPolicy)) errors.push('uninstallPolicy is invalid');
+  if (!['release', 'keep-alive'].includes(manifest.backgroundPolicy)) errors.push('backgroundPolicy is invalid');
+  const relative = (path) => typeof path === 'string' && path.length > 0 && path.length < 512 && !path.includes('\\') && !path.includes('\0') && !path.startsWith('/') && !/^[A-Za-z]:/.test(path) && path.split('/').every((part) => part && part !== '.' && part !== '..');
+  if (!manifest.entrypoints || typeof manifest.entrypoints !== 'object' || Array.isArray(manifest.entrypoints) || !Object.values(manifest.entrypoints).length || Object.values(manifest.entrypoints).some((path) => !relative(path))) errors.push('entrypoints must be package-relative paths');
+  for (const path of [manifest.icon, manifest.dataMigration?.entry].filter((value) => value !== undefined)) if (!relative(path)) errors.push('resource path is invalid');
+  for (const key of ['name', 'description', 'displayName']) if (manifest[key] !== undefined && (!manifest[key] || typeof manifest[key] !== 'object' || Array.isArray(manifest[key]) || ['zh-CN', 'en-US'].some((locale) => typeof manifest[key][locale] !== 'string' || !manifest[key][locale]))) errors.push(`${key} must include zh-CN and en-US`);
+  if (typeof manifest.category !== 'string' || !manifest.category) errors.push('category is invalid');
+  if (!manifest.defaultWindow || typeof manifest.defaultWindow !== 'object' || Array.isArray(manifest.defaultWindow) || Object.entries(manifest.defaultWindow).some(([key, value]) => !['width', 'height', 'minWidth', 'minHeight', 'resizable', 'maximizable'].includes(key) || (['resizable', 'maximizable'].includes(key) ? typeof value !== 'boolean' : !Number.isSafeInteger(value) || value < 1))) errors.push('defaultWindow is invalid');
+  for (const key of ['permissions', 'capabilityAllowlist']) if (!Array.isArray(manifest[key]) || manifest[key].some((value) => typeof value !== 'string' || !value) || new Set(manifest[key]).size !== manifest[key].length) errors.push(`${key} must be a unique nonempty string array`);
   if (manifest.actions && (!Array.isArray(manifest.actions) || manifest.actions.some((action) => !action?.actionId || action.version === undefined))) errors.push('actions must declare actionId and version');
-  if (manifest.dataVersion !== undefined && typeof manifest.dataVersion !== 'string') errors.push('dataVersion must be a string');
+  if (manifest.dataMigration && (!Array.isArray(manifest.dataMigration.from) || !manifest.dataMigration.from.every((value) => Number.isSafeInteger(value) && value >= 0) || !relative(manifest.dataMigration.entry))) errors.push('dataMigration is invalid');
   const forbidden = containsForbidden(manifest);
   if (forbidden) errors.push(forbidden);
   const network = (manifest.capabilityAllowlist ?? []).filter((x) => String(x).startsWith('network.'));

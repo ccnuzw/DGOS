@@ -1,0 +1,21 @@
+{$DGOS_PUBLIC_HOST} {
+  encode zstd gzip
+  header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    X-Content-Type-Options "nosniff"
+    Referrer-Policy "strict-origin-when-cross-origin"
+  }
+  @api path /api/* /health /ready
+  handle @api {
+    reverse_proxy api:3000 {
+      header_up Host {$DGOS_PUBLIC_HOST}
+      header_up X-Forwarded-Proto https
+      header_up X-Forwarded-Host {$DGOS_PUBLIC_HOST}
+      header_up -X-Forwarded-Port
+      header_up -X-Forwarded-Ssl
+    }
+  }
+  handle {
+    reverse_proxy web:4173
+  }
+}

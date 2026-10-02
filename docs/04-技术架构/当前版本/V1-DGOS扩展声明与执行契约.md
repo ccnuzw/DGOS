@@ -2,6 +2,8 @@
 
 > 状态：设计基线，服务于 V1 平台和 V2-V5 扩展规划。本文使用 DGOS 自有概念，不承诺兼容任何外部平台字段。
 
+2026-10-02：V1 preview/connect/discover/invoke/Run工程投影已由[V1 OpenAPI](V1-openapi.yaml)引用[V1扩展投影](V1-extension.openapi.yaml)，r5追加[管理投影](V1-extension-management.openapi.yaml)与[扩展管理补全契约](V1-扩展管理补全工程契约.md)，覆盖既有自定义Skill/改名/翻译/受信在线预览/MCP模板凭据。字段类型/必填/枚举以机器文件为准。本页概念状态不是第二套HTTP枚举；Worker未整合实现不作通过证据。
+
 ## 1. 目标
 
 为 App、Skill、MCP、Agent Tool 和 Canvas Node 提供统一的声明、注册、授权、执行和审计边界。扩展可以由一个应用包提供，也可以独立安装；用户看到的是可发现能力，系统保存的是相互独立的身份、版本和生命周期状态。
@@ -87,4 +89,4 @@ Canvas Node 额外记录 `input-valid`、`output-ready` 和 `runId`，不能把�
 
 ## 10. 待冻结
 
-最终 manifest JSON Schema、签名和信任链、权限枚举、MCP 连接协议、Task/Run 传输、Canvas Node 端口 schema、跨版本迁移和桌面/Web 能力差异仍需单独 ADR 与实现证据。
+V1已登记安装预览、配置版本、连接/工具目录及Run传输工程形状，见主OpenAPI及[工程核查](V1-应用与扩展工程契约核查.md)。实际runner profile、可信来源/Secret接线、双宿主隔离与故障验证由实施包补证。Canvas Node端口及跨版本能力归后续版本，不阻塞已具V1契约的独立子切片。

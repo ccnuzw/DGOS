@@ -1,0 +1,88 @@
+{
+  "schema": "dgos/v1-candidate-group/v1",
+  "work_package": "V1-CANDIDATE-COVERAGE",
+  "revision": 15,
+  "run_id": "V1-candidate-tooling-1790917521801-business",
+  "group": "business",
+  "started_at": "2026-10-02T05:05:21.819Z",
+  "ended_at": "2026-10-02T05:05:21.819Z",
+  "candidate_id": "e1484fe91218f8a0becd88835efdb32ab918d16ab1a4559b05481b81be669cca",
+  "build_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "runtime_assets": {
+    "config": {
+      "id": "api-worker-runtime",
+      "files": {
+        "docker-compose.production.yml": "665075a6a0a14e222d37de62ab38ac2b87022bad7a0360793215b1ec24407aae",
+        "docker-compose.integration.yml": "4c5dec78651a9fce318e6eae6819b6b97dbb90bcef4b6b0d1c53d2d0a1e39e54",
+        "deployment/Dockerfile": "af655a07980dec7c52f80ea2dff0556639fd43eb4b1e9b3784c574bc5f95c7f4",
+        "deployment/Caddyfile": "c80ff0d71d0202128e69b5cb56415139c86a4f639f53185265682e4e3e255a69",
+        "scripts/v1-ops-api.mjs": "bd0277e16ba95d3c4e78fe46f11c8468ea927aec76e9b2f7d8e78aabe25f2ac7",
+        "scripts/v1-ops-worker.mjs": "5f35d9a6568ac7659c003751e7f40632b2645cd1726e177f8704026df235359a",
+        "apps/api/src/server.mjs": "bfdb2d97bdcedf9acd1f518e77644117de70a8c98f4d68bc4cf08cf784c33988",
+        "apps/worker/src/worker.mjs": "e94c90888699b34a66632c77b8d5afea879734605e341423cf5cb821c58aa7e4",
+        "scripts/v1-ui-management-fixture.mjs": "e746a1a03e377a3f596df9f13773de266d08ba6a46c876c48c2f7b5ec0ad8922",
+        "src/extensions/v1-default-runtime.json": "bd239ddf74be47cd4b7334335148defec79417bf13315359c19de07296e2a064",
+        ".herdr/state/package-fixture-r9/trust-roots.json": "51fa44c893658e2a0f2bf404bbac1a38ca08525169278dbfe22f56ed38bd8283",
+        ".herdr/state/integration-trust-roots-r9.json": "1933e71b80dfd3c63ad93117d199bc9fef18a00597e510f5976c761af9f91ddc"
+      }
+    },
+    "envelope": {
+      "id": "workbench-1.0.1",
+      "path": ".herdr/state/package-fixture-r9/ai-workbench-envelope.json",
+      "sha256": "d68a6e06e11a513cdd94511dee71ce18b931c97d6a19692ff6cf865726324f77"
+    },
+    "dist": {
+      "id": "web-dist",
+      "root": "apps/web/dist",
+      "files": {
+        "apps/web/dist/assets/index-BFWr4XFs.css": "fa3cf098e7e1bf210a0960839de2472b8f6fe88dcdbad29210e3ad7e77627383",
+        "apps/web/dist/assets/index-NFqsGjYo.js": "360c42b6cc5d9e96c4e3354e4fa846865dc51c97133a901f40487f719752ce1c",
+        "apps/web/dist/index.html": "550b23358dbf1324c1cdf67456242e4d7c64368468790a1940edb1201aeb835f"
+      }
+    },
+    "image": {
+      "id": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    }
+  },
+  "source_identity": {
+    "commit": null,
+    "head_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "working_tree_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "source_identity_start": {
+    "commit": null,
+    "head_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "working_tree_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "source_identity_end": {
+    "commit": null,
+    "head_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "working_tree_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "source_drift": false,
+  "exit_code": 1,
+  "candidate_complete": false,
+  "environment": "local host Node with isolated resources; image is candidate artifact binding only",
+  "admin_database": null,
+  "child_database": null,
+  "redis_db": null,
+  "frozen_migrations": [],
+  "evidence_dirs": [
+    "docs/05-测试与发布/端到端验收/报告/V1-candidate-tooling-1790917521801-business"
+  ],
+  "generated_files": [],
+  "generated_file_sha256": {},
+  "asset_sha256": {},
+  "results": [],
+  "failed_assets": [],
+  "unexecuted_assets": [],
+  "covered_cases": [],
+  "cleanup": [],
+  "error": "group has zero results",
+  "limitations": [
+    "Local host execution only; browser/native and unresolved branch receipts remain pending.",
+    "Image field binds the candidate artifact and does not claim these tests ran in that image.",
+    "No E2E case is claimed without explicit passing business assertions."
+  ]
+}

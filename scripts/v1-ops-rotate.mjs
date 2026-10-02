@@ -1,0 +1,24 @@
+import { randomBytes } from 'node:crypto';
+import { chmod, open, rename, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+import { createFileRootKeyHandle, DurableSecretService } from '../src/security/durable-secret-service.mjs';
+
+const [ciphertextDirectory, keyDirectory, newKeyId] = process.argv.slice(2);
+if (!ciphertextDirectory || !keyDirectory || !/^[a-zA-Z0-9_-]{1,64}$/.test(newKeyId ?? '')) throw new Error('usage: node scripts/v1-ops-rotate.mjs CIPHERTEXT_DIR KEY_DIR NEW_KEY_ID');
+const keys = createFileRootKeyHandle({ keyDirectory });
+const previous = await keys.getCurrentKey();
+if (previous.keyId === newKeyId) throw new Error('key_id_must_change');
+const keyFile = path.join(keyDirectory, `${newKeyId}.key`);
+await writeFile(keyFile, randomBytes(32).toString('base64url'), { flag: 'wx', mode: 0o600 });
+await chmod(keyFile, 0o600);
+const pointer = path.join(keyDirectory, `current.${newKeyId}.tmp`);
+const handle = await open(pointer, 'wx', 0o600);
+await handle.writeFile(newKeyId);
+await handle.sync();
+await handle.close();
+await rename(pointer, path.join(keyDirectory, 'current'));
+const dir = await open(keyDirectory, 'r');
+await dir.sync(); await dir.close();
+const service = await new DurableSecretService({ directory: ciphertextDirectory, rootKeyHandle: keys }).ready();
+const result = await service.rewrap();
+console.log(JSON.stringify({ previousKeyId: previous.keyId, newKeyId, rewrapped: result.changed, previousKeyRetention: 'retain_until_backup_expiry_and_validation' }));

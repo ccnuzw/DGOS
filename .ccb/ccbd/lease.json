@@ -1,0 +1,26 @@
+{
+  "schema_version": 2,
+  "record_type": "ccbd_lease",
+  "api_version": 2,
+  "project_id": "5b40b5bdda7a29d418a6f8d6ee8b4226c938aa5d24641c374bcf2b0058d0e76a",
+  "ccbd_pid": 58610,
+  "socket_path": "/Users/apple/Progame/DGOS/.ccb/ccbd/ccbd.sock",
+  "owner_uid": 501,
+  "boot_id": "apples-MacBook-Pro.local",
+  "started_at": "2026-10-02T02:09:48.445349Z",
+  "last_heartbeat_at": "2026-10-02T12:06:54.797073Z",
+  "mount_state": "mounted",
+  "generation": 1,
+  "config_signature": "af32ec9789cc977ed8af1b49d9d5907b830869111a95f3fbc500cc85343d3c41",
+  "keeper_pid": 58609,
+  "daemon_instance_id": "c60dbd21d9334128b28f066eee5110f9",
+  "control_plane_endpoint": {
+    "kind": "unix_socket",
+    "address": "/Users/apple/Progame/DGOS/.ccb/ccbd/ccbd.sock",
+    "display": "/Users/apple/Progame/DGOS/.ccb/ccbd/ccbd.sock",
+    "legacy_socket_path": "/Users/apple/Progame/DGOS/.ccb/ccbd/ccbd.sock",
+    "auth_ref": null,
+    "fingerprint": null,
+    "socket_path": "/Users/apple/Progame/DGOS/.ccb/ccbd/ccbd.sock"
+  }
+}

@@ -1,0 +1,97 @@
+TAP version 13
+# Subtest: package retention protects references, removes expired failed records, and resumes disk failure
+not ok 1 - package retention protects references, removes expired failed records, and resumes disk failure
+  ---
+  duration_ms: 47.064958
+  type: 'test'
+  location: '/Users/apple/Progame/DGOS/tests/integration/postgres-package-retention.test.mjs:16:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected "actual" to be strictly unequal to:
+    
+    '5483d806d3100bcc0fb5a591d3b50c4609caed2f89c515c2f4c3608f72293605'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: '5483d806d3100bcc0fb5a591d3b50c4609caed2f89c515c2f4c3608f72293605'
+  actual: '5483d806d3100bcc0fb5a591d3b50c4609caed2f89c515c2f4c3608f72293605'
+  operator: 'notStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/apple/Progame/DGOS/tests/integration/postgres-package-retention.test.mjs:61:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: audit failure after disk removal retains prepared intent and restart completes it
+not ok 2 - audit failure after disk removal retains prepared intent and restart completes it
+  ---
+  duration_ms: 15.940084
+  type: 'test'
+  location: '/Users/apple/Progame/DGOS/tests/integration/postgres-package-retention.test.mjs:83:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /audit_unavailable/. Input:
+    
+    'ReferenceError: now is not defined'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+  error: 'now is not defined'
+  name: 'ReferenceError'
+  stack: |-
+    PostgresPackageRetention.clock (file:///Users/apple/Progame/DGOS/tests/integration/postgres-package-retention.test.mjs:106:83)
+    PostgresPackageRetention.cutoff (file:///Users/apple/Progame/DGOS/src/apps/package-retention.mjs:19:52)
+    PostgresPackageRetention.runBatch (file:///Users/apple/Progame/DGOS/src/apps/package-retention.mjs:69:25)
+    TestContext.<anonymous> (file:///Users/apple/Progame/DGOS/tests/integration/postgres-package-retention.test.mjs:113:32)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  operator: 'rejects'
+  stack: |-
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async TestContext.<anonymous> (file:///Users/apple/Progame/DGOS/tests/integration/postgres-package-retention.test.mjs:113:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: app lifecycle lock blocks cleanup and startup settles interrupted staging
+ok 3 - app lifecycle lock blocks cleanup and startup settles interrupted staging
+  ---
+  duration_ms: 67.42675
+  type: 'test'
+  ...
+# Subtest: confirmed preview rejects drift and failed install records continue across bounded batches
+ok 4 - confirmed preview rejects drift and failed install records continue across bounded batches
+  ---
+  duration_ms: 50.57575
+  type: 'test'
+  ...
+# Subtest: unpublished failure audit protects record and cleanup writes transactional outbox
+not ok 5 - unpublished failure audit protects record and cleanup writes transactional outbox
+  ---
+  duration_ms: 16.045875
+  type: 'test'
+  location: '/Users/apple/Progame/DGOS/tests/integration/postgres-package-retention.test.mjs:190:1'
+  failureType: 'testCodeFailure'
+  error: 'now is not defined'
+  code: 'ERR_TEST_FAILURE'
+  name: 'ReferenceError'
+  stack: |-
+    PostgresPackageRetention.clock (file:///Users/apple/Progame/DGOS/tests/integration/postgres-package-retention.test.mjs:205:111)
+    PostgresPackageRetention.cutoff (file:///Users/apple/Progame/DGOS/src/apps/package-retention.mjs:19:52)
+    PostgresPackageRetention.preview (file:///Users/apple/Progame/DGOS/src/apps/package-retention.mjs:31:25)
+    PostgresRetentionRepository.preview (file:///Users/apple/Progame/DGOS/src/audit/retention.mjs:16:1085)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async TestContext.<anonymous> (file:///Users/apple/Progame/DGOS/tests/integration/postgres-package-retention.test.mjs:209:28)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 2
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 262.104833

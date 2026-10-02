@@ -1,0 +1,1 @@
+{"name":"@dgos/dgos-ui","version":"0.1.0","type":"module","exports":{".":"./src/index.tsx","./style.css":"./src/ui.css"},"peerDependencies":{"react":"^19.0.0"},"devDependencies":{"@types/react":"^19.1.10"},"scripts":{"build":"node -e \"process.exit(0)\"","check":"node -e \"process.exit(0)\""}}

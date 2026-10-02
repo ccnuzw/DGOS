@@ -1,0 +1,167 @@
+{
+  "runId": "V1-EXT-PUBLIC-r7-2026-10-02T04-51-54-931Z-05a3a49d",
+  "workPackage": "V1-EXT-PUBLIC r7",
+  "startedAt": "2026-10-02T04:51:54.933Z",
+  "database": "dgos_v1_ext_public_05a3a49d9985715b0bbef8cc2b6be0e6",
+  "redisDb": 5,
+  "namespace": "v1-ext-public:05a3a49d9985715b0bbef8cc2b6be0e6",
+  "apiPort": 15173,
+  "fixturePort": 15174,
+  "parentPid": 50431,
+  "cases": [
+    {
+      "name": "isolated_frozen_schema",
+      "result": "passed",
+      "facts": {
+        "migrationCount": 47,
+        "versions": [
+          "0001-v1-governance",
+          "0002-connection-test-leases",
+          "0003-audit-outbox-leases",
+          "0004-retention-jobs",
+          "0005-quota-usage",
+          "0006-runtime",
+          "0007-provider-config-ai-task",
+          "0009-quota-usage-dimensions",
+          "0010-quota-usage-idempotency",
+          "0011-runtime-persistence",
+          "0012-ai-task-leases",
+          "0013-action-run-recovery",
+          "0014-audit-runtime-targets",
+          "0015-action-handler-claim",
+          "0016-action-input-recovery",
+          "0017-action-recovery-guard",
+          "0018-action-cancel-guard",
+          "0019-ai-task-dispatch-fence",
+          "0022-api-key-rotation",
+          "0023-governance-policy",
+          "0024-admin-session-freshness",
+          "0025-extension-registry",
+          "0026-extension-runs",
+          "0027-extension-run-events",
+          "0028-app-packages",
+          "0029-app-package-deployments",
+          "0030-app-package-operations",
+          "0031-provider-account-bindings",
+          "0032-provider-connection-recovery",
+          "0033-provider-admission",
+          "0034-extension-recovery",
+          "0035-package-recovery",
+          "0036-provider-operations",
+          "0037-app-data-migration",
+          "0038-permission-action-lifecycle",
+          "0039-provider-protocol-confirmations",
+          "0040-provider-profile-bindings",
+          "0041-app-data-migration-package-digests",
+          "0043-provider-protocol-receipts",
+          "0044-system-projection",
+          "0045-network-route-activation",
+          "0046-package-retention",
+          "0047-ai-task-parameters",
+          "0048-network-route-fingerprint",
+          "0049-extension-management",
+          "0050-session-management",
+          "0051-proxy-provisioning"
+        ]
+      }
+    },
+    {
+      "name": "public_api_independent_worker",
+      "result": "passed",
+      "facts": {
+        "apiPort": 15173,
+        "parentPid": 50431,
+        "workerPid": 50442
+      }
+    },
+    {
+      "name": "public_provider_and_quota_setup",
+      "result": "passed",
+      "facts": {
+        "ownerId": "92c5988e-1c56-4857-9258-a49a8970243d",
+        "providerConfigId": "43b35343-9fb7-4bf4-8104-606db24dc195",
+        "connectionTestId": "143242d4-6e7b-4418-9f3e-c2c32859c112"
+      }
+    },
+    {
+      "name": "custom_skill_rename_stable_identity",
+      "result": "passed",
+      "facts": {
+        "skillId": "custom_05a3a49d9985715b0bbef8cc2b6be0e6",
+        "packageId": "local_c9b0bac901a508e3_custom_05a3a49d9985715b0bbef8cc2b6be0e6_e73dbf34ba84040c",
+        "stateVersion": 3
+      }
+    },
+    {
+      "name": "confirmed_custom_run_real_task_quota_artifact",
+      "result": "passed",
+      "facts": {
+        "runId": "f9839ee7-d145-4b88-86ca-f8aa50617e58",
+        "taskId": "521d256c-2638-46f3-8072-c31640a1c56d",
+        "artifactId": "1a1cf778-dd00-4deb-bef1-2ba0db485250",
+        "quotaState": "settled",
+        "usageEvents": 1,
+        "providerCalls": 1
+      }
+    },
+    {
+      "name": "translation_task_artifact_apply_source_cas",
+      "result": "passed",
+      "facts": {
+        "taskId": "a82eb642-ad92-4226-ba76-9fc6fbed9e82",
+        "artifactId": "5aabde44-34a9-4bf3-bd66-8f9bff8aafd5",
+        "quotaState": "settled",
+        "usageEvents": 1,
+        "stateVersion": 4
+      }
+    },
+    {
+      "name": "template_credential_connect_discovery_invoke",
+      "result": "passed",
+      "facts": {
+        "mcpId": "mcp_05a3a49d9985715b0bbef8cc2b6be0e6",
+        "runId": "807e3f36-7e74-428e-9947-30371ca8cbb3",
+        "credentialStatus": "configured",
+        "toolCount": 2
+      }
+    },
+    {
+      "name": "trusted_https_online_preview_immutable_bytes",
+      "result": "passed",
+      "facts": {
+        "installedVersion": "1.0.0",
+        "changedRemoteVersion": "2.0.0",
+        "rejectedUntrusted": true
+      }
+    }
+  ],
+  "limitations": [
+    "Controlled local HTTPS Provider and signed extension fixtures, not external production endpoints.",
+    "Scoped public HTTP chain; final V1 release candidate remains separate."
+  ],
+  "status": "passed",
+  "finishedAt": "2026-10-02T04:51:56.547Z",
+  "sourceBefore": {
+    "scripts/v1-extension-management-http.mjs": "012e8b2268714aa8ecec3028c6d10fdceb1229f98987812ac0a082f6b0e1025d",
+    "apps/api/src/server.mjs": "bfdb2d97bdcedf9acd1f518e77644117de70a8c98f4d68bc4cf08cf784c33988",
+    "apps/api/src/extension-routes.mjs": "6fd65b099d9f1c9d41303796b40285ebfa39bde9f3e8fe7e1584382bd5c4e83d",
+    "apps/worker/src/worker.mjs": "e94c90888699b34a66632c77b8d5afea879734605e341423cf5cb821c58aa7e4",
+    "src/extensions/service.mjs": "6856cbdcdd3e26a85ec4ff5613d41984e62ba7c548881024117c092bc8d600da",
+    "src/extensions/management-service.mjs": "17dc33bf1b00fb1e6b6bb4bd03210c22f14bc15661813fc4ffcc7e033a098c13",
+    "src/extensions/runtime.mjs": "ecd30a48f96c63b0f511936f8201cae81ed4cf914528a59ce61faa674215a32d",
+    "src/ai-task/service.mjs": "979006a7ea95762e6949491ecdab5c4c79f5b056cd2841b00ca92a9b5c82f689",
+    "migrations/0049-extension-management.sql": "ba0bc80a0ccc74e05a5244b50e52e6a26df39ad854995ba038020b7d5d954f1b"
+  },
+  "sourceAfter": {
+    "scripts/v1-extension-management-http.mjs": "012e8b2268714aa8ecec3028c6d10fdceb1229f98987812ac0a082f6b0e1025d",
+    "apps/api/src/server.mjs": "bfdb2d97bdcedf9acd1f518e77644117de70a8c98f4d68bc4cf08cf784c33988",
+    "apps/api/src/extension-routes.mjs": "6fd65b099d9f1c9d41303796b40285ebfa39bde9f3e8fe7e1584382bd5c4e83d",
+    "apps/worker/src/worker.mjs": "e94c90888699b34a66632c77b8d5afea879734605e341423cf5cb821c58aa7e4",
+    "src/extensions/service.mjs": "6856cbdcdd3e26a85ec4ff5613d41984e62ba7c548881024117c092bc8d600da",
+    "src/extensions/management-service.mjs": "17dc33bf1b00fb1e6b6bb4bd03210c22f14bc15661813fc4ffcc7e033a098c13",
+    "src/extensions/runtime.mjs": "ecd30a48f96c63b0f511936f8201cae81ed4cf914528a59ce61faa674215a32d",
+    "src/ai-task/service.mjs": "979006a7ea95762e6949491ecdab5c4c79f5b056cd2841b00ca92a9b5c82f689",
+    "migrations/0049-extension-management.sql": "ba0bc80a0ccc74e05a5244b50e52e6a26df39ad854995ba038020b7d5d954f1b"
+  },
+  "sourceStable": true
+}

@@ -1,0 +1,16 @@
+TAP version 13
+# Subtest: protocol directory exposes one public DTO and validation has no publish side effect
+ok 1 - protocol directory exposes one public DTO and validation has no publish side effect
+  ---
+  duration_ms: 78.11775
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 168.070625

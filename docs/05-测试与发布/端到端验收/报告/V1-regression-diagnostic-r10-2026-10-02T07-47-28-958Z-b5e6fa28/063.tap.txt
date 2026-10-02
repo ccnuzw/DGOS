@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: audit query records access, redacts summaries and scopes cursor pages
+ok 1 - audit query records access, redacts summaries and scopes cursor pages
+  ---
+  duration_ms: 50.423833
+  type: 'test'
+  ...
+# Subtest: main API audit query records itself and rejects unauthorized disclosure
+ok 2 - main API audit query records itself and rejects unauthorized disclosure
+  ---
+  duration_ms: 20.226
+  type: 'test'
+  ...
+# Subtest: standalone PostgreSQL audit record and outbox commit or roll back together
+ok 3 - standalone PostgreSQL audit record and outbox commit or roll back together
+  ---
+  duration_ms: 32.933958
+  type: 'test'
+  ...
+# Subtest: main API with PostgreSQL persists the audit query before disclosure
+ok 4 - main API with PostgreSQL persists the audit query before disclosure
+  ---
+  duration_ms: 27.577125
+  type: 'test'
+  ...
+# Subtest: two fresh authenticated public policy writes have one winner
+ok 5 - two fresh authenticated public policy writes have one winner
+  ---
+  duration_ms: 36.009042
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 373.394042

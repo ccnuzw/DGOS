@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: r6 proposed profile bounds workload and percentiles use raw observations
+ok 1 - r6 proposed profile bounds workload and percentiles use raw observations
+  ---
+  duration_ms: 5.024334
+  type: 'test'
+  ...
+# Subtest: r16 refuses unready startup and selects only the 47 frozen migrations
+ok 2 - r16 refuses unready startup and selects only the 47 frozen migrations
+  ---
+  duration_ms: 5.079667
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 168.809667

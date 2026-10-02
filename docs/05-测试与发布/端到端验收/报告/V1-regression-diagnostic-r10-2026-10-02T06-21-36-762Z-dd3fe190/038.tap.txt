@@ -1,0 +1,34 @@
+TAP version 13
+# Subtest: ProviderEgress blocks private and metadata targets before fetch
+ok 1 - ProviderEgress blocks private and metadata targets before fetch
+  ---
+  duration_ms: 3.065209
+  type: 'test'
+  ...
+# Subtest: ProviderEgress requires HTTPS and rejects redirects
+ok 2 - ProviderEgress requires HTTPS and rejects redirects
+  ---
+  duration_ms: 1.266625
+  type: 'test'
+  ...
+# Subtest: ProviderEgress rejects mixed DNS answers instead of allowing rebinding candidates
+ok 3 - ProviderEgress rejects mixed DNS answers instead of allowing rebinding candidates
+  ---
+  duration_ms: 0.242083
+  type: 'test'
+  ...
+# Subtest: ProviderEgress rejects IPv6 loopback, link-local, and unique-local targets
+ok 4 - ProviderEgress rejects IPv6 loopback, link-local, and unique-local targets
+  ---
+  duration_ms: 0.222
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 55.626125

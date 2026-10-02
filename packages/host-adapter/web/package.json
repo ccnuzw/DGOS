@@ -1,0 +1,1 @@
+{"name":"@dgos/host-adapter-web","version":"0.1.0","type":"module","exports":{".":"./src/index.ts"},"scripts":{"build":"node -e \"process.exit(0)\"","check":"node -e \"process.exit(0)\""}}

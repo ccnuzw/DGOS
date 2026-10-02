@@ -1,0 +1,33 @@
+TAP version 13
+# Subtest: extension route projection injects auth subject and exposes SSE run events
+not ok 1 - extension route projection injects auth subject and exposes SSE run events
+  ---
+  duration_ms: 41.984833
+  type: 'test'
+  location: '/Users/apple/Progame/DGOS/tests/extensions/extension-routes.test.mjs:10:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    422 !== 202
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 202
+  actual: 422
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/apple/Progame/DGOS/tests/extensions/extension-routes.test.mjs:19:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 131.707042

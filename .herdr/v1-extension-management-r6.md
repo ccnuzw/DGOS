@@ -1,0 +1,11 @@
+# V1-EXT r6 — full V1 extension management
+
+Worker-E main workspace, r5 stopped. Ready input `V1-扩展管理补全工程契约.md`, `V1-extension-management.openapi.yaml`, lifecycle schema and main OpenAPI. Implement all operations and rules there, retaining existing12HTTP evidence as historical subset.
+
+Own src/extensions EXCEPT runtime.mjs (I network until stopped handoff), apps/extension-runner, apps/api/src/extension-routes.mjs, tests/extensions and scripts/v1-extension-http.mjs. New migration allocated `0049-extension-management.sql`;0048 is I frozen fingerprint (ignore stale Planner suggestion0048). Freeze SHA before apply. H owns Task service/repository/0047; interact through existing AiTaskService API with server-owned input + durable requestId dispatch intent. Lead supplies aiTasks/networkRoute/Secret/controlled sources at composition; provide exact constructor injection needs. D owns UI.
+
+Complete custom text Skill stable identity/edit/rename/translation Task and apply binding, signed trusted HTTPS preview/immutable bytes, MCP templates/config/write-only credential lifecycle and persistent Secret compensation, bundled missing credential and Run/reference boundaries. No arbitrary shell/URL/secretRef from caller. Preserve schema/current APP dependency/Broker/confirmation. Translation must real local Task/Quota fixture and strict JSON validated Artifact; never fake translations. Dynamic custom use requires actual explicit APP dependency, not built-in bypass.
+
+Online source trust/operator root/config policy must be real module configuration, no permanently-reject substitute. Use shared networkRoute scoped egress after I stops runtime; meanwhile inject independently. Provide credentialResolver in API and daemon with no plaintext storage/outbox, restrictive HTTP fixture explicit nonproduction only. Test actual API+independent daemon and Task worker, failure/atomic retry/secret compensation, real signed HTTPS source mutation, schema negative and authority denial.
+
+Resources existing E15141–49/Redis DB4 new prefix/dgos_v1_extensions_r3final or random extension subdb; apply only frozen migrations, coordinate H0047 readiness. No D15200, no old worktree product writes. Report `.herdr/V1-EXT-r6.md` and paired evidence+source hash/cleanup. Stop writing after bounded closure; remaining target OS or external limits explicit.

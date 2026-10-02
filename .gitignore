@@ -14,6 +14,7 @@ target/
 .tauri/
 data/
 secrets/
+.worktrees/
 
 # Generated documentation previews and local exports
 preview/

@@ -1,0 +1,106 @@
+TAP version 13
+# Subtest: package retention protects references, removes expired failed records, and resumes disk failure
+not ok 1 - package retention protects references, removes expired failed records, and resumes disk failure
+  ---
+  duration_ms: 42.367375
+  type: 'test'
+  location: '/Users/apple/Progame/DGOS/tests/integration/postgres-package-retention.test.mjs:16:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      {
+        failedInstall: {
+          eligibleCount: 0,
+          protectedCount: 2
+        },
+    +   plan: {
+    +     categories: [
+    +       'failedInstall',
+    +       'stagedPackage'
+    +     ],
+    +     cutoffAt: '2026-09-02T07:42:00.000Z',
+    +     policyVersion: '1'
+    +   },
+        stagedPackage: {
+          eligibleCount: 0,
+          protectedCount: 2
+        }
+      }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    failedInstall:
+      eligibleCount: 0
+      protectedCount: 2
+    stagedPackage:
+      eligibleCount: 0
+      protectedCount: 2
+  actual:
+    plan:
+      cutoffAt: '2026-09-02T07:42:00.000Z'
+      policyVersion: '1'
+      categories:
+        0: 'failedInstall'
+        1: 'stagedPackage'
+    failedInstall:
+      eligibleCount: 0
+      protectedCount: 2
+    stagedPackage:
+      eligibleCount: 0
+      protectedCount: 2
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/apple/Progame/DGOS/tests/integration/postgres-package-retention.test.mjs:56:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: audit failure after disk removal retains prepared intent and restart completes it
+ok 2 - audit failure after disk removal retains prepared intent and restart completes it
+  ---
+  duration_ms: 34.492125
+  type: 'test'
+  ...
+# Subtest: app lifecycle lock blocks cleanup and startup settles interrupted staging
+ok 3 - app lifecycle lock blocks cleanup and startup settles interrupted staging
+  ---
+  duration_ms: 67.609958
+  type: 'test'
+  ...
+# Subtest: confirmed preview rejects drift and failed install records continue across bounded batches
+not ok 4 - confirmed preview rejects drift and failed install records continue across bounded batches
+  ---
+  duration_ms: 34.45275
+  type: 'test'
+  location: '/Users/apple/Progame/DGOS/tests/integration/postgres-package-retention.test.mjs:159:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    message: 'retention_preview_conflict'
+  operator: 'rejects'
+  stack: |-
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async TestContext.<anonymous> (file:///Users/apple/Progame/DGOS/tests/integration/postgres-package-retention.test.mjs:178:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: unpublished failure audit protects record and cleanup writes transactional outbox
+ok 5 - unpublished failure audit protects record and cleanup writes transactional outbox
+  ---
+  duration_ms: 39.554584
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 3
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 285.478291

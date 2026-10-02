@@ -1,0 +1,28 @@
+TAP version 13
+# Subtest: PostgreSQL signed releases distinguish channels and persist lifecycle
+ok 1 - PostgreSQL signed releases distinguish channels and persist lifecycle
+  ---
+  duration_ms: 95.820875
+  type: 'test'
+  ...
+# Subtest: audit failure rolls back review; pointer crash windows recover from durable deployment
+ok 2 - audit failure rolls back review; pointer crash windows recover from durable deployment
+  ---
+  duration_ms: 94.711791
+  type: 'test'
+  ...
+# Subtest: PostgreSQL migration journal restores data after interrupted update
+ok 3 - PostgreSQL migration journal restores data after interrupted update
+  ---
+  duration_ms: 65.788167
+  type: 'test'
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 3
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 319.878125

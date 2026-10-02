@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: provider worker claims queued tests and converges them once
+ok 1 - provider worker claims queued tests and converges them once
+  ---
+  duration_ms: 2.557
+  type: 'test'
+  ...
+# Subtest: expired provider worker lease can be reclaimed
+ok 2 - expired provider worker lease can be reclaimed
+  ---
+  duration_ms: 0.113417
+  type: 'test'
+  ...
+# Subtest: cancelled running probe aborts and converges under its original testId
+ok 3 - cancelled running probe aborts and converges under its original testId
+  ---
+  duration_ms: 11.095917
+  type: 'test'
+  ...
+# Subtest: late probe success cannot override cancellation or write a second terminal audit
+ok 4 - late probe success cannot override cancellation or write a second terminal audit
+  ---
+  duration_ms: 16.388291
+  type: 'test'
+  ...
+# Subtest: claimed cancel request records exactly one terminal audit without probing
+ok 5 - claimed cancel request records exactly one terminal audit without probing
+  ---
+  duration_ms: 0.335291
+  type: 'test'
+  ...
+# Subtest: total deadline ends an unresponsive probe without a false success
+ok 6 - total deadline ends an unresponsive probe without a false success
+  ---
+  duration_ms: 26.108917
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 106.555125

@@ -1,0 +1,32 @@
+:root { font: 14px/1.5 system-ui, sans-serif; color: var(--text); background: var(--canvas); }
+* { box-sizing: border-box; }
+body { margin: 0; }
+main { max-width: 900px; margin: auto; padding: 20px 24px 40px; }
+header, .section-title, .form-actions, .task-actions, .resume { display: flex; align-items: center; gap: 12px; }
+header, .section-title { justify-content: space-between; }
+header { border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 22px; }
+h1 { font-size: 20px; margin: 0; }
+h2 { font-size: 17px; margin: 0; }
+form { display: grid; gap: 10px; }
+label { font-weight: 600; }
+textarea, select, input { min-width: 0; width: 100%; padding: 9px 10px; font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: 4px; }
+textarea { min-height: 150px; resize: vertical; }
+button { min-height: 40px; padding: 8px 13px; border: 1px solid var(--primary); border-radius: 4px; background: var(--primary); color: var(--on-primary); font: inherit; cursor: pointer; }
+button:hover { filter: brightness(.94); }
+button:disabled { opacity: .5; cursor: default; }
+button:focus-visible, textarea:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+#retry-submit, #refresh, #resume { color: var(--primary); background: var(--surface); }
+#cancel { color: var(--danger); background: var(--surface); border-color: var(--danger); }
+#parameters { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+#parameters[hidden] { display: none; }
+#parameters label { display: grid; gap: 4px; }
+small { color: var(--muted); font-weight: 400; }
+section { margin-top: 24px; border-top: 1px solid var(--border); padding-top: 16px; }
+.resume { margin: 16px 0; }
+.resume label { white-space: nowrap; }
+.resume input { flex: 1; }
+output, pre { display: block; white-space: pre-wrap; overflow-wrap: anywhere; }
+output { min-height: 56px; padding: 12px; background: var(--soft); border-radius: 4px; }
+#artifacts { display: grid; justify-items: start; gap: 10px; margin-top: 12px; }
+#artifacts pre { width: 100%; margin: 0; padding: 12px; background: var(--soft); }
+@media (max-width: 560px) { main { padding: 16px; } header, .section-title { align-items: flex-start; flex-wrap: wrap; } .resume { display: grid; grid-template-columns: 1fr auto; } .resume label { grid-column: 1 / -1; } }

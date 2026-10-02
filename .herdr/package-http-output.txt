@@ -1,0 +1,13 @@
+PASS isolated_database_frozen_migrations
+PASS public_api_ready
+PASS five_catalog_origins_and_review_visibility
+PASS public_input_overrides_denied_without_side_effects
+PASS public_install_test_install_launch_health_and_protected_uninstall
+PASS public_provider_task_artifact_fixture
+PASS immutable_channel_update_and_browser_health_rollback
+PASS restart_repairs_pointer_from_durable_deployment
+PASS public_retention_drift_confirm_run_and_physical_stage_cleanup
+PASS public_uninstall_keeps_data_and_history
+PASS signed_context_bridge_projection_and_numeric_cursor
+PASS events_requires_live_read_grant_and_signed_declaration
+{"result":"passed","exitCode":0,"reportPath":".herdr/state/package-http-evidence/V1-package-http-2026-10-02T11-19-25-506Z-8c7b1c5e.md","manifestPath":".herdr/state/package-http-evidence/V1-package-http-2026-10-02T11-19-25-506Z-8c7b1c5e-manifest.json","logPath":".herdr/state/package-http-evidence/V1-package-http-2026-10-02T11-19-25-506Z-8c7b1c5e.log.json","database":"dgos_v1_package_http_8c7b1c5ee47348f78d605582237d3349","cases":12}

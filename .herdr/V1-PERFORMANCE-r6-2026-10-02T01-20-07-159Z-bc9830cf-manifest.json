@@ -1,0 +1,505 @@
+{
+  "run_id": "V1-PERFORMANCE-r6-2026-10-02T01-20-07-159Z-bc9830cf",
+  "environment": "local-isolated-smoke",
+  "scope": "bounded calibration only",
+  "command": "DGOS_PERF_STARTUP_READY=1 DGOS_PERF_ADMIN_URL=<redacted> DGOS_PERF_REDIS_URL=redis://127.0.0.1:6379/8 node scripts/v1-performance.mjs",
+  "working_directory": "/Users/apple/Progame/DGOS",
+  "profile_sha256": "d05461415d06a6d49ab9e9108130e35fc01968dd912c8207fa11849480cdcd1c",
+  "migration_set_sha256": "43b39b08d6523710a0b942c603bf1df23ed8d6dfb3e73c84eaaed548bbb3eb06",
+  "database": "dgos_v1_perf_16fe5b870035",
+  "redis_db": 8,
+  "redis_namespace": "v1-perf:dgos_v1_perf_16fe5b870035",
+  "ports": {
+    "api": 15111,
+    "fixture": 15112
+  },
+  "stages": [
+    {
+      "name": "ramp",
+      "target_concurrency": 2,
+      "duration_ms": 2510.4,
+      "requests": 315,
+      "throughput_rps": 125.48,
+      "classification": {
+        "success": 315
+      },
+      "latency": {
+        "system_settings_read": {
+          "count": 233,
+          "p50_ms": 4.15,
+          "p95_ms": 4.91,
+          "p99_ms": 7.02,
+          "max_ms": 11.5
+        },
+        "usage_query": {
+          "count": 66,
+          "p50_ms": 3.83,
+          "p95_ms": 4.62,
+          "p99_ms": 9.8,
+          "max_ms": 9.8
+        },
+        "task_submit": {
+          "count": 16,
+          "p50_ms": 17.61,
+          "p95_ms": 33.69,
+          "p99_ms": 33.69,
+          "max_ms": 33.69
+        }
+      }
+    },
+    {
+      "name": "short_steady",
+      "target_concurrency": 4,
+      "duration_ms": 3009.4,
+      "requests": 762,
+      "throughput_rps": 253.2,
+      "classification": {
+        "success": 762
+      },
+      "latency": {
+        "system_settings_read": {
+          "count": 593,
+          "p50_ms": 4.19,
+          "p95_ms": 5.65,
+          "p99_ms": 12.08,
+          "max_ms": 33.59
+        },
+        "usage_query": {
+          "count": 169,
+          "p50_ms": 3.76,
+          "p95_ms": 5.02,
+          "p99_ms": 7.99,
+          "max_ms": 8
+        },
+        "task_submit": {
+          "count": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "max_ms": null
+        }
+      }
+    },
+    {
+      "name": "bounded_overload_probe",
+      "target_concurrency": 8,
+      "duration_ms": 2511.7,
+      "requests": 1306,
+      "throughput_rps": 519.96,
+      "classification": {
+        "success": 1306
+      },
+      "latency": {
+        "system_settings_read": {
+          "count": 1015,
+          "p50_ms": 4.01,
+          "p95_ms": 5.42,
+          "p99_ms": 7.06,
+          "max_ms": 12.73
+        },
+        "usage_query": {
+          "count": 291,
+          "p50_ms": 3.45,
+          "p95_ms": 4.57,
+          "p99_ms": 5.62,
+          "max_ms": 9.65
+        },
+        "task_submit": {
+          "count": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "max_ms": null
+        }
+      }
+    },
+    {
+      "name": "recovery",
+      "target_concurrency": 2,
+      "duration_ms": 2004.2,
+      "requests": 254,
+      "throughput_rps": 126.73,
+      "classification": {
+        "success": 254
+      },
+      "latency": {
+        "system_settings_read": {
+          "count": 198,
+          "p50_ms": 4.14,
+          "p95_ms": 4.94,
+          "p99_ms": 5.75,
+          "max_ms": 11.71
+        },
+        "usage_query": {
+          "count": 56,
+          "p50_ms": 3.78,
+          "p95_ms": 4.48,
+          "p99_ms": 11.4,
+          "max_ms": 11.4
+        },
+        "task_submit": {
+          "count": 0,
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null,
+          "max_ms": null
+        }
+      }
+    }
+  ],
+  "samples": [
+    {
+      "at": "2026-10-02T01:20:09.908Z",
+      "queue_depth": 5,
+      "pg_connections": 30,
+      "pg_commits": "162",
+      "api_rss_kb": 135504,
+      "worker_rss_kb": 132560,
+      "generator_rss_kb": 142144,
+      "active": 1
+    },
+    {
+      "at": "2026-10-02T01:20:10.905Z",
+      "queue_depth": 1,
+      "pg_connections": 30,
+      "pg_commits": "952",
+      "api_rss_kb": 136432,
+      "worker_rss_kb": 133520,
+      "generator_rss_kb": 143632,
+      "active": 0
+    },
+    {
+      "at": "2026-10-02T01:20:11.906Z",
+      "queue_depth": 0,
+      "pg_connections": 32,
+      "pg_commits": "1516",
+      "api_rss_kb": 137424,
+      "worker_rss_kb": 133680,
+      "generator_rss_kb": 146944,
+      "active": 0
+    },
+    {
+      "at": "2026-10-02T01:20:12.906Z",
+      "queue_depth": 0,
+      "pg_connections": 32,
+      "pg_commits": "2595",
+      "api_rss_kb": 138256,
+      "worker_rss_kb": 133744,
+      "generator_rss_kb": 150352,
+      "active": 0
+    },
+    {
+      "at": "2026-10-02T01:20:13.906Z",
+      "queue_depth": 0,
+      "pg_connections": 32,
+      "pg_commits": "3573",
+      "api_rss_kb": 138448,
+      "worker_rss_kb": 133792,
+      "generator_rss_kb": 155664,
+      "active": 0
+    },
+    {
+      "at": "2026-10-02T01:20:14.906Z",
+      "queue_depth": 0,
+      "pg_connections": 35,
+      "pg_commits": "4517",
+      "api_rss_kb": 138592,
+      "worker_rss_kb": 133792,
+      "generator_rss_kb": 159184,
+      "active": 1
+    },
+    {
+      "at": "2026-10-02T01:20:15.906Z",
+      "queue_depth": 0,
+      "pg_connections": 35,
+      "pg_commits": "6644",
+      "api_rss_kb": 138800,
+      "worker_rss_kb": 133904,
+      "generator_rss_kb": 159536,
+      "active": 0
+    },
+    {
+      "at": "2026-10-02T01:20:16.906Z",
+      "queue_depth": 0,
+      "pg_connections": 36,
+      "pg_commits": "8691",
+      "api_rss_kb": 138912,
+      "worker_rss_kb": 89200,
+      "generator_rss_kb": 159776,
+      "active": 2
+    },
+    {
+      "at": "2026-10-02T01:20:17.906Z",
+      "queue_depth": 0,
+      "pg_connections": 33,
+      "pg_commits": "9210",
+      "api_rss_kb": 138992,
+      "worker_rss_kb": 89584,
+      "generator_rss_kb": 159872,
+      "active": 2
+    },
+    {
+      "at": "2026-10-02T01:20:18.906Z",
+      "queue_depth": 0,
+      "pg_connections": 23,
+      "pg_commits": "9737",
+      "api_rss_kb": 139024,
+      "worker_rss_kb": 90400,
+      "generator_rss_kb": 159888,
+      "active": 0
+    }
+  ],
+  "invariants": {
+    "submitted": 16,
+    "terminal": 16,
+    "upstream_calls": 16,
+    "anomalies": [],
+    "duplicate_usage": 0,
+    "negative_usage": 0,
+    "no_duplicate_upstream": true,
+    "terminal_latency": {
+      "count": 16,
+      "p50_ms": 134,
+      "p95_ms": 1929,
+      "p99_ms": 1929,
+      "max_ms": 1929
+    }
+  },
+  "generator": {
+    "max_active": 8,
+    "submit_attempts": 16,
+    "stage_overshoot_ms": 35.8,
+    "sample_failures": 0,
+    "samples": 10,
+    "saturated": false
+  },
+  "limitations": [
+    "Engineering proposal is unapproved.",
+    "Local fixture is not paid Provider, production TLS, staging steady load, or release acceptance.",
+    "Dirty working tree is not a frozen build."
+  ],
+  "sanitization": "Credentials, tokens, request/response bodies and process logs omitted.",
+  "started_at": "2026-10-02T01:20:07.160Z",
+  "source_before": {
+    "commit": null,
+    "head_commit": "72ab1cb98b064a6e27b9f60a9f8f00881a827a99",
+    "working_tree_sha256": "de732dab0a37614aa8f77a690825d95cef5e207101b9100cd2675be67902e02c"
+  },
+  "migrations": [
+    {
+      "version": "0001-v1-governance",
+      "checksum": "4041158120cf8fc433117e217d41e483272e8c198e9813935d1f1ae567a833e3"
+    },
+    {
+      "version": "0002-connection-test-leases",
+      "checksum": "556fae173bf3efe8b502ab715e1ac62364e978a8e5f989a1b6bd84e2388978f8"
+    },
+    {
+      "version": "0003-audit-outbox-leases",
+      "checksum": "090a9ca7f251014e7dc8bd35544a4e71ca43c7e30b6ef2e41cdce338f70055bc"
+    },
+    {
+      "version": "0004-retention-jobs",
+      "checksum": "0030ee08a56817e4d283913d6e55e5416478bc2ebc1e156b0e008fc8e75c8145"
+    },
+    {
+      "version": "0005-quota-usage",
+      "checksum": "d037c22c993b91c64e0c54f12d78ed698e303f57fbd64ecbd027721869016e86"
+    },
+    {
+      "version": "0006-runtime",
+      "checksum": "5537f89b8475c4546fe37f6d740a6a5d0300dea17e7095d9ee2df796863b792b"
+    },
+    {
+      "version": "0007-provider-config-ai-task",
+      "checksum": "caf1f288f9f285026649ee61f0770034cedabd02439de4c6d742b9ed644a4229"
+    },
+    {
+      "version": "0009-quota-usage-dimensions",
+      "checksum": "42a11b86d92e23f9d492b34e34a697f52d062e18388cce643f4eeafd3efc5a36"
+    },
+    {
+      "version": "0010-quota-usage-idempotency",
+      "checksum": "87001b0cd6fe7dfa552f3eb278bac932ef0864af09b06cdc98c78bddd38ac5f2"
+    },
+    {
+      "version": "0011-runtime-persistence",
+      "checksum": "bc3db9fa2b38de9817fa9a545bd89971112f22b9664622b652922c6aeca86eee"
+    },
+    {
+      "version": "0012-ai-task-leases",
+      "checksum": "07c93eaa90919726c6d3384b44d0ff3c1e046434c870d0b64196e81600c19813"
+    },
+    {
+      "version": "0013-action-run-recovery",
+      "checksum": "7dda51f53af4ebd624ebfaf1fccc2a1a6d626aefffc445dba31c6c217b939186"
+    },
+    {
+      "version": "0014-audit-runtime-targets",
+      "checksum": "b837e3c5e3f7300b4dd964706b7418b3b19e2889086216eb84833986decb7f49"
+    },
+    {
+      "version": "0015-action-handler-claim",
+      "checksum": "145866e6d23ab992c4fe2e4f11715f6948788a513fa34dfb6a3f16abbc410959"
+    },
+    {
+      "version": "0016-action-input-recovery",
+      "checksum": "c084c94a7b676ef4d4fa9823decaf8d9174315ee8bad8096c38f5b7e314d9dfc"
+    },
+    {
+      "version": "0017-action-recovery-guard",
+      "checksum": "a3fb760d103d5fbb3a31d67f4fa6973982d169bb19a10ab2c3e13bca9c57d8ad"
+    },
+    {
+      "version": "0018-action-cancel-guard",
+      "checksum": "8a5d8b799e25fc219e42a935556e2429ff26609ee3fd05a233257bc6f4f0856c"
+    },
+    {
+      "version": "0019-ai-task-dispatch-fence",
+      "checksum": "b99e6cd5488c9558929048bf8e41e3e9607e6e5fcbdd560791c5f3999b64cbb5"
+    },
+    {
+      "version": "0022-api-key-rotation",
+      "checksum": "bc8e3d735e420ec34d9255807a90f48b559bd651a3ce5ac4511114aaf128c80c"
+    },
+    {
+      "version": "0023-governance-policy",
+      "checksum": "0a19d322f1ff95d7f4db1a5cf427a75f440cff9c4c2e1862f79ad24ab4c757e5"
+    },
+    {
+      "version": "0024-admin-session-freshness",
+      "checksum": "c476ba85c605640f8eea4ff4de5fc3617a12f12ecfb9ac4b33f45ac7a2befcdf"
+    },
+    {
+      "version": "0025-extension-registry",
+      "checksum": "13282166e607b23321221d077ccc19f4185e672f94db928c00771d229eb7d8bd"
+    },
+    {
+      "version": "0026-extension-runs",
+      "checksum": "21cc24eff1f399747864761049a4c4a19ceb765e52b856e589c4f35c7bd620bb"
+    },
+    {
+      "version": "0027-extension-run-events",
+      "checksum": "94aaf8a510f48ea9d87e4cf98657996efb10c5f3026aa8dfc9c91ee287b99538"
+    },
+    {
+      "version": "0028-app-packages",
+      "checksum": "08fae924e0e37d0999c4a43933a83177a5a0f215bac99e5368b73ab1d56b5f71"
+    },
+    {
+      "version": "0029-app-package-deployments",
+      "checksum": "dcdd38cba9baee568bf1919289dfe1d20899abc9a569be380d526f87c3c4e794"
+    },
+    {
+      "version": "0030-app-package-operations",
+      "checksum": "30e68b53884c70f0af4069616b73028019ab01c4a91c3cdcf9950bd94e19e4d6"
+    },
+    {
+      "version": "0031-provider-account-bindings",
+      "checksum": "ea5bb76be51aac25ddd348e6be58f0ec0fef990155ff499745297673bd8e9a2e"
+    },
+    {
+      "version": "0032-provider-connection-recovery",
+      "checksum": "0c8989a248fb373087afa9b1af8f8aa2110feb2303540752422543de44e66a5a"
+    },
+    {
+      "version": "0033-provider-admission",
+      "checksum": "1cf8888eb6a554b4a7fe6a71e8b06b0b1daf80d91a6a3bfa997af27822337679"
+    },
+    {
+      "version": "0034-extension-recovery",
+      "checksum": "9a6c2e429aa756435d2d8bc885277275c47a547851c1ae0ba60f2bda2c6ff81e"
+    },
+    {
+      "version": "0035-package-recovery",
+      "checksum": "c73ff34b55493b548759560d8fb0cbe44fd15de081456069d282eabe91ba6750"
+    },
+    {
+      "version": "0036-provider-operations",
+      "checksum": "24f5649da8b92b2d3ee9c63e9bbf9a7a5ed897180da761a6211c5c0ed8996aad"
+    },
+    {
+      "version": "0037-app-data-migration",
+      "checksum": "554603eff3422d32e6249880a8f62268ef410f33ff1773dc40aab0cb4f12bb0c"
+    },
+    {
+      "version": "0038-permission-action-lifecycle",
+      "checksum": "5542368a6fa955ac58440a3a223ef662fb1a54a62a883ae2fd8ffa2daf9608bd"
+    },
+    {
+      "version": "0039-provider-protocol-confirmations",
+      "checksum": "07259111a3c3808c5e6070b0189bd0bf74dcd040623b137590b17bd452bd8b12"
+    },
+    {
+      "version": "0040-provider-profile-bindings",
+      "checksum": "761b4b96d3a7c509198dbdd1cd1d958b92a28f6b8f4cee449ebf99b080050343"
+    },
+    {
+      "version": "0041-app-data-migration-package-digests",
+      "checksum": "9ab4865298fab5f7be79f0906bf82ed176bf844a96e03b42daf8e5d579a09090"
+    },
+    {
+      "version": "0043-provider-protocol-receipts",
+      "checksum": "2cbc7d81813a50c85393ae857b260c796e8a7ea4db8f7c122541ab0abf5266fb"
+    },
+    {
+      "version": "0044-system-projection",
+      "checksum": "a95019d20a3d2e63678b23f14fb35929f65c0192b075b4d995d35c8fb067e647"
+    },
+    {
+      "version": "0045-network-route-activation",
+      "checksum": "c2bc2a47a3360e47b02d4edd9880b88694ec3ab84cdf7613674cd2099d40040d"
+    },
+    {
+      "version": "0046-package-retention",
+      "checksum": "7321916de0ddff31f40d48b837acada75d8ec893691c7c65f22d0b707d6a9a83"
+    },
+    {
+      "version": "0047-ai-task-parameters",
+      "checksum": "22b6e9e886943f2b660de4d54989e0587c58cb67e373fbd45b7140849f6f15f6"
+    },
+    {
+      "version": "0048-network-route-fingerprint",
+      "checksum": "7879e6cf17753fa82254675756fbeb1fdfb9ad67e11808aec8922cd2f10cd33d"
+    },
+    {
+      "version": "0050-session-management",
+      "checksum": "8802fe3a02b0bf7364aeac96215da09454d0c53b48c06d2cb76c6f3d6b455d85"
+    }
+  ],
+  "exit_code": 1,
+  "cleanup": "dropped dgos_v1_perf_16fe5b870035",
+  "redis_keys_removed": 2,
+  "temporary_root_cleanup": "removed",
+  "source_after": {
+    "commit": null,
+    "head_commit": "72ab1cb98b064a6e27b9f60a9f8f00881a827a99",
+    "working_tree_sha256": "80f0e27ae062d699b382947e1bb60fc34811fb9536c4b8813e3b44cf1a05acef"
+  },
+  "profile_sha256_after": "d05461415d06a6d49ab9e9108130e35fc01968dd912c8207fa11849480cdcd1c",
+  "source_drift": true,
+  "failure": "source_or_profile_drift",
+  "commit": null,
+  "head_commit": "72ab1cb98b064a6e27b9f60a9f8f00881a827a99",
+  "finished_at": "2026-10-02T01:20:19.125Z",
+  "logs": {
+    "api_lines": 100,
+    "worker_lines": 1,
+    "bodies_and_secrets_omitted": true
+  },
+  "code_version": "72ab1cb98b064a6e27b9f60a9f8f00881a827a99+working-tree:de732dab0a37614aa8f77a690825d95cef5e207101b9100cd2675be67902e02c",
+  "test_report": ".herdr/V1-PERFORMANCE-r6-2026-10-02T01-20-07-159Z-bc9830cf.md",
+  "asset_sha256": {
+    "scripts/v1-performance.mjs": "a69c4f5a4b00e996902bd1e5d467fc22312c5534f5119b22cdad1d8cfae27700",
+    ".herdr/v1-performance-profile-r6.json": "d05461415d06a6d49ab9e9108130e35fc01968dd912c8207fa11849480cdcd1c"
+  },
+  "stats": {
+    "expected": 4,
+    "passed": 4,
+    "failed": 1,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "prior_attempts": []
+}

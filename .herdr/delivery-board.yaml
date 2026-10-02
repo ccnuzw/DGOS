@@ -1,0 +1,275 @@
+version: 1
+project: DGOS
+purpose: runtime delivery coordination only
+
+# This file records orchestration state and references. It does not define
+# product rules, implementation status, or evidence truth.
+active_delivery: DGOS-V1-IMPLEMENT-20261002
+lead_current_work_package:
+  id: V1-E2E-03-LEAD-VERIFICATION
+  revision: 1
+  mode: verification
+  slice_id: V1-platform
+  feature_ids: [V1-FR-003]
+  status: blocked
+  workspace_path: /Users/apple/Progame/DGOS
+  baseline: 72ab1cb98b064a6e27b9f60a9f8f00881a827a99
+  allowed_paths: [.herdr/V1-E2E-03-LEAD-20261002.md, docs/02-产品与版本/当前版本/V1-实现状态.md, .herdr/delivery-board.yaml]
+  report_path: .herdr/V1-E2E-03-LEAD-20261002.md
+  next_action: 'Browser fixture/context 5/5通过；native preflight通过；Docker image build/inspect/runtime probe通过，docker scout因未登录无法取得漏洞扫描结果；继续收敛真实admin凭据、正式候选绑定和release审批'
+  blockers: [docker_scout_authentication, real_admin_credentials_for_management_workbench, final_candidate_binding, release_commit_and_approvals]
+lead_dependency_report: .herdr/V1-LEAD-DEPENDENCY-20261002.md
+lead_wave:
+  id: V1-LEAD-WAVE-20261002-02
+  status: active
+  objective: 'Use recovered PG/Docker environment to close retention regression, reconcile requirement registry, and execute native/browser/ops verification before candidate freeze.'
+  evidence: docs/05-测试与发布/端到端验收/报告/V1-regression-diagnostic-r10-2026-10-02T07-55-45-081Z-b6089f15-manifest.json
+  lanes:
+    planner: {owner: planner, package: V1-SPEC-CLOSURE-r19, status: integrated, dependency: none}
+    verify: {owner: verify, package: V1-VERIFY-CANDIDATE-r16, status: review, dependency: planner_registry, note: 'worker report stale on AC/E2E counts; Lead independent registry now 62/12/7/3 and tooling 26/26'}
+    native: {owner: worker-f, package: V1-NATIVE-CLOSURE-r15, status: blocked, dependency: pg_available, note: 'candidate-preflight signed_resource_drift:workbench.js; runner not executed'}
+    browser: {owner: worker-d, package: V1-BROWSER-CLOSURE-r10, status: blocked, dependency: chromium_available, note: 'all real branches failed before launch with mach_port_rendezvous permission denied; no business assertion reached'}
+    ops: {owner: worker-i, package: V1-OPS-SECURITY-CLOSURE-r11, status: partial, dependency: docker_available, note: 'Compose fail-closed and negative guards verified; Docker image/runtime/restore evidence blocked by socket permissions'}
+  lead_gate: 'No candidate freeze until planner registry, verify bindings, native/browser/ops reports and current source identity are reviewed.'
+lead_next_dispatch:
+  date: '2026-10-02'
+  packages:
+    - id: V1-REMAINING-BROWSER-r10
+      revision: 10
+      mode: verification
+      owner: worker-d
+      status: queued
+      slice_id: V1-platform
+      feature_ids: [V1-FR-003, V1-FR-009, V1-FR-001]
+      workspace_path: /Users/apple/Progame/DGOS
+      baseline: 72ab1cb98b064a6e27b9f60a9f8f00881a827a99
+      allowed_paths: [apps/web/e2e/real-management.spec.mjs, apps/web/e2e/real-management-fixture.spec.mjs, apps/web/e2e/real-context.spec.mjs, apps/web/e2e/real-workbench.spec.mjs, apps/web/evidence]
+      forbidden_paths: [apps/web/src, apps/web/dist, apps/api, src, migrations, docs/02-产品与版本/当前版本/V1-实现状态.md]
+      objective: '执行P1浏览器管理剩余分支盘点；优先补真实断言资产，只有明确产品缺陷才回报Lead，不改Web/dist或产品源码'
+      acceptance: ['每个执行分支有前置条件和业务断言', '覆盖缺凭据MCP、在线Skill确认、Assistant ask/deny/cancel/recovery、System context权限分支', '输出命令、exit、pass/fail/skip、source/dist hash与未覆盖项', '停止写入后回执并移交Lead']
+      commands: ['node --check <changed files>', 'pnpm --filter @dgos/web exec playwright test -c playwright.config.mjs <target> --workers=1']
+      writeback: [.herdr/V1-REMAINING-BROWSER-r10.md, apps/web/evidence]
+    - id: V1-NATIVE-DIAGNOSIS-r15
+      revision: 15
+      mode: verification
+      owner: worker-f
+      status: queued
+      slice_id: V1-platform
+      feature_ids: [V1-FR-001, V1-FR-005]
+      workspace_path: /Users/apple/Progame/DGOS
+      baseline: 72ab1cb98b064a6e27b9f60a9f8f00881a827a99
+      allowed_paths: [apps/desktop/scripts/workbench-main-driver.js, apps/desktop/scripts/workbench-frame-driver.js, apps/desktop/scripts/candidate-preflight.mjs, apps/desktop/scripts/visible-macos.mjs, .herdr/V1-NATIVE-DIAGNOSIS-r15.md]
+      forbidden_paths: [apps/web/dist, apps/web/src, apps/ai-workbench-package, apps/desktop/src-tauri/src, scripts/v1-desktop-real.mjs, migrations]
+      objective: '复现并诊断native signed Workbench bridge timeout；保留产品协议/sandbox不变，确认失败是在driver注入、host hello时序、iframe load还是bridge消息链'
+      acceptance: ['运行前核对无其他native进程且候选preflight通过', '至少一轮真实前台manifest含stageHistory/frameDiagnostics/window证据', '不得降低sandbox、等待门槛或伪造ready', '输出根因判断、限制和下一步窄修建议', '停止写入后回执并移交Lead']
+      commands: ['node apps/desktop/scripts/candidate-preflight.mjs', 'node scripts/v1-desktop-real.mjs', 'node --check <changed files>']
+      writeback: [.herdr/V1-NATIVE-DIAGNOSIS-r15.md, .herdr/*NATIVE*manifest.json]
+parallel_dispatch:
+  date: '2026-10-02'
+  coordination_rule: 'Workers write only their assigned paths; Planner owns spec/task reports; Verify owns independent evidence/tooling; Lead owns final state, bindings, freeze and release gate.'
+  packages:
+    - {id: V1-IDENTITY-CLOSURE-r21, revision: 21, owner: worker-a, mode: implementation, feature_ids: [V1-FR-010, V1-FR-011], allowed_paths: [apps/api/src/identity-service.mjs, apps/api/src/identity-routes.mjs, src/identity, tests/integration/identity-api.test.mjs, tests/integration/postgres-identity.test.mjs, tests/security], forbidden_paths: [docs/02-产品与版本/当前版本/V1-实现状态.md, migrations, apps/web/src], acceptance: ['session/key owner scope and high-risk freshness are server-enforced', 'rotation/revoke/audit atomic cases pass on 47-migration child DB', 'no secret leakage and cross-instance revoke evidence'], writeback: [.herdr/V1-IDENTITY-CLOSURE-r21.md, tests/provider/evidence]}
+    - {id: V1-PROVIDER-CLOSURE-r18, revision: 18, owner: worker-b, mode: implementation, feature_ids: [V1-FR-007, V1-FR-012, V1-FR-013], allowed_paths: [src/provider, src/provider-config, src/provider-adapters, src/security/provider-egress.mjs, src/security/network-route.mjs, apps/worker/src/provider-test-worker.mjs, tests/provider, tests/integration/provider*], forbidden_paths: [migrations, apps/web/src, docs/02-产品与版本/当前版本/V1-实现状态.md], acceptance: ['provider account/config admission, disable propagation and CAS are covered', 'connection worker lease/heartbeat/cancel/error matrix passes', 'TLS/SSRF/redirect/DNS boundary tests pass without secret leakage'], writeback: [.herdr/V1-PROVIDER-CLOSURE-r18.md, tests/provider/evidence]}
+    - {id: V1-GOV-QUOTA-CLOSURE-r12, revision: 12, owner: worker-c, mode: implementation, feature_ids: [V1-FR-014, V1-FR-015], allowed_paths: [src/audit, src/quota, src/permissions, src/system, apps/api/src/governance*, apps/api/src/audit*, tests/integration/postgres-audit*, tests/integration/postgres-retention*, tests/integration/postgres-quota*, tests/security], forbidden_paths: [migrations, apps/web/src, docs/02-产品与版本/当前版本/V1-实现状态.md], acceptance: ['all high-risk mutations audit atomically or fail closed', 'retention preview/execute/checkpoint/reference protection passes', 'quota admission/settlement/reconciliation and scope isolation pass'], writeback: [.herdr/V1-GOV-QUOTA-CLOSURE-r12.md, tests/provider/evidence]}
+    - {id: V1-BROWSER-CLOSURE-r10, revision: 10, owner: worker-d, mode: verification, feature_ids: [V1-FR-001, V1-FR-003, V1-FR-009], allowed_paths: [apps/web/e2e, apps/web/evidence], forbidden_paths: [apps/web/src, apps/web/dist, apps/api, src, migrations], acceptance: ['real management/context/assistant branches have business assertions', 'missing credentials, explicit deny, ask/allow/replan, cancel/recovery and context CAS are exercised', 'source/dist hashes and uncovered branches recorded'], writeback: [.herdr/V1-REMAINING-BROWSER-r10.md, apps/web/evidence]}
+    - {id: V1-EXT-SANDBOX-CLOSURE-r11, revision: 11, owner: worker-e, mode: implementation, feature_ids: [V1-FR-003], allowed_paths: [src/extensions, apps/extension-runner, tests/extensions, scripts/v1-extension-http.mjs, scripts/v1-extension-management-http.mjs], forbidden_paths: [apps/web/src, apps/web/dist, migrations, docs/02-产品与版本/当前版本/V1-实现状态.md], acceptance: ['public management/Run path remains 8/8 on current source', 'Linux sandbox normal/negative canaries and macOS policy tests pass', 'persisted Run/credential/permission behavior is independently evidenced'], writeback: [.herdr/V1-EXT-SANDBOX-CLOSURE-r11.md, tests/extensions/evidence]}
+    - {id: V1-NATIVE-CLOSURE-r15, revision: 15, owner: worker-f, mode: implementation, feature_ids: [V1-FR-001, V1-FR-005], allowed_paths: [apps/desktop/scripts/workbench-main-driver.js, apps/desktop/scripts/workbench-frame-driver.js, apps/desktop/scripts/candidate-preflight.mjs, apps/desktop/scripts/visible-macos.mjs, .herdr/V1-NATIVE-DIAGNOSIS-r15.md], forbidden_paths: [apps/web/dist, apps/web/src, apps/ai-workbench-package, apps/desktop/src-tauri/src, scripts/v1-desktop-real.mjs, migrations], acceptance: ['native bridge handshake/root cause identified and fixed without weakening sandbox', 'real Workbench Task/SSE/Artifact/reload/context run produces manifest', 'window and cleanup evidence recorded'], writeback: [.herdr/V1-NATIVE-DIAGNOSIS-r15.md, .herdr/*NATIVE*manifest.json]}
+    - {id: V1-PACKAGE-LIFECYCLE-r12, revision: 12, owner: worker-g, mode: implementation, feature_ids: [V1-FR-002, V1-FR-009], allowed_paths: [src/apps, apps/api/src/package*, apps/api/src/app-capabilities.mjs, tests/integration/app-package*, tests/unit/app-packages.test.mjs, scripts/v1-package-http.mjs], forbidden_paths: [migrations, apps/web/src, apps/web/dist, docs/02-产品与版本/当前版本/V1-实现状态.md], acceptance: ['signed package/catalog/install/update/uninstall lifecycle and health rollback passes', 'approval roles, protected preinstall and data/artifact references are asserted', 'interrupted operation recovery and idempotency are evidenced'], writeback: [.herdr/V1-PACKAGE-LIFECYCLE-r12.md, docs/05-测试与发布/端到端验收/报告]}
+    - {id: V1-WORKBENCH-TASK-CLOSURE-r10, revision: 10, owner: worker-h, mode: implementation, feature_ids: [V1-FR-005, V1-FR-007, V1-FR-015], allowed_paths: [apps/ai-workbench-package, apps/web/e2e/real-workbench.spec.mjs, src/ai-task, src/provider-config/text*, tests/integration/ai-task*, tests/provider/profile-task-wiring.test.mjs], forbidden_paths: [apps/web/dist, apps/desktop/src-tauri/src, migrations, docs/02-产品与版本/当前版本/V1-实现状态.md], acceptance: ['profile defaults/limits/snapshot and selector rejection pass', 'SSE cursor/reload/same-task/artifact and cancel/unknown outcomes pass', 'no duplicate upstream call or quota settlement'], writeback: [.herdr/V1-WORKBENCH-TASK-CLOSURE-r10.md, tests/provider/evidence]}
+    - {id: V1-OPS-SECURITY-CLOSURE-r11, revision: 11, owner: worker-i, mode: verification, feature_ids: [V1-FR-010, V1-FR-013, V1-FR-014, V1-FR-015], allowed_paths: [deployment, docker-compose.production.yml, scripts/v1-ops*, scripts/v1-performance.mjs, docs/05-测试与发布/发布, docs/05-测试与发布/性能与容量], forbidden_paths: [src, apps/api, apps/web/src, migrations], acceptance: ['fresh image scan/runtime canary or documented hard blocker', 'backup/restore, secret rotation, readiness and multistore evidence', 'performance/recovery inputs remain proposal vs approved clearly separated'], writeback: [.herdr/V1-OPS-SECURITY-CLOSURE-r11.md, deployment]}
+    - {id: V1-SPEC-CLOSURE-r19, revision: 19, owner: planner, mode: reconciliation, feature_ids: [V1-FR-001, V1-FR-002, V1-FR-003, V1-FR-005, V1-FR-007, V1-FR-009, V1-FR-010, V1-FR-011, V1-FR-012, V1-FR-013, V1-FR-014, V1-FR-015], allowed_paths: [docs/03-功能规格/V1, docs/04-技术架构/当前版本, docs/05-测试与发布/端到端验收, .herdr/V1-SPEC-CLOSURE-r19.md], forbidden_paths: [src, apps, migrations, docs/02-产品与版本/当前版本/V1-实现状态.md, docs-evidence.json], acceptance: ['map all 62 AC to current test asset and real evidence', 'identify stale/contradictory specs without changing business semantics', 'produce ordered Lead task packets and exact writeback list'], writeback: [.herdr/V1-SPEC-CLOSURE-r19.md]}
+    - {id: V1-VERIFY-CANDIDATE-r16, revision: 16, owner: verify, mode: verification, feature_ids: [V1-FR-001, V1-FR-002, V1-FR-003, V1-FR-005, V1-FR-007, V1-FR-009, V1-FR-010, V1-FR-011, V1-FR-012, V1-FR-013, V1-FR-014, V1-FR-015], allowed_paths: [scripts/v1-candidate-run.mjs, scripts/v1-regression-sweep.mjs, tests/tooling, .herdr/V1-VERIFY-CANDIDATE-r16.md, docs/05-测试与发布/端到端验收/报告], forbidden_paths: [src, apps, migrations, docs/02-产品与版本/当前版本/V1-实现状态.md, docs-evidence.json], acceptance: ['fix actual coverage extraction and candidate group bindings', 'independently classify pass/fail/skip/uncovered for 62 AC/12 E2E/7 NFR/3 RG', 'do not run full candidate until all writers stop and Lead freezes bindings'], writeback: [.herdr/V1-VERIFY-CANDIDATE-r16.md, docs/05-测试与发布/端到端验收/报告]}
+implementation_authorization:
+  date: '2026-10-02'
+  scope: 'User authorized continued V1 implementation, Lead scheduling and dynamic additional Workers while user rests'
+  task_pack: .herdr/v1-implementation-r1.md
+  baseline: 72ab1cb98b064a6e27b9f60a9f8f00881a827a99
+  completion_rule: 'Actual V1 acceptance and release evidence; never infer completion from agent status'
+recovery:
+  date: '2026-10-02'
+  reason: 'Herdr bare Codex resume dropped direct catalog/computer_use flags; D-I shells also retained old worktree cwd'
+  action: 'Recovered A-I and Verify with original session IDs/model; current main-tree task cwd restored; scoped zsh resume adapter installed'
+  verified: 'All ten Codex sessions executed native exec pwd/git-root/role reads exit0; Verify r3 bare resume through adapter also passed; .herdr/HERDR-TOOLS-RECOVERY-r1.md'
+  next_action: 'Lead resumed explicit r18 scope after inspecting live idle panes; all historical packages outside r18 remain paused'
+implementation_packages:
+  - {id: V1-UI-FIXTURE-REFRESH, revision: 9, owner: lead, status: working, workspace_path: /Users/apple/Progame/DGOS, allowed_paths: [data/v1-ui-management-fixture], next_action: 'H idle, D tests stopped; preserve historical reports, replace only H scoped test fixture via owner script for real MCP first install and11branch browser run'}
+  - {id: V1-TASK-REGRESSION, revision: 21, owner: lead, status: working, task_pack: .herdr/v1-task-regression-r20.md, next_action: 'A provider failed before r21 tools; stopped paths transferred to Lead for quota audit fixture and real PG retest'}
+  - {id: V1-EXTENSION-ISOLATION, revision: 10, owner: worker-e, status: working, task_pack: .herdr/v1-extension-isolation-r10.md, next_action: 'Replace fixed shared DB and broad old-package cleanup with random child and exact resources; preserve12 assertions'}
+  - {id: V1-NATIVE-EXECUTION, revision: 13, owner: worker-f, status: working, task_pack: .herdr/v1-resume-r18.md, next_action: 'Lead r12 got signed_workbench_bridge_timeout and actual Settings screenshot; retain all stages and diagnose navigation/bridge on same dist'}
+  - {id: V1-IDENTITY-REGRESSION, revision: 20, owner: worker-c, status: working, task_pack: .herdr/v1-identity-regression-r20.md, next_action: 'Diagnose live bootstrap secret count3vs1; prove loser unusable and winner valid without weakening compensation'}
+  - {id: V1-TASK-REGRESSION, revision: 20, owner: worker-a, status: working, task_pack: .herdr/v1-task-regression-r20.md, next_action: 'Repair observed queue-test isolation and outdated profile fixture; keep atomicity assertions; Lead runs real PG'}
+  - {id: V1-BROWSER-BRANCHES, revision: 9, owner: worker-d, status: working, task_pack: .herdr/v1-browser-branches-r9.md, next_action: 'Replace conditional false coverage with asserted branches and add real System context test; Web/dist stays frozen'}
+  - {id: V1-NATIVE-EXECUTION, revision: 12, owner: worker-f, status: working, task_pack: .herdr/v1-resume-r18.md, next_action: 'Lead r11 actual run4setup pass then webview_result_timeout with null last state; diagnose debug initialization and return repaired exact run'}
+  - {id: V1-PG-DIAGNOSTIC, revision: 19, owner: worker-c, status: working, task_pack: .herdr/v1-pg-diagnostic-r19.md, next_action: 'Isolated PG/guarded diagnostic on frozen domain paths; only own report/logs, no product changes'}
+  - {id: V1-GAP-RECONCILE, revision: 18, owner: planner, status: working, task_pack: .herdr/v1-resume-r18.md, next_action: 'Audit remaining62AC/12FR and write concrete remaining plan; authority state unchanged'}
+  - {id: V1-CANDIDATE-COVERAGE, revision: 15, owner: verify, status: working, task_pack: .herdr/v1-resume-r18.md, next_action: 'Resume unexecuted r14 actual coverage extraction and tooling tests; full candidate waits writers stop'}
+  - {id: V1-IMAGE-SECURITY, revision: 10, owner: worker-b, status: working, task_pack: .herdr/v1-resume-r18.md, next_action: 'Triage existing scan and fix supported dependencies with actual runtime/security proof'}
+  - {id: V1-NATIVE-EXECUTION, revision: 11, owner: worker-f, status: working, task_pack: .herdr/v1-resume-r18.md, next_action: 'Lead transfers stopped r10 native paths to F; diagnose real signed Workbench frame chain on unchanged dist'}
+  - {id: V1-UI-INVENTORY, revision: 8, owner: worker-d, status: working, task_pack: .herdr/v1-resume-r18.md, next_action: 'Read-only browser evidence/resources and missing-branch inventory; no Web/dist mutation'}
+  - {id: V1-CANDIDATE-COVERAGE, revision: 14, owner: verify, status: blocked, task_pack: .herdr/v1-candidate-coverage-r14.md, next_action: 'Reset session had no native tools and made no changes. Existing runner emits covered_cases=[] and synthetic placeholder names; implement actual log/assertion mapping before any candidate run.'}
+  - {id: V1-NATIVE-EXECUTION, revision: 10, owner: lead, status: blocked, task_pack: .herdr/v1-native-execution-r10.md, report_path: .herdr/V1-NATIVE-EXECUTION-r10.md, next_action: 'F reset to read-only old worktree and stopped; Lead reran exact dist. Preflight/isolated setup pass, but signed Workbench GUI times out after launch because Tauri child-frame test injection is unavailable. See final r9 manifest and r10 report; no candidate native proof.'}
+  - {id: V1-IMAGE-SECURITY, revision: 9, owner: worker-b, status: blocked, task_pack: .herdr/v1-image-security-r9.md, next_action: 'Reset session made no r9 classification/report. Persisted r9 image sha256:b13512c0 scan is 1 critical/59 high (60 findings, 23 unique); CVE-2026-6653 libxml2 has no fixed version. Release remains blocked.'}
+  - {id: V1-PERMISSION-REGRANT, revision: 17, owner: worker-c, status: integrated, task_pack: .herdr/v1-permission-regrant-r17.md, report_path: .herdr/V1-PERMISSION-REGRANT-r17.md, next_action: 'StoppedPG13/13 zero skip; D reloaded15200 and originalSkill recovery1/1 passed using explicit Settings deny→allow, no newSkill'}
+  - {id: V1-CANDIDATE-BINDING, revision: 13, owner: verify, status: review, task_pack: .herdr/v1-convergence-r16.md, report_path: .herdr/V1-CANDIDATE-RUNNER-r13.md, next_action: 'Stopped; Lead independent25/25; full-dist/config actual constituents verified; final bindings/source freeze and execution pending'}
+  - {id: V1-PROVIDER-PROBE-FIX, revision: 17, owner: worker-a, status: integrated, task_pack: .herdr/v1-provider-probe-fix-r17.md, report_path: .herdr/V1-PROVIDER-PROBE-FIX-r17.md, next_action: 'Stopped; focused10/10 and I independent8/8, cancel247ms; candidate bind pending subsequent sharedserver changes'}
+  - {id: V1-PROVIDER-FAILURES, revision: 8, owner: worker-i, status: review, task_pack: .herdr/v1-convergence-r16.md, report_path: .herdr/V1-PROVIDER-FAILURES-r8.md, next_action: 'Stopped post-A8/8 sourceStable; exactPGRedis cleaned ports15181–89returned; finalTLS runner replay after freeze'}
+  - {id: V1-HARNESS-SCHEMA, revision: 16, owner: worker-c, status: review, task_pack: .herdr/v1-convergence-r16.md, report_path: .herdr/V1-HARNESS-SCHEMA-r16.md, next_action: 'Stopped; tooling2/2,47migration full-set digest frozen; Lead verified3file hashes; actual identity/performance runs await candidate'}
+  - {id: V1-DESKTOP-CANDIDATE, revision: 9, owner: worker-f, status: review, task_pack: .herdr/v1-convergence-r16.md, report_path: .herdr/V1-DESKTOP-CANDIDATE-r9.md, next_action: 'Stopped cargo/check/scripts passed; oldapp mismatch expected; await Ddist seal to build and actual signedAPPnative task'}
+  - {id: V1-UI-MANAGEMENT-FIXTURE, revision: 8, owner: worker-h, status: review, task_pack: .herdr/v1-convergence-r16.md, report_path: .herdr/V1-UI-MANAGEMENT-FIXTURE-r8.md, next_action: 'Source stopped;15175–77 stayslive for D; HTTPtranslationArtifactapply passed, MCPfirstinstall reserved; final candidate reload coordinated'}
+  - {id: V1-CONVERGENCE, revision: 16, owner: lead, status: blocked, task_pack: .herdr/v1-convergence-r16.md, next_action: 'Candidate freeze is prohibited: native real GUI proof failed, image security remains 1 critical/59 high, and actual E2E coverage extraction is not implemented. No docs-evidence/release state promotion.'}
+  - {id: V1-ASSISTANT-RESOLVE, revision: 16, owner: worker-a, status: integrated, task_pack: .herdr/v1-convergence-r16.md, report_path: .herdr/V1-ASSISTANT-RESOLVE-r16.md, next_action: 'Stopped; Lead independentPG2/2 zero skip; D reload confirms resolver/plan now works, later permission UI branches ongoing'}
+  - {id: V1-EXT-READ, revision: 9, owner: worker-e, status: review, task_pack: .herdr/v1-convergence-r16.md, report_path: .herdr/V1-EXT-READ-r9.md, next_action: 'Stopped; separate skill.read permission required, PGask409/allow200/deny403 2/2; Lead verifiedtest+sandboxSHA; D explicit-grant browser retest'}
+  - {id: V1-OPS-RELEASE, revision: 8, owner: worker-b, status: review, task_pack: .herdr/v1-convergence-r16.md, report_path: .herdr/V1-OPS-RELEASE-r8.md, next_action: 'Stopped APIworker/browser/LinuxE73 passed; actualscan1critical61high; server drift known; securityr9 then finalsource rebuild'}
+  - {id: V1-CANDIDATE-RUNNER, revision: 12, owner: verify, status: review, task_pack: .herdr/v1-convergence-r16.md, report_path: .herdr/V1-CANDIDATE-RUNNER-r12.md, next_action: 'Stopped; Lead independent23/23; executable fivegroups ready, r13 exact runtime bytes binding next; final execution waits freeze'}
+  - {id: V1-UI-LIVE-MANAGEMENT, revision: 7, owner: worker-d, status: working, task_pack: .herdr/v1-convergence-r16.md, next_action: 'Seal r6; A/E fixes and controlled translation/MCP fixture; real UI complete then stop'}
+  - {id: V1-STATUS-RECONCILE, revision: 8, owner: planner, status: closed, task_pack: .herdr/v1-convergence-r16.md, report_path: .herdr/V1-STATUS-RECONCILE-r8.md, next_action: 'Stopped62AC mapping and unapproved releaseinput proposal; Lead applied reviewed12FR authority/facts0drift; finalcandidate evidence pending'}
+  - {id: V1-STREAM-TRANSPORT, revision: 1, owner: lead, status: review, workspace_path: /Users/apple/Progame/DGOS, allowed_paths: [src/security/provider-egress.mjs, tests/security/provider-egress-stream.test.mjs], next_action: 'Real TLS early chunk/limit/cancel/total deadline tests8/8; H activates adapter streamResponse, I implements proxy equivalent'}
+  - {id: V1-CONTINUE, revision: 6, owner: lead, status: working, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-continuation-r6.md, next_action: 'Recover live browser, integrate network routes, enumerate remaining AC and freeze candidate'}
+  - {id: V1-ACTION-FRESHNESS, revision: 8, owner: worker-a, status: review, workspace_path: /Users/apple/Progame/DGOS, report_path: .herdr/V1-ACTIONS-r8.md, next_action: 'Stopped PG2/2 memory26/9skip; final independent candidate pending'}
+  - {id: V1-WORKBENCH, revision: 9, owner: worker-a, status: integrated, workspace_path: /Users/apple/Progame/DGOS, report_path: .herdr/V1-WORKBENCH-r9.md, next_action: '1.0.1/build2 signed installed; D parameterTask live1/1 historical build'}
+  - {id: V1-AUDIT-QUERY, revision: 11, owner: worker-c, status: integrated, workspace_path: /Users/apple/Progame/DGOS, report_path: .herdr/V1-GOV-r11.md, next_action: 'Main registration done; PG5/5 memory8/3skip, candidate pending'}
+  - {id: V1-IDENTITY-MULTIINSTANCE, revision: 12, owner: worker-c, status: review, workspace_path: /Users/apple/Progame/DGOS, report_path: .herdr/V1-IDENTITY-r12.md, next_action: 'Stopped20/20 local live cases; final candidate pending'}
+  - {id: V1-TRANSPORT-BOUNDARY, revision: 13, owner: worker-c, status: working, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-transport-boundary-r13.md, next_action: 'Reusable trusted TLS/proxy/native transport proof for secret writes; prevent forged headers'}
+  - {id: V1-TEST-ISOLATION, revision: 14, owner: worker-c, participants: [worker-h, worker-i, worker-e], status: working, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-test-isolation-r14.md, next_action: 'Allow strict Verify random child only in domain test guards; no product changes'}
+  - {id: V1-DIAGNOSTIC-FIXES, revision: 15, owner: lead, participants: [worker-a, worker-c, worker-e], status: working, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-diagnostic-fixes-r15.md, next_action: 'A001/017 fixtures C059 transaction fixture Ecanonical ongoing; targeted tests only'}
+  - {id: V1-RETENTION-PACKAGES, revision: 9, owner: worker-g, status: integrated, workspace_path: /Users/apple/Progame/DGOS, report_path: .herdr/V1-RETENTION-PACKAGES-r9.md, next_action: 'PG10/10 memory14/14; main cleaner attached, HTTP r10 verifying'}
+  - {id: V1-PACKAGES-HTTP, revision: 10, owner: worker-g, status: working, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-package-http-r10.md, next_action: 'Full public package lifecycle and attached retention HTTP, A owns package UI'}
+  - {id: V1-PACKAGES-INPUT, revision: 11, owner: worker-g, status: review, workspace_path: /Users/apple/Progame/DGOS, report_path: .herdr/V1-PACKAGES-r11.md, next_action: 'Stopped public12phases passed; private locks and strict input verified'}
+  - {id: V1-ACCEPTANCE-TOOLING, revision: 8, owner: verify, status: working, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-acceptance-identity-r8.md, next_action: 'r7tooling13/13; fix precise source identity drift and composable candidate groups'}
+  - {id: V1-VERIFY-PRE-FREEZE, revision: 9, owner: verify, status: working, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-verify-prefreeze-r9.md, next_action: 'Independent critical read-only checks before source freeze'}
+  - {id: V1-REGRESSION-DIAGNOSTIC, revision: 10, owner: verify, status: working, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-regression-diagnostic-r10.md, next_action: 'One current memory/isolatedPG diagnostic through frozen0051; no repeated drift chasing'}
+  - {id: V1-PERFORMANCE, revision: 6, owner: worker-b, status: working, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-performance-preparation-r6.md, next_action: 'Bounded isolated load/invariant harness and calibration, no production approval claim'}
+  - {id: V1-OPS-RELEASE, revision: 7, owner: worker-b, status: working, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-ops-release-r7.md, next_action: 'I stopped ops r4 paths transferred to B; Linux image/sandbox/health and multistore recovery'}
+  - {id: V1-AC-CLOSURE, revision: 4, owner: planner, status: closed, workspace_path: /Users/apple/Progame/DGOS, report_path: .herdr/V1-AC-CLOSURE-r4.md, next_action: '62AC/12FR audit sealed; assigned packages close gaps'}
+  - {id: P0-DOC-COMPLETION, revision: 5, owner: planner, status: closed, workspace_path: /Users/apple/Progame/DGOS, report_path: .herdr/P0-DOC-r5.md, next_action: 'Provider/FR003/context/device/retention schemas Ready; implementation in progress'}
+  - {id: P0-DOC-PROXY, revision: 6, owner: planner, status: working, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-proxy-provisioning-doc-r6.md, next_action: 'Minimal authorized proxy Secret provisioning closes user configuration path'}
+  - {id: P0-DOC-WRITEBACK, revision: 7, owner: planner, status: closed, workspace_path: /Users/apple/Progame/DGOS, report_path: .herdr/P0-DOC-WRITEBACK-r7.md, next_action: 'Stopped12FR verification mappings; planning0/0/0; authority state pending Lead'}
+  - {id: V1-PROVIDER-PARAMETERS, revision: 5, owner: worker-h, status: review, workspace_path: /Users/apple/Progame/DGOS, report_path: .herdr/V1-PROVIDER-r5.md, next_action: 'Stopped; final memory12/12 PG1/1; public separate-process closure r6'}
+  - {id: V1-PROVIDER-HTTP, revision: 6, owner: worker-h, status: working, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-provider-http-r6.md, next_action: 'Public full Profile/parameters with real OS worker and network fixture'}
+  - {id: V1-EXT-PUBLIC, revision: 7, owner: worker-h, status: review, workspace_path: /Users/apple/Progame/DGOS, report_path: .herdr/V1-EXT-PUBLIC-r7.md, next_action: 'Stopped public8/8 OSworker; later sandbox change needs final replay'}
+  - {id: V1-EXT-MANAGEMENT, revision: 6, owner: worker-e, status: working, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-extension-management-r6.md, next_action: 'FR003 management Ready; custom/translation/online signed preview/templates credentials, allocated0049'}
+  - {id: V1-EXT-SANDBOX, revision: 8, owner: worker-e, status: review, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-extension-sandbox-r7.md, report_path: .herdr/V1-EXT-SANDBOX-r7.md, write_handoff: 'E r8 narrow macOS follow-up stopped; Lead checked transport and two test hashes against report', next_action: 'macOS local10/10 reported; transport73dae1558ac3b1e55f8ece4a9de4efc1d823f0966529ed514e7236ef7f26131a awaits B/Verify final-image Linux normal+negative canary replay'}
+  - {id: V1-NETWORK, revision: 7, owner: worker-i, status: working, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-network-context-r7.md, next_action: 'r6 public chain2/2; expiry must advance context cursor, manual proxy provisioning contract next'}
+  - {id: V1-PACKAGE-RECEIPTS, revision: 8, owner: worker-g, status: closed, workspace_path: /Users/apple/Progame/DGOS, report_path: .herdr/V1-PACKAGES-r8.md, next_action: 'D real original Task get/events/artifact passed with no resubmit'}
+  - {id: V1-PERMISSION-500, revision: 10, owner: worker-c, status: closed, workspace_path: /Users/apple/Progame/DGOS, report_path: .herdr/V1-PERMISSION-SETTINGS-r10.md, next_action: 'PG16/16 then D real permission PATCH1/1 passed after restart'}
+  - {id: V1-RUNTIME-UNIT, revision: 7, owner: worker-a, status: review, workspace_path: /Users/apple/Progame/DGOS, next_action: 'Stopped writing; unit8/8 reported, Verify targeted recheck'}
+  - {id: V1-DESKTOP-REAL, revision: 6, owner: worker-f, status: review, workspace_path: /Users/apple/Progame/DGOS, report_path: .herdr/V1-DESKTOP-r6.md, next_action: 'Stopped local7/7 plus real screenshot; DeveloperID absent; currentbuild rerun afterfreeze'}
+  - {id: V1-MACOS-SANDBOX, revision: 7, owner: worker-f, status: working, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-macos-sandbox-diagnosis-r7.md, next_action: 'Read-only policy diagnosis of Node SIGABRT; E retains product writes'}
+  - {id: V1-REGRESSION-SWEEP, revision: 6, owner: verify, status: closed, workspace_path: /Users/apple/Progame/DGOS, report_path: .herdr/V1-REGRESSION-TARGETED-r6.md, next_action: '9/9 independent targeted; original drifting failures preserved'}
+  - {id: V1-RUNTIME-REGRESSION, revision: 6, owner: worker-a, status: working, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-runtime-regression-r6.md, next_action: 'Upgrade signed package/runtime regression fixtures; System file ownership transferred from C'}
+  - {id: V1-PERMISSION-SETTINGS, revision: 8, owner: worker-c, status: working, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-permission-settings-r8.md, next_action: 'Implement authoritative permission list/batch and atomic System version adapter'}
+  - {id: V1-SYSTEM, revision: 7, owner: worker-c, status: integrated, workspace_path: /Users/apple/Progame/DGOS, report_path: .herdr/V1-SYSTEM-r7.md, next_action: '0044 applied to Compose; unique public System routes wired, D tests real PATCH'}
+  - {id: V1-PACKAGE-RESOURCE, revision: 7, owner: worker-g, status: working, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-package-resource-r7.md, next_action: 'Fix observed opaque iframe subresource 401 with session-validated static ticket'}
+  - {id: V1-OPS, revision: 4, owner: worker-i, status: review, workspace_path: /Users/apple/Progame/DGOS, report_path: .herdr/V1-OPS-r4.md, next_action: 'Local image/Secret/TLS fixture and DB/Redis readiness recovery reported; no production claim'}
+  - {id: V1-ACTIONS, revision: 5, owner: worker-a, status: working, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-continuation-r5.md, next_action: 'Strict public Action declaration and installed-manifest regression fixtures'}
+  - {id: V1-TASK, revision: 5, owner: worker-b, status: review, workspace_path: /Users/apple/Progame/DGOS, report_path: .herdr/V1-TASK-r5.md, next_action: '11/11 exit0 no-drift historical snapshot; 15200 environment returned and assigned to D'}
+  - {id: V1-GOV, revision: 4, owner: worker-c, status: integrated, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-governance-verification-r4.md, next_action: 'Governance targeted 10/10 and PG6/6; Provider E2E fixture failure assigned for follow-up'}
+  - {id: V1-QUOTA-REVIEW, revision: 6, owner: worker-c, status: working, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-continuation-r5.md, next_action: 'Revalidate public quota authContext after API constructor repair'}
+  - {id: V1-UI, revision: 5, owner: worker-d, status: working, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-ui-completion-r5.md, next_action: 'UI acceptance/localization and C retest; Provider/extension forms wait Planner Ready'}
+  - {id: V1-UI-LIVE-MANAGEMENT, revision: 6, owner: worker-d, status: working, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-ui-live-management-r6.md, next_action: 'r5source frozen; complete genuine browser management/E2E09/10 tests'}
+  - {id: V1-EXT, revision: 5, owner: worker-e, status: working, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-extensions-http-r5.md, next_action: 'Public Skill/MCP/daemon HTTP flow and negative paths on own assigned resources'}
+  - {id: V1-DESKTOP, revision: 4, owner: worker-f, status: review, workspace_path: /Users/apple/Progame/DGOS, report_path: .herdr/V1-DESKTOP-r4.md, next_action: 'Native bridge/session fixture passed; real API business flow remains open'}
+  - {id: V1-PACKAGES, revision: 5, owner: worker-g, status: working, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-continuation-r5.md, next_action: 'Unique deployment projection, session-bound bridge and actual workbench tasks'}
+  - {id: V1-PROVIDER, revision: 4, owner: worker-h, status: working, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-continuation-r5.md, next_action: 'Protocol confirmation and actual text profile task integration'}
+  - {id: P0-DOC, revision: 3, owner: planner, status: working, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-continuation-r5.md, report_path: .herdr/P0-DOC-r3.md, next_action: 'Confirmation issuance and exact SDK/HTTP contract convergence'}
+  - {id: V1-VERIFY-SETUP, revision: 2, owner: verify, status: review, workspace_path: /Users/apple/Progame/DGOS, allowed_paths: [scripts/verify-release.mjs, tests/tooling/verify-release.test.mjs, .herdr/v1-verification-plan-r1.md], report_path: .herdr/v1-verification-plan-r1.md, next_action: 'Stopped writing; tooling reports 8/8 and isolated child DB smoke, await Lead acceptance'}
+  - {id: V1-VERIFY-REVIEW, revision: 1, owner: verify, status: closed, workspace_path: /Users/apple/Progame/DGOS, allowed_paths: [.herdr/v1-independent-review-r1.md], report_path: .herdr/v1-independent-review-r1.md, next_action: 'Static blockers returned to E/G/H r3; no dynamic acceptance claimed'}
+  - {id: V1-VERIFY-CORE, revision: 2, owner: verify, status: closed, workspace_path: /Users/apple/Progame/DGOS, task_pack: .herdr/v1-verify-core-r2.md, report_path: .herdr/v1-verify-core-r2.md, next_action: 'Local core6/6 historical; independent integrated revision started'}
+  - {id: V1-VERIFY-INTEGRATED, revision: 4, owner: verify, status: review, workspace_path: /Users/apple/Progame/DGOS, report_path: .herdr/v1-verify-integrated-r4.md, next_action: 'A/G/H targeted child-DB verification and historical B11/11 manifest independently checked'}
+work_packages:
+  - id: V1-GAP-PLAN
+    delivery_id: DGOS-V1-GAP-20261002
+    mode: specification
+    task_pack_revision: 1
+    owner: planner
+    status: working
+    workspace_path: /Users/apple/Progame/DGOS
+    baseline: 72ab1cb
+    dependencies: []
+    allowed_paths: ['docs/02-产品与版本/当前版本/V1-缺口与实施计划-2026-10-02.md']
+    objective: 'Audit V1 scope/readiness and draft dated gap assessment and dependency-based implementation plan; no product state changes'
+    report_path: docs/02-产品与版本/当前版本/V1-缺口与实施计划-2026-10-02.md
+    last_progress_at: '2026-10-02'
+    next_action: 'Planner drafts; Lead integrates independent audits'
+    blockers: []
+    write_handoff: 'Planner owns only the dated report until final reply'
+  - id: V1-GAP-CODE
+    delivery_id: DGOS-V1-GAP-20261002
+    mode: reconciliation
+    task_pack_revision: 1
+    owner: lead
+    participants: [worker-a, worker-b, worker-c]
+    status: review
+    workspace_path: /Users/apple/Progame/DGOS
+    baseline: 72ab1cb
+    dependencies: []
+    allowed_paths: []
+    objective: 'Read-only audits: A runtime/desktop/extensions; B AI/provider/quota; C identity/governance/security'
+    report_path: docs/02-产品与版本/当前版本/V1-缺口与实施计划-2026-10-02.md
+    last_progress_at: '2026-10-02'
+    next_action: 'A/B/C r1 final replies received; integrate findings into Planner report'
+    blockers: []
+    write_handoff: 'Read-only; no product commands or service mutations'
+  - id: V1-GAP-VERIFY
+    delivery_id: DGOS-V1-GAP-20261002
+    mode: verification
+    task_pack_revision: 1
+    owner: verify
+    status: review
+    workspace_path: /Users/apple/Progame/DGOS
+    baseline: 72ab1cb
+    dependencies: []
+    allowed_paths: []
+    objective: 'Run read-only documentation gates and inspect release/E2E evidence; independently check dated plan'
+    report_path: docs/02-产品与版本/当前版本/V1-缺口与实施计划-2026-10-02.md
+    last_progress_at: '2026-10-02'
+    next_action: 'r1 returned: check 0/3, planning 0/82, release 22 errors; await dated plan for independent review'
+    blockers: []
+    write_handoff: 'Read-only; no approval or evidence fabrication'
+  - id: TEAM-PREFLIGHT
+    delivery_id: DGOS-TEAM-PREFLIGHT
+    mode: verification
+    task_pack_revision: 1
+    owner: lead
+    status: closed
+    workspace_path: /Users/apple/Progame/DGOS
+    baseline: 72ab1cb
+    dependencies: []
+    allowed_paths: []
+    participants: [planner, worker-a, worker-b, worker-c, verify]
+    objective: 'Read-only live readiness check; report role, task and blockers'
+    report_path: .herdr/deployment.md
+    last_progress_at: '2026-10-02'
+    next_action: 'All five collaborators returned PREFLIGHT-r1 READY; await new user goal'
+    blockers: []
+    write_handoff: 'No writes delegated'
+decisions_waiting: []
+last_lead_update: '2026-10-02'
+allocated_new_migrations:
+  - {version: '0045-network-route-activation', owner: worker-i, status: frozen, sha256: c2bc2a47a3360e47b02d4edd9880b88694ec3ab84cdf7613674cd2099d40040d}
+  - {version: '0046-package-retention', owner: worker-g, status: frozen, sha256: 7321916de0ddff31f40d48b837acada75d8ec893691c7c65f22d0b707d6a9a83}
+  - {version: '0047-ai-task-parameters', owner: worker-h, status: frozen, sha256: 22b6e9e886943f2b660de4d54989e0587c58cb67e373fbd45b7140849f6f15f6}
+  - {version: '0048-network-route-fingerprint', owner: worker-i, status: frozen, sha256: 7879e6cf17753fa82254675756fbeb1fdfb9ad67e11808aec8922cd2f10cd33d}
+  - {version: '0049-extension-management', owner: worker-e, status: frozen, sha256: ba0bc80a0ccc74e05a5244b50e52e6a26df39ad854995ba038020b7d5d954f1b}
+  - {version: '0050-session-management', owner: worker-c, status: frozen, sha256: 8802fe3a02b0bf7364aeac96215da09454d0c53b48c06d2cb76c6f3d6b455d85}
+  - {version: '0051-proxy-provisioning', owner: worker-i, status: frozen, sha256: 778fddef654d67bc3ecfc01e11fd91f826f91d68a5b6c5c72568b5e35cca1939}
+last_completed_delivery:
+  id: DGOS-TEAM-PREFLIGHT
+  revision: 1
+  mode: verification
+  report_path: .herdr/deployment.md
+  scope: 'Live role/client mapping, skill access, native tools and absence of pending tasks'
+  next_action: 'Await user goal; prepare scoped task packages before product work'
+cancelled_work_packages:
+  - id: SETUP-CLI
+    revision: 1
+    reason: 'Wrong-client OpenCode Worker task cancelled; no implementation files created; do not resume'
+
+# work_packages[] entry contract:
+# delivery_id, id, slice_id, feature_ids, owner, status, mode,
+# task_pack_revision, workspace_path, baseline, dependencies,
+# allowed_paths, report_path, last_progress_at, next_action,
+# blockers, write_handoff.
+# status: queued | working | review | integrated | closed | blocked
+# Use unique branches/worktrees for concurrent code writers. Before reassignment,
+# confirm the prior writer has stopped and record the write_handoff.

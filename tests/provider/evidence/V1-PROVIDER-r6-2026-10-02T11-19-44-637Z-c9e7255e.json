@@ -1,0 +1,182 @@
+{
+  "runId": "V1-PROVIDER-r6-2026-10-02T11-19-44-637Z-c9e7255e",
+  "workPackage": "V1-PROVIDER r6",
+  "startedAt": "2026-10-02T11:19:44.639Z",
+  "parentDatabase": "dgos_v1_provider",
+  "database": "dgos_v1_provider_c9e7255ef8279bfd18543fb953a1fdb2",
+  "redisDb": 5,
+  "namespace": "v1-provider-r6:c9e7255ef8279bfd18543fb953a1fdb2",
+  "apiPort": 15171,
+  "fixturePort": 15172,
+  "parentPid": 67472,
+  "cases": [
+    {
+      "name": "isolated_frozen_schema",
+      "result": "passed",
+      "facts": {
+        "migrationCount": 47,
+        "versions": [
+          "0001-v1-governance",
+          "0002-connection-test-leases",
+          "0003-audit-outbox-leases",
+          "0004-retention-jobs",
+          "0005-quota-usage",
+          "0006-runtime",
+          "0007-provider-config-ai-task",
+          "0009-quota-usage-dimensions",
+          "0010-quota-usage-idempotency",
+          "0011-runtime-persistence",
+          "0012-ai-task-leases",
+          "0013-action-run-recovery",
+          "0014-audit-runtime-targets",
+          "0015-action-handler-claim",
+          "0016-action-input-recovery",
+          "0017-action-recovery-guard",
+          "0018-action-cancel-guard",
+          "0019-ai-task-dispatch-fence",
+          "0022-api-key-rotation",
+          "0023-governance-policy",
+          "0024-admin-session-freshness",
+          "0025-extension-registry",
+          "0026-extension-runs",
+          "0027-extension-run-events",
+          "0028-app-packages",
+          "0029-app-package-deployments",
+          "0030-app-package-operations",
+          "0031-provider-account-bindings",
+          "0032-provider-connection-recovery",
+          "0033-provider-admission",
+          "0034-extension-recovery",
+          "0035-package-recovery",
+          "0036-provider-operations",
+          "0037-app-data-migration",
+          "0038-permission-action-lifecycle",
+          "0039-provider-protocol-confirmations",
+          "0040-provider-profile-bindings",
+          "0041-app-data-migration-package-digests",
+          "0043-provider-protocol-receipts",
+          "0044-system-projection",
+          "0045-network-route-activation",
+          "0046-package-retention",
+          "0047-ai-task-parameters",
+          "0048-network-route-fingerprint",
+          "0049-extension-management",
+          "0050-session-management",
+          "0051-proxy-provisioning"
+        ]
+      }
+    },
+    {
+      "name": "public_api_and_independent_worker",
+      "result": "passed",
+      "facts": {
+        "apiPort": 15171,
+        "parentPid": 67472,
+        "workerPid": 67483
+      }
+    },
+    {
+      "name": "public_profile_account_config_quota_setup",
+      "result": "passed",
+      "facts": {
+        "profileIds": [
+          "fixture.responses.c9e7255ef8279bfd18543fb953a1fdb2",
+          "fixture.chat.c9e7255ef8279bfd18543fb953a1fdb2"
+        ],
+        "configIds": [
+          "79219742-046f-4e48-ad32-646a436a5dcc",
+          "0900cc4f-ec46-48bb-be3a-8364141775fb"
+        ],
+        "connectionTestId": "94e4c03d-4b78-4e65-8611-b28ed4dc5f3f"
+      }
+    },
+    {
+      "name": "responses_snapshot_early_delta_artifact_replay",
+      "result": "passed",
+      "facts": {
+        "taskId": "84ef5bf1-3589-4293-b3c8-1cc8955d7c0a",
+        "workerPid": 67483,
+        "executionDigest": "82bad2006b7743d1ed8f0a139b9bc3e49f1ef7da7c37fd1f1b4d15bf46447b49",
+        "firstDeltaBeforeEof": true,
+        "lastEventIdResumed": true,
+        "eventCount": 3,
+        "upstreamCalls": 1
+      }
+    },
+    {
+      "name": "chat_snapshot_independent_worker_restart",
+      "result": "passed",
+      "facts": {
+        "taskId": "dd1d3d25-35cc-47ec-9766-41970bf49454",
+        "oldPid": 67483,
+        "workerPid": 67484,
+        "upstreamCalls": 1
+      }
+    },
+    {
+      "name": "invalid_parameters_zero_side_effect",
+      "result": "passed",
+      "facts": {}
+    },
+    {
+      "name": "pre_dispatch_config_mutation_denies_network",
+      "result": "passed",
+      "facts": {
+        "taskId": "68ea78c9-df41-48ec-aa20-77864e4cdaff",
+        "errorKey": "provider_config_disabled",
+        "upstreamCalls": 0,
+        "reservation": "released"
+      }
+    },
+    {
+      "name": "sigkill_sent_unknown_no_repeat",
+      "result": "passed",
+      "facts": {
+        "taskId": "e605d611-b41e-490b-a320-c0d9f0efdf14",
+        "oldPid": 67484,
+        "workerPid": 67488,
+        "upstreamCalls": 1,
+        "reservation": "needs_review"
+      }
+    },
+    {
+      "name": "pre_dispatch_policy_mutation_denies_network",
+      "result": "passed",
+      "facts": {
+        "taskId": "8244cf30-593b-4c04-a04f-2e0d86e2852a",
+        "errorKey": "model_not_allowed",
+        "upstreamCalls": 0,
+        "reservation": "released"
+      }
+    }
+  ],
+  "limitations": [
+    "Controlled local HTTPS fixture, not a paid or production Provider.",
+    "Only Provider HTTP and worker chain; not the full V1 release suite."
+  ],
+  "status": "passed",
+  "finishedAt": "2026-10-02T11:19:46.332Z",
+  "sourceBefore": {
+    "scripts/v1-provider-http.mjs": "04f9a094bbb942a6665a1067d10a7f3ab70517e0266028f685509f130e66280d",
+    "apps/api/src/server.mjs": "817de931008a26870e7363e10778e22d5a7abae22796595d94dc6d46c9e80546",
+    "apps/worker/src/worker.mjs": "e94c90888699b34a66632c77b8d5afea879734605e341423cf5cb821c58aa7e4",
+    "src/ai-task/service.mjs": "979006a7ea95762e6949491ecdab5c4c79f5b056cd2841b00ca92a9b5c82f689",
+    "src/ai-task/repository.mjs": "348a98092f88955d6ab893a716678c3caa55503ea7274b55ff046e7d3981f8c2",
+    "src/provider-adapters/openai-compatible.mjs": "356935081e25db3b977f1258b355116d91ae4227351b3f833d5b9033cee170a0",
+    "src/provider-config/task-admission.mjs": "b6b9c1966cf8ab1c0a479d6790139a9aff59dd9cc789d8b79c7de0850796351e",
+    "src/provider-config/text-profile.mjs": "7a480dc28ffd6058f11b6e0af9a5f42c9767cba2f2c34fb73ee0432a1a02b636",
+    "migrations/0047-ai-task-parameters.sql": "22b6e9e886943f2b660de4d54989e0587c58cb67e373fbd45b7140849f6f15f6"
+  },
+  "sourceAfter": {
+    "scripts/v1-provider-http.mjs": "04f9a094bbb942a6665a1067d10a7f3ab70517e0266028f685509f130e66280d",
+    "apps/api/src/server.mjs": "817de931008a26870e7363e10778e22d5a7abae22796595d94dc6d46c9e80546",
+    "apps/worker/src/worker.mjs": "e94c90888699b34a66632c77b8d5afea879734605e341423cf5cb821c58aa7e4",
+    "src/ai-task/service.mjs": "979006a7ea95762e6949491ecdab5c4c79f5b056cd2841b00ca92a9b5c82f689",
+    "src/ai-task/repository.mjs": "348a98092f88955d6ab893a716678c3caa55503ea7274b55ff046e7d3981f8c2",
+    "src/provider-adapters/openai-compatible.mjs": "356935081e25db3b977f1258b355116d91ae4227351b3f833d5b9033cee170a0",
+    "src/provider-config/task-admission.mjs": "b6b9c1966cf8ab1c0a479d6790139a9aff59dd9cc789d8b79c7de0850796351e",
+    "src/provider-config/text-profile.mjs": "7a480dc28ffd6058f11b6e0af9a5f42c9767cba2f2c34fb73ee0432a1a02b636",
+    "migrations/0047-ai-task-parameters.sql": "22b6e9e886943f2b660de4d54989e0587c58cb67e373fbd45b7140849f6f15f6"
+  },
+  "sourceStable": true
+}

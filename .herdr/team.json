@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "roles": [
+    { "name": "lead", "label": "Lead", "kind": "opencode", "role": "lead.md" },
+    { "name": "planner", "label": "Planner", "kind": "opencode", "role": "planner.md" },
+    { "name": "worker-a", "label": "Worker-A", "kind": "codex", "role": "worker.md" },
+    { "name": "worker-b", "label": "Worker-B", "kind": "codex", "role": "worker.md" },
+    { "name": "worker-c", "label": "Worker-C", "kind": "codex", "role": "worker.md" },
+    { "name": "worker-d", "label": "Worker-D", "kind": "codex", "role": "worker.md" },
+    { "name": "worker-e", "label": "Worker-E", "kind": "codex", "role": "worker.md" },
+    { "name": "worker-f", "label": "Worker-F", "kind": "codex", "role": "worker.md" },
+    { "name": "worker-g", "label": "Worker-G", "kind": "codex", "role": "worker.md" },
+    { "name": "worker-h", "label": "Worker-H", "kind": "codex", "role": "worker.md" },
+    { "name": "worker-i", "label": "Worker-I", "kind": "codex", "role": "worker.md" },
+    { "name": "verify", "label": "Verify", "kind": "codex", "role": "verify.md" }
+  ],
+  "codexArgs": ["--sandbox", "workspace-write", "--ask-for-approval", "never", "--disable", "computer_use"],
+  "opencodeArgs": ["--auto"],
+  "modelPolicy": "inherit existing provider and model; do not replace without user instruction"
+}

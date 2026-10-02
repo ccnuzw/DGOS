@@ -1,0 +1,17 @@
+name: dgos-ops-r7-fixture
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: dgos
+      POSTGRES_PASSWORD: ${DGOS_OPS_FIXTURE_PASSWORD:?required}
+      POSTGRES_DB: postgres
+    ports:
+      - 127.0.0.1:15310:5432
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U dgos -d postgres']
+      interval: 1s
+      timeout: 2s
+      retries: 30

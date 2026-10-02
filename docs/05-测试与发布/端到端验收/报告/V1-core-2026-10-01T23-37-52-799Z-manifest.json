@@ -1,0 +1,226 @@
+{
+  "run_id": "V1-core-2026-10-01T23-37-52-799Z",
+  "environment": "local-compose-fixture",
+  "started_at": "2026-10-01T23:37:52.799Z",
+  "command": "DGOS_CORE_CREDENTIAL=<redacted> node scripts/v1-core-compose.mjs",
+  "working_directory": "/Users/apple/Progame/DGOS",
+  "scope": "V1 core public HTTP and dedicated PostgreSQL facts",
+  "cases": [],
+  "limitations": [
+    "Fixture is local; no public Provider/TLS or production guarantee.",
+    "Main worktree has concurrent edits; this is not a frozen build or full V1 E2E pass."
+  ],
+  "cleanup": "No database reset; batch rows remain for inspection. Dedicated Compose services remain running.",
+  "sanitization": "Credential, session token, request bodies, and fixture request bodies are omitted.",
+  "source_before": {
+    "commit": null,
+    "head_commit": "72ab1cb98b064a6e27b9f60a9f8f00881a827a99",
+    "working_tree_sha256": "e4eae583abdfdd571f426fda40472d59897c909adf0530497dcd7373cdb23c6b"
+  },
+  "asset_sha256": {
+    "scripts/v1-core-compose.mjs": "2c1db41ca97191d1db1bfcaa744e4fc04d094a532fc8975667011aa57a0688ee",
+    "docker-compose.integration.yml": "06f71e2a398863a6510e9c10051788b4102afb9a058eb64ee842e176bb6af7a7",
+    "apps/api/src/server.mjs": "bf0a8a6d376829904c3fa6f9609677537289f87164aed7e6b9bb4cfbf84a5b6a",
+    "apps/api/src/provider-protocol-routes.mjs": "5fcd399630e3468034019d294016db7d1d0d9cb39375bfb8d0629a09222a35ae",
+    "apps/worker/src/worker.mjs": "436d2baf2559bf0f7359ab0c9f30ae0bac5736b80fee4aba5e3aa60374c8ca69",
+    "src/ai-task/repository.mjs": "a3cc1a1f9f986b86d8d5ff127debdfcfcb4224774a7236feeb3feaeb32d7696f",
+    "src/ai-task/service.mjs": "41e04cd57a18e8f1274050e59b39983ec8f6dffe038b2bfa40e713fbd10c57fb",
+    "src/quota/repository.mjs": "e80a22b9508e88da2ca0cab6bbf0580d9ec802eb070f2007eafdd858903d4aa4",
+    "src/quota/service.mjs": "4920922239f6fe21fef672b2d08592b385c99cb0a9c8f6da040a0f4f597ee768",
+    "src/provider-config/task-admission.mjs": "7e217076ea6f8bd274606d36bf4b95405a0f06faa0f80cfeddf20f746db83bd9",
+    "src/provider-config/protocol-confirmations.mjs": "3c105ffdde1b53e0e13d80b180bfc5072f9c17ec9bad1187aef08cffa3fdf0f7",
+    "src/actions/service.mjs": "a1ec27df351bdced220dff6ad7fe853ffebda0222ba7187d169dd5a819f44466"
+  },
+  "migrations": [
+    {
+      "version": "0001-v1-governance",
+      "checksum": "4041158120cf8fc433117e217d41e483272e8c198e9813935d1f1ae567a833e3"
+    },
+    {
+      "version": "0002-connection-test-leases",
+      "checksum": "556fae173bf3efe8b502ab715e1ac62364e978a8e5f989a1b6bd84e2388978f8"
+    },
+    {
+      "version": "0003-audit-outbox-leases",
+      "checksum": "090a9ca7f251014e7dc8bd35544a4e71ca43c7e30b6ef2e41cdce338f70055bc"
+    },
+    {
+      "version": "0004-retention-jobs",
+      "checksum": "0030ee08a56817e4d283913d6e55e5416478bc2ebc1e156b0e008fc8e75c8145"
+    },
+    {
+      "version": "0005-quota-usage",
+      "checksum": "d037c22c993b91c64e0c54f12d78ed698e303f57fbd64ecbd027721869016e86"
+    },
+    {
+      "version": "0006-runtime",
+      "checksum": "5537f89b8475c4546fe37f6d740a6a5d0300dea17e7095d9ee2df796863b792b"
+    },
+    {
+      "version": "0007-provider-config-ai-task",
+      "checksum": "caf1f288f9f285026649ee61f0770034cedabd02439de4c6d742b9ed644a4229"
+    },
+    {
+      "version": "0009-quota-usage-dimensions",
+      "checksum": "42a11b86d92e23f9d492b34e34a697f52d062e18388cce643f4eeafd3efc5a36"
+    },
+    {
+      "version": "0010-quota-usage-idempotency",
+      "checksum": "87001b0cd6fe7dfa552f3eb278bac932ef0864af09b06cdc98c78bddd38ac5f2"
+    },
+    {
+      "version": "0011-runtime-persistence",
+      "checksum": "bc3db9fa2b38de9817fa9a545bd89971112f22b9664622b652922c6aeca86eee"
+    },
+    {
+      "version": "0012-ai-task-leases",
+      "checksum": "07c93eaa90919726c6d3384b44d0ff3c1e046434c870d0b64196e81600c19813"
+    },
+    {
+      "version": "0013-action-run-recovery",
+      "checksum": "7dda51f53af4ebd624ebfaf1fccc2a1a6d626aefffc445dba31c6c217b939186"
+    },
+    {
+      "version": "0014-audit-runtime-targets",
+      "checksum": "b837e3c5e3f7300b4dd964706b7418b3b19e2889086216eb84833986decb7f49"
+    },
+    {
+      "version": "0015-action-handler-claim",
+      "checksum": "145866e6d23ab992c4fe2e4f11715f6948788a513fa34dfb6a3f16abbc410959"
+    },
+    {
+      "version": "0016-action-input-recovery",
+      "checksum": "c084c94a7b676ef4d4fa9823decaf8d9174315ee8bad8096c38f5b7e314d9dfc"
+    },
+    {
+      "version": "0017-action-recovery-guard",
+      "checksum": "a3fb760d103d5fbb3a31d67f4fa6973982d169bb19a10ab2c3e13bca9c57d8ad"
+    },
+    {
+      "version": "0018-action-cancel-guard",
+      "checksum": "8a5d8b799e25fc219e42a935556e2429ff26609ee3fd05a233257bc6f4f0856c"
+    },
+    {
+      "version": "0019-ai-task-dispatch-fence",
+      "checksum": "b99e6cd5488c9558929048bf8e41e3e9607e6e5fcbdd560791c5f3999b64cbb5"
+    },
+    {
+      "version": "0022-api-key-rotation",
+      "checksum": "bc8e3d735e420ec34d9255807a90f48b559bd651a3ce5ac4511114aaf128c80c"
+    },
+    {
+      "version": "0023-governance-policy",
+      "checksum": "0a19d322f1ff95d7f4db1a5cf427a75f440cff9c4c2e1862f79ad24ab4c757e5"
+    },
+    {
+      "version": "0024-admin-session-freshness",
+      "checksum": "c476ba85c605640f8eea4ff4de5fc3617a12f12ecfb9ac4b33f45ac7a2befcdf"
+    },
+    {
+      "version": "0025-extension-registry",
+      "checksum": "13282166e607b23321221d077ccc19f4185e672f94db928c00771d229eb7d8bd"
+    },
+    {
+      "version": "0026-extension-runs",
+      "checksum": "21cc24eff1f399747864761049a4c4a19ceb765e52b856e589c4f35c7bd620bb"
+    },
+    {
+      "version": "0027-extension-run-events",
+      "checksum": "94aaf8a510f48ea9d87e4cf98657996efb10c5f3026aa8dfc9c91ee287b99538"
+    },
+    {
+      "version": "0028-app-packages",
+      "checksum": "08fae924e0e37d0999c4a43933a83177a5a0f215bac99e5368b73ab1d56b5f71"
+    },
+    {
+      "version": "0029-app-package-deployments",
+      "checksum": "dcdd38cba9baee568bf1919289dfe1d20899abc9a569be380d526f87c3c4e794"
+    },
+    {
+      "version": "0030-app-package-operations",
+      "checksum": "30e68b53884c70f0af4069616b73028019ab01c4a91c3cdcf9950bd94e19e4d6"
+    },
+    {
+      "version": "0031-provider-account-bindings",
+      "checksum": "ea5bb76be51aac25ddd348e6be58f0ec0fef990155ff499745297673bd8e9a2e"
+    },
+    {
+      "version": "0032-provider-connection-recovery",
+      "checksum": "0c8989a248fb373087afa9b1af8f8aa2110feb2303540752422543de44e66a5a"
+    },
+    {
+      "version": "0033-provider-admission",
+      "checksum": "1cf8888eb6a554b4a7fe6a71e8b06b0b1daf80d91a6a3bfa997af27822337679"
+    },
+    {
+      "version": "0034-extension-recovery",
+      "checksum": "9a6c2e429aa756435d2d8bc885277275c47a547851c1ae0ba60f2bda2c6ff81e"
+    },
+    {
+      "version": "0035-package-recovery",
+      "checksum": "c73ff34b55493b548759560d8fb0cbe44fd15de081456069d282eabe91ba6750"
+    },
+    {
+      "version": "0036-provider-operations",
+      "checksum": "24f5649da8b92b2d3ee9c63e9bbf9a7a5ed897180da761a6211c5c0ed8996aad"
+    },
+    {
+      "version": "0037-app-data-migration",
+      "checksum": "554603eff3422d32e6249880a8f62268ef410f33ff1773dc40aab0cb4f12bb0c"
+    },
+    {
+      "version": "0038-permission-action-lifecycle",
+      "checksum": "5542368a6fa955ac58440a3a223ef662fb1a54a62a883ae2fd8ffa2daf9608bd"
+    },
+    {
+      "version": "0039-provider-protocol-confirmations",
+      "checksum": "07259111a3c3808c5e6070b0189bd0bf74dcd040623b137590b17bd452bd8b12"
+    }
+  ],
+  "exit_code": 1,
+  "error": "fetch failed",
+  "failed_phase": "preflight",
+  "finished_at": "2026-10-01T23:37:52.883Z",
+  "source_after": {
+    "commit": null,
+    "head_commit": "72ab1cb98b064a6e27b9f60a9f8f00881a827a99",
+    "working_tree_sha256": "e4eae583abdfdd571f426fda40472d59897c909adf0530497dcd7373cdb23c6b"
+  },
+  "asset_sha256_after": {
+    "scripts/v1-core-compose.mjs": "2c1db41ca97191d1db1bfcaa744e4fc04d094a532fc8975667011aa57a0688ee",
+    "docker-compose.integration.yml": "06f71e2a398863a6510e9c10051788b4102afb9a058eb64ee842e176bb6af7a7",
+    "apps/api/src/server.mjs": "bf0a8a6d376829904c3fa6f9609677537289f87164aed7e6b9bb4cfbf84a5b6a",
+    "apps/api/src/provider-protocol-routes.mjs": "5fcd399630e3468034019d294016db7d1d0d9cb39375bfb8d0629a09222a35ae",
+    "apps/worker/src/worker.mjs": "436d2baf2559bf0f7359ab0c9f30ae0bac5736b80fee4aba5e3aa60374c8ca69",
+    "src/ai-task/repository.mjs": "a3cc1a1f9f986b86d8d5ff127debdfcfcb4224774a7236feeb3feaeb32d7696f",
+    "src/ai-task/service.mjs": "41e04cd57a18e8f1274050e59b39983ec8f6dffe038b2bfa40e713fbd10c57fb",
+    "src/quota/repository.mjs": "e80a22b9508e88da2ca0cab6bbf0580d9ec802eb070f2007eafdd858903d4aa4",
+    "src/quota/service.mjs": "4920922239f6fe21fef672b2d08592b385c99cb0a9c8f6da040a0f4f597ee768",
+    "src/provider-config/task-admission.mjs": "7e217076ea6f8bd274606d36bf4b95405a0f06faa0f80cfeddf20f746db83bd9",
+    "src/provider-config/protocol-confirmations.mjs": "3c105ffdde1b53e0e13d80b180bfc5072f9c17ec9bad1187aef08cffa3fdf0f7",
+    "src/actions/service.mjs": "a1ec27df351bdced220dff6ad7fe853ffebda0222ba7187d169dd5a819f44466"
+  },
+  "source_drift": false,
+  "commit": null,
+  "head_commit": "72ab1cb98b064a6e27b9f60a9f8f00881a827a99",
+  "code_version": "72ab1cb98b064a6e27b9f60a9f8f00881a827a99+working-tree:e4eae583abdfdd571f426fda40472d59897c909adf0530497dcd7373cdb23c6b",
+  "test_report": "docs/05-测试与发布/端到端验收/报告/V1-core-2026-10-01T23-37-52-799Z.md",
+  "stats": {
+    "expected": 11,
+    "passed": 0,
+    "failed": 1,
+    "skipped": 10,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "prior_attempts": [
+    "docs/05-测试与发布/端到端验收/报告/V1-core-2026-10-01T17-50-28-797Z-manifest.json",
+    "docs/05-测试与发布/端到端验收/报告/V1-core-2026-10-01T17-55-17-691Z-manifest.json",
+    "docs/05-测试与发布/端到端验收/报告/V1-core-2026-10-01T17-55-43-102Z-manifest.json",
+    "docs/05-测试与发布/端到端验收/报告/V1-core-2026-10-01T17-56-46-534Z-manifest.json",
+    "docs/05-测试与发布/端到端验收/报告/V1-core-2026-10-01T17-57-19-678Z-manifest.json",
+    "docs/05-测试与发布/端到端验收/报告/V1-core-2026-10-01T17-59-12-353Z-manifest.json",
+    "docs/05-测试与发布/端到端验收/报告/V1-core-2026-10-01T18-00-07-428Z-manifest.json",
+    "docs/05-测试与发布/端到端验收/报告/V1-core-2026-10-01T18-01-32-524Z-manifest.json"
+  ]
+}

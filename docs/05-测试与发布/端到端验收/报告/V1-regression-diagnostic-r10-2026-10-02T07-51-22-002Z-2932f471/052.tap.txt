@@ -1,0 +1,88 @@
+TAP version 13
+# Subtest: verified package lifecycle preserves prior pointer and user data
+ok 1 - verified package lifecycle preserves prior pointer and user data
+  ---
+  duration_ms: 24.83175
+  type: 'test'
+  ...
+# Subtest: bad signatures, untrusted source and path traversal are rejected before staging
+ok 2 - bad signatures, untrusted source and path traversal are rejected before staging
+  ---
+  duration_ms: 1.146708
+  type: 'test'
+  ...
+# Subtest: canonical signature bytes sort numeric-looking keys and submit request is idempotent
+ok 3 - canonical signature bytes sort numeric-looking keys and submit request is idempotent
+  ---
+  duration_ms: 4.916291
+  type: 'test'
+  ...
+# Subtest: bridge JSON preserves finite floats and omits optional object fields without changing package signatures
+ok 4 - bridge JSON preserves finite floats and omits optional object fields without changing package signatures
+  ---
+  duration_ms: 0.488375
+  type: 'test'
+  ...
+# Subtest: protected official package rejects uninstall without removing pointer
+ok 5 - protected official package rejects uninstall without removing pointer
+  ---
+  duration_ms: 6.960041
+  type: 'test'
+  ...
+# Subtest: update switches real bytes and registration failure remains recoverable
+ok 6 - update switches real bytes and registration failure remains recoverable
+  ---
+  duration_ms: 14.287958
+  type: 'test'
+  ...
+# Subtest: launch and resources require active deployment and verified bytes
+ok 7 - launch and resources require active deployment and verified bytes
+  ---
+  duration_ms: 8.875875
+  type: 'test'
+  ...
+# Subtest: bundled first-party install needs an operator official root
+ok 8 - bundled first-party install needs an operator official root
+  ---
+  duration_ms: 0.779125
+  type: 'test'
+  ...
+# Subtest: declared JSON data migration upgrades and rolls back on failed commit
+ok 9 - declared JSON data migration upgrades and rolls back on failed commit
+  ---
+  duration_ms: 16.351
+  type: 'test'
+  ...
+# Subtest: bridge binds launch instance and current package capability
+ok 10 - bridge binds launch instance and current package capability
+  ---
+  duration_ms: 7.534875
+  type: 'test'
+  ...
+# Subtest: deployment projection is subject scoped and supplies update baseVersion
+ok 11 - deployment projection is subject scoped and supplies update baseVersion
+  ---
+  duration_ms: 5.53125
+  type: 'test'
+  ...
+# Subtest: migration rejects repeated, chained and self moves before writing data
+ok 12 - migration rejects repeated, chained and self moves before writing data
+  ---
+  duration_ms: 22.349584
+  type: 'test'
+  ...
+# Subtest: recovery does not commit migration for a different package with matching dataVersion
+ok 13 - recovery does not commit migration for a different package with matching dataVersion
+  ---
+  duration_ms: 9.9585
+  type: 'test'
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 177.125416

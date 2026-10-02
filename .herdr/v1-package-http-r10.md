@@ -1,0 +1,9 @@
+# V1-PACKAGES HTTP r10
+
+Worker-G after retention r9 stopped; A owns business package/UI/build/fixture files. G owns package backend, new `scripts/v1-package-http.mjs`, package integration tests and `.herdr/V1-PACKAGES-r10.md`. No A/D frontend edits. Lead has attached PostgresPackageRetention to existing governance and onReady in main server per r9 contract.
+
+Exercise FR002 AC01–03/E2E02 full public HTTP (with actual browser health probe where required), and FR01430d classification preview-confirm-run through main server. Five catalog origins/policies, developer test installation vs ordinary approved/official, protected preinstall deny, immutable versions/channels, real signed resources, update successful+health failure rollback preserving data/Artifact refs, interrupted recovery, uninstall history retained. Use public routes for business setup and reads; DB timestamp fault/age fixtures explicitly labeled and no direct active-version substitution as proof. Observe audit/outbox and denied no side effects.
+
+Retention full route must project approved packageRetention categories/digest, confirmation drift rejects, run/checkpoint/retry actual disk cleanup and protected refs. Separate package root under tmp and random `dgos_v1_package_http_<hex>` DB or own packages DB on5432,15161–69. No D15200/old signing fixture. Fixtures contain only disposable signing keys in tmp; reports no secrets/ticket URLs.
+
+Exact migration freeze allowlist: through0048 currently0045/0046/0047/0048 frozen;0049/0050 in progress, wait their frozen hashes if current identity source requires0050. API constructor stability coordinate Lead; do not blind apply current SQL. Fix discovered G domain issues, report other owner blockers. No new SQL unless assigned. Report actual cases/exit/hash/cleanup and stop writing.

@@ -5,15 +5,32 @@ import { InMemoryProviderRepository } from '../../src/provider/repository.mjs';
 import { InMemoryProviderConfigRepository } from '../../src/provider-config/repository.mjs';
 import { InMemoryAiTaskRepository } from '../../src/ai-task/repository.mjs';
 import { InMemorySecretService } from '../../src/security/secret-service.mjs';
+import { InMemoryIdentityRepository } from '../../src/identity/repository.mjs';
+import { ProviderTestWorker } from '../../apps/worker/src/provider-test-worker.mjs';
+
+const fixtureEgress = { async validateTarget(url) { assert.equal(url, 'https://provider.invalid/v1'); } };
+const fixtureDescriptor = { descriptorVersion: 'text.v1', inputs: ['text'], outputs: ['text'], taskModes: ['text.chat'], streaming: { text: true }, cancellation: true, modelCatalog: 'remote' };
+async function readyAccount(app, auth, account, providerRepository, providerConfigRepository, secretService) {
+  const created = await app.inject({ method: 'POST', url: '/api/v1/provider/connection-tests', headers: auth, payload: { accountId: account.accountId, accountVersion: account.version, protocolVersion: 'v1' } });
+  assert.equal(created.statusCode, 202, created.body);
+  const worker = new ProviderTestWorker({ repository: providerRepository, configRepository: providerConfigRepository, secretService, egress: fixtureEgress, adapters: { 'openai-compatible': { protocolVersion: 'v1', async probe({ credential }) { assert.equal(credential, 'fixture-secret'); } } } });
+  const finished = await worker.runOnce();
+  assert.equal(finished.status, 'succeeded');
+  assert.equal(finished.testId, created.json().testId);
+  const result = await app.inject({ method: 'POST', url: `/api/v1/provider/accounts/${account.accountId}/state`, headers: auth, payload: { baseVersion: account.version, state: 'ready', connectionTestId: finished.testId } });
+  assert.equal(result.statusCode, 200, result.body);
+  return result.json();
+}
 
 test('public ProviderConfig to text task API supports explicit refresh, idempotency, SSE resume and artifact authorization', async () => {
   const providerRepository = new InMemoryProviderRepository();
   const providerConfigRepository = new InMemoryProviderConfigRepository();
   const aiTaskRepository = new InMemoryAiTaskRepository();
   const secretService = new InMemorySecretService();
+  const identityRepository = new InMemoryIdentityRepository();
   const fixtureAdapter = { protocolType: 'openai-compatible', protocolVersion: 'v1', descriptorVersion: 'text.v1', taskModes: ['text.chat'], streamingText: true, cancellation: true, modelListing: true, async validate() { return { descriptorVersion: 'text.v1', inputs: ['text'], outputs: ['text'], taskModes: ['text.chat'], streaming: { text: true }, cancellation: true, modelCatalog: 'remote' }; }, async listModels() { return [{ modelId: 'fixture-text-model', displayName: 'Fixture model', taskModes: ['text.chat'], streaming: true, tools: false, capabilitySummary: { text: true } }]; } };
   const quotaCalls = [];
-  const app = buildServer({ logger: false, repository: new (await import('../../src/identity/repository.mjs')).InMemoryIdentityRepository(), auditRepository: new (await import('../../src/audit/outbox.mjs')).InMemoryAuditRepository(), providerRepository, providerConfigRepository, aiTaskRepository, secretService, providerAdapters: [fixtureAdapter], providerRunner: async function* () { yield 'hello'; yield ' world'; }, providerEgress: {}, quotaAdapter: { preflight: async (input) => { quotaCalls.push({ type: 'preflight', input }); return { decision: 'allow', allowed: true, requestId: input.requestId }; }, reserve: async (input) => { quotaCalls.push({ type: 'reserve', input }); return { reservationId: 'fixture-reservation', ...input, state: 'reserved', reservedAmount: 1 }; }, settle: async (input) => { quotaCalls.push({ type: 'settle', input }); return { reservationId: input.reservationId, state: input.release ? 'released' : 'settled', usageStatus: input.usageStatus, reconciliation: 'complete' }; }, release: async (input) => { quotaCalls.push({ type: 'release', input }); return { reservationId: input.reservationId, state: 'released', reconciliation: 'complete' }; } } });
+  const app = buildServer({ logger: false, repository: identityRepository, auditRepository: new (await import('../../src/audit/outbox.mjs')).InMemoryAuditRepository(), providerRepository, providerConfigRepository, aiTaskRepository, secretService, providerAdapters: [fixtureAdapter], providerRunner: async function* () { yield 'hello'; yield ' world'; }, providerEgress: fixtureEgress, quotaAdapter: { preflight: async (input) => { quotaCalls.push({ type: 'preflight', input }); return { decision: 'allow', allowed: true, requestId: input.requestId }; }, reserve: async (input) => { quotaCalls.push({ type: 'reserve', input }); return { reservationId: 'fixture-reservation', ...input, state: 'reserved', reservedAmount: 1 }; }, settle: async (input) => { quotaCalls.push({ type: 'settle', input }); return { reservationId: input.reservationId, state: input.release ? 'released' : 'settled', usageStatus: input.usageStatus, reconciliation: 'complete' }; }, release: async (input) => { quotaCalls.push({ type: 'release', input }); return { reservationId: input.reservationId, state: 'released', reconciliation: 'complete' }; } } });
   const bootstrap = await app.inject({ method: 'POST', url: '/api/v1/identity/admin/bootstrap', payload: { displayName: 'Task Owner', credential: 'owner-password' } });
   const ownerId = bootstrap.json().principalId;
   const token = bootstrap.json().sessionId;
@@ -21,6 +38,7 @@ test('public ProviderConfig to text task API supports explicit refresh, idempote
   const accountRes = await app.inject({ method: 'POST', url: '/api/v1/provider/accounts', headers: auth, payload: { protocolType: 'openai-compatible', displayName: 'Fixture', credential: 'fixture-secret', scope: { endpoint: 'https://provider.invalid/v1' } } });
   assert.equal(accountRes.statusCode, 201);
   const account = accountRes.json();
+  await readyAccount(app, auth, account, providerRepository, providerConfigRepository, secretService);
   const configRes = await app.inject({ method: 'POST', url: '/api/v1/provider/configs', headers: auth, payload: { requestId: 'config-create-1', providerAccountId: account.accountId, protocolType: 'openai-compatible', displayName: 'Fixture config', baseUrl: 'https://provider.invalid/v1' } });
   assert.equal(configRes.statusCode, 201, configRes.body);
   const config = configRes.json();
@@ -52,7 +70,7 @@ test('public ProviderConfig to text task API supports explicit refresh, idempote
   assert.equal(quotaCalls.find((call) => call.type === 'settle').input.terminalState, 'completed');
   assert.equal(quotaCalls.find((call) => call.type === 'settle').input.usageStatus, 'unavailable');
   assert.deepEqual(quotaCalls.map((call) => call.type), ['preflight', 'reserve', 'settle']);
-  assert.equal(quotaCalls[0].input.taskId, receipt.taskId);
+  assert.equal(quotaCalls[0].input.taskId, undefined);
   assert.equal(quotaCalls[1].input.taskId, receipt.taskId);
   assert.equal(quotaCalls[1].input.attemptId, quotaCalls[2].input.attemptId);
   const events = await app.inject({ method: 'GET', url: `/api/v1/ai-tasks/${receipt.taskId}/events`, headers: auth });
@@ -60,27 +78,35 @@ test('public ProviderConfig to text task API supports explicit refresh, idempote
   const firstEvent = await aiTaskRepository.listEvents(receipt.taskId, 0);
   const resumed = await app.inject({ method: 'GET', url: `/api/v1/ai-tasks/${receipt.taskId}/events`, headers: { ...auth, 'last-event-id': String(firstEvent[0].sequence) } });
   assert.doesNotMatch(resumed.body, new RegExp(`id: ${firstEvent[0].sequence}\\n`));
+  const unknown = await app.inject({ method: 'GET', url: '/api/v1/ai-tasks/task-does-not-exist/events', headers: auth });
+  assert.equal(unknown.statusCode, 404);
+  const unknownSnapshot = await app.inject({ method: 'GET', url: '/api/v1/ai-tasks/task-does-not-exist', headers: auth });
+  assert.equal(unknownSnapshot.statusCode, 404);
   const artifactId = snapshot.json().artifactIds[0];
   const artifact = await app.inject({ method: 'GET', url: `/api/v1/artifacts/${artifactId}`, headers: auth });
   assert.equal(artifact.json().content, 'hello world');
-  const strangerId = '00000000-0000-4000-8000-000000000099';
-  const strangerKey = await app.inject({ method: 'POST', url: '/api/v1/secret/api-keys', headers: auth, payload: { name: 'stranger', scopes: ['artifact.read'], ownerId: strangerId } });
+  const stranger = await identityRepository.createPrincipal({ credentialRef: 'fixture:stranger' });
+  const strangerSession = await identityRepository.createSession({ principalId: stranger.principalId, expiresAt: new Date(Date.now() + 60_000) });
+  const strangerKey = await app.inject({ method: 'POST', url: '/api/v1/secret/api-keys', headers: { authorization: `Bearer ${strangerSession.sessionId}` }, payload: { name: 'stranger', scopes: ['artifact.read'] } });
+  assert.equal(strangerKey.statusCode, 201, strangerKey.body);
   const denied = await app.inject({ method: 'GET', url: `/api/v1/artifacts/${artifactId}`, headers: { authorization: `ApiKey ${strangerKey.json().secret}` } });
   assert.equal(denied.statusCode, 404);
   assert.equal(ownerId, config.ownerId);
   await app.close();
 });
 
-test('quota preflight rejection fails the task before an attempt or reservation is created', async () => {
+test('quota preflight rejection creates no task, attempt or reservation', async () => {
   const providerRepository = new InMemoryProviderRepository();
   const providerConfigRepository = new InMemoryProviderConfigRepository();
   const aiTaskRepository = new InMemoryAiTaskRepository();
   const secretService = new InMemorySecretService();
-  const fixtureAdapter = { protocolType: 'openai-compatible', protocolVersion: 'v1', descriptorVersion: 'text.v1', taskModes: ['text.chat'], streamingText: true, cancellation: true, modelListing: true, async listModels() { return [{ modelId: 'fixture-text-model', displayName: 'Fixture model', taskModes: ['text.chat'], streaming: true, tools: false, capabilitySummary: { text: true } }]; } };
-  const app = buildServer({ logger: false, repository: new (await import('../../src/identity/repository.mjs')).InMemoryIdentityRepository(), auditRepository: new (await import('../../src/audit/outbox.mjs')).InMemoryAuditRepository(), providerRepository, providerConfigRepository, aiTaskRepository, secretService, providerAdapters: [fixtureAdapter], quotaAdapter: { preflight: async () => { throw Object.assign(new Error('quota_exceeded'), { statusCode: 429 }); }, reserve: async () => { throw new Error('reserve_must_not_run'); } } });
+  const fixtureAdapter = { protocolType: 'openai-compatible', protocolVersion: 'v1', descriptorVersion: 'text.v1', taskModes: ['text.chat'], streamingText: true, cancellation: true, modelListing: true, async validate() { return fixtureDescriptor; }, async listModels() { return [{ modelId: 'fixture-text-model', displayName: 'Fixture model', taskModes: ['text.chat'], streaming: true, tools: false, capabilitySummary: { text: true } }]; } };
+  let reservations = 0;
+  const app = buildServer({ logger: false, repository: new InMemoryIdentityRepository(), auditRepository: new (await import('../../src/audit/outbox.mjs')).InMemoryAuditRepository(), providerRepository, providerConfigRepository, aiTaskRepository, secretService, providerAdapters: [fixtureAdapter], providerEgress: fixtureEgress, quotaAdapter: { preflight: async () => { throw Object.assign(new Error('quota_exceeded'), { statusCode: 429 }); }, reserve: async () => { reservations += 1; throw new Error('reserve_must_not_run'); } } });
   const bootstrap = await app.inject({ method: 'POST', url: '/api/v1/identity/admin/bootstrap', payload: { displayName: 'Quota Owner', credential: 'owner-password' } });
   const auth = { authorization: `Bearer ${bootstrap.json().sessionId}` };
   const account = await app.inject({ method: 'POST', url: '/api/v1/provider/accounts', headers: auth, payload: { protocolType: 'openai-compatible', displayName: 'Fixture', credential: 'fixture-secret', scope: { endpoint: 'https://provider.invalid/v1' } } });
+  await readyAccount(app, auth, account.json(), providerRepository, providerConfigRepository, secretService);
   const config = await app.inject({ method: 'POST', url: '/api/v1/provider/configs', headers: auth, payload: { providerAccountId: account.json().accountId, protocolType: 'openai-compatible', displayName: 'Fixture config', baseUrl: 'https://provider.invalid/v1' } });
   const configId = config.json().id;
   await app.inject({ method: 'POST', url: `/api/v1/provider/configs/${configId}/validate`, headers: auth });
@@ -89,9 +115,9 @@ test('quota preflight rejection fails the task before an attempt or reservation 
   const response = await app.inject({ method: 'POST', url: '/api/v1/ai-tasks', headers: auth, payload: { requestId: 'quota-denied-task', target: 'text', intent: 'text.chat', input: { text: 'blocked' }, options: { providerConfigId: configId, modelId: 'fixture-text-model' } } });
   assert.equal(response.statusCode, 429);
   const tasks = [...aiTaskRepository.tasks.values()];
-  assert.equal(tasks.length, 1);
-  assert.equal(tasks[0].status, 'failed');
+  assert.equal(tasks.length, 0);
   assert.equal(aiTaskRepository.attempts.size, 0);
+  assert.equal(reservations, 0);
   await app.close();
 });
 
@@ -100,11 +126,12 @@ async function setupTaskFixture({ providerRunner, quotaAdapter }) {
   const providerConfigRepository = new InMemoryProviderConfigRepository();
   const aiTaskRepository = new InMemoryAiTaskRepository();
   const secretService = new InMemorySecretService();
-  const fixtureAdapter = { protocolType: 'openai-compatible', protocolVersion: 'v1', descriptorVersion: 'text.v1', taskModes: ['text.chat'], streamingText: true, cancellation: true, modelListing: true, async validate() { return { descriptorVersion: 'text.v1' }; }, async listModels() { return [{ modelId: 'fixture-text-model', displayName: 'Fixture model', taskModes: ['text.chat'], streaming: true, tools: false, capabilitySummary: { text: true } }]; } };
-  const app = buildServer({ logger: false, repository: new (await import('../../src/identity/repository.mjs')).InMemoryIdentityRepository(), auditRepository: new (await import('../../src/audit/outbox.mjs')).InMemoryAuditRepository(), providerRepository, providerConfigRepository, aiTaskRepository, secretService, providerAdapters: [fixtureAdapter], providerRunner, providerEgress: {}, quotaAdapter });
+  const fixtureAdapter = { protocolType: 'openai-compatible', protocolVersion: 'v1', descriptorVersion: 'text.v1', taskModes: ['text.chat'], streamingText: true, cancellation: true, modelListing: true, async validate() { return fixtureDescriptor; }, async listModels() { return [{ modelId: 'fixture-text-model', displayName: 'Fixture model', taskModes: ['text.chat'], streaming: true, tools: false, capabilitySummary: { text: true } }]; } };
+  const app = buildServer({ logger: false, repository: new InMemoryIdentityRepository(), auditRepository: new (await import('../../src/audit/outbox.mjs')).InMemoryAuditRepository(), providerRepository, providerConfigRepository, aiTaskRepository, secretService, providerAdapters: [fixtureAdapter], providerRunner, providerEgress: fixtureEgress, quotaAdapter });
   const bootstrap = await app.inject({ method: 'POST', url: '/api/v1/identity/admin/bootstrap', payload: { displayName: 'Lifecycle Owner', credential: 'owner-password' } });
   const auth = { authorization: `Bearer ${bootstrap.json().sessionId}` };
   const account = await app.inject({ method: 'POST', url: '/api/v1/provider/accounts', headers: auth, payload: { protocolType: 'openai-compatible', displayName: 'Fixture', credential: 'fixture-secret', scope: { endpoint: 'https://provider.invalid/v1' } } });
+  await readyAccount(app, auth, account.json(), providerRepository, providerConfigRepository, secretService);
   const config = await app.inject({ method: 'POST', url: '/api/v1/provider/configs', headers: auth, payload: { providerAccountId: account.json().accountId, protocolType: 'openai-compatible', displayName: 'Fixture config', baseUrl: 'https://provider.invalid/v1' } });
   const configId = config.json().id;
   assert.equal((await app.inject({ method: 'POST', url: `/api/v1/provider/configs/${configId}/validate`, headers: auth })).statusCode, 200);
@@ -134,6 +161,9 @@ test('task cancellation releases quota exactly once', async () => {
   assert.equal((await fixture.app.inject({ method: 'GET', url: `/api/v1/ai-tasks/${response.json().taskId}`, headers: fixture.auth })).json().status, 'cancelled');
   assert.equal(calls.filter(([type]) => type === 'release').length, 1);
   assert.equal(calls.filter(([type]) => type === 'settle').length, 0);
+  const repeated = await fixture.app.inject({ method: 'DELETE', url: `/api/v1/ai-tasks/${response.json().taskId}`, headers: { ...fixture.auth, 'x-dgos-csrf': 'test' } });
+  assert.equal(repeated.statusCode, 200);
+  assert.equal(calls.filter(([type]) => type === 'release').length, 1);
   await fixture.app.close();
 });
 

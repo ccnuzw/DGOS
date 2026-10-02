@@ -8,5 +8,8 @@
     "build:macos": "cargo tauri build --manifest-path src-tauri/Cargo.toml",
     "dev": "cargo tauri dev --manifest-path src-tauri/Cargo.toml",
     "e2e:macos": "node scripts/e2e-macos.mjs"
+  },
+  "devDependencies": {
+    "sharp": "^0.35.5"
   }
 }

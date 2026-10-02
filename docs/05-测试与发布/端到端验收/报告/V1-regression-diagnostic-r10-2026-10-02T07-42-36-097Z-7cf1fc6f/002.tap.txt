@@ -1,0 +1,16 @@
+TAP version 13
+# Subtest: daemon catches tick errors, bounds claims, and awaits shutdown
+ok 1 - daemon catches tick errors, bounds claims, and awaits shutdown
+  ---
+  duration_ms: 23.220584
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 70.90425

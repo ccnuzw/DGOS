@@ -89,7 +89,7 @@ V1 Key 属于明确主体/部署，禁止匿名发行、通配管理权限、凭
 
 ### OpenAPI operation 映射
 
-以下接口已登记于 [V1-openapi.yaml](../../../04-技术架构/当前版本/V1-openapi.yaml)，实现状态仍为规划中，不代表已有实现。
+接口字段以[V1-openapi.yaml](../../../04-技术架构/当前版本/V1-openapi.yaml)为准；完成度只链接[V1实现状态](../../../02-产品与版本/当前版本/V1-实现状态.md)，不由接口登记推断。
 
 | 业务能力 | operationId | 当前状态 |
 | --- | --- | --- |
@@ -106,7 +106,7 @@ V1 Key 属于明确主体/部署，禁止匿名发行、通配管理权限、凭
 
 创建/轮换返回一次性 secret、`keyId`、遮蔽前缀、scope、过期时间和 `requestId`；列表/撤销只返回脱敏元数据和状态。
 
-| 本功能机器映射 | `listApiKeys`、`createApiKey`、`rotateApiKey`、`revokeApiKey` | 已登记；实现状态仍为规划中 |
+本功能机器映射为`listApiKeys/createApiKey/rotateApiKey/revokeApiKey`；逐项运行证据见实现与验证。
 
 ### 逐操作契约约束
 
@@ -147,7 +147,7 @@ Key `active -> rotation_pending -> active/revoked`，并可进入 `expired`；�
 
 ### 物理约束与迁移
 
-keyId、digest 和 rotationGroup 唯一；禁止明文落库；scope 采用版本化 schema。物理约束和 migration 按 ADR-0006 实现，Secret backend 和一次性展示按 ADR-0007 实现；当前仍无 migration 证据。
+keyId、digest 和 rotationGroup 唯一；禁止明文落库；scope 采用版本化schema。实际migration与PG验证见[F报告](../../../05-测试与发布/端到端验收/报告/V1-F-整合联调报告.md)，遵循ADR-0006/0007；有限轮换窗口与生产Secret不能由旧即时轮换证据代替。
 
 ### 数据所有权
 
@@ -159,13 +159,37 @@ Secret 服务拥有秘密，Identity/Permission 拥有 owner/scope，Audit 拥�
 
 ## 验收标准
 
-#### AC01–AC04 API Key 生命周期
+#### AC01 一次性创建
 
-Given 有权主体请求最小 scope 的 Key。
+Given 有权主体请求最小 scopes 的 Key。
 
-When 创建、调用、轮换、撤销或等待过期。
+When 创建 Key。
 
-Then 明文只展示一次，scope 不能越权，轮换和撤销可查询且失败不产生目标副作用。
+Then 明文仅在成功响应返回一次；列表只显示遮蔽标识和 scope。
+
+#### AC02 作用域校验
+
+Given Key 请求超出其 scopes 或主体权限。
+
+When 使用该 Key 调用公开能力。
+
+Then 失败返回拒绝和 requestId，不触发目标副作用；审计记录不含 Key，目标资源状态不改变且不创建新资源。
+
+#### AC03 轮换
+
+Given 旧 Key 处于 active 状态且调用者请求轮换。
+
+When 创建轮换 Key。
+
+Then 创建新 Key 与 rotationGroup；显式确认或窗口到期后撤销旧 Key，不出现无审计的双有效状态。
+
+#### AC04 撤销/过期
+
+Given Key 已撤销或已到期。
+
+When 再次使用该 Key 调用。
+
+Then 请求被拒绝，缓存授权失效，目标资源不变且撤销可审计。
 
 | AC | Given / When | Then 与无副作用断言 |
 | --- | --- | --- |
@@ -178,15 +202,15 @@ Then 明文只展示一次，scope 不能越权，轮换和撤销可查询且失
 
 | AC 范围 | 自动化重点 | 建议测试文件 | 建议命令 | 当前状态 |
 | --- | --- | --- | --- | --- |
-| AC01–AC04 | 一次性展示、轮换、撤销、scope 和脱敏 | `tests/integration/api-key-lifecycle.spec.ts`、`tests/security/api-key-redaction.spec.ts` | `npm test -- api-key-lifecycle` | 规划中 |
+| AC01–AC04 | 一次性展示、轮换、撤销、scope 和脱敏 | `scripts/v1-identity-http.mjs`、`tests/security/key-delegation.test.mjs` | node scripts/v1-identity-http.mjs；env -u DGOS_DATABASE_URL node --test tests/security/key-delegation.test.mjs | C r12双实例20/20含有限重叠/过期/撤销；完整UI与当前候选待验 |
 
 ### AC 逐项测试设计
 
 | AC | 验收重点 | 测试层级 | 目标资产 | 目标命令 | 初始资产状态 |
 | --- | --- | --- | --- | --- | --- |
-| AC01 | 一次性创建和展示 | Integration | `tests/integration/api-key-lifecycle.spec.ts` | `npm test -- api-key-lifecycle` | 未创建 |
-| AC02 | scope 越权与脱敏 | Security | `tests/security/api-key-redaction.spec.ts` | `npm test -- api-key-redaction` | 未创建 |
-| AC03–AC04 | 轮换、撤销和过期 | Integration/Security | `tests/integration/api-key-lifecycle.spec.ts` | `npm test -- api-key-lifecycle` | 未创建 |
+| AC01 | 一次性创建和展示 | Integration | `tests/integration/identity-api.test.mjs` | node --test tests/integration/identity-api.test.mjs | 已有子集；未作本轮通过声明 |
+| AC02 | scope 越权与脱敏 | Security/公开HTTP | `tests/security/key-delegation.test.mjs`、`scripts/v1-identity-http.mjs` | env -u DGOS_DATABASE_URL node --test tests/security/key-delegation.test.mjs；node scripts/v1-identity-http.mjs | C r12受限scope/审计无秘密；完整资源委派按候选复验 |
+| AC03–AC04 | 轮换、撤销和过期 | 双API/PG/Redis | `scripts/v1-identity-http.mjs`、`tests/security/v1-governance-e2e.test.mjs` | node scripts/v1-identity-http.mjs | C r12真实有限窗口内双Key有效、窗口后旧Key拒绝、过期/撤销拒绝；不是早期立即401断言 |
 
 ## 安全、观测与恢复
 
@@ -194,4 +218,10 @@ API Key 只允许 TLS 传输；UI 不提供复制后再次查看、导出或日�
 
 ## 实现与验证
 
-当前无 Secret 实现、测试资产或运行证据；规格 Ready 仅表示规划输入完整。
+2026-10-02 / r7回写：C r12双API/PG/Redis本地公开链20/20，包含跨实例Key认证、有限overlap内新旧Key同时可用、窗口后旧Key拒绝、过期与显式撤销及审计无凭据。基线72ab1cb加报告源码摘要，manifest SHA256为714ba199cb55b5efd9d6088a2542266230a5027cee4c6c1de28b26c18f279286；命令`node scripts/v1-identity-http.mjs`及隔离15121/15122、Redis DB3/随机子库要求见[本轮证据索引](../V1-AC资产核对-2026-10-02.md#r7-证据回写2026-10-02)。旧“立即401不满足窗口”保留在历史盘点，不再代表r12路径。
+
+这不是完整资源级委派、真实UI一次展示或生产Secret证明；D当前页面与最终候选在途。C r13可信transport单元5/5和C r15持久Secret审计fixture12/12分别证明输入判定与测试事务适配，不能互升成生产入口/真实PG可用性。
+
+## 技术设计
+
+见[API Key生命周期技术设计](02-API-Key生命周期-技术设计.md)。

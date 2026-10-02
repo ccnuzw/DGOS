@@ -1,33 +1,35 @@
-name: dgos-release
+name: ${DGOS_INTEGRATION_PROJECT:-dgos-v1-integration}
 x-node: &node
   image: node:22-bookworm-slim
   working_dir: /workspace
   volumes:
     - .:/workspace:ro
 x-runtime: &runtime
-  DGOS_DATABASE_URL: postgresql://dgos:dgos@postgres:5432/dgos
+  DGOS_DATABASE_URL: postgresql://dgos:dgos@postgres:5432/dgos_v1_integrated
   REDIS_URL: redis://redis:6379
   NODE_ENV: test
   DGOS_ALLOW_INSECURE_FIXTURE: '1'
   DGOS_FIXTURE_BASE_URL: http://fixture:4080
-  DGOS_ALLOWED_ORIGINS: http://127.0.0.1:14173
+  DGOS_ALLOWED_ORIGINS: http://127.0.0.1:${DGOS_INTEGRATION_WEB_PORT:-15203}
+  DGOS_PACKAGE_ROOT: /var/lib/dgos/packages
+  DGOS_EXTENSION_CONFIG_FILE: /workspace/src/extensions/v1-default-runtime.json
 services:
   postgres:
     image: postgres:16-alpine
     environment:
       POSTGRES_USER: dgos
       POSTGRES_PASSWORD: dgos
-      POSTGRES_DB: dgos
-    ports: ['127.0.0.1:15432:5432']
+      POSTGRES_DB: dgos_v1_integrated
+    ports: ['127.0.0.1:${DGOS_INTEGRATION_PG_PORT:-15200}:5432']
     tmpfs: ['/var/lib/postgresql/data']
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U dgos -d dgos']
+      test: ['CMD-SHELL', 'pg_isready -U dgos -d dgos_v1_integrated']
       interval: 1s
       timeout: 3s
       retries: 30
   redis:
     image: redis:7-alpine
-    ports: ['127.0.0.1:16379:6379']
+    ports: ['127.0.0.1:${DGOS_INTEGRATION_REDIS_PORT:-15201}:6379']
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
       interval: 1s
@@ -36,13 +38,14 @@ services:
   migrate:
     <<: *node
     environment: *runtime
+    profiles: [migration]
     command: ['node', 'scripts/apply-migrations.mjs']
     depends_on:
       postgres: {condition: service_healthy}
   fixture:
     <<: *node
     command: ['node', 'scripts/release-fixture.mjs']
-    ports: ['127.0.0.1:14080:4080']
+    ports: ['127.0.0.1:${DGOS_INTEGRATION_FIXTURE_PORT:-15204}:4080']
     healthcheck:
       test: ['CMD', 'node', '-e', "fetch('http://localhost:4080/__fixture').then(r=>{if(!r.ok)process.exit(1)})"]
       interval: 2s
@@ -50,14 +53,18 @@ services:
       retries: 20
   api:
     <<: *node
+    volumes:
+      - .:/workspace:ro
+      - integration-packages:/var/lib/dgos/packages
     environment:
       <<: *runtime
       HOST: 0.0.0.0
       PORT: '3000'
+      DGOS_PACKAGE_TRUST_ROOTS_FILE: /workspace/.herdr/state/integration-trust-roots-r9.json
     command: ['node', 'apps/api/src/server.mjs']
-    ports: ['127.0.0.1:13000:3000']
+    ports: ['127.0.0.1:${DGOS_INTEGRATION_API_PORT:-15202}:3000']
     depends_on:
-      migrate: {condition: service_completed_successfully}
+      postgres: {condition: service_healthy}
       redis: {condition: service_healthy}
       fixture: {condition: service_healthy}
     healthcheck:
@@ -83,7 +90,7 @@ services:
       PORT: '4173'
       API_BASE_URL: http://api:3000
     command: ['node', 'apps/web/scripts/serve.mjs']
-    ports: ['127.0.0.1:14173:4173']
+    ports: ['127.0.0.1:${DGOS_INTEGRATION_WEB_PORT:-15203}:4173']
     depends_on:
       api: {condition: service_healthy}
     healthcheck:
@@ -91,3 +98,5 @@ services:
       interval: 2s
       timeout: 3s
       retries: 20
+volumes:
+  integration-packages:

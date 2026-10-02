@@ -1,0 +1,21 @@
+import pg from '../../apps/api/node_modules/pg/lib/index.js';
+import { ExtensionRunDaemon } from '../../apps/extension-runner/src/daemon.mjs';
+import { ExtensionService } from '../../src/extensions/service.mjs';
+import { PostgresExtensionRepository } from '../../src/extensions/repository.mjs';
+import { PostgresPackageRepository } from '../../src/apps/postgres-package-repository.mjs';
+import { PostgresAuditRepository } from '../../src/audit/outbox.mjs';
+import { createTrustedBuiltinPermissionBroker } from '../../src/permissions/broker.mjs';
+import { PostgresPermissionRepository } from '../../src/permissions/postgres-repository.mjs';
+import { loadExtensionRuntime } from '../../src/extensions/runtime.mjs';
+
+const databaseUrl=new URL(process.env.DGOS_EXTENSION_TEST_DATABASE_URL ?? '');
+if(databaseUrl.protocol!=='postgresql:'||databaseUrl.hostname!=='127.0.0.1'||databaseUrl.port!=='5432'||databaseUrl.username!=='dgos'||databaseUrl.search||databaseUrl.hash||!/^\/(?:dgos_v1_ext_http_[0-9a-f]{32}|dgos_v1_extensions_r3final)$/.test(databaseUrl.pathname))throw new Error('dedicated_extension_test_database_required');
+const pool=new pg.Pool({connectionString:databaseUrl.href});
+const audit=new PostgresAuditRepository(pool);
+const options=await loadExtensionRuntime({configPath:process.env.DGOS_EXTENSION_CONFIG_FILE,packageRepository:new PostgresPackageRepository(pool),pool,audit,permissions:createTrustedBuiltinPermissionBroker({repository:new PostgresPermissionRepository(pool),audit})});
+const service=new ExtensionService({...options,repository:new PostgresExtensionRepository(pool)});
+const daemon=new ExtensionRunDaemon({service,intervalMs:30,onError:(error)=>process.stderr.write(`${error.message}\n`)});
+daemon.start();
+process.stdout.write('extension-daemon-ready\n');
+let stopping;
+process.on('SIGTERM',()=>{stopping??=daemon.stop().then(()=>pool.end());stopping.then(()=>process.exit(0),(error)=>{process.stderr.write(`${error.message}\n`);process.exit(1);});});

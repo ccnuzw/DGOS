@@ -1,0 +1,148 @@
+{
+  "runId": "V1-EXT-PUBLIC-r7-2026-10-02T02-08-14-994Z-c3fe8f83",
+  "workPackage": "V1-EXT-PUBLIC r7",
+  "startedAt": "2026-10-02T02:08:14.996Z",
+  "database": "dgos_v1_ext_public_c3fe8f834db43163d54bde9b049878ec",
+  "redisDb": 5,
+  "namespace": "v1-ext-public:c3fe8f834db43163d54bde9b049878ec",
+  "apiPort": 15173,
+  "fixturePort": 15174,
+  "parentPid": 57600,
+  "cases": [
+    {
+      "name": "isolated_frozen_schema",
+      "result": "passed",
+      "facts": {
+        "migrationCount": 47,
+        "versions": [
+          "0001-v1-governance",
+          "0002-connection-test-leases",
+          "0003-audit-outbox-leases",
+          "0004-retention-jobs",
+          "0005-quota-usage",
+          "0006-runtime",
+          "0007-provider-config-ai-task",
+          "0009-quota-usage-dimensions",
+          "0010-quota-usage-idempotency",
+          "0011-runtime-persistence",
+          "0012-ai-task-leases",
+          "0013-action-run-recovery",
+          "0014-audit-runtime-targets",
+          "0015-action-handler-claim",
+          "0016-action-input-recovery",
+          "0017-action-recovery-guard",
+          "0018-action-cancel-guard",
+          "0019-ai-task-dispatch-fence",
+          "0022-api-key-rotation",
+          "0023-governance-policy",
+          "0024-admin-session-freshness",
+          "0025-extension-registry",
+          "0026-extension-runs",
+          "0027-extension-run-events",
+          "0028-app-packages",
+          "0029-app-package-deployments",
+          "0030-app-package-operations",
+          "0031-provider-account-bindings",
+          "0032-provider-connection-recovery",
+          "0033-provider-admission",
+          "0034-extension-recovery",
+          "0035-package-recovery",
+          "0036-provider-operations",
+          "0037-app-data-migration",
+          "0038-permission-action-lifecycle",
+          "0039-provider-protocol-confirmations",
+          "0040-provider-profile-bindings",
+          "0041-app-data-migration-package-digests",
+          "0043-provider-protocol-receipts",
+          "0044-system-projection",
+          "0045-network-route-activation",
+          "0046-package-retention",
+          "0047-ai-task-parameters",
+          "0048-network-route-fingerprint",
+          "0049-extension-management",
+          "0050-session-management",
+          "0051-proxy-provisioning"
+        ]
+      }
+    },
+    {
+      "name": "public_api_independent_worker",
+      "result": "passed",
+      "facts": {
+        "apiPort": 15173,
+        "parentPid": 57600,
+        "workerPid": 57614
+      }
+    },
+    {
+      "name": "public_provider_and_quota_setup",
+      "result": "passed",
+      "facts": {
+        "ownerId": "edd956f1-7316-4368-8db4-2fa39496f4e1",
+        "providerConfigId": "e5a3b94a-fa6d-40f7-8a5c-fe0bf39e88cc",
+        "connectionTestId": "3bd2ca10-70c1-44b8-96e5-4eed9c10dd9a"
+      }
+    },
+    {
+      "name": "custom_skill_rename_stable_identity",
+      "result": "passed",
+      "facts": {
+        "skillId": "custom_c3fe8f834db43163d54bde9b049878ec",
+        "packageId": "local_0ee0b9207d14c7e8_custom_c3fe8f834db43163d54bde9b049878ec_a0422f697484f21c",
+        "stateVersion": 3
+      }
+    },
+    {
+      "name": "confirmed_custom_run_real_task_quota_artifact",
+      "result": "passed",
+      "facts": {
+        "runId": "408d169c-a9ee-4644-89f4-0febc1c12855",
+        "taskId": "c2dc0549-a631-42ad-93eb-adcc428a08f6",
+        "artifactId": "f928cbd1-58f7-416c-b71c-874c1025be8f",
+        "providerCalls": 1
+      }
+    },
+    {
+      "name": "translation_task_artifact_apply_source_cas",
+      "result": "passed",
+      "facts": {
+        "taskId": "98634eb6-50d3-474b-aa79-ff8dfc05d70c",
+        "artifactId": "2a4367ca-5be4-4582-896c-0d925c4fb656",
+        "stateVersion": 4
+      }
+    }
+  ],
+  "limitations": [
+    "Controlled local HTTPS Provider and signed extension fixtures, not external production endpoints.",
+    "Scoped public HTTP chain; final V1 release candidate remains separate."
+  ],
+  "status": "failed",
+  "failure": {
+    "phase": "template",
+    "message": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'failed'\n- 'connected'\n"
+  },
+  "finishedAt": "2026-10-02T02:08:16.373Z",
+  "sourceBefore": {
+    "scripts/v1-extension-management-http.mjs": "45b5f757485c43998f8b6534ac2f3b24dced7c19060c636922aa66d7cf561ca1",
+    "apps/api/src/server.mjs": "b058a8719d87d87a9e25b58d425e420cad7d9361767806a722ffa5c5a5b65c9f",
+    "apps/api/src/extension-routes.mjs": "6fd65b099d9f1c9d41303796b40285ebfa39bde9f3e8fe7e1584382bd5c4e83d",
+    "apps/worker/src/worker.mjs": "e94c90888699b34a66632c77b8d5afea879734605e341423cf5cb821c58aa7e4",
+    "src/extensions/service.mjs": "6856cbdcdd3e26a85ec4ff5613d41984e62ba7c548881024117c092bc8d600da",
+    "src/extensions/management-service.mjs": "17dc33bf1b00fb1e6b6bb4bd03210c22f14bc15661813fc4ffcc7e033a098c13",
+    "src/extensions/runtime.mjs": "613f6fcc010382e0a2c936a6520f85ffac3f7a7609c5c26042da7392ad621b9c",
+    "src/ai-task/service.mjs": "979006a7ea95762e6949491ecdab5c4c79f5b056cd2841b00ca92a9b5c82f689",
+    "migrations/0049-extension-management.sql": "ba0bc80a0ccc74e05a5244b50e52e6a26df39ad854995ba038020b7d5d954f1b"
+  },
+  "sourceAfter": {
+    "scripts/v1-extension-management-http.mjs": "45b5f757485c43998f8b6534ac2f3b24dced7c19060c636922aa66d7cf561ca1",
+    "apps/api/src/server.mjs": "b058a8719d87d87a9e25b58d425e420cad7d9361767806a722ffa5c5a5b65c9f",
+    "apps/api/src/extension-routes.mjs": "6fd65b099d9f1c9d41303796b40285ebfa39bde9f3e8fe7e1584382bd5c4e83d",
+    "apps/worker/src/worker.mjs": "e94c90888699b34a66632c77b8d5afea879734605e341423cf5cb821c58aa7e4",
+    "src/extensions/service.mjs": "6856cbdcdd3e26a85ec4ff5613d41984e62ba7c548881024117c092bc8d600da",
+    "src/extensions/management-service.mjs": "17dc33bf1b00fb1e6b6bb4bd03210c22f14bc15661813fc4ffcc7e033a098c13",
+    "src/extensions/runtime.mjs": "613f6fcc010382e0a2c936a6520f85ffac3f7a7609c5c26042da7392ad621b9c",
+    "src/ai-task/service.mjs": "979006a7ea95762e6949491ecdab5c4c79f5b056cd2841b00ca92a9b5c82f689",
+    "migrations/0049-extension-management.sql": "ba0bc80a0ccc74e05a5244b50e52e6a26df39ad854995ba038020b7d5d954f1b"
+  },
+  "sourceStable": true
+}

@@ -1,0 +1,118 @@
+{
+  "runId": "V1-EXT-http-2026-10-02T01-44-51-977Z",
+  "environment": "local-dedicated-postgresql-real-http",
+  "database": "dgos_v1_extensions_r3final",
+  "port": 15141,
+  "startedAt": "2026-10-02T01:44:51.978Z",
+  "cases": [
+    {
+      "name": "Dedicated schema checksums",
+      "result": "passed",
+      "facts": {
+        "migrationCount": 47,
+        "extensionRecoveryChecksum": "9a6c2e429aa756435d2d8bc885277275c47a547851c1ae0ba60f2bda2c6ff81e"
+      }
+    },
+    {
+      "name": "Real API and independent daemon ready",
+      "result": "passed",
+      "facts": {
+        "port": 15141,
+        "workerProcessId": 41833
+      }
+    },
+    {
+      "name": "Authenticated session",
+      "result": "passed",
+      "facts": {
+        "principalId": "411b18b7-9cf9-45ff-817a-5db2a33db4a8",
+        "reusedExistingSession": true,
+        "fixtureSessionProvisioned": false
+      }
+    },
+    {
+      "name": "Signed app deployed",
+      "result": "passed",
+      "facts": {
+        "appId": "com.example.exteec944843f8f43d789a94869078958fd",
+        "packageDigest": "sha256:55c600c46ae92280adbde6c862b1b26649052d012fa6e99b039d687674157478",
+        "dependencyCount": 2
+      }
+    },
+    {
+      "name": "Declared capabilities explicitly allowed",
+      "result": "passed",
+      "facts": {
+        "builtinManagement": true,
+        "signedAppExecution": true
+      }
+    },
+    {
+      "name": "Skill public confirmation and Run",
+      "result": "passed",
+      "facts": {
+        "runId": "527583f7-cf86-4545-bf11-907ba011d40b",
+        "state": "succeeded",
+        "sequence": 3
+      }
+    },
+    {
+      "name": "MCP public connect, tools and Run",
+      "result": "passed",
+      "facts": {
+        "runId": "08e03a30-0508-4d22-972b-d10489aaa86b",
+        "state": "succeeded",
+        "sequence": 3
+      }
+    },
+    {
+      "name": "Independent daemon process restart recovers MCP",
+      "result": "passed",
+      "facts": {
+        "runId": "6f188bda-50c6-4a1d-a8c9-c56f12f7d606",
+        "state": "succeeded",
+        "priorHandlerCalls": 1,
+        "processChanged": true
+      }
+    },
+    {
+      "name": "Malformed/unknown session and explicit deny",
+      "result": "passed",
+      "facts": {
+        "malformedSessionRejected": true,
+        "unknownSessionRejected": true,
+        "permissionDenied": true
+      }
+    },
+    {
+      "name": "Queued Run cancel and uninstall reference guard",
+      "result": "passed",
+      "facts": {
+        "runId": "9ba0d03b-e885-4a54-8425-70341640c355",
+        "state": "cancelled"
+      }
+    },
+    {
+      "name": "Disconnect, disable and uninstall",
+      "result": "passed",
+      "facts": {
+        "mcp": "removed",
+        "skill": "removed"
+      }
+    },
+    {
+      "name": "Session revocation denies extension read",
+      "result": "passed",
+      "facts": {
+        "revoked": true
+      }
+    }
+  ],
+  "limitations": [
+    "Local signed package fixture and macOS sandbox are not production deployment evidence.",
+    "V1 schema permits one active admin principal, so a second authenticated subject cannot be produced through the public identity API in this database.",
+    "API uses buildServer with real routes and repositories; extension daemon runs in a separate Node process in this harness."
+  ],
+  "status": "passed",
+  "finishedAt": "2026-10-02T01:44:53.337Z"
+}

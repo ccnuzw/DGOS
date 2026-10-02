@@ -1,0 +1,32 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { buildServer } from '../../apps/api/src/server.mjs';
+import { InMemoryIdentityRepository } from '../../src/identity/repository.mjs';
+
+test('permission decision writes reject stale sessions and API Keys without changing effective permission', async (t) => {
+  assert.equal(process.env.DGOS_DATABASE_URL, undefined, 'this test requires the memory group');
+  const repository = new InMemoryIdentityRepository();
+  const app = buildServer({ logger: false, repository });
+  t.after(() => app.close());
+  const boot = await app.inject({ method: 'POST', url: '/api/v1/identity/admin/bootstrap', payload: { displayName: 'Permission freshness', credential: 'local-permission-freshness-fixture' } });
+  assert.equal(boot.statusCode, 201, boot.body);
+  const { sessionId, principalId } = boot.json();
+  const headers = { authorization: `Bearer ${sessionId}` };
+  const payload = { appId: 'dgos.extensions', capability: 'skill.read', scope: '*', decision: 'allow' };
+  const key = await app.inject({ method: 'POST', url: '/api/v1/secret/api-keys', headers, payload: { name: 'permissions', scopes: ['permission.manage'] } });
+  assert.equal(key.statusCode, 201, key.body);
+  const keyWrite = await app.inject({ method: 'PATCH', url: '/api/v1/permissions', headers: { authorization: `ApiKey ${key.json().secret}` }, payload });
+  assert.equal(keyWrite.statusCode, 403, keyWrite.body);
+  assert.equal(keyWrite.json().errorKey, 'step_up_required');
+  const session = repository.sessions.get(sessionId);
+  const freshUntil = session.authFreshUntil;
+  session.authFreshUntil = new Date(Date.now() - 1000).toISOString();
+  const stale = await app.inject({ method: 'PATCH', url: '/api/v1/permissions', headers, payload });
+  assert.equal(stale.statusCode, 403, stale.body);
+  assert.equal(stale.json().errorKey, 'step_up_required');
+  assert.equal((await app.permissions.check({ subjectId: principalId, ...payload })).decision, 'ask');
+  session.authFreshUntil = freshUntil;
+  const granted = await app.inject({ method: 'PATCH', url: '/api/v1/permissions', headers, payload });
+  assert.equal(granted.statusCode, 200, granted.body);
+  assert.equal(granted.json().decision, 'allow');
+});

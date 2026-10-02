@@ -1,0 +1,258 @@
+openapi: 3.0.3
+info:
+  title: DGOS V1 extension management engineering projection
+  version: '1.0.0'
+  description: P0-DOC r5 existing FR003 AC03–08 completion. Referenced by the sole main OpenAPI; specification, not implementation evidence.
+security:
+  - dgosSession: []
+  - dgosApiKey: []
+paths:
+  /api/v1/skills/custom:
+    post:
+      operationId: createCustomSkill
+      x-tag-feature: V1-FR-003
+      x-tag-implementation-status: planned
+      description: skill.install plus current resource authorization and CSRF for Session. Creates a subject-owned local declarative Skill, installed but disabled, with a stable ID and server-owned package identity. No shell, model call or automatic grant. requestId/body digest replay returns the same record; changed intent conflicts. Prompt and audit/receipt commit atomically, prompt never logged.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CustomSkillCreate' }
+      responses:
+        '201':
+          description: Installed disabled custom Skill
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SkillDetail' }
+        default: { $ref: 'V1-openapi.yaml#/components/responses/ValidationError' }
+  /api/v1/skills/{skillId}/definition:
+    parameters:
+      - { $ref: 'V1-openapi.yaml#/components/parameters/SkillId' }
+    get:
+      operationId: getSkillDefinition
+      x-tag-feature: V1-FR-003
+      x-tag-implementation-status: planned
+      description: skill.read plus owner authorization. Returns editable declarative content only to the authorized management UI; no-store and read audit. Not an export endpoint. Signed package contents remain immutable; local display overrides are separate.
+      responses:
+        '200':
+          description: Authorized definition and source revision
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SkillDetail' }
+        default: { $ref: 'V1-openapi.yaml#/components/responses/NotFound' }
+    patch:
+      operationId: updateSkillDefinition
+      x-tag-feature: V1-FR-003
+      x-tag-implementation-status: planned
+      description: skill.manage plus current owner authorization and Session CSRF. Rename/description overrides never change stable skillId/packageId/version or signed source bytes. systemPrompt edits only for custom Skills and require explicit confirmed=true; semantic changes disable new calls until explicit re-enable. CAS stateVersion, idempotent requestId and audit atomic. Current Run uses saved definition; no active reference rewrite.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SkillDefinitionUpdate' }
+      responses:
+        '200':
+          description: Updated definition revision
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SkillDetail' }
+        default: { $ref: 'V1-openapi.yaml#/components/responses/Conflict' }
+  /api/v1/skills/{skillId}/translations:
+    parameters:
+      - { $ref: 'V1-openapi.yaml#/components/parameters/SkillId' }
+    post:
+      operationId: translateSkill
+      x-tag-feature: V1-FR-003
+      x-tag-implementation-status: planned
+      description: skill.manage and ai_task.submit plus resource/model permission, CSRF and explicit confirmed=true. Review target language, selected fields, model and disclosure before submit. Uses existing text Task/Quota/Artifact, no generic Agent. Freeze source revision/digest and selected fields; Task receipt mapping and quota admission are atomic/idempotent. Does not change Skill or enable it. Query/cancel/read via existing Task scopes.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SkillTranslationRequest' }
+      responses:
+        '202':
+          description: Existing authorized AI Task for translation
+          content:
+            application/json:
+              schema: { $ref: 'V1-openapi.yaml#/components/schemas/AITaskReceipt' }
+        default: { $ref: 'V1-openapi.yaml#/components/responses/ValidationError' }
+  /api/v1/skills/{skillId}/translations/apply:
+    parameters:
+      - { $ref: 'V1-openapi.yaml#/components/parameters/SkillId' }
+    post:
+      operationId: applySkillTranslation
+      x-tag-feature: V1-FR-003
+      x-tag-implementation-status: planned
+      description: skill.manage, ai_task.read and artifact.read plus owner checks and Session CSRF. Explicit review/confirm applies only a succeeded translation Task bound to this Skill/source revision. Server reads its Artifact and validates bounded selected-field JSON; no caller translated text override. CAS and audit/receipt atomic; source changed conflicts. Signed package prompt translation is preview only, cannot overwrite signed executable content.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TranslationApplyRequest' }
+      responses:
+        '200':
+          description: Reviewed local definition/display override applied
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SkillDetail' }
+        default: { $ref: 'V1-openapi.yaml#/components/responses/Conflict' }
+  /api/v1/mcp/templates:
+    get:
+      operationId: listMcpTemplates
+      x-tag-feature: V1-FR-003
+      x-tag-implementation-status: planned
+      description: mcp.read; authorized trusted template metadata only. Does not install/connect or fetch arbitrary commands. Templates use the same verified source preview/install flow.
+      responses:
+        '200':
+          description: Non-secret templates
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [items]
+                properties:
+                  items: { type: array, items: { $ref: '#/components/schemas/McpTemplate' } }
+        default: { $ref: 'V1-openapi.yaml#/components/responses/Forbidden' }
+  /api/v1/mcp/{mcpId}/config:
+    parameters:
+      - { $ref: 'V1-openapi.yaml#/components/parameters/McpId' }
+    put:
+      operationId: updateMcpConfig
+      x-tag-feature: V1-FR-003
+      x-tag-implementation-status: planned
+      description: mcp.manage, owner authorization, Session CSRF and explicit confirmation. CAS stateVersion; validate trusted template/runner schema. Configuration change requires stopped/disconnected service and no active Run; otherwise conflict with no change. Secret replacement accepts write-only values, never arbitrary SecretRef. Persist config/reference/audit atomically with durable Secret compensation. Does not connect or enable automatically.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/McpConfigUpdate' }
+      responses:
+        '200':
+          description: Redacted configuration state
+          content:
+            application/json:
+              schema: { $ref: 'V1-extension.openapi.yaml#/components/schemas/Record' }
+        default: { $ref: 'V1-openapi.yaml#/components/responses/Conflict' }
+components:
+  securitySchemes:
+    dgosSession: { $ref: 'V1-openapi.yaml#/components/securitySchemes/dgosSession' }
+    dgosApiKey: { $ref: 'V1-openapi.yaml#/components/securitySchemes/dgosApiKey' }
+  schemas:
+    SkillId:
+      type: string
+      pattern: '^[a-z0-9_][a-z0-9_.-]{0,127}$'
+    SkillContent:
+      type: object
+      additionalProperties: false
+      required: [name, description, systemPrompt]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 128 }
+        description: { type: string, maxLength: 4096 }
+        systemPrompt: { type: string, minLength: 1, maxLength: 16384, description: Private user content, not executable code or authority; never audit/log or pass through generic config rejection by relaxing secret validation globally }
+    CustomSkillCreate:
+      type: object
+      additionalProperties: false
+      required: [requestId, skillId, content, confirmed]
+      properties:
+        requestId: { type: string, format: uuid }
+        skillId: { $ref: '#/components/schemas/SkillId' }
+        content: { $ref: '#/components/schemas/SkillContent' }
+        confirmed: { type: boolean, enum: [true] }
+    SkillDetail:
+      type: object
+      additionalProperties: false
+      required: [skillId, packageId, version, stateVersion, sourceType, state, content, contentDigest]
+      properties:
+        skillId: { $ref: '#/components/schemas/SkillId' }
+        packageId: { type: string }
+        version: { $ref: 'V1-openapi.yaml#/components/schemas/ExactProtocolVersion' }
+        stateVersion: { type: integer, minimum: 1 }
+        sourceType: { type: string, enum: [custom, package] }
+        state: { type: string, enum: [installed, enabled, disabled, removed] }
+        content: { $ref: '#/components/schemas/SkillContent' }
+        contentDigest: { type: string }
+        localizedDisplay:
+          type: object
+          additionalProperties:
+            type: object
+            additionalProperties: false
+            required: [name, description]
+            properties:
+              name: { type: string, maxLength: 128 }
+              description: { type: string, maxLength: 4096 }
+    SkillDefinitionUpdate:
+      type: object
+      additionalProperties: false
+      required: [requestId, baseVersion, patch]
+      properties:
+        requestId: { type: string, format: uuid }
+        baseVersion: { type: integer, minimum: 1 }
+        confirmed: { type: boolean, enum: [true] }
+        patch:
+          type: object
+          additionalProperties: false
+          minProperties: 1
+          properties:
+            name: { type: string, minLength: 1, maxLength: 128 }
+            description: { type: string, maxLength: 4096 }
+            systemPrompt: { type: string, minLength: 1, maxLength: 16384 }
+    SkillTranslationRequest:
+      type: object
+      additionalProperties: false
+      required: [requestId, baseVersion, targetLocale, fields, options, confirmed]
+      properties:
+        requestId: { type: string, format: uuid }
+        baseVersion: { type: integer, minimum: 1 }
+        targetLocale: { type: string, enum: [zh-CN, en-US] }
+        fields: { type: array, minItems: 1, uniqueItems: true, items: { type: string, enum: [name, description, systemPrompt] } }
+        options: { $ref: 'V1-openapi.yaml#/components/schemas/TextTaskOptions' }
+        confirmed: { type: boolean, enum: [true] }
+    TranslationApplyRequest:
+      type: object
+      additionalProperties: false
+      required: [requestId, baseVersion, taskId, artifactId, confirmed]
+      properties:
+        requestId: { type: string, format: uuid }
+        baseVersion: { type: integer, minimum: 1 }
+        taskId: { type: string }
+        artifactId: { type: string }
+        confirmed: { type: boolean, enum: [true] }
+    McpTemplate:
+      type: object
+      additionalProperties: false
+      required: [templateId, version, source, name, setupState, config, credentialFields]
+      properties:
+        templateId: { type: string }
+        version: { $ref: 'V1-openapi.yaml#/components/schemas/ExactProtocolVersion' }
+        source: { type: string, description: Verified source key to pass to existing preview operation }
+        name: { type: string }
+        setupState: { type: string, enum: [ready, needs-credentials], description: Template requirement only, not live connection state }
+        config: { $ref: 'V1-extension.openapi.yaml#/components/schemas/Config' }
+        credentialFields:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [name, label, required]
+            properties:
+              name: { type: string, pattern: '^[a-z][a-zA-Z0-9_]{0,63}$' }
+              label: { type: string }
+              required: { type: boolean }
+    CredentialInput:
+      type: object
+      writeOnly: true
+      maxProperties: 16
+      additionalProperties: { type: string, minLength: 1, maxLength: 8192 }
+      description: Field names must exactly match trusted template credentialFields. HTTPS or authorized native Secret boundary only. Not returned, logged, hashed into public preview, queued in ordinary config, or stored outside SecretService. No caller secretRef.
+    McpConfigUpdate:
+      type: object
+      additionalProperties: false
+      required: [requestId, baseVersion, config, confirmed]
+      properties:
+        requestId: { type: string, format: uuid }
+        baseVersion: { type: integer, minimum: 1 }
+        config: { $ref: 'V1-extension.openapi.yaml#/components/schemas/Config' }
+        credentials: { $ref: '#/components/schemas/CredentialInput' }
+        confirmed: { type: boolean, enum: [true] }

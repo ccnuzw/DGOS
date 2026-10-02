@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: PostgreSQL login audit failure rolls back session creation
+ok 1 - PostgreSQL login audit failure rolls back session creation
+  ---
+  duration_ms: 33.012042
+  type: 'test'
+  ...
+# Subtest: PostgreSQL retention needs confirmed preview and preserves referenced revoked session
+ok 2 - PostgreSQL retention needs confirmed preview and preserves referenced revoked session
+  ---
+  duration_ms: 35.864125
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 134.45075

@@ -1,0 +1,85 @@
+TAP version 13
+# Subtest: admin URL rejects missing or original business database before opening a pool
+ok 1 - admin URL rejects missing or original business database before opening a pool
+  ---
+  duration_ms: 0.956959
+  type: 'test'
+  ...
+# node broken: 2
+# Subtest: nonzero child exit is recorded and only the generated child database is dropped
+ok 2 - nonzero child exit is recorded and only the generated child database is dropped
+  ---
+  duration_ms: 6.052125
+  type: 'test'
+  ...
+# Subtest: migration failure still drops only the created child database
+ok 3 - migration failure still drops only the created child database
+  ---
+  duration_ms: 1.281333
+  type: 'test'
+  ...
+# Subtest: timeout and signal produce non-success even without numeric exit code
+ok 4 - timeout and signal produce non-success even without numeric exit code
+  ---
+  duration_ms: 24.9905
+  type: 'test'
+  ...
+# node first: null (timeout)
+# Subtest: null child exit is recorded as failure and halts later commands
+ok 5 - null child exit is recorded as failure and halts later commands
+  ---
+  duration_ms: 2.842
+  type: 'test'
+  ...
+# Subtest: dirty source identity does not pretend HEAD is the tested commit
+ok 6 - dirty source identity does not pretend HEAD is the tested commit
+  ---
+  duration_ms: 0.313291
+  type: 'test'
+  ...
+# Subtest: porcelain -z consumes rename and copy source paths as pairs
+ok 7 - porcelain -z consumes rename and copy source paths as pairs
+  ---
+  duration_ms: 0.437542
+  type: 'test'
+  ...
+# Subtest: only exact generated report paths are excluded from source identity
+ok 8 - only exact generated report paths are excluded from source identity
+  ---
+  duration_ms: 0.227541
+  type: 'test'
+  ...
+# Subtest: source identity ignores only current generated report and detects docs and rename drift
+ok 9 - source identity ignores only current generated report and detects docs and rename drift
+  ---
+  duration_ms: 380.477625
+  type: 'test'
+  ...
+# node passing: 0
+# Subtest: end snapshot drift fails the runner even when command exits zero
+ok 10 - end snapshot drift fails the runner even when command exits zero
+  ---
+  duration_ms: 2.41325
+  type: 'test'
+  ...
+# Subtest: test discovery stays in the root tests tree
+ok 11 - test discovery stays in the root tests tree
+  ---
+  duration_ms: 1.766833
+  type: 'test'
+  ...
+# Subtest: source identity is exported and detects this dirty verification script
+ok 12 - source identity is exported and detects this dirty verification script
+  ---
+  duration_ms: 169.116625
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 660.467666
