@@ -4,33 +4,33 @@ purpose: runtime delivery coordination only
 
 # This file records orchestration state and references. It does not define
 # product rules, implementation status, or evidence truth.
-active_delivery: DGOS-V1-IMPLEMENT-20261002
+active_delivery: DGOS-V1-WAVE1-CLOSURE-20261003
 lead_current_work_package:
-  id: V1-E2E-03-LEAD-VERIFICATION
+  id: V1-WAVE1-COORDINATION
   revision: 1
-  mode: verification
+  mode: implementation
   slice_id: V1-platform
-  feature_ids: [V1-FR-003]
-  status: blocked
+  feature_ids: [V1-FR-001, V1-FR-003, V1-FR-005, V1-FR-007, V1-FR-010]
+  status: working
   workspace_path: /Users/apple/Progame/DGOS
-  baseline: 72ab1cb98b064a6e27b9f60a9f8f00881a827a99
-  allowed_paths: [.herdr/V1-E2E-03-LEAD-20261002.md, docs/02-产品与版本/当前版本/V1-实现状态.md, .herdr/delivery-board.yaml]
-  report_path: .herdr/V1-E2E-03-LEAD-20261002.md
-  next_action: 'Browser fixture/context 5/5通过；native preflight通过；Docker image build/inspect/runtime probe通过，docker scout因未登录无法取得漏洞扫描结果；继续收敛真实admin凭据、正式候选绑定和release审批'
-  blockers: [docker_scout_authentication, real_admin_credentials_for_management_workbench, final_candidate_binding, release_commit_and_approvals]
+  baseline: 6c6a80b3780d3af71a825f1608246dc17e7b0b32
+  allowed_paths: [.herdr/*, docs/02-产品与版本/当前版本/*]
+  report_path: .herdr/V1-WAVE1-COORDINATION-r1.md
+  next_action: 'Wave 1 启动：5个并行工作包派发中 - Native bridge修复(F)、镜像安全(B/I)、E2E-10修复(C)、真实Provider(H)、文档收敛(Planner)'
+  blockers: []
 lead_dependency_report: .herdr/V1-LEAD-DEPENDENCY-20261002.md
 lead_wave:
-  id: V1-LEAD-WAVE-20261002-02
+  id: V1-WAVE1-P0-BLOCKERS-20261003
   status: active
-  objective: 'Use recovered PG/Docker environment to close retention regression, reconcile requirement registry, and execute native/browser/ops verification before candidate freeze.'
-  evidence: docs/05-测试与发布/端到端验收/报告/V1-regression-diagnostic-r10-2026-10-02T07-55-45-081Z-b6089f15-manifest.json
+  objective: '解除V1发布P0阻塞：Native bridge超时、镜像安全漏洞、E2E-10失败、真实Provider缺失'
+  evidence: .herdr/V1-WAVE1-EXECUTION-PLAN.md
   lanes:
-    planner: {owner: planner, package: V1-SPEC-CLOSURE-r19, status: integrated, dependency: none}
-    verify: {owner: verify, package: V1-VERIFY-CANDIDATE-r16, status: review, dependency: planner_registry, note: 'worker report stale on AC/E2E counts; Lead independent registry now 62/12/7/3 and tooling 26/26'}
-    native: {owner: worker-f, package: V1-NATIVE-CLOSURE-r15, status: blocked, dependency: pg_available, note: 'candidate-preflight signed_resource_drift:workbench.js; runner not executed'}
-    browser: {owner: worker-d, package: V1-BROWSER-CLOSURE-r10, status: blocked, dependency: chromium_available, note: 'all real branches failed before launch with mach_port_rendezvous permission denied; no business assertion reached'}
-    ops: {owner: worker-i, package: V1-OPS-SECURITY-CLOSURE-r11, status: partial, dependency: docker_available, note: 'Compose fail-closed and negative guards verified; Docker image/runtime/restore evidence blocked by socket permissions'}
-  lead_gate: 'No candidate freeze until planner registry, verify bindings, native/browser/ops reports and current source identity are reviewed.'
+    planner: {owner: planner, package: WP-W1-05, status: queued, dependency: none, note: '生成Wave 1四个工作包的context-pack'}
+    worker-f: {owner: worker-f, package: WP-W1-01, status: queued, dependency: none, note: 'Native bridge诊断与修复，目标E2E-01 Passed'}
+    worker-b: {owner: worker-b, package: WP-W1-02, status: queued, dependency: none, note: '镜像安全修复，协作worker-i，目标≤5 High CVEs'}
+    worker-c: {owner: worker-c, package: WP-W1-03, status: queued, dependency: none, note: 'E2E-10修复，目标6/6通过'}
+    worker-h: {owner: worker-h, package: WP-W1-04, status: queued, dependency: none, note: '真实Provider接入，消除fixture依赖'}
+  lead_gate: 'Wave 1完成条件：Native bridge修复+E2E-01通过、镜像≤5 High CVEs、E2E-10全通过、真实Provider至少一个text task成功'
 lead_next_dispatch:
   date: '2026-10-02'
   packages:

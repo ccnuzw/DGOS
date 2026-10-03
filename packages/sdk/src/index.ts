@@ -1,6 +1,6 @@
 // Main SDK exports
 
-export { DGOSClient } from './client.js';
+export { DGOSClient } from './client';
 
 // API exports
 export { TasksAPI } from './api/tasks.js';

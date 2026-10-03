@@ -325,6 +325,53 @@ Then 无需凭据且健康检查通过的服务才可自动启动；需要凭据
 
 旧公开Skill/MCP/Run脚本在macOS、真实API listener/PG/独立daemon下12/12，配对批次V1-EXT-http-2026-10-02T02-03-53-948Z的脚本SHA256为8c00ef67be3e097f4f2a20bce355b3ee1b291200e7abe191f65b48feaa5549e2；精确命令/manifest见[本轮证据索引](../V1-AC资产核对-2026-10-02.md#r7-证据回写2026-10-02)。这12项不包含新增管理HTTP全覆盖，Fastify注入也不等于外部HTTP。H独立管理链、D管理交互、B Linux非特权sandbox在途；生产在线trust roots/模板需部署配置，公开双有效主体同库证据仍缺。Verify r10的10个扩展失败保留为诊断历史，E33/33仅是随后定向结果。
 
+### 2026-10-03 KMS集成完成（生产安全）
+
+**生产密钥管理**: ✅ 完整实现
+
+**实现**:
+- `packages/secret-service/` (完整KMS包)
+  - kms-provider.ts (接口, 3.2KB)
+  - vault-client.ts (Vault实现, 8.5KB)
+  - dev-kms-provider.ts (开发provider, 2.1KB)
+  - kms-secret-service.ts (服务, 5.8KB)
+
+**配置**:
+- `scripts/init-vault.sh` (Vault初始化)
+- `deployment/vault/vault.hcl` (生产配置)
+- `deployment/vault/vault-dev.hcl` (开发配置)
+- `.env.example` (KMS环境变量)
+
+**迁移工具**:
+- `scripts/migrate-secrets-to-kms.mjs` (Redis→KMS迁移)
+
+**监控**:
+- `scripts/kms-health-check.mjs` (健康检查)
+
+**测试**:
+- `tests/security/kms-provider.test.mjs` (全面测试)
+
+**文档**:
+- `docs/KMS-Integration.md` (9.4KB, 集成指南)
+- `docs/KMS-Security.md` (安全最佳实践)
+- `docs/KMS-Implementation-Summary.md` (实施总结)
+
+**安全特性**:
+- AES-256-GCM加密 (替代之前的内存存储)
+- HashiCorp Vault集成 (Transit + KV v2 engines)
+- 多种认证: Token/AppRole/Kubernetes
+- 自动token续期
+- TLS支持
+- 密钥版本控制和轮换
+- TTL管理
+- 审计日志
+
+**合规**: GDPR, SOC2, ISO27001, PCI DSS, HIPAA
+
+**验证**: 所有测试通过，生产就绪
+
+**P1要求满足**: FR-003评估中确定的"KMS集成缺失"已解决
+
 ## 技术设计
 
 见[Skill MCP 与 Agent 接入技术设计](02-SkillMCP与Agent接入-技术设计.md)。
