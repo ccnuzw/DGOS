@@ -135,7 +135,8 @@
     "requireSliceBinding": true
   },
   "ignoreLinksIn": [
-    "90-参考资料"
+    "90-参考资料",
+    "99-历史归档"
   ],
   "strict": false,
   "tierRules": {

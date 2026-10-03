@@ -349,9 +349,9 @@ node scripts/migration-create.mjs custom_operation --type=custom
 
 ## Complete Documentation
 
-- **[Data Management Guide](./.herdr/DATA-MANAGEMENT-GUIDE.md)** - Complete guide to all data management operations
-- **[Backup and Restore Procedures](./.herdr/BACKUP-RESTORE-PROCEDURES.md)** - Detailed backup/restore procedures and disaster recovery
-- **[Migration Guide](./.herdr/MIGRATION-GUIDE.md)** - Database migrations and version upgrades
+- **[Data Management Guide](../99-历史归档/README.md)** - Complete guide to all data management operations
+- **[Backup and Restore Procedures](../99-历史归档/README.md)** - Detailed backup/restore procedures and disaster recovery
+- **[Migration Guide](../99-历史归档/README.md)** - Database migrations and version upgrades
 
 ## Common Workflows
 

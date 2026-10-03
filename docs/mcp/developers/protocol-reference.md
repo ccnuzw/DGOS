@@ -598,7 +598,7 @@ Validate resource URIs to prevent path traversal attacks.
 
 ## Examples
 
-See the [examples directory](../../examples/mcp-servers/) for complete implementations:
+See the [examples directory](../README.md) for complete implementations:
 
 - `memory-server.mjs`: Simple memory storage
 - `filesystem-server.mjs`: File system access

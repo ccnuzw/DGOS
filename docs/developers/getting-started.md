@@ -588,5 +588,5 @@ dgos app uninstall <appId>
 ## 下一步
 
 - 查看[示例应用](../../examples/)
-- 阅读[API参考文档](./api-reference.md)
+- 阅读[API参考文档](../skills/api-reference.md)
 - 加入[开发者社区](https://developers.dgos.dev)

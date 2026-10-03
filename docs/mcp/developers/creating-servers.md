@@ -536,11 +536,11 @@ Include:
 ## Next Steps
 
 - Review [MCP Protocol Reference](./protocol-reference.md)
-- Study [Example Servers](../../examples/mcp-servers/)
+- Study [Example Servers](../README.md)
 - Join the [DGOS Community](#)
 
 ## Resources
 
 - [MCP Specification](https://modelcontextprotocol.io)
-- [DGOS SDK Documentation](../../packages/mcp-server-sdk/)
+- [DGOS SDK Documentation](../../../packages/sdk/README.md)
 - [Community MCP Servers](https://github.com/topics/mcp-server)

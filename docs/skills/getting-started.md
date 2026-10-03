@@ -531,8 +531,8 @@ dgos skill publish --version 1.1.0
 
 ## Resources
 
-- [API Reference](./api-reference.md)
-- [Examples](./examples/)
-- [Manifest Reference](./manifest-reference.md)
-- [Triggers Reference](./triggers.md)
+- [API Reference](../skills/api-reference.md)
+- [Examples](./README.md)
+- [Manifest Reference](./api-reference.md)
+- [Triggers Reference](./best-practices.md)
 - [Best Practices](./best-practices.md)

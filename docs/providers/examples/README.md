@@ -721,4 +721,4 @@ describe('Adapter Tests', () => {
 
 - [Adapter Development Guide](../development/adapter-development.md)
 - [Protocol Reference](../reference/protocol-reference.md)
-- [Testing Guide](../development/testing.md)
+- [Testing Guide](../development/adapter-development.md)

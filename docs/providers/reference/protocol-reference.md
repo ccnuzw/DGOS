@@ -475,5 +475,5 @@ operations: {
 ## See Also
 
 - [Adapter Development Guide](../development/adapter-development.md)
-- [Capability System](./capability-system.md)
-- [API Reference](./api-reference.md)
+- [Capability System](../README.md)
+- [API Reference](../../skills/api-reference.md)

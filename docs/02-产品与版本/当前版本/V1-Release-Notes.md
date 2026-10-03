@@ -331,7 +331,7 @@ For future upgrades from V1 to V2:
 
 ### Developer Documentation
 - [V1 Developer Guide](../../06-用户文档/V1-Developer-Guide.md)
-- [Architecture Overview](../../04-技术架构/V1-Architecture.md)
+- [Architecture Overview](../../04-技术架构/当前版本/V1-总体架构.md)
 - [API Reference](../../04-技术架构/V1-API-Reference.md)
 - [Extension Development](../../06-用户文档/V1-Developer-Guide.md#extension-development)
 
@@ -343,9 +343,9 @@ For future upgrades from V1 to V2:
 
 ### Release Information
 - [Known Issues](./V1-Known-Issues.md)
-- [Development Report](../../.herdr/V1-DEVELOPMENT-REPORT.md)
-- [E2E Test Report](../../.herdr/V1-E2E-REPORT.md)
-- [Release Report](../../.herdr/V1-RELEASE-REPORT.md)
+- [Development Report](../../99-历史归档/README.md)
+- [E2E Test Report](../../99-历史归档/README.md)
+- [Release Report](../../99-历史归档/README.md)
 
 ---
 
@@ -382,4 +382,4 @@ V1 represents the foundation of the DGOS platform with 12 core features and 62 a
 
 ---
 
-**For the latest information, see the [V1 Final Status Summary](../../.herdr/V1-FINAL-STATUS.md)**
+**For the latest information, see the [V1 Final Status Summary](../../99-历史归档/README.md)**

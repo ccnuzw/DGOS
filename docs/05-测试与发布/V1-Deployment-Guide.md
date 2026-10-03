@@ -794,6 +794,6 @@ sudo systemctl start dgos-api dgos-worker
 ---
 
 **For additional information:**
-- [Security Best Practices](../04-技术架构/安全架构.md)
-- [Monitoring Guide](../04-技术架构/可观测性.md)
+- [Security Best Practices](../04-技术架构/当前版本/V1-总体架构.md)
+- [Monitoring Guide](../04-技术架构/当前版本/V1-总体架构.md)
 - [Troubleshooting](../06-用户文档/V1-User-Guide.md#troubleshooting)

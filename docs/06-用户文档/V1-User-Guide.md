@@ -1439,8 +1439,8 @@ When reporting issues, include:
 
 #### Support Channels
 
-1. Check [Known Issues](../../02-产品与版本/当前版本/V1-Known-Issues.md)
-2. Review [Deployment Guide](../../05-测试与发布/V1-Deployment-Guide.md)
+1. Check [Known Issues](../02-产品与版本/当前版本/V1-Known-Issues.md)
+2. Review [Deployment Guide](../05-测试与发布/V1-Deployment-Guide.md)
 3. Search documentation
 4. Contact technical support
 

@@ -12,7 +12,7 @@
 ## 当前结论
 
 - 当前不能标记为可发布。r11 已补齐运维、安全、恢复与性能输入，但 fresh image/canary、目标环境恢复、性能批准和发布签字仍缺失。
-- 当前证据与限制见 [.herdr/V1-OPS-SECURITY-CLOSURE-r11.md](../../../.herdr/V1-OPS-SECURITY-CLOSURE-r11.md)。
+- 当前证据与限制见 [.herdr/V1-OPS-SECURITY-CLOSURE-r11.md](../../99-历史归档/README.md)。
 
 ## 完成定义
 

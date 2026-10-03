@@ -464,13 +464,13 @@ git push origin add-my-provider
 
 See the [examples directory](../examples/) for complete implementations:
 
-- [OpenAI-Compatible Adapter](../examples/openai-compatible.md)
-- [Async Workflow Adapter](../examples/async-workflow.md)
-- [Custom REST API Adapter](../examples/custom-rest-api.md)
-- [Streaming Adapter](../examples/streaming.md)
+- [OpenAI-Compatible Adapter](../examples/README.md)
+- [Async Workflow Adapter](../examples/README.md)
+- [Custom REST API Adapter](../examples/README.md)
+- [Streaming Adapter](../examples/README.md)
 
 ## Next Steps
 
 - [Protocol Reference](../reference/protocol-reference.md)
-- [API Reference](../reference/api-reference.md)
-- [Capability System](../reference/capability-system.md)
+- [API Reference](../README.md)
+- [Capability System](../README.md)

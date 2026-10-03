@@ -163,7 +163,7 @@ Each model can support multiple capabilities:
 
 - [Adapter Development Guide](../development/adapter-development.md) - Build custom adapters
 - [Protocol Reference](../reference/protocol-reference.md) - Protocol specification
-- [API Reference](../reference/api-reference.md) - SDK and API documentation
+- [API Reference](../README.md) - SDK and API documentation
 - [Examples](../examples/) - Sample implementations
 
 ## Support

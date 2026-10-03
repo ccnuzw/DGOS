@@ -479,4 +479,4 @@ Standard error codes used in DGOS skills:
 
 ## Examples
 
-See [Examples Directory](./examples/) for complete skill examples.
+See [Examples Directory](./README.md) for complete skill examples.

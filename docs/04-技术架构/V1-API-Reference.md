@@ -786,5 +786,5 @@ All V1 endpoints are stable and will not introduce breaking changes. Future vers
 ---
 
 **For code examples and SDKs:**
-- [Developer Guide](../../06-用户文档/V1-Developer-Guide.md)
-- [Integration Examples](../04-技术架构/集成指南.md)
+- [Developer Guide](../06-用户文档/V1-Developer-Guide.md)
+- [Integration Examples](当前版本/V1-接口契约.md)

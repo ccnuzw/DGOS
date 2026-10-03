@@ -479,6 +479,6 @@ Before publishing your skill:
 ## Resources
 
 - [Getting Started Guide](./getting-started.md)
-- [API Reference](./api-reference.md)
+- [API Reference](../skills/api-reference.md)
 - [Example Skills](../../built-in-skills/)
 - [Templates](../../templates/skills/)

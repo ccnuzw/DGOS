@@ -174,10 +174,10 @@ Chain multiple skills:
 
 ## 📚 Documentation
 
-- [Getting Started Guide](./docs/skills/getting-started.md) - Learn skill development
-- [API Reference](./docs/skills/api-reference.md) - Complete API docs
-- [Best Practices](./docs/skills/best-practices.md) - Guidelines and patterns
-- [Implementation Summary](./docs/skills/IMPLEMENTATION-SUMMARY.md) - System overview
+- [Getting Started Guide](./getting-started.md) - Learn skill development
+- [API Reference](./api-reference.md) - Complete API docs
+- [Best Practices](./best-practices.md) - Guidelines and patterns
+- [Implementation Summary](./IMPLEMENTATION-SUMMARY.md) - System overview
 
 ## 🏗️ Architecture
 
@@ -284,7 +284,7 @@ To create a new skill:
 5. Document usage
 6. Package and share
 
-See [Getting Started Guide](./docs/skills/getting-started.md) for details.
+See [Getting Started Guide](./getting-started.md) for details.
 
 ## 📝 Example Skill
 

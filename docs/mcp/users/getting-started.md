@@ -204,11 +204,11 @@ Browser automation and web scraping.
 ## Next Steps
 
 - Explore the [MCP Marketplace](#) for more servers
-- Learn to [build your own MCP server](./developers/creating-servers.md)
-- Read the [MCP Protocol Reference](./developers/protocol-reference.md)
+- Learn to [build your own MCP server](../developers/creating-servers.md)
+- Read the [MCP Protocol Reference](../developers/protocol-reference.md)
 
 ## Getting Help
 
-- Check the [FAQ](./faq.md)
-- View [Troubleshooting Guide](./troubleshooting.md)
+- Check the [FAQ](../README.md)
+- View [Troubleshooting Guide](../README.md)
 - Report issues on [GitHub](https://github.com/dgos-app/dgos)

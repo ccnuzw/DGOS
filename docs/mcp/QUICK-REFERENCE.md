@@ -293,10 +293,10 @@ dgos mcp package
 
 ## Resources
 
-- 📖 [User Guide](docs/mcp/users/getting-started.md)
-- 🛠️ [Developer Guide](docs/mcp/developers/creating-servers.md)
-- 📋 [Protocol Reference](docs/mcp/developers/protocol-reference.md)
-- 💻 [Examples](examples/mcp-servers/)
+- 📖 [User Guide](users/getting-started.md)
+- 🛠️ [Developer Guide](developers/creating-servers.md)
+- 📋 [Protocol Reference](developers/protocol-reference.md)
+- 💻 [Examples](README.md)
 - 🌐 [MCP Spec](https://modelcontextprotocol.io)
 
 ## Support

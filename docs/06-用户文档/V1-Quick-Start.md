@@ -766,9 +766,9 @@ DGOS is open source! We welcome contributions:
 Ready to deploy DGOS to production?
 
 - **[Production Guide](../05-测试与发布/发布/README.md)**: Deployment best practices
-- **[Security Hardening](../04-技术架构/当前版本/安全架构.md)**: Security configuration
-- **[Monitoring](../04-技术架构/当前版/可观测性.md)**: Observability and alerts
-- **[Backup Strategy](../05-测试与发布/灾备/README.md)**: Disaster recovery planning
+- **[Security Hardening](../04-技术架构/当前版本/V1-总体架构.md)**: Security configuration
+- **[Monitoring](../04-技术架构/当前版本/V1-总体架构.md)**: Observability and alerts
+- **[Backup Strategy](../05-测试与发布/发布/恢复手册.md)**: Disaster recovery planning
 
 ---
 

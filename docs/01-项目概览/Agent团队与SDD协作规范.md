@@ -18,20 +18,21 @@
 
 ## 2. 核心模型
 
-团队采用“固定责任、动态工作包”的模型：
+团队采用“固定工作线、动态工作包”的模型：
 
 ```text
 用户
   ↓
 Lead
   ├── Spec/Docs Planner
-  ├── Worker A
-  ├── Worker B
-  ├── Worker C ...
-  └── Verify
+  ├── Worker-A · 平台与核心服务
+  ├── Worker-B · Provider与AI可靠性
+  ├── Worker-C · Web与用户体验
+  ├── Worker-D · Native与运行时
+  └── Worker-E · 部署与运维
 ```
 
-角色数量不等于固定 pane 数量。Lead 可以根据任务创建、复用或归档 Worker；用户只直接操作 Lead。Planner 和 Verify 是 Lead 调度的协作角色，Worker 是可扩展的执行槽位。
+DGOS 固定保留五个可执行 Worker。领域名称和默认工作线用于减少指挥歧义，但五个 Worker 都可以创建独立 worktree、执行完整任务包并参与并行开发；每次工作仍以任务包中的范围、路径和验收为准。用户只直接操作 Lead；Planner 和 Verify 是 Lead 调度的协作角色。
 
 `spec-docs` 的工具和规则是所有角色共同遵守的工作协议，不分别扩展成产品经理、架构师、安全负责人、发布经理等大量常驻 Agent。
 
@@ -123,7 +124,7 @@ Planner 可以写文档草案和已授权的文档变更，但不能未经 Lead 
 
 ### 4.3 Worker
 
-Worker 是通用执行角色，不固定绑定前端、后端、Provider 或某个产品领域。工作包决定 Worker 当前的专业范围。
+Worker 是带默认工作线的执行角色，工作包决定本次最终范围。A：平台与核心服务、数据、migration、权限、公共契约；B：Provider、AI Task、网络、安全、配额、性能；C：Web/UI、桌面交互、浏览器 E2E、用户流程；D：Native/Tauri、扩展、sandbox、安装生命周期；E：部署、镜像、发布、恢复、测试基础设施和运维证据。
 
 Worker 可以执行：
 
@@ -249,6 +250,20 @@ Verify 生成真实报告和 manifest；Planner 回写验证章节；Lead 根据
 适用于 Agent 失败、会话丢失、任务超时或工作区发生变化。
 
 Lead 根据任务包、仓库实际状态、Worker 报告和已有证据重新建立上下文，替换失败 Worker，不依赖旧聊天记录继续。
+
+### 5.10 DGOS 标准开发流程
+
+1. **入口分流**：Lead 接收目标，绑定版本、功能 ID 和交付切片；无法绑定时先进入盘点。
+2. **规格准备**：Planner 读取权威文档、代码和证据，生成最小 context-pack/task-pack；冲突形成决策请求。
+3. **Ready 门禁**：Lead 确认范围、接口、数据、权限、错误、AC、测试映射和工作区边界；未 Ready 不进入实现。
+4. **任务派发**：Lead 为每个包指定唯一 owner、revision、baseline、允许/禁止路径、依赖和回写清单；最多 3 个 Worker 并行写入。
+5. **实现与自证**：Worker 只修改授权范围，运行任务包命令，返回文件、命令、结果、限制和未决事项。
+6. **阶段验证**：里程碑或 Writer 停止后由 Verify 独立检查代码、契约、测试、AC 和证据，不偷偷修实现。
+7. **整合收敛**：Lead 处理冲突、返工和合并顺序，确保同一事实只有一个权威来源。
+8. **文档回写**：Planner 根据真实结果回写功能文档、契约、追踪和验证映射；Lead 更新实现状态。
+9. **交付判断**：只有真实证据满足 AC/E2E/NFR 和发布门禁，才允许标记完成或进入下一 Wave。
+
+快捷规则：没有任务包不写代码；没有 Verify 证据不宣布通过；没有 Lead 决定不改变范围；历史工作包不直接恢复。
 
 ## 6. 通用任务包
 
@@ -466,7 +481,7 @@ Worker 完成
 - 新 Agent 通过任务包接续，而不是通过读取旧聊天记录接续；
 - 角色是责任边界，不要求一一对应固定 pane；
 - 当前 workspace 的布局不构成本规范的一部分；
-- 当前客户端固定为 Lead/Planner 使用 OpenCode，Worker-A/B/C 和 Verify 使用 Codex；显示名无数字前缀，映射维护在 `.herdr/team.json`。增减槽位按任务需要安排，客户端和模型调整遵守用户指定。
+- 当前客户端固定为 Lead/Planner 使用 OpenCode，Worker-A 至 Worker-E 和 Verify 使用 Codex；Worker 的可见名称包含其默认领域，内部名仍为 `worker-a` 至 `worker-e`，映射维护在 `.herdr/team.json`。五个 Worker 均可执行任务包和创建独立 worktree；增减槽位按任务需要安排，客户端和模型调整遵守用户指定。
 
 ## 13. 与 spec-docs 的对应关系
 
