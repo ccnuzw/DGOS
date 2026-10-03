@@ -1,0 +1,42 @@
+{
+  "name": "@dgos/cli",
+  "version": "1.0.0",
+  "description": "DGOS Command Line Interface",
+  "type": "module",
+  "bin": {
+    "dgos": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@dgos/sdk": "workspace:*",
+    "commander": "^11.0.0",
+    "chalk": "^5.3.0",
+    "ora": "^7.0.0",
+    "inquirer": "^9.0.0",
+    "cli-table3": "^0.6.3",
+    "js-yaml": "^4.1.0",
+    "chokidar": "^3.5.3",
+    "prompts": "^2.4.2",
+    "boxen": "^7.1.1",
+    "picocolors": "^1.0.0",
+    "degit": "^2.8.4",
+    "execa": "^8.0.1",
+    "semver": "^7.5.4",
+    "open": "^9.1.0",
+    "ws": "^8.14.2",
+    "tar": "^6.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/inquirer": "^9.0.0",
+    "@types/js-yaml": "^4.0.0",
+    "@types/prompts": "^2.4.0",
+    "@types/ws": "^8.5.0",
+    "@types/tar": "^6.1.0",
+    "@types/semver": "^7.5.0",
+    "typescript": "^5.0.0"
+  }
+}

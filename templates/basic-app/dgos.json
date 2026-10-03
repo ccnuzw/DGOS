@@ -1,0 +1,53 @@
+{
+  "format": "dgos-app/v1",
+  "appId": "dev.example.basic-app",
+  "version": "1.0.0",
+  "build": 1,
+  "releaseChannel": "dev",
+  "minRuntimeVersion": "0.1.0",
+  "dataVersion": 1,
+  "name": {
+    "zh-CN": "基础应用",
+    "en-US": "Basic App"
+  },
+  "description": {
+    "zh-CN": "DGOS基础应用模板",
+    "en-US": "DGOS basic application template"
+  },
+  "category": "utilities",
+  "icon": "public/icon.png",
+  "entrypoints": {
+    "main": "src/index.html"
+  },
+  "defaultWindow": {
+    "width": 960,
+    "height": 720,
+    "minWidth": 640,
+    "minHeight": 480,
+    "resizable": true,
+    "maximizable": true
+  },
+  "backgroundPolicy": "release",
+  "trustLevel": "standard",
+  "uninstallPolicy": "user-removable",
+  "permissions": [
+    "system.context.read",
+    "storage.kv.write",
+    "storage.kv.read"
+  ],
+  "capabilityAllowlist": [
+    "dgos.system.info",
+    "dgos.system.context.read",
+    "dgos.storage.kv.get",
+    "dgos.storage.kv.set",
+    "dgos.ui.notify",
+    "dgos.ui.toast"
+  ],
+  "dependencies": {
+    "apps": [],
+    "skills": [],
+    "mcp": []
+  },
+  "actions": [],
+  "agent": null
+}

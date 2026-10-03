@@ -75,7 +75,7 @@ test('CSRF - POST succeeds with x-dgos-csrf header', async (t) => {
       'x-dgos-csrf': 'web',
       'content-type': 'application/json',
     },
-    payload: { protocol: 'openai-compatible', label: 'Test', endpoint: 'https://api.example.com' },
+    payload: { protocol: 'openai-compatible', label: 'Test', endpoint: 'https://api.example.com', credential: 'sk-test-key' },
   });
 
   assert.equal(response.statusCode, 201, 'Should accept request with CSRF header');

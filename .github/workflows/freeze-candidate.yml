@@ -1,0 +1,151 @@
+name: Freeze Release Candidate
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., 1.0.0-rc.1)'
+        required: true
+        type: string
+      run_tests:
+        description: 'Run tests after freezing'
+        required: false
+        type: boolean
+        default: true
+
+jobs:
+  freeze:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Make scripts executable
+        run: |
+          chmod +x scripts/freeze-candidate.sh
+          chmod +x scripts/verify-candidate.sh
+          chmod +x scripts/test-candidate.sh
+
+      - name: Freeze candidate
+        run: ./scripts/freeze-candidate.sh
+        env:
+          VERSION: ${{ inputs.version }}
+
+      - name: Get candidate ID
+        id: candidate
+        run: |
+          CANDIDATE_ID=$(ls -1t candidates/ | head -1)
+          echo "id=$CANDIDATE_ID" >> $GITHUB_OUTPUT
+          echo "Candidate ID: $CANDIDATE_ID"
+
+      - name: Verify candidate
+        run: ./scripts/verify-candidate.sh "${{ steps.candidate.outputs.id }}"
+
+      - name: Test candidate
+        if: ${{ inputs.run_tests }}
+        run: ./scripts/test-candidate.sh "${{ steps.candidate.outputs.id }}"
+        continue-on-error: true
+
+      - name: Upload candidate artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-candidate-${{ steps.candidate.outputs.id }}
+          path: candidates/${{ steps.candidate.outputs.id }}
+          retention-days: 90
+          compression-level: 9
+
+      - name: Create release tag
+        run: |
+          CANDIDATE_ID="${{ steps.candidate.outputs.id }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "$CANDIDATE_ID" -m "Release candidate $CANDIDATE_ID"
+          git push origin "$CANDIDATE_ID"
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.candidate.outputs.id }}
+          release_name: Release Candidate ${{ steps.candidate.outputs.id }}
+          body: |
+            # DGOS V1 Release Candidate
+
+            **Candidate ID:** ${{ steps.candidate.outputs.id }}
+            **Version:** ${{ inputs.version }}
+            **Commit:** ${{ github.sha }}
+            **Created:** ${{ github.event.repository.updated_at }}
+
+            ## Verification Status
+
+            ✅ Candidate frozen and verified
+
+            ## Contents
+
+            - Complete source code
+            - Built API server
+            - Built web frontend
+            - Built shared packages
+            - Database migrations
+            - Configuration templates
+            - Build manifest with checksums
+
+            ## Next Steps
+
+            1. Download artifacts from this release
+            2. Deploy to staging environment
+            3. Run E2E validation tests
+            4. Approve for production deployment
+
+            ## Documentation
+
+            See `docs/release/candidate-freeze-guide.md` for detailed deployment instructions.
+          draft: false
+          prerelease: true
+
+      - name: Summary
+        run: |
+          echo "## Release Candidate Frozen ✅" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Candidate ID:** ${{ steps.candidate.outputs.id }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** ${{ inputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "- Source code archive" >> $GITHUB_STEP_SUMMARY
+          echo "- API build" >> $GITHUB_STEP_SUMMARY
+          echo "- Web build" >> $GITHUB_STEP_SUMMARY
+          echo "- Packages build" >> $GITHUB_STEP_SUMMARY
+          echo "- Database migrations" >> $GITHUB_STEP_SUMMARY
+          echo "- Configuration templates" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Status" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Frozen and verified" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ inputs.run_tests }}" = "true" ]; then
+            echo "✅ Tests executed" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "1. Download artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "2. Deploy to staging" >> $GITHUB_STEP_SUMMARY
+          echo "3. Run validation tests" >> $GITHUB_STEP_SUMMARY

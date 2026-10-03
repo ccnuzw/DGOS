@@ -1,0 +1,15 @@
+{
+  "name": "@dgos-example/hello-world",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "dgos app dev",
+    "build": "dgos app build",
+    "validate": "dgos app validate",
+    "package": "dgos app package"
+  },
+  "dependencies": {
+    "@dgos/sdk": "workspace:*"
+  }
+}

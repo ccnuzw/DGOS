@@ -1,0 +1,20 @@
+{
+  "name": "@dgos/secret-service",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./kms": "./src/kms-provider.ts",
+    "./vault": "./src/vault-client.ts"
+  },
+  "scripts": {
+    "check": "node --check src/index.ts"
+  },
+  "dependencies": {
+    "node-vault": "^0.10.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0"
+  }
+}

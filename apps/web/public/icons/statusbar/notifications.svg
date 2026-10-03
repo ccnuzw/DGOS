@@ -1,0 +1,6 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Bell icon -->
+  <path d="M 12 4 C 10 4 8 6 8 8 L 8 12 C 8 14 7 15 6 16 L 18 16 C 17 15 16 14 16 12 L 16 8 C 16 6 14 4 12 4 Z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+  <path d="M 10 16 C 10 17 10.5 18 11 18.5 C 11.5 19 12 19 12 19 C 12 19 12.5 19 13 18.5 C 13.5 18 14 17 14 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  <line x1="12" y1="4" x2="12" y2="2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

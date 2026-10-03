@@ -1,0 +1,238 @@
+.assistant-chat {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 200px);
+  min-height: 500px;
+}
+
+.messages-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: var(--color-surface);
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-radius: 8px;
+  max-width: 80%;
+  animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-user {
+  align-self: flex-end;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.message-assistant {
+  align-self: flex-start;
+  background: var(--color-panel);
+  border: 1px solid var(--color-border);
+}
+
+.message-system {
+  align-self: center;
+  background: var(--color-info-surface);
+  border: 1px solid var(--color-info);
+  max-width: 60%;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.message-time {
+  opacity: 0.7;
+  font-size: 0.75rem;
+}
+
+.message-content {
+  line-height: 1.5;
+}
+
+.message-content p {
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.quick-actions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  overflow-x: auto;
+  flex-wrap: wrap;
+}
+
+.quick-action-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.quick-action-btn:hover {
+  background: var(--color-panel);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.input-area {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-panel);
+}
+
+.message-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.message-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary-alpha);
+}
+
+.message-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.input-hint {
+  padding: 0 1rem 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-align: right;
+}
+
+.action-confirm-dialog {
+  min-width: 500px;
+  max-width: 600px;
+}
+
+.action-details {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: var(--color-surface);
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+}
+
+.action-details dl {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.action-details dt {
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.action-details dd {
+  margin: 0;
+}
+
+.action-details pre {
+  background: var(--color-panel);
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  overflow-x: auto;
+  margin: 0;
+}
+
+.permission-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.permission-list li {
+  padding: 0.25rem 0.5rem;
+  background: var(--color-panel);
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-family: monospace;
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .message-user {
+  background: var(--color-primary-dark);
+}
+
+[data-theme="dark"] .quick-action-btn {
+  background: var(--color-surface-dark);
+}
+
+[data-theme="dark"] .quick-action-btn:hover {
+  background: var(--color-panel-dark);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .message {
+    max-width: 90%;
+  }
+
+  .action-confirm-dialog {
+    min-width: 90vw;
+  }
+
+  .action-details dl {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .action-details dt {
+    margin-bottom: -0.5rem;
+  }
+}

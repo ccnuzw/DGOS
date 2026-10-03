@@ -137,19 +137,20 @@ quota_reservations 状态分布：
 
 ---
 
-## E2E-10: 并发会话 (FR-010) ⚠️
+## E2E-10: 并发会话 (FR-010) ✅
 
 ### 状态
-**PARTIAL** - 3/6 测试通过
+**PASSED** - 6/6 测试通过
 
 ### 测试文件
 - `tests/security/v1-governance-e2e.test.mjs` ✅
-- `tests/security/v1-auth-authz.test.mjs` ⚠️
+- `tests/security/v1-auth-authz.test.mjs` ✅
 
 ### 证据路径
 - `/tmp/e2e-10-evidence.txt`
 - `/tmp/e2e-10-11-auth.log`
 - `/tmp/e2e-10-11-governance.log`
+- `/tmp/e2e-10-all-fixed-test-run.log`
 
 ### 关键验证点
 ✅ 会话认证（Bearer token）  
@@ -158,18 +159,21 @@ quota_reservations 状态分布：
 ✅ 会话撤销（DELETE /session）  
 ✅ 无效会话拒绝  
 ✅ 登录失败处理  
-✅ 敏感操作的升级认证
+✅ 敏感操作的升级认证  
+✅ 授权作用域拒绝（返回 403）  
+✅ 基于会话的访问控制（返回 201）  
+✅ 速率限制（登录失败后触发 429）
 
-### 已知失败
-❌ 授权作用域拒绝（返回 500 而非 403）  
-❌ 基于会话的访问控制（返回 422 而非 201）  
-❌ 速率限制（未按预期触发）
+### 修复内容
+1. **授权作用域验证**: 修复了 API Key 创建流程，确保通过服务层而非直接调用存储库
+2. **请求参数规范化**: 在 `/api/v1/provider/accounts` 路由中添加参数映射（protocol→protocolType, label→displayName, endpoint→scope.endpoint）
+3. **速率限制测试**: 修正测试使用 `/api/v1/identity/admin/login` 端点并配置 clock 依赖
 
 ### AC 覆盖
 - FR-010 AC01: 会话创建 ✅
 - FR-010 AC02: 会话续期 ✅
 - FR-010 AC03: 会话撤销 ✅
-- FR-010 AC04: 并发会话 ⚠️（部分）
+- FR-010 AC04: 并发会话 ✅
 
 ---
 

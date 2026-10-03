@@ -1,0 +1,20 @@
+{
+  "name": "@dgos/examples",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "basic": "tsx examples/sdk/basic-task.ts",
+    "streaming": "tsx examples/sdk/streaming-task.ts",
+    "batch": "tsx examples/sdk/batch-operations.ts",
+    "errors": "tsx examples/sdk/error-handling.ts",
+    "providers": "tsx examples/sdk/provider-management.ts"
+  },
+  "dependencies": {
+    "@dgos/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}

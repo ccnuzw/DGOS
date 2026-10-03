@@ -1,0 +1,440 @@
+/* Enhanced UX Component Styles */
+
+/* Toast Notifications */
+.toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 420px;
+  pointer-events: none;
+}
+
+.dgos-toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--raised);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 0 1px var(--border);
+  pointer-events: auto;
+  animation: toast-enter 0.2s ease-out;
+}
+
+.dgos-toast.exiting {
+  animation: toast-exit 0.2s ease-in forwards;
+}
+
+.dgos-toast.success { border-left: 3px solid var(--success); }
+.dgos-toast.error { border-left: 3px solid var(--danger); }
+.dgos-toast.info { border-left: 3px solid var(--info); }
+.dgos-toast.warning { border-left: 3px solid var(--warning); }
+
+.toast-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.dgos-toast.success .toast-icon { background: var(--success-soft); color: var(--success); }
+.dgos-toast.error .toast-icon { background: var(--danger-soft); color: var(--danger); }
+.dgos-toast.info .toast-icon { background: var(--info-soft); color: var(--info); }
+.dgos-toast.warning .toast-icon { background: var(--warning-soft); color: var(--warning); }
+
+.toast-content {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.toast-action {
+  padding: 6px 12px;
+  background: var(--primary);
+  color: var(--on-primary);
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.toast-action:hover {
+  opacity: 0.9;
+}
+
+.toast-close {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.toast-close:hover {
+  color: var(--text);
+}
+
+@keyframes toast-enter {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes toast-exit {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
+}
+
+/* Keyboard Shortcuts Help */
+.keyboard-help {
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.keyboard-help-content {
+  display: grid;
+  gap: 24px;
+  margin: 20px 0;
+}
+
+.shortcut-group h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.shortcut-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.shortcut-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.shortcut-item:last-child {
+  border-bottom: none;
+}
+
+.shortcut-item dt {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.shortcut-item dd {
+  margin: 0;
+  display: flex;
+  gap: 4px;
+}
+
+.keyboard-help kbd {
+  display: inline-block;
+  padding: 4px 8px;
+  background: var(--soft);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Progress Bars */
+.dgos-progress-wrapper {
+  width: 100%;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.dgos-progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--soft);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.dgos-progress-bar.success .progress-fill { background: var(--success); }
+.dgos-progress-bar.warning .progress-fill { background: var(--warning); }
+.dgos-progress-bar.danger .progress-fill { background: var(--danger); }
+
+.dgos-progress-bar.indeterminate .progress-fill {
+  width: 40%;
+  animation: progress-indeterminate 1.5s ease-in-out infinite;
+}
+
+@keyframes progress-indeterminate {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(250%); }
+  100% { transform: translateX(-100%); }
+}
+
+/* Skeleton Loaders */
+.dgos-skeleton {
+  background: linear-gradient(90deg, var(--soft) 25%, var(--border) 50%, var(--soft) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.dgos-skeleton.text {
+  height: 1em;
+  transform: translateY(4px);
+}
+
+.dgos-skeleton.circular {
+  border-radius: 50%;
+}
+
+.dgos-skeleton.rectangular {
+  border-radius: 6px;
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-list {
+  display: grid;
+  gap: 12px;
+}
+
+.skeleton-list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+}
+
+.skeleton-list-content {
+  flex: 1;
+  display: grid;
+  gap: 8px;
+}
+
+.skeleton-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.skeleton-title {
+  margin-bottom: 6px;
+}
+
+.skeleton-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+/* Loading Overlay */
+.dgos-loading-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9998;
+  backdrop-filter: blur(2px);
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  background: var(--raised);
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+.loading-content p {
+  margin: 0;
+  font-weight: 500;
+  color: var(--text);
+}
+
+/* Inline Spinner */
+.dgos-spinner-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  vertical-align: middle;
+}
+
+.spinner-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary);
+  animation: spinner-bounce 1.4s ease-in-out infinite both;
+}
+
+.dgos-spinner-inline.sm .spinner-dot { width: 4px; height: 4px; }
+.dgos-spinner-inline.lg .spinner-dot { width: 8px; height: 8px; }
+
+.spinner-dot:nth-child(1) { animation-delay: -0.32s; }
+.spinner-dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes spinner-bounce {
+  0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* Enhanced Form Fields */
+.dgos-form-field {
+  display: grid;
+  gap: 6px;
+}
+
+.field-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.required-mark {
+  color: var(--danger);
+  margin-left: 4px;
+}
+
+.field-hint {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: -2px;
+}
+
+.field-error {
+  font-size: 12px;
+  color: var(--danger);
+  margin-top: -2px;
+  font-weight: 500;
+}
+
+.field-count {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.dgos-form-field.has-error input,
+.dgos-form-field.has-error select,
+.dgos-form-field.has-error textarea {
+  border-color: var(--danger);
+}
+
+.dgos-form-field.has-error input:focus,
+.dgos-form-field.has-error select:focus,
+.dgos-form-field.has-error textarea:focus {
+  outline-color: var(--danger);
+}
+
+.dgos-textarea {
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.dgos-form-group {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 0;
+}
+
+.dgos-form-group legend {
+  font-weight: 600;
+  font-size: 14px;
+  padding: 0 8px;
+  color: var(--text);
+}
+
+.form-group-content {
+  display: grid;
+  gap: 14px;
+}
+
+/* Responsive Toast */
+@media (max-width: 680px) {
+  .toast-container {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    max-width: none;
+  }
+
+  .dgos-toast {
+    flex-wrap: wrap;
+  }
+
+  .toast-action {
+    width: 100%;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .dgos-toast,
+  .progress-fill,
+  .dgos-skeleton,
+  .spinner-dot {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .dgos-progress-bar.indeterminate .progress-fill {
+    width: 100%;
+  }
+}

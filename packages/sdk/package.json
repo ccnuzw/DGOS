@@ -1,12 +1,24 @@
 {
   "name": "@dgos/sdk",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.mjs"
+    ".": "./src/index.ts",
+    "./app": "./src/app/index.ts",
+    "./types": "./src/types/index.ts",
+    "./testing": "./src/testing/index.ts"
   },
   "scripts": {
-    "build": "node --check src/index.mjs",
-    "check": "node --check src/index.mjs"
+    "build": "tsc --noEmit",
+    "check": "tsc --noEmit",
+    "check:sdk": "tsc --noEmit --project tsconfig.sdk.json"
+  },
+  "dependencies": {
+    "eventsource": "^2.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
   }
 }

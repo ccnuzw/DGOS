@@ -1,0 +1,25 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad-tasks" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F472B6"/>
+      <stop offset="100%" stop-color="#EC4899"/>
+    </linearGradient>
+    <filter id="shadow-tasks">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <!-- Rounded rectangle base -->
+  <rect x="4" y="4" width="40" height="40" rx="10" fill="url(#grad-tasks)" filter="url(#shadow-tasks)"/>
+  <!-- Highlight -->
+  <path d="M 4 14 Q 4 4 14 4 L 34 4 Q 44 4 44 14 L 44 20 Q 24 10 4 20 Z" fill="white" opacity="0.3"/>
+  <!-- Activity chart - line graph -->
+  <path d="M 12 32 L 16 28 L 20 30 L 24 22 L 28 26 L 32 20 L 36 24" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.95"/>
+  <!-- Data points -->
+  <circle cx="16" cy="28" r="2" fill="white"/>
+  <circle cx="24" cy="22" r="2" fill="white"/>
+  <circle cx="32" cy="20" r="2" fill="white"/>
+  <!-- Activity indicator -->
+  <circle cx="35" cy="15" r="2.5" fill="white" opacity="0.9">
+    <animate attributeName="opacity" values="0.9;0.4;0.9" dur="2s" repeatCount="indefinite"/>
+  </circle>
+</svg>

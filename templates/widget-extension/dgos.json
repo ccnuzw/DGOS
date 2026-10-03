@@ -1,0 +1,149 @@
+{
+  "format": "dgos-app/v2",
+  "appId": "dev.example.widget",
+  "version": "1.0.0",
+  "build": 1,
+  "releaseChannel": "dev",
+  "minRuntimeVersion": "0.1.0",
+  "dataVersion": 1,
+  "name": {
+    "zh-CN": "小部件扩展",
+    "en-US": "Widget Extension"
+  },
+  "description": {
+    "zh-CN": "DGOS小部件扩展模板，用于创建桌面小部件",
+    "en-US": "DGOS widget extension template for creating desktop widgets"
+  },
+  "category": "utilities",
+  "icon": "public/icon.png",
+  "entrypoints": {
+    "main": "src/index.html",
+    "config": "src/config.html"
+  },
+  "defaultWindow": {
+    "width": 400,
+    "height": 500,
+    "minWidth": 300,
+    "minHeight": 400,
+    "resizable": true,
+    "maximizable": false
+  },
+  "backgroundPolicy": "keep-alive",
+  "trustLevel": "standard",
+  "uninstallPolicy": "user-removable",
+  "permissions": [
+    "storage.kv.read",
+    "storage.kv.write",
+    "network.fetch"
+  ],
+  "capabilityAllowlist": [
+    "dgos.storage.kv.get",
+    "dgos.storage.kv.set",
+    "dgos.network.fetch",
+    "dgos.ui.notify"
+  ],
+  "dependencies": {
+    "apps": [],
+    "skills": [],
+    "mcp": []
+  },
+  "widgets": [
+    {
+      "widgetId": "main-widget",
+      "name": {
+        "zh-CN": "主小部件",
+        "en-US": "Main Widget"
+      },
+      "description": {
+        "zh-CN": "可自定义的桌面小部件",
+        "en-US": "Customizable desktop widget"
+      },
+      "entrypoint": "src/widget.html",
+      "icon": "public/widget-icon.png",
+      "defaultSize": {
+        "width": 300,
+        "height": 200
+      },
+      "resizable": true,
+      "refreshInterval": 60000,
+      "configurable": true,
+      "configSchema": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "default": "My Widget"
+          },
+          "updateInterval": {
+            "type": "number",
+            "minimum": 10000,
+            "default": 60000
+          },
+          "theme": {
+            "type": "string",
+            "enum": ["light", "dark", "auto"],
+            "default": "auto"
+          }
+        }
+      }
+    },
+    {
+      "widgetId": "compact-widget",
+      "name": {
+        "zh-CN": "紧凑小部件",
+        "en-US": "Compact Widget"
+      },
+      "description": {
+        "zh-CN": "紧凑版本的小部件",
+        "en-US": "Compact version of the widget"
+      },
+      "entrypoint": "src/compact-widget.html",
+      "icon": "public/widget-compact-icon.png",
+      "defaultSize": {
+        "width": 150,
+        "height": 150
+      },
+      "resizable": false,
+      "refreshInterval": 60000,
+      "configurable": false
+    }
+  ],
+  "extensions": [
+    {
+      "extensionId": "quick-action",
+      "type": "toolbar",
+      "target": "system.toolbar",
+      "label": {
+        "zh-CN": "快速操作",
+        "en-US": "Quick Action"
+      },
+      "icon": "public/toolbar-icon.png",
+      "entrypoint": "src/toolbar-action.js",
+      "position": 10
+    }
+  ],
+  "shortcuts": [
+    {
+      "shortcutId": "toggle-widget",
+      "key": "Ctrl+Shift+W",
+      "command": "toggle-widget-visibility",
+      "platform": "all"
+    }
+  ],
+  "performance": {
+    "maxBundleSize": 200000,
+    "maxMemory": 50,
+    "maxCPU": 3
+  },
+  "accessibility": {
+    "wcagLevel": "AA",
+    "keyboardNavigable": true,
+    "screenReaderSupport": true
+  },
+  "metadata": {
+    "author": "Your Name",
+    "homepage": "https://example.com",
+    "license": "MIT",
+    "tags": ["widget", "desktop", "extension", "toolbar"]
+  }
+}

@@ -1,0 +1,16 @@
+# Candidates Directory
+
+This directory stores frozen release candidates created by the candidate freeze system.
+
+Each candidate is a complete, immutable snapshot containing:
+- Source code
+- Built artifacts
+- Database migrations
+- Configuration templates
+- Checksums and metadata
+
+Candidates are automatically excluded from git (see `.gitignore`).
+
+## Usage
+
+See `docs/release/candidate-freeze-guide.md` for complete documentation.

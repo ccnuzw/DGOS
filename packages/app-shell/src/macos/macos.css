@@ -1,0 +1,940 @@
+/* macOS-style UI System for DGOS V1 - Pixel-Perfect Edition */
+/* Implements professional-grade glassmorphism, dock, system bar, and window chrome */
+
+/* ==================== Global Optimizations ==================== */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ==================== System Bar ==================== */
+.macos-system-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  /* Enhanced glassmorphism with gradient overlay */
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.85) 0%,
+    rgba(255, 255, 255, 0.75) 100%
+  );
+  backdrop-filter: blur(40px) saturate(180%) brightness(1.05);
+  -webkit-backdrop-filter: blur(40px) saturate(180%) brightness(1.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow:
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.04),
+    0 1px 3px rgba(0, 0, 0, 0.02);
+  z-index: 1000;
+  user-select: none;
+  -webkit-app-region: drag;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+}
+
+[data-theme="dark"] .macos-system-bar {
+  background: linear-gradient(
+    to bottom,
+    rgba(30, 30, 30, 0.9) 0%,
+    rgba(25, 25, 25, 0.85) 100%
+  );
+  backdrop-filter: blur(40px) saturate(180%) brightness(0.85);
+  -webkit-backdrop-filter: blur(40px) saturate(180%) brightness(0.85);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    inset 0 -1px 0 0 rgba(255, 255, 255, 0.03),
+    0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.macos-system-bar__left,
+.macos-system-bar__center,
+.macos-system-bar__right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  -webkit-app-region: no-drag;
+}
+
+.macos-system-bar__left {
+  flex: 1;
+}
+
+.macos-system-bar__center {
+  flex: 0 0 auto;
+}
+
+.macos-system-bar__right {
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.macos-system-bar__logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 150ms;
+}
+
+.macos-system-bar__logo:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .macos-system-bar__logo:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.macos-system-bar__logo-mark {
+  width: 24px;
+  height: 24px;
+  background: var(--primary);
+  color: white;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.macos-system-bar__app-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.macos-system-bar__icon-button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  border-radius: 6px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.macos-system-bar__icon-button:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.macos-system-bar__icon-button:active {
+  transform: scale(0.96);
+  background: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .macos-system-bar__icon-button:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .macos-system-bar__icon-button:active {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.macos-system-bar__time {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  min-width: 48px;
+  text-align: center;
+}
+
+/* ==================== Dock ==================== */
+.macos-dock {
+  position: fixed;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  /* Enhanced glassmorphism with multi-layer gradient */
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0.25) 100%
+  );
+  backdrop-filter: blur(60px) saturate(200%) brightness(1.1);
+  -webkit-backdrop-filter: blur(60px) saturate(200%) brightness(1.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 24px;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.04) inset,
+    0 20px 40px rgba(0, 0, 0, 0.15),
+    0 8px 16px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  user-select: none;
+  will-change: transform;
+  transform: translateX(-50%) translate3d(0, 0, 0);
+}
+
+[data-theme="dark"] .macos-dock {
+  background: linear-gradient(
+    to bottom,
+    rgba(50, 50, 50, 0.5) 0%,
+    rgba(40, 40, 40, 0.4) 50%,
+    rgba(35, 35, 35, 0.35) 100%
+  );
+  backdrop-filter: blur(60px) saturate(200%) brightness(0.9);
+  -webkit-backdrop-filter: blur(60px) saturate(200%) brightness(0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+    0 20px 40px rgba(0, 0, 0, 0.5),
+    0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.macos-dock__item {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform;
+  transform-origin: center bottom;
+}
+
+.macos-dock__item:active {
+  transition-duration: 0.1s;
+}
+
+/* Bounce animation for launching apps */
+@keyframes dock-icon-bounce {
+  0% { transform: scale(1) translateY(0); }
+  25% { transform: scale(0.95) translateY(-4px); }
+  50% { transform: scale(1.05) translateY(-12px); }
+  75% { transform: scale(0.98) translateY(-8px); }
+  100% { transform: scale(1) translateY(-10px); }
+}
+
+.macos-dock__item--launching {
+  animation: dock-icon-bounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.macos-dock__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.15),
+    0 1px 3px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  display: grid;
+  place-items: center;
+  color: var(--text);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Subtle highlight effect */
+.macos-dock__icon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.3) 0%,
+    transparent 50%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+[data-theme="dark"] .macos-dock__icon {
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.macos-dock__icon img,
+.macos-dock__icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.macos-dock__indicator {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  box-shadow:
+    0 0 4px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  opacity: 0;
+  transition: opacity 200ms;
+}
+
+.macos-dock__item--running .macos-dock__indicator {
+  opacity: 1;
+}
+
+[data-theme="dark"] .macos-dock__indicator {
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.4);
+}
+
+.macos-dock__badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  background: linear-gradient(135deg, #FF4747 0%, #FF3838 100%);
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  line-height: 1;
+}
+
+[data-theme="dark"] .macos-dock__badge {
+  border: 2px solid rgba(30, 30, 30, 0.9);
+}
+
+.macos-dock__divider {
+  width: 2px;
+  height: 40px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 1px;
+  margin: 0 4px;
+}
+
+[data-theme="dark"] .macos-dock__divider {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ==================== Window ==================== */
+.macos-window {
+  position: absolute;
+  min-width: 400px;
+  min-height: 300px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(30px) saturate(150%);
+  -webkit-backdrop-filter: blur(30px) saturate(150%);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.5) inset,
+    0 25px 70px rgba(0, 0, 0, 0.25),
+    0 10px 30px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: opacity 200ms, box-shadow 200ms, transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+}
+
+[data-theme="dark"] .macos-window {
+  background: rgba(40, 40, 40, 0.95);
+  backdrop-filter: blur(30px) saturate(150%);
+  -webkit-backdrop-filter: blur(30px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+    0 25px 70px rgba(0, 0, 0, 0.4),
+    0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.macos-window--focused {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.5) inset,
+    0 30px 80px rgba(0, 0, 0, 0.3),
+    0 12px 35px rgba(0, 0, 0, 0.18);
+}
+
+[data-theme="dark"] .macos-window--focused {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+    0 30px 80px rgba(0, 0, 0, 0.5),
+    0 12px 35px rgba(0, 0, 0, 0.3);
+}
+
+.macos-window--unfocused {
+  opacity: 0.95;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.3) inset,
+    0 15px 40px rgba(0, 0, 0, 0.15),
+    0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .macos-window--unfocused {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+    0 15px 40px rgba(0, 0, 0, 0.3),
+    0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.macos-window--maximized {
+  top: 44px !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: calc(100vh - 44px) !important;
+  border-radius: 0;
+}
+
+.macos-window--minimizing {
+  animation: windowMinimize 400ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.macos-window--opening {
+  animation: windowOpen 300ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.macos-window--closing {
+  animation: windowClose 200ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@keyframes windowOpen {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes windowClose {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+}
+
+@keyframes windowMinimize {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.1);
+    opacity: 0;
+  }
+}
+
+/* ==================== Window Title Bar ==================== */
+.macos-window__title-bar {
+  height: 32px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: move;
+  user-select: none;
+}
+
+.macos-window__traffic-lights {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 1;
+}
+
+.macos-window__traffic-light {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.macos-window__traffic-light:hover {
+  filter: brightness(0.95);
+  transform: scale(1.05);
+}
+
+.macos-window__traffic-light:active {
+  filter: brightness(0.85);
+  transform: scale(0.98);
+}
+
+/* Pixel-perfect gradients for traffic lights */
+.macos-window__traffic-light--close {
+  background: linear-gradient(
+    135deg,
+    #FF6159 0%,
+    #FF5F56 50%,
+    #ED5450 100%
+  );
+}
+
+.macos-window__traffic-light--minimize {
+  background: linear-gradient(
+    135deg,
+    #FFC02F 0%,
+    #FFBD2E 50%,
+    #E5A617 100%
+  );
+}
+
+.macos-window__traffic-light--maximize {
+  background: linear-gradient(
+    135deg,
+    #2DCC40 0%,
+    #27C93F 50%,
+    #1FB334 100%
+  );
+}
+
+.macos-window__traffic-light::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: #8C0000;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity 0.15s;
+  line-height: 1;
+}
+
+.macos-window__traffic-lights:hover .macos-window__traffic-light::after {
+  opacity: 1;
+}
+
+.macos-window__traffic-light--close::after {
+  content: '×';
+  font-size: 13px;
+  color: #8C0000;
+}
+
+.macos-window__traffic-light--minimize::after {
+  content: '−';
+  font-size: 11px;
+  color: #A15E00;
+}
+
+.macos-window__traffic-light--maximize::after {
+  content: '⤢';
+  font-size: 9px;
+  color: #006600;
+}
+
+/* Unfocused state - gray out the buttons */
+.macos-window--unfocused .macos-window__traffic-light {
+  background: #d4d4d8 !important;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.macos-window--unfocused .macos-window__traffic-light::after {
+  opacity: 0 !important;
+}
+
+.macos-window__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+}
+
+.macos-window__content {
+  flex: 1;
+  overflow: auto;
+  background: var(--canvas);
+}
+
+/* ==================== Launchpad ==================== */
+.macos-launchpad {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(40px) brightness(0.9);
+  -webkit-backdrop-filter: blur(40px) brightness(0.9);
+  z-index: 500;
+  display: grid;
+  place-items: center;
+  padding: 60px 40px;
+  opacity: 0;
+  animation: launchpadFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+[data-theme="dark"] .macos-launchpad {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(40px) brightness(0.7);
+  -webkit-backdrop-filter: blur(40px) brightness(0.7);
+}
+
+.macos-launchpad--closing {
+  animation: launchpadFadeOut 0.25s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@keyframes launchpadFadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px) brightness(1);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(40px) brightness(0.9);
+  }
+}
+
+@keyframes launchpadFadeOut {
+  from {
+    opacity: 1;
+    backdrop-filter: blur(40px) brightness(0.9);
+  }
+  to {
+    opacity: 0;
+    backdrop-filter: blur(0px) brightness(1);
+  }
+}
+
+.macos-launchpad__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  gap: 32px 32px;
+  max-width: 900px;
+  width: 100%;
+  place-items: center;
+}
+
+.macos-launchpad__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 12px;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  animation: launchpadIconEnter 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.macos-launchpad__item:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: scale(1.02);
+}
+
+.macos-launchpad__item:active {
+  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Enhanced stagger animation for launchpad items */
+.macos-launchpad__item:nth-child(1) { animation-delay: 0ms; }
+.macos-launchpad__item:nth-child(2) { animation-delay: 20ms; }
+.macos-launchpad__item:nth-child(3) { animation-delay: 40ms; }
+.macos-launchpad__item:nth-child(4) { animation-delay: 60ms; }
+.macos-launchpad__item:nth-child(5) { animation-delay: 80ms; }
+.macos-launchpad__item:nth-child(6) { animation-delay: 100ms; }
+.macos-launchpad__item:nth-child(7) { animation-delay: 120ms; }
+.macos-launchpad__item:nth-child(8) { animation-delay: 140ms; }
+.macos-launchpad__item:nth-child(9) { animation-delay: 160ms; }
+.macos-launchpad__item:nth-child(10) { animation-delay: 180ms; }
+.macos-launchpad__item:nth-child(11) { animation-delay: 200ms; }
+.macos-launchpad__item:nth-child(12) { animation-delay: 220ms; }
+.macos-launchpad__item:nth-child(13) { animation-delay: 240ms; }
+.macos-launchpad__item:nth-child(14) { animation-delay: 260ms; }
+.macos-launchpad__item:nth-child(n+15) { animation-delay: 280ms; }
+
+@keyframes launchpadIconEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.3) translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.macos-launchpad__icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.25),
+    0 2px 6px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  display: grid;
+  place-items: center;
+  color: var(--text);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Icon highlight effect */
+.macos-launchpad__icon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.25) 0%,
+    transparent 50%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+[data-theme="dark"] .macos-launchpad__icon {
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.4),
+    0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.macos-launchpad__icon img,
+.macos-launchpad__icon svg {
+  width: 40px;
+  height: 40px;
+}
+
+.macos-launchpad__label {
+  font-size: 12px;
+  color: white;
+  text-align: center;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.3;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* ==================== Desktop ==================== */
+.macos-desktop {
+  position: fixed;
+  inset: 0;
+  background: var(--canvas);
+  display: flex;
+  flex-direction: column;
+}
+
+.macos-desktop__workspace {
+  flex: 1;
+  margin-top: 44px;
+  margin-bottom: 76px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ==================== Responsive ==================== */
+@media (max-width: 850px) {
+  .macos-dock {
+    padding: 8px 12px;
+    gap: 6px;
+  }
+
+  .macos-dock__item {
+    width: 44px;
+    height: 44px;
+  }
+
+  .macos-dock__icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .macos-dock__icon img,
+  .macos-dock__icon svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .macos-launchpad__grid {
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 24px;
+  }
+
+  .macos-launchpad__icon {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+@media (max-width: 520px) {
+  .macos-system-bar {
+    padding: 0 12px;
+  }
+
+  .macos-system-bar__app-name {
+    display: none;
+  }
+
+  .macos-dock {
+    bottom: 4px;
+    padding: 6px 10px;
+    gap: 4px;
+  }
+
+  .macos-dock__item {
+    width: 40px;
+    height: 40px;
+  }
+
+  .macos-dock__icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .macos-launchpad__grid {
+    gap: 20px;
+  }
+}
+
+/* ==================== Scrollbar Styling ==================== */
+/* macOS-style scrollbars */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: background 0.2s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: rgba(0, 0, 0, 0.4);
+  background-clip: padding-box;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  background-clip: padding-box;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+  background-clip: padding-box;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:active {
+  background: rgba(255, 255, 255, 0.4);
+  background-clip: padding-box;
+}
+
+/* ==================== Accessibility ==================== */
+@media (prefers-reduced-motion: reduce) {
+  .macos-dock__item,
+  .macos-window,
+  .macos-launchpad,
+  .macos-launchpad__item,
+  .macos-system-bar__icon-button,
+  .macos-window__traffic-light {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Enhanced focus visible styles */
+.macos-system-bar__icon-button:focus-visible,
+.macos-dock__item:focus-visible,
+.macos-window__traffic-light:focus-visible,
+.macos-launchpad__item:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+.macos-system-bar__logo:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Touch device adaptations */
+@media (hover: none) and (pointer: coarse) {
+  .macos-dock__item {
+    min-width: 56px;
+    min-height: 56px;
+  }
+
+  .macos-system-bar__icon-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .macos-window__traffic-light {
+    min-width: 16px;
+    min-height: 16px;
+  }
+}
+
+/* ==================== Scaling Support ==================== */
+html[data-scale="75"] {
+  zoom: 0.75;
+}
+
+html[data-scale="100"] {
+  zoom: 1.0;
+}
+
+html[data-scale="125"] {
+  zoom: 1.25;
+}
+
+html[data-scale="150"] {
+  zoom: 1.5;
+}
+
+html[data-scale="175"] {
+  zoom: 1.75;
+}

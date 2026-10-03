@@ -1,0 +1,26 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad-models" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C084FC"/>
+      <stop offset="100%" stop-color="#A855F7"/>
+    </linearGradient>
+    <filter id="shadow-models">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <!-- Rounded rectangle base -->
+  <rect x="4" y="4" width="40" height="40" rx="10" fill="url(#grad-models)" filter="url(#shadow-models)"/>
+  <!-- Highlight -->
+  <path d="M 4 14 Q 4 4 14 4 L 34 4 Q 44 4 44 14 L 44 20 Q 24 10 4 20 Z" fill="white" opacity="0.3"/>
+  <!-- 3D Cube representing AI model -->
+  <!-- Front face -->
+  <path d="M 16 24 L 24 28 L 32 24 L 32 32 L 24 36 L 16 32 Z" fill="white" opacity="0.9"/>
+  <!-- Top face -->
+  <path d="M 24 16 L 32 20 L 32 24 L 24 28 L 16 24 L 16 20 Z" fill="white" opacity="1"/>
+  <!-- Left face -->
+  <path d="M 16 20 L 16 28 L 24 32 L 24 24 Z" fill="white" opacity="0.7"/>
+  <!-- Neural network nodes -->
+  <circle cx="20" cy="22" r="1.5" fill="url(#grad-models)"/>
+  <circle cx="28" cy="22" r="1.5" fill="url(#grad-models)"/>
+  <circle cx="24" cy="26" r="1.5" fill="url(#grad-models)"/>
+</svg>

@@ -1,0 +1,23 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad-settings-dark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#CBD5E1"/>
+      <stop offset="100%" stop-color="#94A3B8"/>
+    </linearGradient>
+    <filter id="shadow-dark">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+  <rect x="4" y="4" width="40" height="40" rx="10" fill="url(#grad-settings-dark)" filter="url(#shadow-dark)"/>
+  <path d="M 4 14 Q 4 4 14 4 L 34 4 Q 44 4 44 14 L 44 20 Q 24 10 4 20 Z" fill="white" opacity="0.4"/>
+  <circle cx="24" cy="24" r="5" fill="white" opacity="0.95"/>
+  <circle cx="24" cy="24" r="3" fill="url(#grad-settings-dark)"/>
+  <rect x="22.5" y="12" width="3" height="4" rx="1" fill="white" opacity="0.95"/>
+  <rect x="22.5" y="32" width="3" height="4" rx="1" fill="white" opacity="0.95"/>
+  <rect x="12" y="22.5" width="4" height="3" rx="1" fill="white" opacity="0.95"/>
+  <rect x="32" y="22.5" width="4" height="3" rx="1" fill="white" opacity="0.95"/>
+  <rect x="15.5" y="15.5" width="3" height="3" rx="1" fill="white" opacity="0.95" transform="rotate(45 17 17)"/>
+  <rect x="29.5" y="15.5" width="3" height="3" rx="1" fill="white" opacity="0.95" transform="rotate(-45 31 17)"/>
+  <rect x="15.5" y="29.5" width="3" height="3" rx="1" fill="white" opacity="0.95" transform="rotate(-45 17 31)"/>
+  <rect x="29.5" y="29.5" width="3" height="3" rx="1" fill="white" opacity="0.95" transform="rotate(45 31 31)"/>
+</svg>

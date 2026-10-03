@@ -1,8 +1,18 @@
 import React, { useEffect, useRef, useState, type PropsWithChildren } from 'react';
-import { AppWindow, Command, LayoutGrid, Settings, Sparkles, Cpu, Wrench, Shield, Activity, KeyRound, Blocks, Workflow, Code2, Info, Boxes } from 'lucide-react';
+import { AppWindow, Command, LayoutGrid, Settings, Sparkles, Cpu, Wrench, Shield, Activity, KeyRound, Blocks, Workflow, Code2, Info, Boxes, Palette } from 'lucide-react';
 import { routes, type RouteKey } from '@dgos/design-tokens';
 import { webHost } from '@dgos/host-adapter-web';
-const icons={desktop:AppWindow,catalog:LayoutGrid,settings:Settings,system:Info,providers:Cpu,models:Boxes,protocols:Workflow,skills:Blocks,mcp:Workflow,assistant:Sparkles,tasks:Activity,developer:Code2,keys:KeyRound,governance:Shield,usage:Wrench};
+
+// Export macOS components
+export * from './macos';
+export { MacOSShell } from './macos';
+export { MacOSSystemBar } from './macos/system-bar';
+export { MacOSDock } from './macos/dock';
+export { MacOSWindow } from './macos/window';
+export { MacOSLaunchpad } from './macos/launchpad';
+export { WindowManager, useWindowManager } from './macos/window-manager';
+
+const icons={desktop:AppWindow,catalog:LayoutGrid,settings:Settings,system:Info,providers:Cpu,models:Boxes,protocols:Workflow,skills:Blocks,mcp:Workflow,assistant:Sparkles,tasks:Activity,developer:Code2,keys:KeyRound,governance:Shield,usage:Wrench,designSystem:Palette};
 export const navGroups:RouteKey[][]=[['desktop','catalog','tasks','assistant'],['settings','providers','models','skills','mcp'],['developer','protocols','keys','governance','usage']];
 export function useRoute(){const get=()=>Object.entries(routes).find(([,v])=>v===window.location.pathname)?.[0] as RouteKey||'desktop';const [route,setRoute]=useState<RouteKey>(get);useEffect(()=>{const fn=()=>setRoute(get());window.addEventListener('popstate',fn);return()=>window.removeEventListener('popstate',fn)},[]);return route}
 export function Shell({route,labels,children,actions}:PropsWithChildren<{route:RouteKey;labels:Record<string,string>;actions?:React.ReactNode}>){

@@ -1,0 +1,126 @@
+{
+  "format": "dgos-app/v2",
+  "appId": "dev.example.data-viz",
+  "version": "1.0.0",
+  "build": 1,
+  "releaseChannel": "dev",
+  "minRuntimeVersion": "0.1.0",
+  "dataVersion": 1,
+  "name": {
+    "zh-CN": "数据可视化应用",
+    "en-US": "Data Visualization App"
+  },
+  "description": {
+    "zh-CN": "DGOS数据可视化应用模板，用于创建交互式图表和报表",
+    "en-US": "DGOS data visualization template for creating interactive charts and reports"
+  },
+  "category": "data",
+  "icon": "public/icon.png",
+  "entrypoints": {
+    "main": "src/index.html",
+    "viewer": "src/viewer.html"
+  },
+  "defaultWindow": {
+    "width": 1200,
+    "height": 800,
+    "minWidth": 800,
+    "minHeight": 600,
+    "resizable": true,
+    "maximizable": true
+  },
+  "backgroundPolicy": "release",
+  "trustLevel": "standard",
+  "uninstallPolicy": "user-removable",
+  "permissions": [
+    "storage.kv.read",
+    "storage.kv.write",
+    "network.fetch",
+    "file.read"
+  ],
+  "capabilityAllowlist": [
+    "dgos.storage.kv.get",
+    "dgos.storage.kv.set",
+    "dgos.network.fetch",
+    "dgos.file.read",
+    "dgos.ui.notify"
+  ],
+  "dependencies": {
+    "apps": [],
+    "skills": [],
+    "mcp": []
+  },
+  "actions": [],
+  "agent": null,
+  "fileAssociations": [
+    {
+      "extension": ".csv",
+      "mimeType": "text/csv",
+      "description": {
+        "zh-CN": "CSV数据文件",
+        "en-US": "CSV data file"
+      },
+      "icon": "public/csv-icon.png"
+    },
+    {
+      "extension": ".json",
+      "mimeType": "application/json",
+      "description": {
+        "zh-CN": "JSON数据文件",
+        "en-US": "JSON data file"
+      },
+      "icon": "public/json-icon.png"
+    }
+  ],
+  "exportedAPIs": [
+    {
+      "apiId": "chart-renderer",
+      "version": "1.0.0",
+      "description": {
+        "zh-CN": "图表渲染API",
+        "en-US": "Chart rendering API"
+      },
+      "methods": [
+        {
+          "methodId": "render-chart",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "type": { "enum": ["line", "bar", "pie", "scatter"] },
+              "data": { "type": "array" },
+              "options": { "type": "object" }
+            },
+            "required": ["type", "data"]
+          },
+          "outputSchema": {
+            "type": "object",
+            "properties": {
+              "chartId": { "type": "string" },
+              "imageUrl": { "type": "string" }
+            }
+          },
+          "requiredCapabilities": []
+        }
+      ]
+    }
+  ],
+  "performance": {
+    "maxBundleSize": 800000,
+    "maxMemory": 250,
+    "maxStartupTime": 2000,
+    "maxRenderTime": 1000
+  },
+  "accessibility": {
+    "wcagLevel": "AA",
+    "keyboardNavigable": true,
+    "screenReaderSupport": true,
+    "highContrastSupport": true,
+    "textScaling": true,
+    "ariaLabels": true
+  },
+  "metadata": {
+    "author": "Your Name",
+    "homepage": "https://example.com",
+    "license": "MIT",
+    "tags": ["data-visualization", "charts", "graphs", "analytics", "reporting"]
+  }
+}

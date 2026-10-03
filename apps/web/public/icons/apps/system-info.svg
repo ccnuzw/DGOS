@@ -1,0 +1,21 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad-system-info" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#60A5FA"/>
+      <stop offset="100%" stop-color="#3B82F6"/>
+    </linearGradient>
+    <filter id="shadow-system-info">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <!-- Rounded rectangle base -->
+  <rect x="4" y="4" width="40" height="40" rx="10" fill="url(#grad-system-info)" filter="url(#shadow-system-info)"/>
+  <!-- Highlight -->
+  <path d="M 4 14 Q 4 4 14 4 L 34 4 Q 44 4 44 14 L 44 20 Q 24 10 4 20 Z" fill="white" opacity="0.3"/>
+  <!-- Info symbol - dot -->
+  <circle cx="24" cy="18" r="2.5" fill="white"/>
+  <!-- Info symbol - stem -->
+  <rect x="21.5" y="24" width="5" height="14" rx="2.5" fill="white"/>
+  <!-- Info symbol - base -->
+  <rect x="19" y="36" width="10" height="3" rx="1.5" fill="white" opacity="0.8"/>
+</svg>

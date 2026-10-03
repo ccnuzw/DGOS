@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Alert, Button, Panel, Status } from '@dgos/dgos-ui';
-import { api, receiptError } from './api';
+import { Alert, Button, Panel, Status, Badge, Empty } from '@dgos/dgos-ui';
+import { api, receiptError, items } from './api';
 import { allLabels } from './i18n';
 import { displayNumber } from './region';
+import { webHost } from '@dgos/host-adapter-web';
+import { routes } from '@dgos/design-tokens';
 
 type Dict = Record<string, any>;
 type T = ReturnType<typeof allLabels>;
@@ -28,9 +30,11 @@ function formatUptime(seconds: number): string {
 
 export function SystemInfo({ t }: { t: T }) {
   const [data, setData] = useState<Dict | null>(null);
+  const [apps, setApps] = useState<Dict[]>([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [appsLoading, setAppsLoading] = useState(false);
 
   async function load() {
     setLoading(true);
@@ -45,8 +49,21 @@ export function SystemInfo({ t }: { t: T }) {
     }
   }
 
+  async function loadApps() {
+    setAppsLoading(true);
+    try {
+      const result = await api<Dict>('/api/v1/apps');
+      setApps(items(result).filter((app: Dict) => app.catalogState === 'installed'));
+    } catch (e) {
+      // Apps may not be available
+    } finally {
+      setAppsLoading(false);
+    }
+  }
+
   useEffect(() => {
     void load();
+    void loadApps();
   }, []);
 
   useEffect(() => {
@@ -56,6 +73,32 @@ export function SystemInfo({ t }: { t: T }) {
     }, 5000);
     return () => clearInterval(interval);
   }, [autoRefresh]);
+
+  const getHealthStatus = (): 'healthy' | 'degraded' | 'unhealthy' => {
+    if (!data) return 'unhealthy';
+    const services = data.services || {};
+    const statuses = [
+      services.api?.status,
+      services.worker?.status,
+      services.database?.status,
+      services.redis?.status,
+    ];
+
+    const failed = statuses.filter(s => s === 'failed' || s === 'error' || s === 'unavailable').length;
+    if (failed > 0) return 'unhealthy';
+
+    const degraded = statuses.filter(s => s === 'degraded' || s === 'warning').length;
+    if (degraded > 0) return 'degraded';
+
+    return 'healthy';
+  };
+
+  const healthStatus = getHealthStatus();
+  const healthColors = {
+    healthy: 'success',
+    degraded: 'warning',
+    unhealthy: 'danger',
+  };
 
   if (loading && !data) {
     return (
@@ -88,6 +131,9 @@ export function SystemInfo({ t }: { t: T }) {
         <div className="row between">
           <h2>{t.systemInformation}</h2>
           <div className="row">
+            <Badge variant={healthColors[healthStatus] as any}>
+              {healthStatus.toUpperCase()}
+            </Badge>
             <label className="checkline">
               <input
                 type="checkbox"
@@ -144,6 +190,36 @@ export function SystemInfo({ t }: { t: T }) {
             </dl>
           </div>
         </div>
+      </Panel>
+
+      <Panel>
+        <div className="row between">
+          <h2>{t.installedApps}</h2>
+          <Button onClick={() => void loadApps()}>{t.refresh}</Button>
+        </div>
+        {appsLoading ? (
+          <p role="status">{t.loading}</p>
+        ) : apps.length > 0 ? (
+          <ul className="record-list">
+            {apps.map((app: Dict) => (
+              <li key={app.appId}>
+                <div>
+                  <strong>{app.displayName || app.name?.['en-US'] || app.name?.['zh-CN'] || app.appId}</strong>
+                  <small>
+                    {app.appId} · v{app.version} · {t.build} {app.build}
+                  </small>
+                </div>
+                <div className="row">
+                  <Button onClick={() => webHost.open(`/apps/${app.appId}`)}>
+                    {t.launch}
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <Empty>{t.empty}</Empty>
+        )}
       </Panel>
 
       <Panel>
@@ -248,6 +324,40 @@ export function SystemInfo({ t }: { t: T }) {
               <dd>{data.storage?.auditEvents !== undefined ? displayNumber(data.storage.auditEvents) : 'N/A'}</dd>
             </dl>
           </div>
+        </div>
+      </Panel>
+
+      <Panel>
+        <h2>Quick Actions</h2>
+        <div className="quick-actions-grid">
+          <button
+            className="quick-action-card"
+            onClick={() => webHost.open(routes.settings)}
+          >
+            <strong>{t.settings}</strong>
+            <span>{t.systemContext}</span>
+          </button>
+          <button
+            className="quick-action-card"
+            onClick={() => webHost.open(routes.developer)}
+          >
+            <strong>{t.developer}</strong>
+            <span>Development tools</span>
+          </button>
+          <button
+            className="quick-action-card"
+            onClick={() => webHost.open(routes.catalog)}
+          >
+            <strong>{t.catalog}</strong>
+            <span>Manage applications</span>
+          </button>
+          <button
+            className="quick-action-card"
+            onClick={() => webHost.open(routes.providers)}
+          >
+            <strong>{t.providers}</strong>
+            <span>Provider configurations</span>
+          </button>
         </div>
       </Panel>
     </div>

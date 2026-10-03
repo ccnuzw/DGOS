@@ -1,0 +1,368 @@
+================================================================================
+                      DGOS V1 QUICK START GUIDE
+                    Get Running in 15 Minutes or Less
+================================================================================
+
+Version: V1.0.0
+Last Updated: 2026-10-02
+
+================================================================================
+                            PREREQUISITES
+================================================================================
+
+System Requirements:
+- OS: macOS 12+, Linux (Ubuntu 20.04+), Windows 10+ WSL2
+- Memory: 4GB minimum, 8GB recommended
+- Disk: 2GB free space
+- Network: Internet connection
+
+Required Software:
+- Docker 20.10+
+- Docker Compose 2.0+
+- Node.js 22.0+
+- pnpm 9.0+
+- Git 2.30+
+
+Quick Version Check:
+  $ docker --version
+  $ docker compose version
+  $ node --version
+  $ pnpm --version
+  $ git --version
+
+Installing Missing Software:
+
+  Docker & Docker Compose:
+    macOS/Windows: Download Docker Desktop
+    Linux: curl -fsSL https://get.docker.com | sh
+
+  Node.js v22:
+    $ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+    $ nvm install 22
+    $ nvm use 22
+
+  pnpm:
+    $ npm install -g pnpm@9
+    or
+    $ corepack enable && corepack prepare pnpm@9.0.0 --activate
+
+================================================================================
+              PATH A: DOCKER COMPOSE (RECOMMENDED - 5 MINUTES)
+================================================================================
+
+Perfect for: Quick evaluation, production-like environment
+
+Step 1: Clone Repository
+  $ git clone https://github.com/your-org/DGOS.git
+  $ cd DGOS
+
+Step 2: Configure Environment
+  $ cp .env.example .env
+
+  (Default configuration works out of the box)
+
+Step 3: Start Infrastructure
+  $ docker compose up -d
+
+  Verify services:
+  $ docker compose ps
+
+  Expected: postgres and redis showing "Up (healthy)"
+
+Step 4: Install Dependencies (2-3 minutes)
+  $ pnpm install --frozen-lockfile
+
+Step 5: Run Database Migrations
+  $ pnpm migrate:plan
+
+Step 6: Start DGOS
+
+  Terminal 1:
+  $ pnpm --filter @dgos/api dev
+
+  Terminal 2:
+  $ pnpm --filter @dgos/web dev
+
+Step 7: Access DGOS
+  Web UI:    http://127.0.0.1:5173
+  API:       http://127.0.0.1:3000
+  Health:    http://127.0.0.1:3000/health
+
+SUCCESS! DGOS is now running.
+
+================================================================================
+            PATH B: LOCAL DEVELOPMENT (10 MINUTES)
+================================================================================
+
+Perfect for: Active development, debugging
+
+Step 1: Clone and Setup
+  $ git clone https://github.com/your-org/DGOS.git
+  $ cd DGOS
+  $ cp .env.example .env
+
+Step 2: Start Infrastructure
+  $ docker compose up -d
+
+  Wait 30 seconds for health checks:
+  $ docker compose ps
+
+Step 3: Install Dependencies
+  $ pnpm install --frozen-lockfile
+
+Step 4: Initialize Database
+  $ pnpm migrate:plan
+  $ pnpm migrate:check
+
+Step 5: Run Tests (Optional but Recommended)
+  $ pnpm test
+  $ pnpm test:security
+  $ pnpm test:integration
+
+Step 6: Start Development Servers
+
+  Terminal 1 (API + Worker):
+  $ pnpm dev
+
+  Terminal 2 (Web UI):
+  $ pnpm --filter @dgos/web dev
+
+Step 7: Access DGOS
+  Web UI:    http://127.0.0.1:5173
+  API:       http://127.0.0.1:3000
+  Health:    http://127.0.0.1:3000/health
+
+================================================================================
+            PATH C: MACOS DESKTOP (COMING SOON - 2 MINUTES)
+================================================================================
+
+Perfect for: End users, native macOS experience
+
+Step 1: Download
+  $ curl -L -o DGOS.dmg \
+    https://github.com/your-org/DGOS/releases/latest/download/DGOS.dmg
+
+Step 2: Install
+  1. Open DGOS.dmg
+  2. Drag DGOS to Applications
+  3. Eject disk image
+
+Step 3: Launch
+  1. Open DGOS from Applications
+  2. Allow permissions when prompted
+  3. Wait for initialization (30-60 seconds first launch)
+
+Status: macOS desktop build in development. Use Path A or B for now.
+
+================================================================================
+                        FIRST TIME SETUP
+================================================================================
+
+1. Bootstrap Administrator Account
+
+   Via Web: http://127.0.0.1:5173/setup
+
+   Via API:
+   $ curl -X POST http://127.0.0.1:3000/admin/bootstrap \
+     -H "Content-Type: application/json" \
+     -d '{
+       "username": "admin",
+       "password": "YourSecurePassword123!",
+       "email": "admin@example.com"
+     }'
+
+   Password Requirements:
+   - Minimum 12 characters
+   - Mix of uppercase, lowercase, numbers
+   - Special character recommended
+
+2. Configure First Provider
+
+   Navigate to: Settings > Providers > Add Provider
+
+   Example OpenAI:
+   {
+     "name": "OpenAI GPT-4",
+     "protocol": "openai-compatible",
+     "baseUrl": "https://api.openai.com/v1",
+     "apiKey": "sk-...",
+     "defaultModel": "gpt-4"
+   }
+
+   Testing with Fixture:
+   $ pnpm provider:fixture
+   (Use the baseUrl and token from output)
+
+3. Install First Package (AI Workbench)
+
+   Via Web:
+   - Navigate to Catalog > Packages
+   - Find "AI Workbench"
+   - Click Install
+   - Click Launch
+
+4. Create First Task
+
+   From Workbench:
+   - Click "New Task"
+   - Enter: "Summarize the key features of DGOS"
+   - Select Provider: "OpenAI GPT-4"
+   - Click "Run"
+
+5. View Results
+
+   Results appear in output panel
+   View execution logs in sidebar
+   Export as JSON or text
+
+================================================================================
+                          COMMON TASKS
+================================================================================
+
+Add New Provider:
+  Settings > Providers > Add Provider
+
+Install Package:
+  Catalog > Browse > Install
+
+Create API Key:
+  Settings > API Keys > Create API Key
+
+View Logs:
+  $ docker compose logs -f api
+  $ docker compose logs -f worker
+
+Backup Database:
+  $ docker compose exec postgres pg_dump -U dgos dgos > backup.sql
+
+Restore Database:
+  $ docker compose exec -T postgres psql -U dgos dgos < backup.sql
+
+================================================================================
+                        TROUBLESHOOTING
+================================================================================
+
+Services Won't Start:
+  $ docker ps
+  $ docker compose down -v
+  $ docker compose up -d
+
+Database Connection Error:
+  $ docker compose ps postgres
+  $ docker compose exec postgres pg_isready -U dgos -d dgos
+  $ docker compose restart postgres
+  $ docker compose logs postgres
+
+Port Already in Use:
+  $ lsof -ti:3000
+  $ kill -9 $(lsof -ti:3000)
+  or change PORT in .env
+
+Migration Failed:
+  $ pnpm migrate:check
+  $ pnpm migrate:sql
+
+  Reset (WARNING: destroys data):
+  $ docker compose down -v
+  $ docker compose up -d
+  $ sleep 10
+  $ pnpm migrate:plan
+
+pnpm Install Fails:
+  $ pnpm store prune
+  $ rm -rf node_modules pnpm-lock.yaml
+  $ pnpm install
+
+Web UI Shows White Screen:
+  1. Check dev server: pnpm --filter @dgos/web dev
+  2. Open browser DevTools > Console
+  3. Hard refresh: Ctrl+Shift+R or Cmd+Shift+R
+  4. Rebuild: pnpm --filter @dgos/web build
+
+Permission Denied:
+  $ sudo chown -R $(whoami) node_modules
+
+  Linux Docker socket:
+  $ sudo usermod -aG docker $USER
+  (then log out and back in)
+
+Out of Memory:
+  $ export NODE_OPTIONS="--max-old-space-size=4096"
+
+Still Having Issues?
+  1. Check: http://127.0.0.1:5173/system-info
+  2. Logs: docker compose logs -f
+  3. GitHub Issues: https://github.com/your-org/DGOS/issues
+  4. Community: https://discord.gg/dgos
+
+Include in Bug Reports:
+  - DGOS version (git rev-parse HEAD)
+  - OS and versions (node, docker)
+  - Error messages
+  - Steps to reproduce
+
+================================================================================
+                          NEXT STEPS
+================================================================================
+
+Explore:
+  - Browse Package Catalog
+  - Configure more Providers
+  - Customize Settings
+  - View Analytics
+  - Set up Security
+
+Learn More:
+  - User Guide: docs/06-用户文档/V1-User-Guide.md
+  - Developer Guide: docs/06-用户文档/V1-Developer-Guide.md
+  - API Reference: docs/04-技术架构/当前版本/V1-openapi.yaml
+
+Join Community:
+  - GitHub: https://github.com/your-org/DGOS
+  - Discord: https://discord.gg/dgos
+  - Twitter: https://twitter.com/dgos
+
+Contribute:
+  - Report Bugs
+  - Request Features
+  - Submit PRs
+  - Write Docs
+  - Build Extensions
+
+================================================================================
+                     QUICK REFERENCE COMMANDS
+================================================================================
+
+Essential Commands:
+  docker compose up -d              # Start services
+  docker compose down               # Stop services
+  docker compose logs -f            # View logs
+  pnpm install                      # Install dependencies
+  pnpm migrate:plan                 # Run migrations
+  pnpm dev                          # Start development
+  pnpm test                         # Run tests
+  curl http://127.0.0.1:3000/health # Check health
+
+Default Ports:
+  5173 - Web UI (Development)
+  3000 - API Server
+  5432 - PostgreSQL
+  6379 - Redis
+  9000 - MinIO (optional)
+
+Key Files:
+  .env                    - Environment configuration
+  docker-compose.yml      - Infrastructure definition
+  apps/api/              - API server source
+  apps/web/              - Web UI source
+  migrations/            - Database migrations
+
+================================================================================
+
+Questions? Check docs/06-用户文档/V1-User-Guide.md or ask in Discord
+
+Found an issue? Report at https://github.com/your-org/DGOS/issues
+
+================================================================================
+                    Last Updated: 2026-10-02 | DGOS V1.0.0
+================================================================================

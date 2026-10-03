@@ -1,0 +1,128 @@
+{
+  "format": "dgos-app/v2",
+  "appId": "dev.example.dashboard",
+  "version": "1.0.0",
+  "build": 1,
+  "releaseChannel": "dev",
+  "minRuntimeVersion": "0.1.0",
+  "dataVersion": 1,
+  "name": {
+    "zh-CN": "仪表板应用",
+    "en-US": "Dashboard App"
+  },
+  "description": {
+    "zh-CN": "DGOS仪表板应用模板，用于数据监控和可视化",
+    "en-US": "DGOS dashboard application template for data monitoring and visualization"
+  },
+  "category": "productivity",
+  "icon": "public/icon.png",
+  "entrypoints": {
+    "main": "src/index.html"
+  },
+  "defaultWindow": {
+    "width": 1280,
+    "height": 800,
+    "minWidth": 1024,
+    "minHeight": 600,
+    "resizable": true,
+    "maximizable": true
+  },
+  "backgroundPolicy": "release",
+  "trustLevel": "standard",
+  "uninstallPolicy": "user-removable",
+  "permissions": [
+    "system.context.read",
+    "storage.kv.read",
+    "storage.kv.write",
+    "network.fetch"
+  ],
+  "capabilityAllowlist": [
+    "dgos.system.context.read",
+    "dgos.storage.kv.get",
+    "dgos.storage.kv.set",
+    "dgos.storage.kv.delete",
+    "dgos.ui.notify",
+    "dgos.ui.toast",
+    "dgos.network.fetch"
+  ],
+  "dependencies": {
+    "apps": [],
+    "skills": [],
+    "mcp": []
+  },
+  "actions": [],
+  "agent": null,
+  "widgets": [
+    {
+      "widgetId": "summary-widget",
+      "name": {
+        "zh-CN": "概览小部件",
+        "en-US": "Summary Widget"
+      },
+      "description": {
+        "zh-CN": "显示关键指标的概览",
+        "en-US": "Shows summary of key metrics"
+      },
+      "entrypoint": "src/widgets/summary.html",
+      "icon": "public/widget-icon.png",
+      "defaultSize": {
+        "width": 400,
+        "height": 300
+      },
+      "resizable": true,
+      "refreshInterval": 30000,
+      "configurable": true,
+      "configSchema": {
+        "type": "object",
+        "properties": {
+          "refreshRate": {
+            "type": "number",
+            "minimum": 10000,
+            "default": 30000
+          },
+          "theme": {
+            "type": "string",
+            "enum": ["light", "dark", "auto"],
+            "default": "auto"
+          }
+        }
+      }
+    }
+  ],
+  "commands": [
+    {
+      "commandId": "refresh-dashboard",
+      "label": {
+        "zh-CN": "刷新仪表板",
+        "en-US": "Refresh Dashboard"
+      },
+      "description": {
+        "zh-CN": "刷新所有仪表板数据",
+        "en-US": "Refresh all dashboard data"
+      },
+      "shortcut": "Ctrl+R",
+      "category": "dashboard"
+    }
+  ],
+  "performance": {
+    "maxBundleSize": 512000,
+    "maxMemory": 150,
+    "maxStartupTime": 1500,
+    "maxRenderTime": 800
+  },
+  "accessibility": {
+    "wcagLevel": "AA",
+    "keyboardNavigable": true,
+    "screenReaderSupport": true,
+    "highContrastSupport": true,
+    "textScaling": true,
+    "ariaLabels": true
+  },
+  "metadata": {
+    "author": "Your Name",
+    "homepage": "https://example.com",
+    "repository": "https://github.com/example/dashboard",
+    "license": "MIT",
+    "tags": ["dashboard", "monitoring", "visualization", "analytics"]
+  }
+}

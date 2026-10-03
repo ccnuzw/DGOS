@@ -1,0 +1,25 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- DGOS App Icon - Simplified for smaller sizes -->
+
+  <!-- Layer 3 (back) -->
+  <rect x="18" y="26" width="28" height="20" rx="3" fill="#06B6D4" opacity="0.3"/>
+
+  <!-- Layer 2 (middle) -->
+  <rect x="16" y="22" width="28" height="20" rx="3" fill="#0F5FD9" opacity="0.5"/>
+
+  <!-- Layer 1 (front) -->
+  <rect x="14" y="18" width="28" height="20" rx="3" fill="#0F5FD9"/>
+
+  <!-- Connection nodes -->
+  <circle cx="22" cy="28" r="2.5" fill="#06B6D4"/>
+  <circle cx="34" cy="28" r="2.5" fill="#06B6D4"/>
+  <circle cx="28" cy="34" r="2.5" fill="#06B6D4"/>
+
+  <!-- D letterform -->
+  <path d="M 24 24 L 24 32 L 27 32 Q 30 32 30 28 Q 30 24 27 24 Z" fill="white" opacity="0.9"/>
+
+  <!-- Connection lines -->
+  <line x1="22" y1="28" x2="34" y2="28" stroke="#06B6D4" stroke-width="1" opacity="0.6"/>
+  <line x1="22" y1="28" x2="28" y2="34" stroke="#06B6D4" stroke-width="1" opacity="0.6"/>
+  <line x1="34" y1="28" x2="28" y2="34" stroke="#06B6D4" stroke-width="1" opacity="0.6"/>
+</svg>

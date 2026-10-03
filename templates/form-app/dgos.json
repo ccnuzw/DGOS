@@ -1,0 +1,133 @@
+{
+  "format": "dgos-app/v2",
+  "appId": "dev.example.form-builder",
+  "version": "1.0.0",
+  "build": 1,
+  "releaseChannel": "dev",
+  "minRuntimeVersion": "0.1.0",
+  "dataVersion": 1,
+  "name": {
+    "zh-CN": "表单应用",
+    "en-US": "Form App"
+  },
+  "description": {
+    "zh-CN": "DGOS表单应用模板，用于数据收集和处理",
+    "en-US": "DGOS form application template for data collection and processing"
+  },
+  "category": "productivity",
+  "icon": "public/icon.png",
+  "entrypoints": {
+    "main": "src/index.html"
+  },
+  "defaultWindow": {
+    "width": 800,
+    "height": 900,
+    "minWidth": 600,
+    "minHeight": 700,
+    "resizable": true,
+    "maximizable": true
+  },
+  "backgroundPolicy": "release",
+  "trustLevel": "standard",
+  "uninstallPolicy": "user-removable",
+  "permissions": [
+    "storage.kv.read",
+    "storage.kv.write",
+    "network.fetch",
+    "clipboard.write"
+  ],
+  "capabilityAllowlist": [
+    "dgos.storage.kv.get",
+    "dgos.storage.kv.set",
+    "dgos.storage.kv.delete",
+    "dgos.network.fetch",
+    "dgos.clipboard.writeText",
+    "dgos.ui.notify",
+    "dgos.ui.toast",
+    "dgos.ui.dialog"
+  ],
+  "dependencies": {
+    "apps": [],
+    "skills": [],
+    "mcp": []
+  },
+  "actions": [
+    {
+      "actionId": "submit-form",
+      "version": "1.0.0",
+      "label": {
+        "zh-CN": "提交表单",
+        "en-US": "Submit Form"
+      },
+      "description": {
+        "zh-CN": "提交表单数据",
+        "en-US": "Submit form data"
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "formId": { "type": "string" },
+          "data": { "type": "object" }
+        },
+        "required": ["formId", "data"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "submissionId": { "type": "string" }
+        }
+      },
+      "requiredCapabilities": ["dgos.storage.kv.set"],
+      "risk": "write",
+      "sideEffects": "local-write",
+      "confirmation": "required",
+      "idempotency": "safe",
+      "cancellable": false,
+      "handler": "form.submit"
+    }
+  ],
+  "agent": null,
+  "dataSchemas": {
+    "formDefinition": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "type": { "enum": ["text", "number", "email", "select", "checkbox"] },
+              "label": { "type": "string" },
+              "required": { "type": "boolean" },
+              "validation": { "type": "object" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "performance": {
+    "maxBundleSize": 400000,
+    "maxMemory": 100,
+    "maxStartupTime": 1000,
+    "maxRenderTime": 500
+  },
+  "accessibility": {
+    "wcagLevel": "AA",
+    "keyboardNavigable": true,
+    "screenReaderSupport": true,
+    "highContrastSupport": true,
+    "textScaling": true,
+    "ariaLabels": true
+  },
+  "metadata": {
+    "author": "Your Name",
+    "homepage": "https://example.com",
+    "license": "MIT",
+    "tags": ["form", "data-collection", "validation", "submission"]
+  }
+}

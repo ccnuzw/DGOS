@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DGOS Basic App</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>Welcome to DGOS</h1>
+      <p class="subtitle">Your application is running successfully!</p>
+    </header>
+
+    <main>
+      <section class="card">
+        <h2>Getting Started</h2>
+        <p>This is a basic DGOS application template. You can:</p>
+        <ul>
+          <li>Access system context and settings</li>
+          <li>Store data using the Storage API</li>
+          <li>Submit AI tasks</li>
+          <li>Show notifications and dialogs</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>System Information</h2>
+        <div id="system-info">
+          <p>Loading...</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Actions</h2>
+        <div class="actions">
+          <button id="btn-notify">Show Notification</button>
+          <button id="btn-context">Get Context</button>
+          <button id="btn-storage">Test Storage</button>
+        </div>
+        <div id="output"></div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Built with DGOS SDK</p>
+    </footer>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

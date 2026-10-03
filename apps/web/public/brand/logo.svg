@@ -1,0 +1,37 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- DGOS Logo: Layered applications with connection nodes -->
+  <!-- Brand colors: Deep Ocean Blue (#0F5FD9) + Electric Teal (#06B6D4) -->
+
+  <!-- Background circle -->
+  <circle cx="64" cy="64" r="56" fill="url(#gradient)" opacity="0.1"/>
+
+  <!-- Layer 3 (back) - lighter -->
+  <rect x="36" y="52" width="56" height="40" rx="6" fill="#06B6D4" opacity="0.3"/>
+
+  <!-- Layer 2 (middle) -->
+  <rect x="32" y="44" width="56" height="40" rx="6" fill="#0F5FD9" opacity="0.5"/>
+
+  <!-- Layer 1 (front) - main -->
+  <rect x="28" y="36" width="56" height="40" rx="6" fill="#0F5FD9"/>
+
+  <!-- Connection nodes -->
+  <circle cx="44" cy="56" r="4" fill="#06B6D4"/>
+  <circle cx="68" cy="56" r="4" fill="#06B6D4"/>
+  <circle cx="56" cy="68" r="4" fill="#06B6D4"/>
+
+  <!-- D letterform (subtle) -->
+  <path d="M 48 48 L 48 64 L 54 64 Q 60 64 60 56 Q 60 48 54 48 Z" fill="white" opacity="0.9"/>
+
+  <!-- Connection lines -->
+  <line x1="44" y1="56" x2="68" y2="56" stroke="#06B6D4" stroke-width="1.5" opacity="0.6"/>
+  <line x1="44" y1="56" x2="56" y2="68" stroke="#06B6D4" stroke-width="1.5" opacity="0.6"/>
+  <line x1="68" y1="56" x2="56" y2="68" stroke="#06B6D4" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- Gradient definition -->
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0F5FD9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#06B6D4;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

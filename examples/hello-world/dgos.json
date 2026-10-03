@@ -1,0 +1,44 @@
+{
+  "format": "dgos-app/v1",
+  "appId": "dev.dgos.example.hello-world",
+  "version": "1.0.0",
+  "build": 1,
+  "releaseChannel": "dev",
+  "minRuntimeVersion": "0.1.0",
+  "dataVersion": 1,
+  "name": {
+    "zh-CN": "Hello World",
+    "en-US": "Hello World"
+  },
+  "description": {
+    "zh-CN": "最简单的DGOS应用示例",
+    "en-US": "The simplest DGOS application example"
+  },
+  "category": "utilities",
+  "icon": "public/icon.png",
+  "entrypoints": {
+    "main": "src/index.html"
+  },
+  "defaultWindow": {
+    "width": 600,
+    "height": 400,
+    "minWidth": 400,
+    "minHeight": 300,
+    "resizable": true,
+    "maximizable": true
+  },
+  "backgroundPolicy": "release",
+  "trustLevel": "standard",
+  "uninstallPolicy": "user-removable",
+  "permissions": [],
+  "capabilityAllowlist": [
+    "dgos.ui.notify"
+  ],
+  "dependencies": {
+    "apps": [],
+    "skills": [],
+    "mcp": []
+  },
+  "actions": [],
+  "agent": null
+}

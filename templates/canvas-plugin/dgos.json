@@ -1,0 +1,187 @@
+{
+  "format": "dgos-app/v2",
+  "appId": "dev.example.canvas-plugin",
+  "version": "1.0.0",
+  "build": 1,
+  "releaseChannel": "dev",
+  "minRuntimeVersion": "0.1.0",
+  "dataVersion": 1,
+  "name": {
+    "zh-CN": "画布插件",
+    "en-US": "Canvas Plugin"
+  },
+  "description": {
+    "zh-CN": "DGOS画布插件模板，用于扩展无限画布功能",
+    "en-US": "DGOS canvas plugin template for extending infinite canvas functionality"
+  },
+  "category": "creative",
+  "icon": "public/icon.png",
+  "entrypoints": {
+    "main": "src/index.html",
+    "plugin": "src/plugin.html"
+  },
+  "defaultWindow": {
+    "width": 400,
+    "height": 600,
+    "minWidth": 300,
+    "minHeight": 500,
+    "resizable": true,
+    "maximizable": false
+  },
+  "backgroundPolicy": "release",
+  "trustLevel": "standard",
+  "uninstallPolicy": "user-removable",
+  "permissions": [
+    "storage.kv.read",
+    "storage.kv.write",
+    "canvas.read",
+    "canvas.write"
+  ],
+  "capabilityAllowlist": [
+    "dgos.storage.kv.get",
+    "dgos.storage.kv.set",
+    "dgos.canvas.read",
+    "dgos.canvas.write",
+    "dgos.canvas.addNode",
+    "dgos.canvas.removeNode",
+    "dgos.ui.notify"
+  ],
+  "dependencies": {
+    "apps": [
+      {
+        "appId": "com.dgos.canvas",
+        "version": "1.0.0",
+        "optional": false
+      }
+    ],
+    "skills": [],
+    "mcp": []
+  },
+  "extensions": [
+    {
+      "extensionId": "canvas-tool",
+      "type": "canvas-plugin",
+      "target": "canvas.toolbar",
+      "label": {
+        "zh-CN": "自定义工具",
+        "en-US": "Custom Tool"
+      },
+      "icon": "public/tool-icon.png",
+      "entrypoint": "src/canvas-tool.js",
+      "position": 20
+    },
+    {
+      "extensionId": "canvas-node-type",
+      "type": "canvas-plugin",
+      "target": "canvas.nodes",
+      "label": {
+        "zh-CN": "自定义节点",
+        "en-US": "Custom Node"
+      },
+      "icon": "public/node-icon.png",
+      "entrypoint": "src/custom-node.js"
+    },
+    {
+      "extensionId": "canvas-context-menu",
+      "type": "context-menu",
+      "target": "canvas.node",
+      "label": {
+        "zh-CN": "插件操作",
+        "en-US": "Plugin Action"
+      },
+      "icon": "public/action-icon.png",
+      "entrypoint": "src/context-action.js",
+      "condition": "node.type === 'custom'"
+    }
+  ],
+  "actions": [
+    {
+      "actionId": "create-custom-node",
+      "version": "1.0.0",
+      "label": {
+        "zh-CN": "创建自定义节点",
+        "en-US": "Create Custom Node"
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "x": { "type": "number" },
+          "y": { "type": "number" },
+          "data": { "type": "object" }
+        },
+        "required": ["x", "y"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "nodeId": { "type": "string" }
+        }
+      },
+      "requiredCapabilities": ["dgos.canvas.addNode"],
+      "risk": "write",
+      "sideEffects": "local-write",
+      "confirmation": "none",
+      "idempotency": "unsupported",
+      "cancellable": false,
+      "handler": "canvas.createNode"
+    }
+  ],
+  "agent": null,
+  "exportedAPIs": [
+    {
+      "apiId": "canvas-plugin-api",
+      "version": "1.0.0",
+      "description": {
+        "zh-CN": "画布插件API",
+        "en-US": "Canvas plugin API"
+      },
+      "methods": [
+        {
+          "methodId": "render-custom-node",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "nodeId": { "type": "string" },
+              "data": { "type": "object" }
+            },
+            "required": ["nodeId"]
+          },
+          "outputSchema": {
+            "type": "object",
+            "properties": {
+              "rendered": { "type": "boolean" }
+            }
+          },
+          "requiredCapabilities": ["dgos.canvas.write"]
+        }
+      ]
+    }
+  ],
+  "commands": [
+    {
+      "commandId": "insert-custom-element",
+      "label": {
+        "zh-CN": "插入自定义元素",
+        "en-US": "Insert Custom Element"
+      },
+      "shortcut": "Ctrl+Shift+I",
+      "category": "canvas"
+    }
+  ],
+  "performance": {
+    "maxBundleSize": 300000,
+    "maxMemory": 80,
+    "maxStartupTime": 1000
+  },
+  "accessibility": {
+    "wcagLevel": "AA",
+    "keyboardNavigable": true,
+    "screenReaderSupport": true
+  },
+  "metadata": {
+    "author": "Your Name",
+    "homepage": "https://example.com",
+    "license": "MIT",
+    "tags": ["canvas", "plugin", "drawing", "creative", "extension"]
+  }
+}

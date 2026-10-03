@@ -39,23 +39,36 @@ test('Authorization - insufficient scope rejected', async (t) => {
   const app = buildServer({ logger: false, repository });
   await app.ready();
 
-  // Create API key with limited scope
-  const principal = await repository.createPrincipal({ credentialRef: 'test@example.com' });
-  const keyResult = await repository.createKey({
-    ownerId: principal.principalId,
-    name: 'Limited Key',
-    scopes: ['provider.account.read'], // Only read scope
+  // Bootstrap and create API key with limited scope
+  const bootstrap = await app.inject({
+    method: 'POST',
+    url: '/api/v1/identity/admin/bootstrap',
+    headers: { 'content-type': 'application/json' },
+    payload: { displayName: 'Admin', credential: 'test-credential' },
   });
+  const { sessionId, principalId } = JSON.parse(bootstrap.body);
+
+  const keyResponse = await app.inject({
+    method: 'POST',
+    url: '/api/v1/secret/api-keys',
+    headers: {
+      cookie: `dgos_session=${sessionId}`,
+      'x-dgos-csrf': 'test',
+      'content-type': 'application/json',
+    },
+    payload: { name: 'Limited Key', scopes: ['provider.account.read'] },
+  });
+  const { secret } = JSON.parse(keyResponse.body);
 
   // Attempt write operation with read-only key
   const response = await app.inject({
     method: 'POST',
     url: '/api/v1/provider/accounts',
     headers: {
-      authorization: `ApiKey ${keyResult.secret}`,
+      authorization: `ApiKey ${secret}`,
       'content-type': 'application/json',
     },
-    payload: { protocol: 'openai-compatible', label: 'Test' },
+    payload: { protocol: 'openai-compatible', label: 'Test', credential: 'sk-test-key' },
   });
 
   assert.equal(response.statusCode, 403);
@@ -88,7 +101,7 @@ test('Authorization - session-based access control', async (t) => {
       'x-dgos-csrf': 'web',
       'content-type': 'application/json',
     },
-    payload: { protocol: 'openai-compatible', label: 'User1 Account', endpoint: 'https://api.example.com' },
+    payload: { protocol: 'openai-compatible', label: 'User1 Account', endpoint: 'https://api.example.com', credential: 'sk-test-key' },
   });
 
   assert.equal(createResponse.statusCode, 201);
@@ -110,11 +123,13 @@ test('Authorization - session-based access control', async (t) => {
 
 test('Rate limiting - login attempts limited', async (t) => {
   const repository = new InMemoryIdentityRepository();
-  const app = buildServer({ logger: false, repository });
+  let now = Date.now();
+  const clock = () => now;
+  const app = buildServer({ logger: false, repository, clock });
   await app.ready();
 
   // Create a principal
-  await repository.createPrincipal({ credentialRef: 'test@example.com' });
+  const principal = await repository.createPrincipal({ credentialRef: 'test@example.com' });
 
   // Attempt multiple failed logins
   const attempts = [];
@@ -122,9 +137,9 @@ test('Rate limiting - login attempts limited', async (t) => {
     attempts.push(
       app.inject({
         method: 'POST',
-        url: '/api/v1/identity/bootstrap',
+        url: '/api/v1/identity/admin/login',
         headers: { 'content-type': 'application/json' },
-        payload: { credentialRef: 'wrong@example.com' },
+        payload: { principalHint: principal.principalId, credential: 'wrong-password' },
       })
     );
   }
@@ -133,7 +148,7 @@ test('Rate limiting - login attempts limited', async (t) => {
 
   // Later attempts should be rate limited
   const rateLimited = responses.slice(-1)[0];
-  assert.ok(rateLimited.statusCode === 429 || rateLimited.statusCode === 401, 'Should rate limit after multiple failures');
+  assert.equal(rateLimited.statusCode, 429, 'Should rate limit after multiple failures');
 
   await app.close();
 });

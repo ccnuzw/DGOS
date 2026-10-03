@@ -1,0 +1,57 @@
+{
+  "skillId": "api-integration",
+  "version": "1.0.0",
+  "name": {
+    "en": "API Integration",
+    "zh": "API 集成"
+  },
+  "description": {
+    "en": "Integrate with external APIs",
+    "zh": "与外部 API 集成"
+  },
+  "author": {
+    "name": "Your Name"
+  },
+  "icon": "🌐",
+  "triggers": [
+    {
+      "type": "keyword",
+      "value": "api call"
+    }
+  ],
+  "parameters": [
+    {
+      "name": "endpoint",
+      "type": "string",
+      "required": true,
+      "description": "API endpoint URL"
+    },
+    {
+      "name": "method",
+      "type": "enum",
+      "required": false,
+      "description": "HTTP method",
+      "default": "GET",
+      "options": ["GET", "POST", "PUT", "DELETE"]
+    },
+    {
+      "name": "body",
+      "type": "string",
+      "required": false,
+      "description": "Request body (for POST/PUT)"
+    }
+  ],
+  "permissions": [
+    {
+      "capability": "network:fetch",
+      "reason": "Make HTTP requests to external APIs"
+    }
+  ],
+  "execution": {
+    "timeout": 30000,
+    "retryable": true,
+    "async": true
+  },
+  "category": "data",
+  "tags": ["api", "http", "integration"]
+}

@@ -1,4 +1,5 @@
 /* DGOS UI Component Styles - Extended Components */
+/* DGOS独立品牌 - Brand colors: Deep Ocean Blue + Electric Teal */
 
 /* Input & Select Fields */
 .dgos-input-field, .dgos-select-field {
@@ -13,15 +14,18 @@
   min-height: 36px;
   padding: 7px 9px;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: var(--radius-md, 6px);
   background: var(--surface);
   color: var(--text);
   font: inherit;
+  transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dgos-input:focus, .dgos-select:focus {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
+  border-color: var(--primary);
 }
 
 .dgos-input[aria-invalid="true"], .dgos-select[aria-invalid="true"] {
@@ -46,14 +50,15 @@
   width: 18px;
   height: 18px;
   cursor: pointer;
+  accent-color: var(--primary);
 }
 
-/* Badge */
+/* Badge - Updated with DGOS brand colors */
 .dgos-badge {
   display: inline-flex;
   align-items: center;
   padding: 2px 8px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm, 4px);
   font-size: 12px;
   font-weight: 500;
   white-space: nowrap;
@@ -65,32 +70,42 @@
 }
 
 .dgos-badge.success {
-  background: rgba(22, 131, 75, 0.1);
+  background: rgba(16, 185, 129, 0.1);
   color: var(--success);
 }
 
 .dgos-badge.warning {
-  background: rgba(161, 92, 0, 0.1);
+  background: rgba(245, 158, 11, 0.1);
   color: var(--warning);
 }
 
 .dgos-badge.danger {
-  background: rgba(192, 53, 43, 0.1);
+  background: rgba(239, 68, 68, 0.1);
   color: var(--danger);
 }
 
 .dgos-badge.info {
-  background: rgba(40, 106, 158, 0.1);
+  background: rgba(14, 165, 233, 0.1);
   color: var(--info);
+}
+
+.dgos-badge.primary {
+  background: rgba(15, 95, 217, 0.1);
+  color: var(--primary);
 }
 
 /* Card */
 .dgos-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-lg, 8px);
   padding: 16px;
   min-width: 0;
+  transition: box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dgos-card:hover {
+  box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
 }
 
 /* Spinner */
@@ -125,10 +140,22 @@
   padding: 12px 16px;
   background: var(--raised);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  box-shadow: var(--shadow);
+  border-radius: var(--radius-lg, 8px);
+  box-shadow: var(--shadow-md);
   min-width: 280px;
   max-width: 420px;
+  animation: toast-slide-in 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+@keyframes toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .dgos-toast.success { border-left: 3px solid var(--success); }
@@ -151,6 +178,7 @@
   padding: 0;
   width: 24px;
   height: 24px;
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .toast-close:hover {
@@ -163,22 +191,41 @@
   inset: 0;
   display: grid;
   place-items: center;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(15, 23, 42, 0.6);
   z-index: 1000;
   padding: 16px;
+  animation: backdrop-fade-in 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+@keyframes backdrop-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .dgos-dialog {
   width: min(460px, 100%);
   background: var(--raised);
   padding: 24px;
-  border-radius: 8px;
-  box-shadow: var(--shadow);
+  border-radius: var(--radius-lg, 8px);
+  box-shadow: var(--shadow-xl);
+  animation: dialog-scale-in 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+@keyframes dialog-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .dgos-dialog h2 {
   margin: 0 0 16px;
   font-size: 18px;
+  font-weight: 600;
 }
 
 .dialog-body {
@@ -209,6 +256,8 @@
   font: inherit;
   border-bottom: 2px solid transparent;
   margin-bottom: -1px;
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dgos-tabs button:hover {
@@ -218,7 +267,7 @@
 .dgos-tabs button[aria-selected="true"] {
   color: var(--primary);
   border-bottom-color: var(--primary);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* Breadcrumb */
@@ -241,6 +290,7 @@
 .dgos-breadcrumb a {
   color: var(--muted);
   text-decoration: none;
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dgos-breadcrumb a:hover {
@@ -262,10 +312,11 @@
   background: var(--surface);
   border: 1px solid var(--border);
   padding: 7px 12px;
-  border-radius: 6px;
+  border-radius: var(--radius-md, 6px);
   cursor: pointer;
   font: inherit;
   color: var(--text);
+  transition: background 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dgos-menu > button:hover {
@@ -279,12 +330,24 @@
   min-width: 180px;
   background: var(--raised);
   border: 1px solid var(--border);
-  border-radius: 6px;
-  box-shadow: var(--shadow);
+  border-radius: var(--radius-md, 6px);
+  box-shadow: var(--shadow-md);
   list-style: none;
   margin: 0;
   padding: 4px;
   z-index: 50;
+  animation: menu-slide-in 150ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+@keyframes menu-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .menu-list button {
@@ -295,8 +358,9 @@
   background: none;
   color: var(--text);
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: var(--radius-sm, 4px);
   font: inherit;
+  transition: background 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .menu-list button:hover:not(:disabled) {
@@ -308,8 +372,19 @@
   cursor: not-allowed;
 }
 
+/* Respect reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
   .spinner-circle {
     animation: none;
+    border-top-color: var(--primary);
+    border-right-color: var(--primary);
   }
 }

@@ -1,0 +1,21 @@
+{
+  "name": "@dgos/logger",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./metrics": "./src/metrics.js",
+    "./errors": "./src/errors.js",
+    "./tracing": "./src/tracing.js",
+    "./health": "./src/health.js",
+    "./alerts": "./src/alerts.js"
+  },
+  "scripts": {
+    "check": "node --check src/index.js"
+  },
+  "dependencies": {
+    "pino": "^9.0.0",
+    "pino-pretty": "^11.0.0"
+  }
+}

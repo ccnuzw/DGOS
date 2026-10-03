@@ -1,0 +1,179 @@
+{
+  "format": "dgos-app/v2",
+  "appId": "dev.example.background-service",
+  "version": "1.0.0",
+  "build": 1,
+  "releaseChannel": "dev",
+  "minRuntimeVersion": "0.1.0",
+  "dataVersion": 1,
+  "name": {
+    "zh-CN": "后台服务",
+    "en-US": "Background Service"
+  },
+  "description": {
+    "zh-CN": "DGOS后台服务模板，用于运行持续的后台任务",
+    "en-US": "DGOS background service template for running continuous background tasks"
+  },
+  "category": "utilities",
+  "icon": "public/icon.png",
+  "entrypoints": {
+    "main": "src/index.html",
+    "settings": "src/settings.html"
+  },
+  "defaultWindow": {
+    "width": 600,
+    "height": 400,
+    "minWidth": 500,
+    "minHeight": 300,
+    "resizable": true,
+    "maximizable": false
+  },
+  "backgroundPolicy": "keep-alive",
+  "trustLevel": "standard",
+  "uninstallPolicy": "user-removable",
+  "permissions": [
+    "system.context.read",
+    "storage.kv.read",
+    "storage.kv.write",
+    "network.fetch",
+    "notifications.send"
+  ],
+  "capabilityAllowlist": [
+    "dgos.system.context.read",
+    "dgos.storage.kv.get",
+    "dgos.storage.kv.set",
+    "dgos.network.fetch",
+    "dgos.notifications.create",
+    "dgos.ui.notify"
+  ],
+  "dependencies": {
+    "apps": [],
+    "skills": [],
+    "mcp": []
+  },
+  "backgroundServices": [
+    {
+      "serviceId": "sync-service",
+      "name": {
+        "zh-CN": "同步服务",
+        "en-US": "Sync Service"
+      },
+      "description": {
+        "zh-CN": "定期同步数据",
+        "en-US": "Periodically syncs data"
+      },
+      "entrypoint": "src/services/sync.js",
+      "autoStart": true,
+      "restartPolicy": "on-failure",
+      "maxRestarts": 3,
+      "requiredCapabilities": [
+        "dgos.network.fetch",
+        "dgos.storage.kv.set"
+      ]
+    },
+    {
+      "serviceId": "monitor-service",
+      "name": {
+        "zh-CN": "监控服务",
+        "en-US": "Monitor Service"
+      },
+      "description": {
+        "zh-CN": "监控系统状态",
+        "en-US": "Monitors system status"
+      },
+      "entrypoint": "src/services/monitor.js",
+      "autoStart": true,
+      "restartPolicy": "always",
+      "maxRestarts": 5,
+      "requiredCapabilities": [
+        "dgos.system.context.read",
+        "dgos.notifications.create"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "actionId": "trigger-sync",
+      "version": "1.0.0",
+      "label": {
+        "zh-CN": "触发同步",
+        "en-US": "Trigger Sync"
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "force": { "type": "boolean", "default": false }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "itemsSynced": { "type": "integer" }
+        }
+      },
+      "requiredCapabilities": ["dgos.network.fetch"],
+      "risk": "external",
+      "sideEffects": "external-call",
+      "confirmation": "none",
+      "idempotency": "safe",
+      "cancellable": true,
+      "handler": "sync.trigger"
+    }
+  ],
+  "agent": null,
+  "settingsSections": [
+    {
+      "sectionId": "sync-settings",
+      "label": {
+        "zh-CN": "同步设置",
+        "en-US": "Sync Settings"
+      },
+      "description": {
+        "zh-CN": "配置数据同步选项",
+        "en-US": "Configure data synchronization options"
+      },
+      "fields": [
+        {
+          "fieldId": "sync-interval",
+          "type": "number",
+          "label": {
+            "zh-CN": "同步间隔（分钟）",
+            "en-US": "Sync Interval (minutes)"
+          },
+          "defaultValue": 30,
+          "required": true,
+          "validation": {
+            "min": 5,
+            "max": 1440
+          }
+        },
+        {
+          "fieldId": "sync-on-startup",
+          "type": "boolean",
+          "label": {
+            "zh-CN": "启动时同步",
+            "en-US": "Sync on Startup"
+          },
+          "defaultValue": true,
+          "required": false
+        }
+      ]
+    }
+  ],
+  "performance": {
+    "maxBundleSize": 300000,
+    "maxMemory": 80,
+    "maxCPU": 5
+  },
+  "accessibility": {
+    "wcagLevel": "AA",
+    "keyboardNavigable": true,
+    "screenReaderSupport": true
+  },
+  "metadata": {
+    "author": "Your Name",
+    "license": "MIT",
+    "tags": ["background", "service", "sync", "automation"]
+  }
+}

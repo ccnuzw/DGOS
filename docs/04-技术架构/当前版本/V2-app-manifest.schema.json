@@ -1,0 +1,609 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:dgos:app-manifest:v2",
+  "title": "DGOS application manifest v2",
+  "description": "Enhanced manifest schema with V2-V6 feature support including inter-app communication, widgets, background services, and advanced capabilities",
+  "type": "object",
+  "required": ["format", "appId", "version", "build", "releaseChannel", "minRuntimeVersion", "dataVersion", "name", "description", "category", "icon", "defaultWindow", "entrypoints", "permissions", "capabilityAllowlist", "trustLevel", "backgroundPolicy", "uninstallPolicy"],
+  "properties": {
+    "format": {
+      "const": "dgos-app/v2",
+      "description": "Manifest format version identifier"
+    },
+    "appId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9.-]{1,63}$",
+      "description": "Globally unique application identifier (reverse domain notation recommended)"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$",
+      "description": "Semantic version (SemVer 2.0.0 compliant)"
+    },
+    "build": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991,
+      "description": "Monotonically increasing build number for this version"
+    },
+    "dataVersion": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991,
+      "description": "Application data schema version"
+    },
+    "releaseChannel": {
+      "enum": ["stable", "beta", "dev"],
+      "description": "Release distribution channel"
+    },
+    "minRuntimeVersion": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Minimum DGOS runtime version required"
+    },
+    "name": {
+      "$ref": "#/$defs/localizedText",
+      "description": "Application display name (localized)"
+    },
+    "displayName": {
+      "$ref": "#/$defs/localizedText",
+      "description": "Optional alternative display name for specific contexts"
+    },
+    "description": {
+      "$ref": "#/$defs/localizedText",
+      "description": "Application description (localized)"
+    },
+    "category": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Application category for store classification"
+    },
+    "icon": {
+      "$ref": "#/$defs/relativePath",
+      "description": "Path to application icon (PNG, SVG)"
+    },
+    "entrypoints": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "$ref": "#/$defs/relativePath" },
+      "description": "Named entry points mapping to HTML files"
+    },
+    "trustLevel": {
+      "enum": ["standard", "trusted", "system"],
+      "description": "Requested trust level (actual trust determined by platform)"
+    },
+    "uninstallPolicy": {
+      "enum": ["user-removable", "protected-preinstall"],
+      "description": "Uninstall policy (effective value must be authorized)"
+    },
+    "backgroundPolicy": {
+      "enum": ["release", "keep-alive"],
+      "description": "Background execution policy"
+    },
+    "permissions": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Requested permission identifiers"
+    },
+    "capabilityAllowlist": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Allowed capability identifiers"
+    },
+    "networkAllowlist": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Allowed network domains and URLs"
+    },
+    "defaultWindow": {
+      "$ref": "#/$defs/windowConfig",
+      "description": "Default window configuration"
+    },
+    "dependencies": {
+      "$ref": "#/$defs/dependencies",
+      "description": "Application dependencies"
+    },
+    "actions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/actionDeclaration" },
+      "description": "Registered action declarations"
+    },
+    "agent": {
+      "type": ["object", "null"],
+      "$ref": "#/$defs/agentConfig",
+      "description": "AI agent configuration"
+    },
+    "dataMigration": {
+      "type": "object",
+      "required": ["from", "entry"],
+      "properties": {
+        "from": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "integer", "minimum": 0 }
+        },
+        "entry": {
+          "$ref": "#/$defs/relativePath",
+          "pattern": "\\.json$",
+          "description": "Migration script conforming to V1-app-data-migration.schema.json"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Data migration configuration"
+    },
+    "accentColor": {
+      "type": "string",
+      "description": "Registered semantic token for accent color"
+    },
+    "preferredWindow": {
+      "$ref": "#/$defs/windowConfig",
+      "description": "Preferred window configuration (overrides defaultWindow)"
+    },
+    "minWindowSize": {
+      "type": "object",
+      "properties": {
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false,
+      "description": "Minimum window dimensions"
+    },
+    "routes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Application route patterns"
+    },
+    "deepLinks": {
+      "type": "array",
+      "items": { "type": "string", "format": "uri" },
+      "description": "Deep link URL schemes"
+    },
+    "supportedLocales": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z]{2}-[A-Z]{2}$" },
+      "description": "Supported locale codes"
+    },
+    "commands": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/commandDeclaration" },
+      "description": "Registered UI commands"
+    },
+    "settingsSections": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/settingsSection" },
+      "description": "Application settings sections"
+    },
+    "uiCapabilities": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "UI capability identifiers"
+    },
+    "intents": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/intentHandler" },
+      "description": "Intent handler declarations for inter-app communication"
+    },
+    "widgets": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/widgetDeclaration" },
+      "description": "Widget declarations"
+    },
+    "backgroundServices": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/backgroundService" },
+      "description": "Background service declarations"
+    },
+    "extensions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/extensionPoint" },
+      "description": "Extension point declarations"
+    },
+    "dataSchemas": {
+      "type": "object",
+      "additionalProperties": { "type": "object" },
+      "description": "Application data schemas (JSON Schema)"
+    },
+    "featureFlags": {
+      "type": "object",
+      "additionalProperties": { "type": "boolean" },
+      "description": "Feature flag declarations with default values"
+    },
+    "performance": {
+      "$ref": "#/$defs/performanceBudget",
+      "description": "Performance budget declarations"
+    },
+    "accessibility": {
+      "$ref": "#/$defs/accessibilityConfig",
+      "description": "Accessibility configuration and requirements"
+    },
+    "exportedAPIs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/apiExport" },
+      "description": "APIs exported for other apps to consume"
+    },
+    "contentSecurityPolicy": {
+      "type": "string",
+      "description": "Content Security Policy directives"
+    },
+    "shortcuts": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/keyboardShortcut" },
+      "description": "Keyboard shortcut declarations"
+    },
+    "fileAssociations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/fileAssociation" },
+      "description": "File type associations"
+    },
+    "protocols": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Custom protocol schemes"
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "author": { "type": "string" },
+        "homepage": { "type": "string", "format": "uri" },
+        "repository": { "type": "string", "format": "uri" },
+        "license": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "screenshots": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["url"],
+            "properties": {
+              "url": { "$ref": "#/$defs/relativePath" },
+              "caption": { "$ref": "#/$defs/localizedText" }
+            }
+          }
+        }
+      },
+      "additionalProperties": false,
+      "description": "Application metadata for store listing"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "semver": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$",
+      "description": "Exact SemVer, validated by platform SemVer parser"
+    },
+    "stableId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_.-]{0,127}$",
+      "description": "Stable identifier for cross-version references"
+    },
+    "operationIds": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/stableId" }
+    },
+    "localizedText": {
+      "type": "object",
+      "required": ["zh-CN", "en-US"],
+      "additionalProperties": { "type": "string", "minLength": 1 },
+      "description": "Localized text with required zh-CN and en-US"
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Package-relative POSIX path (no traversal, absolute paths, or symlinks)"
+    },
+    "windowConfig": {
+      "type": "object",
+      "properties": {
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 },
+        "minWidth": { "type": "integer", "minimum": 1 },
+        "minHeight": { "type": "integer", "minimum": 1 },
+        "maxWidth": { "type": "integer", "minimum": 1 },
+        "maxHeight": { "type": "integer", "minimum": 1 },
+        "resizable": { "type": "boolean" },
+        "maximizable": { "type": "boolean" },
+        "minimizable": { "type": "boolean" },
+        "closable": { "type": "boolean" },
+        "alwaysOnTop": { "type": "boolean" },
+        "fullscreenable": { "type": "boolean" },
+        "transparent": { "type": "boolean" },
+        "frame": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "dependencies": {
+      "type": "object",
+      "properties": {
+        "apps": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/appDependency" }
+        },
+        "skills": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/skillDependency" }
+        },
+        "mcp": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/mcpDependency" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "appDependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["appId", "version"],
+      "properties": {
+        "appId": { "$ref": "#/$defs/stableId" },
+        "version": { "$ref": "#/$defs/semver" },
+        "optional": { "type": "boolean", "default": false }
+      }
+    },
+    "skillDependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["packageId", "skillId", "version", "operationIds"],
+      "properties": {
+        "packageId": { "$ref": "#/$defs/stableId" },
+        "skillId": { "$ref": "#/$defs/stableId" },
+        "version": { "$ref": "#/$defs/semver" },
+        "operationIds": { "$ref": "#/$defs/operationIds" }
+      }
+    },
+    "mcpDependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceId", "version", "operationIds"],
+      "properties": {
+        "sourceId": { "$ref": "#/$defs/stableId" },
+        "version": { "$ref": "#/$defs/semver" },
+        "operationIds": { "$ref": "#/$defs/operationIds" }
+      }
+    },
+    "actionDeclaration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["actionId", "version", "label", "inputSchema", "outputSchema", "requiredCapabilities", "risk", "sideEffects", "confirmation", "idempotency", "cancellable", "handler"],
+      "properties": {
+        "actionId": { "$ref": "#/$defs/stableId" },
+        "version": { "$ref": "#/$defs/semver" },
+        "label": { "$ref": "#/$defs/localizedText" },
+        "description": { "$ref": "#/$defs/localizedText" },
+        "inputSchema": {
+          "type": "object",
+          "required": ["type"],
+          "properties": { "type": { "const": "object" } }
+        },
+        "outputSchema": {
+          "type": "object",
+          "required": ["type"],
+          "properties": { "type": { "const": "object" } }
+        },
+        "requiredCapabilities": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/stableId" }
+        },
+        "risk": { "enum": ["read", "write", "external", "destructive"] },
+        "sideEffects": { "enum": ["none", "local-write", "external-call", "model-call", "secret-use", "destructive"] },
+        "confirmation": { "enum": ["none", "required", "elevated"] },
+        "idempotency": { "enum": ["safe", "required", "unsupported"] },
+        "cancellable": { "type": "boolean" },
+        "handler": { "$ref": "#/$defs/stableId" }
+      },
+      "allOf": [{
+        "if": {
+          "properties": { "sideEffects": { "not": { "const": "none" } } },
+          "required": ["sideEffects"]
+        },
+        "then": {
+          "properties": { "confirmation": { "enum": ["required", "elevated"] } }
+        }
+      }]
+    },
+    "agentConfig": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "capabilities": { "type": "array", "items": { "type": "string" } },
+        "modelPreferences": {
+          "type": "object",
+          "properties": {
+            "defaultProvider": { "type": "string" },
+            "fallbackProviders": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    },
+    "commandDeclaration": {
+      "type": "object",
+      "required": ["commandId", "label"],
+      "properties": {
+        "commandId": { "$ref": "#/$defs/stableId" },
+        "label": { "$ref": "#/$defs/localizedText" },
+        "description": { "$ref": "#/$defs/localizedText" },
+        "icon": { "$ref": "#/$defs/relativePath" },
+        "shortcut": { "type": "string" },
+        "category": { "type": "string" },
+        "enabledWhen": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "settingsSection": {
+      "type": "object",
+      "required": ["sectionId", "label", "fields"],
+      "properties": {
+        "sectionId": { "$ref": "#/$defs/stableId" },
+        "label": { "$ref": "#/$defs/localizedText" },
+        "description": { "$ref": "#/$defs/localizedText" },
+        "icon": { "$ref": "#/$defs/relativePath" },
+        "fields": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/settingsField" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "settingsField": {
+      "type": "object",
+      "required": ["fieldId", "type", "label"],
+      "properties": {
+        "fieldId": { "$ref": "#/$defs/stableId" },
+        "type": { "enum": ["boolean", "string", "number", "select", "multiselect", "color", "file"] },
+        "label": { "$ref": "#/$defs/localizedText" },
+        "description": { "$ref": "#/$defs/localizedText" },
+        "defaultValue": {},
+        "required": { "type": "boolean" },
+        "validation": { "type": "object" },
+        "options": { "type": "array" }
+      },
+      "additionalProperties": false
+    },
+    "intentHandler": {
+      "type": "object",
+      "required": ["intentId", "action", "category", "dataSchema"],
+      "properties": {
+        "intentId": { "$ref": "#/$defs/stableId" },
+        "action": { "type": "string" },
+        "category": { "type": "array", "items": { "type": "string" } },
+        "dataSchema": { "type": "object" },
+        "mimeTypes": { "type": "array", "items": { "type": "string" } },
+        "priority": { "type": "integer", "minimum": 0, "maximum": 100 }
+      },
+      "additionalProperties": false,
+      "description": "Intent handler for inter-app communication"
+    },
+    "widgetDeclaration": {
+      "type": "object",
+      "required": ["widgetId", "name", "entrypoint", "defaultSize"],
+      "properties": {
+        "widgetId": { "$ref": "#/$defs/stableId" },
+        "name": { "$ref": "#/$defs/localizedText" },
+        "description": { "$ref": "#/$defs/localizedText" },
+        "entrypoint": { "$ref": "#/$defs/relativePath" },
+        "icon": { "$ref": "#/$defs/relativePath" },
+        "defaultSize": {
+          "type": "object",
+          "required": ["width", "height"],
+          "properties": {
+            "width": { "type": "integer", "minimum": 1 },
+            "height": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "resizable": { "type": "boolean" },
+        "refreshInterval": { "type": "integer", "minimum": 1000 },
+        "configurable": { "type": "boolean" },
+        "configSchema": { "type": "object" }
+      },
+      "additionalProperties": false
+    },
+    "backgroundService": {
+      "type": "object",
+      "required": ["serviceId", "name", "entrypoint"],
+      "properties": {
+        "serviceId": { "$ref": "#/$defs/stableId" },
+        "name": { "$ref": "#/$defs/localizedText" },
+        "description": { "$ref": "#/$defs/localizedText" },
+        "entrypoint": { "$ref": "#/$defs/relativePath" },
+        "autoStart": { "type": "boolean" },
+        "restartPolicy": { "enum": ["never", "on-failure", "always"] },
+        "maxRestarts": { "type": "integer", "minimum": 0 },
+        "requiredCapabilities": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "extensionPoint": {
+      "type": "object",
+      "required": ["extensionId", "type", "target"],
+      "properties": {
+        "extensionId": { "$ref": "#/$defs/stableId" },
+        "type": { "enum": ["menu", "toolbar", "panel", "canvas-plugin", "context-menu"] },
+        "target": { "type": "string" },
+        "label": { "$ref": "#/$defs/localizedText" },
+        "icon": { "$ref": "#/$defs/relativePath" },
+        "entrypoint": { "$ref": "#/$defs/relativePath" },
+        "position": { "type": "integer" },
+        "condition": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "performanceBudget": {
+      "type": "object",
+      "properties": {
+        "maxBundleSize": { "type": "integer", "description": "Maximum bundle size in bytes" },
+        "maxMemory": { "type": "integer", "description": "Maximum memory usage in MB" },
+        "maxCPU": { "type": "number", "description": "Maximum CPU usage percentage" },
+        "maxStartupTime": { "type": "integer", "description": "Maximum startup time in ms" },
+        "maxRenderTime": { "type": "integer", "description": "Maximum initial render time in ms" }
+      },
+      "additionalProperties": false
+    },
+    "accessibilityConfig": {
+      "type": "object",
+      "properties": {
+        "wcagLevel": { "enum": ["A", "AA", "AAA"] },
+        "keyboardNavigable": { "type": "boolean" },
+        "screenReaderSupport": { "type": "boolean" },
+        "highContrastSupport": { "type": "boolean" },
+        "textScaling": { "type": "boolean" },
+        "ariaLabels": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "apiExport": {
+      "type": "object",
+      "required": ["apiId", "version", "methods"],
+      "properties": {
+        "apiId": { "$ref": "#/$defs/stableId" },
+        "version": { "$ref": "#/$defs/semver" },
+        "description": { "$ref": "#/$defs/localizedText" },
+        "methods": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["methodId", "inputSchema", "outputSchema"],
+            "properties": {
+              "methodId": { "$ref": "#/$defs/stableId" },
+              "inputSchema": { "type": "object" },
+              "outputSchema": { "type": "object" },
+              "requiredCapabilities": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "keyboardShortcut": {
+      "type": "object",
+      "required": ["shortcutId", "key", "command"],
+      "properties": {
+        "shortcutId": { "$ref": "#/$defs/stableId" },
+        "key": { "type": "string" },
+        "command": { "type": "string" },
+        "when": { "type": "string" },
+        "platform": { "enum": ["all", "mac", "windows", "linux"] }
+      },
+      "additionalProperties": false
+    },
+    "fileAssociation": {
+      "type": "object",
+      "required": ["extension", "mimeType"],
+      "properties": {
+        "extension": { "type": "string", "pattern": "^\\.[a-z0-9]+$" },
+        "mimeType": { "type": "string" },
+        "description": { "$ref": "#/$defs/localizedText" },
+        "icon": { "$ref": "#/$defs/relativePath" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

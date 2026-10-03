@@ -1,0 +1,17 @@
+{
+  "name": "@dgos/built-in-skills",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "exports": {
+    "./file-search": "./file-search.ts",
+    "./translator": "./translator.ts",
+    "./system-info": "./system-info.ts",
+    "./calculator": "./calculator.ts",
+    "./clipboard": "./clipboard.ts",
+    "./screenshot": "./screenshot.ts"
+  },
+  "dependencies": {
+    "@dgos/skill-sdk": "workspace:*"
+  }
+}

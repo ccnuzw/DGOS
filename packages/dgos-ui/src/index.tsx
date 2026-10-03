@@ -9,3 +9,12 @@ export function Empty({children}:PropsWithChildren){return <p className="dgos-em
 
 // Export extended components
 export * from './components.js';
+
+// Export new UX enhancement components
+export * from './toast';
+export * from './keyboard';
+export * from './progress';
+export * from './forms';
+
+// Export icon components
+export * from './icons';

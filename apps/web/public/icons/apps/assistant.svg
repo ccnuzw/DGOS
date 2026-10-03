@@ -1,0 +1,28 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad-assistant" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D"/>
+      <stop offset="100%" stop-color="#EAB308"/>
+    </linearGradient>
+    <filter id="shadow-assistant">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.3"/>
+    </filter>
+    <filter id="glow-assistant">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Rounded rectangle base -->
+  <rect x="4" y="4" width="40" height="40" rx="10" fill="url(#grad-assistant)" filter="url(#shadow-assistant)"/>
+  <!-- Highlight -->
+  <path d="M 4 14 Q 4 4 14 4 L 34 4 Q 44 4 44 14 L 44 20 Q 24 10 4 20 Z" fill="white" opacity="0.3"/>
+  <!-- Star - sparkle effect -->
+  <path d="M 24 12 L 25.5 19 L 32 20.5 L 25.5 22 L 24 29 L 22.5 22 L 16 20.5 L 22.5 19 Z" fill="white" filter="url(#glow-assistant)"/>
+  <!-- Smaller sparkles -->
+  <path d="M 18 16 L 18.5 18 L 20 18.5 L 18.5 19 L 18 21 L 17.5 19 L 16 18.5 L 17.5 18 Z" fill="white" opacity="0.9"/>
+  <path d="M 30 25 L 30.5 27 L 32 27.5 L 30.5 28 L 30 30 L 29.5 28 L 28 27.5 L 29.5 27 Z" fill="white" opacity="0.9"/>
+  <path d="M 20 32 L 20.5 33.5 L 22 34 L 20.5 34.5 L 20 36 L 19.5 34.5 L 18 34 L 19.5 33.5 Z" fill="white" opacity="0.8"/>
+</svg>

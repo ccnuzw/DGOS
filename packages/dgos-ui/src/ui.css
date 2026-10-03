@@ -1,4 +1,208 @@
 /* DGOS UI Core Component Styles */
+/* DGOS独立品牌 - Independent brand identity */
 @import './components.css';
+@import './ux-enhancements.css';
 
-.dgos-button{min-height:36px;padding:7px 12px;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:6px;cursor:pointer;font:inherit}.dgos-button:hover{background:var(--soft)}.dgos-button.primary{background:var(--primary);border-color:var(--primary);color:var(--on-primary)}.dgos-button.danger{color:var(--danger);border-color:var(--danger)}.dgos-button:disabled{opacity:.55;cursor:not-allowed}.dgos-panel{border:1px solid var(--border);background:var(--surface);border-radius:8px;padding:20px;min-width:0}.dgos-status{display:inline-block;border:1px solid var(--border);border-radius:4px;padding:2px 7px;font-size:12px;white-space:nowrap}.dgos-status.good{color:var(--success)}.dgos-status.bad{color:var(--danger)}.dgos-alert{padding:12px 14px;border-left:3px solid var(--danger);background:var(--soft);margin:12px 0;overflow-wrap:anywhere}.dgos-alert.info{border-color:var(--info)}.dgos-empty{color:var(--muted);padding:20px 0}.dgos-panel h2{font-size:18px;margin:0 0 14px}label{display:grid;gap:5px;font-weight:500}input,select,textarea{box-sizing:border-box;width:100%;min-height:36px;padding:7px 9px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);font:inherit}input[type=checkbox]{width:18px;min-height:18px}textarea{min-height:110px;resize:vertical}form{display:grid;gap:14px}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:2px solid var(--focus);outline-offset:2px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--soft);padding:12px;border-radius:6px}
+/* Button - DGOS brand styling */
+.dgos-button {
+  min-height: 36px;
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: var(--radius-md, 6px);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 500;
+  transition: background 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              transform 100ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dgos-button:hover:not(:disabled) {
+  background: var(--soft);
+}
+
+.dgos-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.dgos-button.primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--on-primary);
+}
+
+.dgos-button.primary:hover:not(:disabled) {
+  background: var(--hover, #0d4fb8);
+  border-color: var(--hover, #0d4fb8);
+}
+
+.dgos-button.secondary {
+  background: var(--secondary);
+  border-color: var(--secondary);
+  color: var(--on-secondary);
+}
+
+.dgos-button.danger {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.dgos-button.danger:hover:not(:disabled) {
+  background: var(--danger);
+  color: white;
+}
+
+.dgos-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Panel */
+.dgos-panel {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--radius-lg, 8px);
+  padding: 20px;
+  min-width: 0;
+}
+
+.dgos-panel h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 14px;
+}
+
+/* Status Badge */
+.dgos-status {
+  display: inline-block;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm, 4px);
+  padding: 2px 7px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.dgos-status.good {
+  color: var(--success);
+  background: rgba(16, 185, 129, 0.1);
+  border-color: var(--success);
+}
+
+.dgos-status.bad {
+  color: var(--danger);
+  background: rgba(239, 68, 68, 0.1);
+  border-color: var(--danger);
+}
+
+/* Alert */
+.dgos-alert {
+  padding: 12px 14px;
+  border-left: 3px solid var(--danger);
+  background: var(--soft);
+  border-radius: var(--radius-md, 6px);
+  margin: 12px 0;
+  overflow-wrap: anywhere;
+}
+
+.dgos-alert.info {
+  border-color: var(--info);
+}
+
+.dgos-alert.success {
+  border-color: var(--success);
+}
+
+.dgos-alert.warning {
+  border-color: var(--warning);
+}
+
+/* Empty State */
+.dgos-empty {
+  color: var(--muted);
+  padding: 20px 0;
+  text-align: center;
+}
+
+/* Form Elements */
+label {
+  display: grid;
+  gap: 5px;
+  font-weight: 500;
+}
+
+input, select, textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 36px;
+  padding: 7px 9px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md, 6px);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+input[type="checkbox"] {
+  width: 18px;
+  min-height: 18px;
+  accent-color: var(--primary);
+}
+
+textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+form {
+  display: grid;
+  gap: 14px;
+}
+
+/* Focus States */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Code Block */
+pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: var(--soft);
+  padding: 12px;
+  border-radius: var(--radius-md, 6px);
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, monospace;
+}
+
+/* Links */
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+a:hover {
+  color: var(--hover, #0d4fb8);
+  text-decoration: underline;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+

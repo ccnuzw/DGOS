@@ -27,3 +27,7 @@ reference/*.mkv
 reference/*.zip
 reference/*.tar
 reference/*.tar.gz
+
+# Release candidates (large frozen artifacts)
+candidates/*/
+!candidates/.gitkeep

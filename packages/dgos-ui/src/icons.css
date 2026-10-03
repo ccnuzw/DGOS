@@ -1,0 +1,122 @@
+/* macOS-style icon styles for DGOS V1 */
+
+.macos-icon {
+  display: inline-block;
+  vertical-align: middle;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Dock icons have hover effects */
+.dock .macos-icon {
+  transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.dock .macos-icon:hover {
+  transform: scale(1.15) translateY(-4px);
+}
+
+.dock .macos-icon:active {
+  transform: scale(1.05) translateY(-2px);
+}
+
+/* Status bar icons use currentColor and have subtle hover */
+.status-icon {
+  color: inherit;
+  opacity: 0.8;
+  transition: opacity 150ms ease;
+}
+
+.status-icon:hover {
+  opacity: 1;
+}
+
+/* Icon grid for catalog/app launcher */
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 16px;
+  padding: 16px;
+}
+
+.icon-grid-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.icon-grid-item:hover {
+  background-color: var(--dgos-color-soft);
+}
+
+.icon-grid-item:active {
+  background-color: var(--dgos-color-border);
+}
+
+.icon-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--dgos-color-text);
+  text-align: center;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Dark mode adjustments for status icons */
+@media (prefers-color-scheme: dark) {
+  .status-icon {
+    opacity: 0.9;
+  }
+
+  .status-icon:hover {
+    opacity: 1;
+  }
+}
+
+/* Animation for icon appearance */
+@keyframes icon-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.macos-icon.animate-appear {
+  animation: icon-appear 200ms cubic-bezier(0, 0, 0.2, 1) forwards;
+}
+
+/* Badge support for notifications on icons */
+.icon-badge {
+  position: relative;
+}
+
+.icon-badge::after {
+  content: attr(data-badge);
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  background: #ef4444;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}

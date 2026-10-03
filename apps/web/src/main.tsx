@@ -22,6 +22,8 @@ import { ModelManagement } from "./model-management";
 import { useDialogKeyboard } from './dialog';
 import { displayNumber, setRegionFormat } from './region';
 import { DeviceSessions } from './sessions';
+import { DesignSystemShowcase } from './design-system-showcase';
+import { AssistantChat } from './assistant-chat';
 import "./style.css";
 
 type Dict = Record<string, any>;
@@ -1654,12 +1656,13 @@ function App() {
     protocols: <ProtocolControl t={t} />,
     skills: <ExtensionsV1 t={t} kind="skills" />,
     mcp: <ExtensionsV1 t={t} kind="mcp" />,
-    assistant: <Assistant t={t} session={session} />,
+    assistant: <AssistantChat t={t} session={session} />,
     tasks: <Tasks t={t} />,
     developer: <DeveloperCenter t={t} />,
     keys: <KeyControl t={t} session={session} onStepUp={beginStepUp} />,
     governance: <GovernanceControl t={t} onStepUp={beginStepUp} />,
     usage: <UsageControl t={t} session={session} />,
+    designSystem: <DesignSystemShowcase t={t} />,
   };
   return (
     <Shell

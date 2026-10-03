@@ -1,0 +1,49 @@
+{
+  "skillId": "my-basic-skill",
+  "version": "1.0.0",
+  "name": {
+    "en": "My Basic Skill",
+    "zh": "我的基础技能"
+  },
+  "description": {
+    "en": "A basic skill template",
+    "zh": "基础技能模板"
+  },
+  "author": {
+    "name": "Your Name",
+    "email": "your.email@example.com"
+  },
+  "icon": "⚡",
+  "triggers": [
+    {
+      "type": "keyword",
+      "value": "myskill",
+      "examples": [
+        "myskill execute",
+        "run myskill"
+      ]
+    }
+  ],
+  "parameters": [
+    {
+      "name": "input",
+      "type": "string",
+      "required": true,
+      "description": "Input text to process"
+    }
+  ],
+  "permissions": [],
+  "execution": {
+    "timeout": 5000,
+    "retryable": true,
+    "async": false
+  },
+  "category": "productivity",
+  "tags": [
+    "example",
+    "basic"
+  ],
+  "dependencies": {
+    "dgos": ">=1.0.0"
+  }
+}

@@ -1,0 +1,20 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad-tasks-dark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FBCFE8"/>
+      <stop offset="100%" stop-color="#F9A8D4"/>
+    </linearGradient>
+    <filter id="shadow-dark">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+  <rect x="4" y="4" width="40" height="40" rx="10" fill="url(#grad-tasks-dark)" filter="url(#shadow-dark)"/>
+  <path d="M 4 14 Q 4 4 14 4 L 34 4 Q 44 4 44 14 L 44 20 Q 24 10 4 20 Z" fill="white" opacity="0.4"/>
+  <path d="M 12 32 L 16 28 L 20 30 L 24 22 L 28 26 L 32 20 L 36 24" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.98"/>
+  <circle cx="16" cy="28" r="2" fill="white"/>
+  <circle cx="24" cy="22" r="2" fill="white"/>
+  <circle cx="32" cy="20" r="2" fill="white"/>
+  <circle cx="35" cy="15" r="2.5" fill="white" opacity="0.95">
+    <animate attributeName="opacity" values="0.95;0.5;0.95" dur="2s" repeatCount="indefinite"/>
+  </circle>
+</svg>

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@dgos/sdk": "workspace:*",
+    "@dgos/logger": "workspace:*",
     "fastify": "^5.0.0",
     "pg": "^8.13.1",
     "redis": "^4.7.0"
