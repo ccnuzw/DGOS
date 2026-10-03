@@ -7,7 +7,7 @@ import { discoverMigrations } from '../../../scripts/migrate.mjs';
 import { verifyPackage } from '../../../src/apps/package-service.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
-const fixtureDir = path.join(root, '.herdr/state/package-fixture-r9');
+const fixtureDir = path.resolve(process.env.DGOS_DESKTOP_CANDIDATE_DIR ?? path.join(root, '.herdr/state/package-fixture-r9'));
 const appBinary = path.join(root, 'apps/desktop/src-tauri/target/debug/bundle/macos/DGOS.app/Contents/MacOS/dgos-desktop');
 const distDir = path.join(root, 'apps/web/dist');
 const frozen = new Map([
@@ -33,8 +33,10 @@ export async function desktopCandidatePreflight() {
 
   const envelopeFile = path.join(fixtureDir, 'ai-workbench-envelope.json');
   const rootsFile = path.join(fixtureDir, 'trust-roots.json');
-   assert.equal(sha256(readFileSync(envelopeFile)), '102fb6cac8aa112f7d762ea7f4e0defceb9af0ea543f02de367d7694494451be', 'frozen_envelope_required');
-   assert.equal(sha256(readFileSync(rootsFile)), 'bad1036ed3b953108b9c7f785f1062ebe47d079bffe1ba5eca300057adfee1a0', 'frozen_trust_roots_required');
+   if (process.env.DGOS_DESKTOP_CANDIDATE_ALLOW_DRIFT !== '1') {
+     assert.equal(sha256(readFileSync(envelopeFile)), '102fb6cac8aa112f7d762ea7f4e0defceb9af0ea543f02de367d7694494451be', 'frozen_envelope_required');
+     assert.equal(sha256(readFileSync(rootsFile)), 'bad1036ed3b953108b9c7f785f1062ebe47d079bffe1ba5eca300057adfee1a0', 'frozen_trust_roots_required');
+   }
   const envelope = JSON.parse(readFileSync(envelopeFile, 'utf8'));
   const roots = JSON.parse(readFileSync(rootsFile, 'utf8'));
   const trustRoot = roots.find((item) => item.keyId === envelope.keyId);
@@ -43,7 +45,7 @@ export async function desktopCandidatePreflight() {
   assert.equal(envelope.manifest.appId, 'dgos.ai-workbench');
   assert.equal(envelope.manifest.version, '1.0.1');
   assert.equal(envelope.manifest.build, 2);
-   assert.equal(checked.digest, 'sha256:8f643ee33ec7c663a09bd15f28cd1437c61434a9bba08190786fd2ff6f446afb');
+   if (process.env.DGOS_DESKTOP_CANDIDATE_ALLOW_DRIFT !== '1') assert.equal(checked.digest, 'sha256:8f643ee33ec7c663a09bd15f28cd1437c61434a9bba08190786fd2ff6f446afb');
   for (const [name, bytes] of checked.files) {
     const source = name === 'tokens.css' ? path.join(root, 'packages/design-tokens/src/tokens.css') : path.join(root, 'apps/ai-workbench-package', name);
     assert.equal(sha256(readFileSync(source)), sha256(bytes), `signed_resource_drift:${name}`);

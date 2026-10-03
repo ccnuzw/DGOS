@@ -1,7 +1,8 @@
 // macOS System Bar Component
 // Top bar with app name, search, and system controls
-import React, { useState, useEffect } from 'react';
-import { Search, Bell, Settings, User } from 'lucide-react';
+import React, { useState, useEffect, type ReactNode } from 'react';
+import { Search, Bell, Settings, User, X, Grid2X2 } from 'lucide-react';
+import type { WindowInstance } from './window-manager';
 
 export interface SystemBarProps {
   currentApp?: string;
@@ -11,6 +12,11 @@ export interface SystemBarProps {
   onSettingsClick?: () => void;
   theme?: 'light' | 'dark';
   onThemeToggle?: () => void;
+  windows?: WindowInstance[];
+  focusedWindowId?: string | null;
+  onWindowFocus?: (windowId: string) => void;
+  onWindowClose?: (windowId: string) => void;
+  onLauncherClick?: () => void;
 }
 
 export function MacOSSystemBar({
@@ -21,6 +27,11 @@ export function MacOSSystemBar({
   onSettingsClick,
   theme = 'light',
   onThemeToggle,
+  windows = [],
+  focusedWindowId,
+  onWindowFocus,
+  onWindowClose,
+  onLauncherClick,
 }: SystemBarProps) {
   const [time, setTime] = useState(formatTime(new Date()));
 
@@ -32,8 +43,60 @@ export function MacOSSystemBar({
     return () => clearInterval(interval);
   }, []);
 
+  // Get visible windows (not minimized)
+  const visibleWindows = windows.filter((w) => w.state !== 'minimized');
+
+  // Check if any window is maximized
+  const hasMaximizedWindow = visibleWindows.some((w) => w.state === 'maximized');
+
+  // Render tabs only when at least one window is maximized
+  const renderTabs = () => {
+    if (!hasMaximizedWindow || visibleWindows.length === 0) {
+      return null;
+    }
+
+    return visibleWindows.map((window) => (
+      <div
+        key={window.id}
+        className={`macos-window-tab ${window.id === focusedWindowId ? 'macos-window-tab--active' : ''}`}
+        onClick={() => onWindowFocus?.(window.id)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onWindowFocus?.(window.id); }
+        }}
+      >
+        {window.icon && (
+          <div className="macos-window-tab__icon" style={{ width: '14px', height: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div className="macos-window-tab__icon-content">{window.icon}</div>
+          </div>
+        )}
+        <span className="macos-window-tab__title">{window.title}</span>
+        <button
+          className="macos-system-bar__launcher"
+          onClick={onLauncherClick}
+          aria-label="Open application launcher"
+          type="button"
+        >
+          <Grid2X2 size={18} />
+        </button>
+        <button
+          className="macos-window-tab__close"
+          onClick={(e) => {
+            e.stopPropagation();
+            onWindowClose?.(window.id);
+          }}
+          type="button"
+          aria-label={`Close ${window.title}`}
+        >
+          <X size={12} />
+        </button>
+      </div>
+    ));
+  };
+
   return (
-    <div className="macos-system-bar">
+    <div className={`macos-system-bar ${hasMaximizedWindow ? 'macos-system-bar--with-tabs' : ''}`}>
       <div className="macos-system-bar__left">
         <button
           className="macos-system-bar__logo"
@@ -44,13 +107,13 @@ export function MacOSSystemBar({
           <div className="macos-system-bar__logo-mark">D</div>
           <span>DGOS</span>
         </button>
-        {currentApp && (
+        {!hasMaximizedWindow && currentApp && (
           <span className="macos-system-bar__app-name">{currentApp}</span>
         )}
       </div>
 
       <div className="macos-system-bar__center">
-        {/* Reserved for future use - window title or breadcrumbs */}
+        {renderTabs()}
       </div>
 
       <div className="macos-system-bar__right">

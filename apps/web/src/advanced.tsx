@@ -325,6 +325,12 @@ export function ExtensionsV1({
     const timer = setInterval(run.reload, 1200);
     return () => clearInterval(timer);
   }, [runId, run.data?.state]);
+  useEffect(() => {
+    if (!runId || !run.data) return;
+    if (["succeeded", "failed", "cancelled", "timed_out", "blocked"].includes(run.data.state)) {
+      localStorage.removeItem("dgos.ui.extensionRunId");
+    }
+  }, [runId, run.data]);
   async function inspect(e: FormEvent) {
     e.preventDefault();
     setPreview(null);

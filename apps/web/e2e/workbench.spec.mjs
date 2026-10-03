@@ -37,6 +37,27 @@ test('mock workbench submits a task and renders streamed result', async ({ page 
   await expect(page.getByText(/Events:/)).toContainText('Events:');
 });
 
+test('assistant quick command plans, confirms, cancels and restores a run', async ({ page }) => {
+  let executed;
+  await page.route('**/api/v1/actions', route => respond(route, { items: [{ actionId: 'system.navigate.system.settings', actionVersion: '1', appId: 'dgos.system', requiredCapabilities: ['system.navigate'], riskLevel: 'medium', sideEffects: 'navigation', inputSchema: { properties: { target: { type: 'string' } }, required: ['target'] } }] }));
+  await page.route('**/api/v1/actions/system.navigate.system.settings/plan', route => respond(route, { planId: 'plan-ui', riskLevel: 'medium', permission: { decision: 'allow' }, target: 'system.settings', inputSummary: ['target'] }));
+  await page.route('**/api/v1/permissions/check', route => respond(route, { decision: 'allow' }));
+  await page.route('**/api/v1/actions/system.navigate.system.settings/execute', route => { executed = route.request().postDataJSON(); return respond(route, { runId: 'run-ui', taskId: 'task-ui', requestId: executed?.requestId, state: 'queued', actionId: 'system.navigate.system.settings' }, 202); });
+  await page.route('**/api/v1/action-runs/run-ui', route => route.request().method() === 'DELETE' ? respond(route, { runId: 'run-ui', state: 'cancelled', taskId: 'task-ui' }, 202) : respond(route, { runId: 'run-ui', state: 'queued', taskId: 'task-ui', actionId: 'system.navigate.system.settings' }));
+  await page.route('**/api/v1/audit/events**', route => respond(route, { items: [] }));
+  await page.goto('/assistant');
+  await page.getByRole('button', { name: 'Open system settings' }).click();
+  await page.getByRole('button', { name: 'Create plan' }).click();
+  await expect(page.getByText('Side effects')).toBeVisible();
+  await page.getByRole('button', { name: 'Confirm and execute' }).click();
+  await expect(page.getByText('Run ID: run-ui')).toBeVisible();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+  await expect(page.getByText('cancelled')).toBeVisible();
+  expect(executed).toMatchObject({ planId: 'plan-ui', confirmed: true, input: { target: 'system.settings' } });
+  await page.reload();
+  await expect(page.getByText('run-ui')).toBeVisible();
+});
+
 test('skill translation freezes the reviewed request and applies only the task artifact reference', async ({ page }) => {
   let translation, applied, reads = 0;
   const definition = { skillId: 'local.text', stateVersion: 3, state: 'disabled', sourceType: 'custom', content: { name: 'Local text', description: 'Local description', systemPrompt: 'private prompt fixture' } };

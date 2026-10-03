@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
-import { Alert, Button, Empty, Panel, Status } from "@dgos/dgos-ui";
-import { Shell, useRoute } from "@dgos/app-shell";
+import { Alert, Button, Empty, Panel, Status, useFocusVisible } from "@dgos/dgos-ui";
+import "@dgos/dgos-ui/accessibility.css";
+import { MacOSShell, useRoute } from "@dgos/app-shell";
 import {
   routes,
   scaleOptions,
@@ -24,7 +25,7 @@ import { displayNumber, setRegionFormat } from './region';
 import { DeviceSessions } from './sessions';
 import { DesignSystemShowcase } from './design-system-showcase';
 import { AssistantChat } from './assistant-chat';
-import "./style.css";
+import "./macos-app-styles.css";
 
 type Dict = Record<string, any>;
 const saved = (key: string) => localStorage.getItem(`dgos.ui.${key}`) || "";
@@ -410,10 +411,12 @@ function Settings({
   t,
   onAppearance,
   subjectId,
+  onSignOut,
 }: {
   t: ReturnType<typeof allLabels>;
   onAppearance: (theme: Theme, locale: Locale, scale: number) => void;
   subjectId: string;
+  onSignOut: () => void;
 }) {
   const resource = useResource("/api/v1/system/settings"),
     op = useOperation(),
@@ -464,6 +467,9 @@ function Settings({
               <p className="section-note">
                 {t.settingsVersion}: {data?.settingsVersion}
               </p>
+              <div className="row">
+                <Button variant="danger" onClick={onSignOut}>{t.signOut}</Button>
+              </div>
               <label>
                 {t.choose}
                 <select value={domain} onChange={(e) => setDomain(e.target.value)}>
@@ -919,7 +925,10 @@ function Assistant({ t, session }: { t: ReturnType<typeof allLabels>; session: D
     [permissionRequests, setPermissionRequests] = useState<Record<string, Dict>>({}),
     [permissionChecks, setPermissionChecks] = useState<Record<string, Dict>>({}),
     [runId, setRunId] = useState(saved("runId")),
-    [run, setRun] = useState<Dict | null>(null);
+    [run, setRun] = useState<Dict | null>(null),
+    [history, setHistory] = useState<Dict[]>(() => {
+      try { return JSON.parse(localStorage.getItem("dgos.ui.assistantHistory") || "[]"); } catch { return []; }
+    });
   const openedRunId = useRef("");
   useEffect(() => {
     if (!run?.runId || run.state !== "succeeded" || openedRunId.current === run.runId) return;
@@ -939,6 +948,15 @@ function Assistant({ t, session }: { t: ReturnType<typeof allLabels>; session: D
     setPlannedInput(null);
     setPermissionRequests({});
     setPermissionChecks({});
+  }
+  function recordRun(value: Dict) {
+    if (!value.runId) return;
+    const entry = { runId: value.runId, taskId: value.taskId, actionId: value.actionId, actionVersion: value.actionVersion, state: value.state || value.status, resultSummary: value.resultSummary, errorSummary: value.errorSummary };
+    setHistory(current => {
+      const next = [entry, ...current.filter(item => item.runId !== entry.runId)].slice(0, 10);
+      localStorage.setItem("dgos.ui.assistantHistory", JSON.stringify(next));
+      return next;
+    });
   }
   async function resolve(e: FormEvent) {
     e.preventDefault();
@@ -963,6 +981,7 @@ function Assistant({ t, session }: { t: ReturnType<typeof allLabels>; session: D
         );
         if (!active) return;
         setRun(value);
+        recordRun(value);
         if (!terminal(value.state || value.status))
           timer = setTimeout(poll, 1000);
         else audit.reload();
@@ -1075,6 +1094,7 @@ function Assistant({ t, session }: { t: ReturnType<typeof allLabels>; session: D
       setRun(result);
       setRunId(result.runId);
       remember("runId", result.runId);
+      recordRun(result);
     }
   }
   async function cancel() {
@@ -1084,7 +1104,7 @@ function Assistant({ t, session }: { t: ReturnType<typeof allLabels>; session: D
         json({}, "DELETE"),
       ),
     );
-    if (result) setRun(result);
+    if (result) { setRun(result); recordRun(result); }
   }
   return (
     <div className="stack">
@@ -1094,6 +1114,12 @@ function Assistant({ t, session }: { t: ReturnType<typeof allLabels>; session: D
           <div className="two-col">
             <Panel>
               <h2>{t.assistant}</h2>
+              <div className="quick-actions-grid" aria-label="Quick commands">
+                {[["system.navigate.system.settings", "Open system settings", { target: "system.settings" }], ["system.info.read", "Check system status", {}], ["app.catalog.open", "Open app catalog", {}], ["provider.status.read", "Check providers", {}]].map(([id, label, value]) => {
+                  const available = items(actions.data).some((item: Dict) => item.actionId === id);
+                  return <Button key={String(id)} disabled={!available} onClick={() => { const item = items(actions.data).find((candidate: Dict) => candidate.actionId === id); if (item) { setActionId(id as string); setInput(value as Dict); clearPlan(); } }}>{String(label)}{!available ? ` · ${t.unavailable}` : ""}</Button>;
+                })}
+              </div>
               <form onSubmit={resolve}>
                 <label>{t.intent}<input value={intent} onChange={e => setIntent(e.target.value)} required /></label>
                 <Button type="submit" busy={op.busy}>{t.resolve}</Button>
@@ -1177,6 +1203,12 @@ function Assistant({ t, session }: { t: ReturnType<typeof allLabels>; session: D
                     {t.risk}: {plan.riskLevel || plan.risk} · {t.permission}:{" "}
                     {plan.permission?.decision || "pending"}
                   </p>
+                  <dl className="data-grid">
+                    <div><dt>{t.action}</dt><dd className="code">{selected.actionId} v{selected.actionVersion || "?"}</dd></div>
+                    <div><dt>{t.capabilities}</dt><dd>{required.join(", ") || t.none}</dd></div>
+                    <div><dt>Side effects</dt><dd>{selected.sideEffects || plan.sideEffects || t.none}</dd></div>
+                    <div><dt>Target</dt><dd>{plan.target || selected.appId || t.current}</dd></div>
+                  </dl>
                   <pre>{JSON.stringify(plan.inputSummary || {}, null, 2)}</pre>
                   {required.map((capability: string) => <div className="result" key={capability}>
                     <p>{capability} · {t.permission}: {permissionChecks[capability]?.decision || 'pending'}</p>
@@ -1201,6 +1233,7 @@ function Assistant({ t, session }: { t: ReturnType<typeof allLabels>; session: D
                   {run && (
                     <>
                       <Status value={run.state || run.status} />
+                      {(run.requestId || run.taskId) && <p className="code">{t.request}: {run.requestId || ""} {run.taskId ? `· ${t.taskId}: ${run.taskId}` : ""}</p>}
                       <pre>
                         {JSON.stringify(
                           run.resultSummary ||
@@ -1221,6 +1254,7 @@ function Assistant({ t, session }: { t: ReturnType<typeof allLabels>; session: D
               ) : (
                 <Empty>{t.empty}</Empty>
               )}
+              {history.length > 0 && <ul className="record-list">{history.map((item: Dict) => <li key={item.runId}><div><strong>{item.actionId || t.action}</strong><small>{item.runId} · {item.state || t.status}{item.taskId ? ` · ${t.taskId}: ${item.taskId}` : ""}</small></div><Button onClick={() => { setRunId(item.runId); setRun(null); }}>{t.resume}</Button></li>)}</ul>}
               <h2>{t.audit}</h2>
               <Resource resource={audit} t={t}>
                 {(data) => (
@@ -1609,6 +1643,7 @@ function Usage({ t }: { t: ReturnType<typeof allLabels> }) {
   );
 }
 function App() {
+  useFocusVisible();
   const route = useRoute(),
     [locale, setLocale] = useState<Locale>(
       saved("locale") === "zh" ? "zh" : "en",
@@ -1667,7 +1702,7 @@ function App() {
   const page: Record<RouteKey, ReactNode> = {
     desktop: <Desktop t={t} />,
     catalog: <AppCatalog t={t} subjectId={session.principalId} />,
-    settings: <><Settings t={t} onAppearance={appearance} subjectId={session.principalId} /><DeviceSessions t={t} onStepUp={beginStepUp} /></>,
+    settings: <><Settings t={t} onAppearance={appearance} subjectId={session.principalId} onSignOut={signOut} /><DeviceSessions t={t} onStepUp={beginStepUp} /></>,
     system: <SystemInfo t={t} />,
     providers: <ProviderControl t={t} />,
     models: <ModelManagement t={t} onChanged={() => {}} />,
@@ -1683,52 +1718,17 @@ function App() {
     designSystem: <DesignSystemShowcase t={t} />,
   };
   return (
-    <Shell
-      route={route}
+    <MacOSShell
+      currentRoute={route}
       labels={t}
-      actions={
-        <>
-          <Button onClick={signOut}>{t.signOut}</Button>
-          <label className="help">
-            {t.theme}
-            <select
-              value={theme}
-              onChange={(e) => setTheme(e.target.value as Theme)}
-            >
-              <option value="light">{t.light}</option>
-              <option value="dark">{t.dark}</option>
-            </select>
-          </label>
-          <label className="help">
-            {t.language}
-            <select
-              value={locale}
-              onChange={(e) => setLocale(e.target.value as Locale)}
-            >
-              <option value="en">English</option>
-              <option value="zh">中文</option>
-            </select>
-          </label>
-          <label className="help">
-            {t.scale}
-            <select
-              value={scale}
-              onChange={(e) => setScale(Number(e.target.value))}
-            >
-              {scaleOptions.map((n) => (
-                <option key={n} value={n}>
-                  {n}%
-                </option>
-              ))}
-            </select>
-          </label>
-        </>
-      }
+      onNavigate={(routeKey) => webHost.open(routes[routeKey])}
+      theme={theme}
+      onThemeToggle={() => setTheme(t => t === 'light' ? 'dark' : 'light')}
     >
       {accountError&&<Alert>{accountError}</Alert>}
       {page[route]}
       {stepUpRetry&&<StepUpDialog t={t} onClose={()=>setStepUpRetry(null)} onAuth={async result=>{setSession(result);const retry=stepUpRetry;setStepUpRetry(null);await retry()}}/>}
-    </Shell>
+    </MacOSShell>
   );
 }
 createRoot(document.getElementById("root")!).render(<App />);

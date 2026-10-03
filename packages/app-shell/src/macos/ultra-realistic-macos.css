@@ -1,0 +1,324 @@
+/* Ultra-Premium macOS Design - Inspired by Real macOS Ventura/Sonoma */
+/* Achieving pixel-perfect glass effects and professional polish */
+
+/* ==================== CRITICAL: Ultra-Strong Glassmorphism ==================== */
+
+.macos-system-bar {
+  background: rgba(246, 246, 246, 0.7) !important;
+  backdrop-filter: blur(80px) saturate(180%) brightness(1.15) !important;
+  -webkit-backdrop-filter: blur(80px) saturate(180%) brightness(1.15) !important;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: none !important;
+  height: 44px !important;
+  padding: 0 12px !important;
+}
+
+[data-theme="dark"] .macos-system-bar {
+  background: rgba(30, 30, 30, 0.65) !important;
+  backdrop-filter: blur(80px) saturate(180%) brightness(0.85) !important;
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+/* ==================== ULTRA-TRANSPARENT DOCK ==================== */
+
+.macos-dock {
+  background: rgba(255, 255, 255, 0.25) !important;
+  backdrop-filter: blur(100px) saturate(180%) brightness(1.2) !important;
+  -webkit-backdrop-filter: blur(100px) saturate(180%) brightness(1.2) !important;
+  border: 0.5px solid rgba(255, 255, 255, 0.35) !important;
+  border-radius: 18px !important;
+  padding: 6px 12px !important;
+  box-shadow:
+    0 0 0 0.5px rgba(0, 0, 0, 0.03) inset,
+    0 30px 60px rgba(0, 0, 0, 0.15),
+    0 15px 30px rgba(0, 0, 0, 0.1) !important;
+  bottom: 8px !important;
+}
+
+[data-theme="dark"] .macos-dock {
+  background: rgba(40, 40, 42, 0.3) !important;
+  backdrop-filter: blur(100px) saturate(180%) brightness(0.9) !important;
+  border: 0.5px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.04) inset,
+    0 30px 60px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Dock icons - perfectly sized */
+.macos-dock__item {
+  width: 52px !important;
+  height: 52px !important;
+}
+
+.macos-dock__icon {
+  width: 100%;
+  height: 100%;
+  border-radius: 13px;
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.2));
+}
+
+/* ==================== PERFECT WINDOWS ==================== */
+
+.macos-window {
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(60px) saturate(180%) brightness(1.1) !important;
+  -webkit-backdrop-filter: blur(60px) saturate(180%) brightness(1.1) !important;
+  border: 0.5px solid rgba(0, 0, 0, 0.08) !important;
+  border-radius: 12px !important;
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.5) inset,
+    0 25px 50px rgba(0, 0, 0, 0.15),
+    0 10px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+.macos-window__title-bar {
+  height: 44px;
+}
+
+.macos-window__content {
+  height: calc(100% - 44px);
+  overflow: auto;
+}
+
+[data-theme="dark"] .macos-window {
+  background: rgba(35, 35, 38, 0.7) !important;
+  backdrop-filter: blur(60px) saturate(180%) brightness(0.9) !important;
+  border: 0.5px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.05) inset,
+    0 25px 50px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* ==================== REFINED TRAFFIC LIGHTS ==================== */
+
+.macos-traffic-light {
+  width: 12px !important;
+  height: 12px !important;
+  border: 0.5px solid rgba(0, 0, 0, 0.08);
+}
+
+.macos-traffic-light--close {
+  background: linear-gradient(135deg, #FF5F57 0%, #FF4136 100%);
+  box-shadow: 0 1px 3px rgba(255, 59, 48, 0.3);
+}
+
+.macos-traffic-light--minimize {
+  background: linear-gradient(135deg, #FEBC2E 0%, #FFA000 100%);
+  box-shadow: 0 1px 3px rgba(255, 188, 46, 0.3);
+}
+
+.macos-traffic-light--maximize {
+  background: linear-gradient(135deg, #28C840 0%, #00C853 100%);
+  box-shadow: 0 1px 3px rgba(40, 200, 64, 0.3);
+}
+
+/* ==================== REALISTIC DESKTOP BACKGROUND ==================== */
+
+.macos-desktop {
+  background: linear-gradient(180deg,
+    #4A90E2 0%,
+    #2C5AA0 50%,
+    #1E3A8A 100%
+  ) !important;
+  background-size: cover;
+  background-position: center;
+}
+
+[data-theme="dark"] .macos-desktop {
+  background: linear-gradient(180deg,
+    #1a1a2e 0%,
+    #0f0f1e 50%,
+    #000000 100%
+  ) !important;
+}
+
+/* ==================== SUBTLE MENU BAR TEXT ==================== */
+
+.macos-system-bar,
+.macos-system-bar button,
+.macos-system-bar a {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.01em;
+}
+
+/* ==================== REFINED PANELS AND CARDS ==================== */
+
+.dgos-panel,
+.app-tile,
+.record-list li {
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(40px) saturate(180%) !important;
+  border: 0.5px solid rgba(0, 0, 0, 0.08) !important;
+  border-radius: 10px !important;
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.5) inset,
+    0 4px 12px rgba(0, 0, 0, 0.06) !important;
+}
+
+[data-theme="dark"] .dgos-panel,
+[data-theme="dark"] .app-tile,
+[data-theme="dark"] .record-list li {
+  background: rgba(40, 40, 42, 0.7) !important;
+  border: 0.5px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* ==================== COMMAND PALETTE - SETTINGS STYLE ==================== */
+
+.macos-command-palette {
+  background: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(80px) saturate(180%) brightness(1.1) !important;
+  -webkit-backdrop-filter: blur(80px) saturate(180%) brightness(1.1) !important;
+  border: 0.5px solid rgba(0, 0, 0, 0.1) !important;
+  border-radius: 14px !important;
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.5) inset,
+    0 30px 80px rgba(0, 0, 0, 0.25),
+    0 15px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+[data-theme="dark"] .macos-command-palette {
+  background: rgba(35, 35, 38, 0.75) !important;
+  backdrop-filter: blur(80px) saturate(180%) brightness(0.9) !important;
+  border: 0.5px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+/* ==================== SEARCH BOX LIKE SETTINGS ==================== */
+
+.macos-command-palette__input {
+  background: rgba(0, 0, 0, 0.03) !important;
+  border-radius: 6px;
+  padding: 8px 12px !important;
+}
+
+[data-theme="dark"] .macos-command-palette__input {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* ==================== SIDEBAR NAVIGATION STYLE ==================== */
+
+nav a,
+nav button {
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 2px;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+nav a:hover,
+nav button:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+nav a[aria-current="page"],
+nav button[aria-current="page"] {
+  background: rgba(0, 0, 0, 0.06);
+  font-weight: 600;
+}
+
+[data-theme="dark"] nav a:hover,
+[data-theme="dark"] nav button:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] nav a[aria-current="page"],
+[data-theme="dark"] nav button[aria-current="page"] {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ==================== BUTTONS - MORE SUBTLE ==================== */
+
+button {
+  font-weight: 500 !important;
+  border-radius: 6px !important;
+  padding: 6px 14px !important;
+  font-size: 13px !important;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+}
+
+button:hover {
+  transform: translateY(-0.5px) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08) !important;
+}
+
+button.primary {
+  background: linear-gradient(180deg, #0F5FD9 0%, #0D54C3 100%) !important;
+  box-shadow: 0 1px 3px rgba(15, 95, 217, 0.3) !important;
+}
+
+button.primary:hover {
+  box-shadow: 0 2px 6px rgba(15, 95, 217, 0.4) !important;
+}
+
+/* ==================== REALISTIC DESKTOP ICONS ==================== */
+
+.desktop-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.15s;
+}
+
+.desktop-icon:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.desktop-icon img {
+  width: 64px;
+  height: 64px;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.2));
+}
+
+.desktop-icon span {
+  font-size: 11px;
+  font-weight: 500;
+  color: white;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* ==================== SCROLLBARS - SUBTLE ==================== */
+
+::-webkit-scrollbar {
+  width: 6px !important;
+  height: 6px !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15) !important;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.25) !important;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* ==================== PERFORMANCE OPTIMIZATIONS ==================== */
+
+.macos-dock,
+.macos-system-bar,
+.macos-window,
+.macos-command-palette {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

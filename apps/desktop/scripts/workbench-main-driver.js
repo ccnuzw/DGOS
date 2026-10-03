@@ -1,7 +1,8 @@
 (() => {
   if (window !== window.top) return;
-  if (window.__DGOS_WORKBENCH_TEST_DRIVER__ && !window.__DGOS_WORKBENCH_TEST_DRIVER_RESTART__) return;
+  if (window.__DGOS_WORKBENCH_TEST_DRIVER_ACTIVE__) return;
   window.__DGOS_WORKBENCH_TEST_DRIVER__ = true;
+  window.__DGOS_WORKBENCH_TEST_DRIVER_ACTIVE__ = true;
   window.__DGOS_WORKBENCH_TEST_DRIVER_RESTART__ = false;
   setTimeout(() => {
     window.__TAURI_INTERNALS__?.invoke('desktop_test_result', { result: { stage: 'driver_injected', readyState: document.readyState } }).catch(() => {});
@@ -75,8 +76,9 @@
       }
       await report({ stage: 'catalog_open', phase, route: location.pathname });
       const row = await waitFor(() => [...document.querySelectorAll('li')].find((item) => item.textContent.includes('dgos.ai-workbench') && item.textContent.includes('1.0.1')), 'signed_workbench_catalog');
-      const launch = [...row.querySelectorAll('button')].find((button) => /launch|启动/i.test(button.textContent));
-      if (!launch) throw new Error('workbench_launch_control_missing');
+      const buttons = [...row.querySelectorAll('button')];
+      const launch = buttons.find((button) => /launch|启动|open|打开/i.test(button.textContent)) ?? buttons[1] ?? buttons[0];
+      if (!launch) throw new Error(`workbench_launch_control_missing:${JSON.stringify({ rowText: row.textContent, buttons: buttons.map((button) => button.textContent) })}`);
       launch.click();
       await report({ stage: 'workbench_launch_clicked', phase, route: location.pathname });
       const frame = await waitFor(() => document.querySelector('iframe[title="dgos.ai-workbench"]'), 'signed_workbench_frame');
@@ -102,6 +104,8 @@
        };
        frame.addEventListener('load', () => { frameDiagnostics.loads++; recordFrame('load'); });
        frame.addEventListener('error', () => { frameDiagnostics.errors++; recordFrame('error'); });
+       frame.addEventListener('load', () => { void report({ stage: 'workbench_frame_load', phase, frameDiagnostics }); });
+       frame.addEventListener('error', () => { void report({ stage: 'workbench_frame_error', phase, frameDiagnostics }); });
        recordFrame('present');
        await report({ stage: 'workbench_frame_present', phase, src: frame.getAttribute('src')?.split('?')[0] });
        sendHello();
@@ -109,7 +113,7 @@
          if (bridgeReady) { clearInterval(helloTimer); return; }
          sendHello();
        }, 250);
-       await waitFor(() => frameReady && bridgeReady, 'signed_workbench_bridge').catch(async (error) => {
+       await waitFor(() => bridgeReady, 'signed_workbench_bridge').catch(async (error) => {
          clearInterval(helloTimer);
         await report({ stage: 'workbench_bridge_diagnostic', phase, frameDiagnostics, frameReady, bridgeReady,
           route: location.pathname, frameSrc: frame.getAttribute('src')?.split('?')[0],

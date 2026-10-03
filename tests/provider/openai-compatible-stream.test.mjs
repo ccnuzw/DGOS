@@ -79,7 +79,7 @@ test('Responses usage is trusted only from a completed response and full transpo
     modelProfiles: { text: { modelNames: ['fixture-model'], workflow: 'text.chat' } }, assets: {},
   }; } } });
   const bound = { ...config, ownerId: 'fixture-owner', capabilityProtocolId: 'fixture.responses', capabilityProtocolVersion: '1.0.0' };
-  const body = 'data: {"type":"response.output_text.delta","delta":"ok"}\n\ndata: {"type":"response.completed","response":{"status":"completed","usage":{"input_tokens":4,"output_tokens":2,"total_tokens":6}}}\n\n';
+  const body = 'event: response.created\ndata: {"type":"response.created","response":{"status":"in_progress"}}\n\nevent: response.in_progress\ndata: {"type":"response.in_progress"}\n\nevent: response.output_item.added\ndata: {"type":"response.output_item.added"}\n\nevent: response.content_part.added\ndata: {"type":"response.content_part.added"}\n\nevent: response.output_text.delta\ndata: {"type":"response.output_text.delta","delta":"ok"}\n\nevent: response.output_text.annotation.added\ndata: {"type":"response.output_text.annotation.added"}\n\nevent: response.output_text.done\ndata: {"type":"response.output_text.done","text":"ok"}\n\nevent: response.content_part.done\ndata: {"type":"response.content_part.done"}\n\nevent: response.output_item.done\ndata: {"type":"response.output_item.done"}\n\nevent: response.completed\ndata: {"type":"response.completed","response":{"status":"completed","usage":{"input_tokens":4,"output_tokens":2,"total_tokens":6}}}\n\n';
   const run = (failAfterCompletion = false) => adapter.streamText({ config: bound, credential: 'fixture-token', modelId: 'fixture-model', input: 'hello', egress: {
     async request(input) {
       assert.equal(input.streamResponse, true);

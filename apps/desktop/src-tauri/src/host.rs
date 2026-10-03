@@ -128,6 +128,11 @@ fn create(app: &tauri::AppHandle, summary: &WindowSummary, restored_geometry: bo
         fetch('/api/v1/identity/admin/session', {{ headers: {{ 'x-request-id': 'desktop-bridge-fixture' }} }})
           .catch(error => console.error('DGOS desktop bridge fixture:', error));
       }}, {{ once: true }});
+      if ({workbench_test}) window.addEventListener('message', (event) => {{
+        const type = event.data?.type;
+        if (type === 'dgos.app.ready' || type === 'dgos.desktop.test.frame.injected' || type === 'dgos.desktop.test.workbench.ready')
+          window.__TAURI_INTERNALS__?.invoke('desktop_test_result', {{ result: {{ stage: 'message_observed', type, origin: event.origin, sourceMatchesFrame: event.source === document.querySelector('iframe[title="dgos.ai-workbench"]')?.contentWindow }} }}).catch(() => {{}});
+      }});
       const realConfig = {real_config};
       window.__DGOS_VISIBLE_TEST__ = {visible_test};
       if (window.__DGOS_VISIBLE_TEST__ && !realConfig) window.addEventListener('DOMContentLoaded', async () => {{
@@ -276,9 +281,6 @@ fn create(app: &tauri::AppHandle, summary: &WindowSummary, restored_geometry: bo
         .on_page_load(move |window, payload| {
             if !workbench_test || !matches!(payload.event(), PageLoadEvent::Finished) { return; }
             eprintln!("dgos desktop debug page finished: {}", payload.url());
-            if let Err(error) = window.eval("window.__DGOS_WORKBENCH_TEST_DRIVER_RESTART__ = true;".to_string()) {
-                eprintln!("dgos desktop debug main driver restart marker failed: {error}");
-            }
             if let Err(error) = window.eval(include_str!("../../scripts/workbench-main-driver.js")) {
                 eprintln!("dgos desktop debug main driver eval failed: {error}");
             }

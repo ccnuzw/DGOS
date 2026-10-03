@@ -76,6 +76,9 @@ export function createOpenAiCompatibleAdapter({ profileDirectory } = {}) {
               usage = trustedUsage(event.response?.usage, value, ['input_tokens', 'output_tokens', 'total_tokens']);
               return;
             }
+            // Responses streams include lifecycle frames around text deltas.
+            // They are valid protocol events and carry no user-visible output.
+            if (event.type?.startsWith('response.') && event.type !== 'response.output_text.delta') return;
             return event.type === 'response.output_text.delta' && typeof event.delta === 'string' ? event.delta : undefined;
           }
           if (usageSeen) throw failure('protocol_mismatch');
@@ -116,7 +119,7 @@ export function createOpenAiCompatibleAdapter({ profileDirectory } = {}) {
           }
         }
         pending += decoder.decode();
-        if (pending || eventData.length || !emitted || !done) throw failure('protocol_mismatch');
+        if (pending.trim() || eventData.length || !emitted || !done) throw failure('protocol_mismatch');
         if (usage) yield { usage };
       } catch (error) {
         if (signal?.aborted) throw failure(signal.reason?.name === 'TimeoutError' ? 'timed_out' : 'cancelled');

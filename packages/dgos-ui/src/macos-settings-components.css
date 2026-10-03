@@ -1,0 +1,414 @@
+/* macOS Settings-Style Sidebar Navigation */
+
+.macos-settings-sidebar {
+  width: 220px;
+  background: rgba(242, 242, 247, 0.95);
+  backdrop-filter: blur(40px) saturate(180%);
+  border-right: 0.5px solid rgba(0, 0, 0, 0.08);
+  padding: 12px 8px;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+[data-theme="dark"] .macos-settings-sidebar {
+  background: rgba(40, 40, 42, 0.95);
+  border-right: 0.5px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Sidebar navigation items */
+.macos-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 2px;
+  user-select: none;
+}
+
+.macos-sidebar-item:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.macos-sidebar-item--active {
+  background: rgba(0, 0, 0, 0.06) !important;
+  color: var(--text);
+}
+
+[data-theme="dark"] .macos-sidebar-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .macos-sidebar-item--active {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Sidebar icons */
+.macos-sidebar-item__icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.macos-sidebar-item__label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Sidebar sections */
+.macos-sidebar-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 0.5px solid rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .macos-sidebar-section {
+  border-top: 0.5px solid rgba(255, 255, 255, 0.08);
+}
+
+.macos-sidebar-section:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+/* Settings content area */
+.macos-settings-content {
+  flex: 1;
+  background: var(--surface);
+  padding: 24px 32px;
+  overflow-y: auto;
+}
+
+/* Content header with navigation arrows */
+.macos-content-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .macos-content-header {
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.08);
+}
+
+.macos-content-nav {
+  display: flex;
+  gap: 4px;
+}
+
+.macos-content-nav button {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: none;
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.macos-content-nav button:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.macos-content-nav button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+[data-theme="dark"] .macos-content-nav button {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .macos-content-nav button:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.macos-content-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+/* Settings rows and sections */
+.macos-settings-section {
+  margin-bottom: 32px;
+}
+
+.macos-settings-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.macos-settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 0.5px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  transition: all 0.15s;
+}
+
+.macos-settings-row:hover {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="dark"] .macos-settings-row {
+  background: rgba(40, 40, 42, 0.6);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .macos-settings-row:hover {
+  background: rgba(50, 50, 52, 0.8);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.macos-settings-row__label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.macos-settings-row__title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.macos-settings-row__description {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* Toggle Switch (macOS style) */
+.macos-toggle {
+  position: relative;
+  width: 44px;
+  height: 26px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 13px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+.macos-toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 22px;
+  height: 22px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.macos-toggle--on {
+  background: #34C759;
+}
+
+.macos-toggle--on::after {
+  left: 20px;
+}
+
+[data-theme="dark"] .macos-toggle {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Select/Dropdown */
+.macos-select {
+  padding: 6px 32px 6px 12px;
+  border: 0.5px solid rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  background: white;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23999' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  transition: all 0.15s;
+}
+
+.macos-select:hover {
+  border-color: rgba(0, 0, 0, 0.25);
+}
+
+.macos-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(15, 95, 217, 0.15);
+}
+
+[data-theme="dark"] .macos-select {
+  background: rgba(40, 40, 42, 0.8);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Checkbox (macOS style) */
+.macos-checkbox {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.macos-checkbox--checked {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.macos-checkbox--checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 5px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+[data-theme="dark"] .macos-checkbox {
+  background: rgba(40, 40, 42, 0.8);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Help button (?) */
+.macos-help-button {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(0, 0, 0, 0.2);
+  background: transparent;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.macos-help-button:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* List items with icons */
+.macos-list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--surface);
+  border: 0.5px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.macos-list-item:hover {
+  background: rgba(0, 0, 0, 0.02);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.macos-list-item__icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.macos-list-item__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.macos-list-item__title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.macos-list-item__subtitle {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.macos-list-item__arrow {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* Slider */
+.macos-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.1);
+  outline: none;
+}
+
+.macos-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  border: 0.5px solid rgba(0, 0, 0, 0.1);
+}
+
+.macos-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+[data-theme="dark"] .macos-slider {
+  background: rgba(255, 255, 255, 0.15);
+}

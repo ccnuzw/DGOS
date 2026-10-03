@@ -1,0 +1,58 @@
+{
+  "workPackage": "WP-W2-04",
+  "owner": "worker-native",
+  "date": "2026-10-03T15:55:46.573Z",
+  "status": "diagnosed",
+  "result": "native_handshake_passed_diagnostic_driver_blocked",
+  "sourceFiles": {
+    "apps/desktop/src-tauri/src/host.rs": "854d3645430010bce1db96e2b6a592d9c66fa3136081a39fdb0c54359aa0ae25",
+    "apps/desktop/scripts/workbench-main-driver.js": "ee0837dc0ec21a781b4eb5d5d3f546e1b4755c872f625f4f2a984fe877551839",
+    "apps/desktop/scripts/workbench-frame-driver.js": "98f597f38c1a8d955b9153eb544337fdfea5f57bf0e58920242a90ec06fbe01e",
+    "apps/desktop/scripts/analyze-native-bridge-manifest.mjs": "e8d348c0282dc624363d3b991efc26879a1e47b1550407f0166b49906e902f0d",
+    "apps/ai-workbench-package/index.html": "50470986926e5418d4d515f9defb3d7be53f3550da468f493b7747dd2c70a1df"
+  },
+  "commands": [
+    {
+      "command": "node apps/desktop/scripts/analyze-native-bridge-manifest.mjs .herdr/V1-NATIVE-EXECUTION-r13-2026-10-02T11-45-10-806Z-730078bf-manifest.json",
+      "result": "passed: handshake true, frame injection false"
+    },
+    {
+      "command": "node --check apps/desktop/scripts/analyze-native-bridge-manifest.mjs",
+      "result": "passed"
+    },
+    {
+      "command": "pnpm --filter @dgos/desktop check",
+      "result": "passed"
+    },
+    {
+      "command": "git diff --check -- apps/desktop apps/ai-workbench-package",
+      "result": "passed"
+    }
+  ],
+  "evidence": {
+    "historicalManifest": ".herdr/V1-NATIVE-EXECUTION-r13-2026-10-02T11-45-10-806Z-730078bf-manifest.json",
+    "analysis": "iframe present and complete; resource path /api/v1/apps/dgos.ai-workbench/resources/index.html; hostHello.sent=1; dgos.app.ready observed from tauri://localhost; injectedPaths=[]; frameReady=false",
+    "windowEvidence": ".herdr/evidence/native-workbench-2026-10-03T13-54-09-115Z.json"
+  },
+  "rootCause": "The timeout is in the test-only frameReady gate, not the production Workbench bridge. Native receives dgos.app.ready, proving the iframe document loaded and host handshake completed. The frame driver was injected through cross-frame WebKit eval in the old path, which is unavailable/unreliable for the opaque sandbox iframe; therefore dgos.desktop.test.workbench.ready is never emitted.",
+  "blockingPoint": "The frozen signed r9 envelope still contains the old index.html and cannot include the current inline diagnostic driver without regenerating/signing a new candidate. Running the old envelope cannot prove the proposed fix.",
+  "nextWorkPackageInput": [
+    "Generate/sign a new candidate envelope whose index.html includes the diagnostic driver, or add a native-only test resource before the sandbox boundary.",
+    "Run the full isolated API/catalog/launch/resource chain against that candidate.",
+    "Keep production acceptance keyed to dgos.app.ready and real bridge calls; treat frameReady as diagnostic-only."
+  ],
+  "nonGoals": [
+    "No Web Task contract changes",
+    "No mock iframe success claim",
+    "No release signing/notarization claim"
+  ],
+  "acceptance": {
+    "iframeLoad": "passed",
+    "resourcePath": "passed",
+    "originCspSandbox": "resource served with opaque sandbox origin; dgos.app.ready origin tauri://localhost observed",
+    "postMessage": "host hello sent and app.ready received",
+    "productionBridge": "handshake passed",
+    "diagnosticFrameDriver": "blocked",
+    "cleanup": "prior runner left no retained native process after cleanup"
+  }
+}

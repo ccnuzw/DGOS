@@ -1,0 +1,56 @@
+{
+  "workPackage": "WP-W2-04",
+  "owner": "worker-native",
+  "date": "2026-10-03T17:14:16.233Z",
+  "status": "blocked",
+  "result": "native_resource_navigation_wry_panic",
+  "candidate": {
+    "directory": ".herdr/state/wp-w2-04-native-candidate",
+    "digest": "sha256:9c4cd6cb8edeca071794e27f3e52b4c0c9bed6b60f7a066551376384a46591fa",
+    "signedDiagnosticDriver": true
+  },
+  "filesChanged": {
+    "apps/desktop/src-tauri/src/host.rs": "8bd0340d46e24f2a5826ecc7f123aba69f69d6fbafbc2f6b4d7c6dbec9f558a7",
+    "apps/desktop/src-tauri/src/proxy.rs": "fc749e536ddce0585d449f7a918aa118e776bbb086fec92387766c3edf53e261",
+    "apps/desktop/scripts/workbench-main-driver.js": "b4992a4d26d78ef815087800272e278582b2859fb532c918ae8bb7a96a128846",
+    "apps/desktop/scripts/candidate-preflight.mjs": "7e19f38727c734d0fc19566459aecd7347673825d363eb486d80eb99f64ccb17",
+    "scripts/v1-desktop-real.mjs": "c4689ff1bf417a7154abd44ab77e14c466e8ebc58b9216ec3714515c3a81976c",
+    "apps/web/src/macos-app-styles.css": "ef101603c05ddcf7b15139030aed18978df5c320c96db4108482cad9e7673725",
+    "packages/app-shell/src/macos/window-tabs.tsx": "0b5984397e248a44799b7bddb76f95c41bde8bddaa9a100ed9962eed1076b938",
+    "packages/app-shell/src/macos/window.tsx": "af705b3e4b7f1101c2c36b09553ed63e1993e5f4faf8ff3cb4f6ce65dd399476"
+  },
+  "verification": {
+    "webBuild": "passed after correcting macos-app-styles.css relative import and minimal TS errors",
+    "desktopCheck": "passed",
+    "candidatePreflight": "passed",
+    "apiCatalogInstallProvider": "passed",
+    "nativeFrameResourceRequest": "observed",
+    "nativeAppReady": "not observed",
+    "bridgeCalls": "not observed"
+  },
+  "latestRun": {
+    "manifest": ".herdr/V1-NATIVE-EXECUTION-r13-2026-10-03T17-12-08-654Z-2a706521-manifest.json",
+    "result": "failed",
+    "error": "desktop_exited:dgos desktop debug window: workbench_test=true, visible_test=false\n\nthread 'main' (4875723) panicked at /Users/apple/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wry-0.57.0/src/wkwebview/mod.rs:1370:40:\ncalled `Option::unwrap()` on a `None` value\nnote: run with `RUST_BACKTRACE",
+    "nativeStderr": "dgos desktop debug window: workbench_test=true, visible_test=false\n\nthread 'main' (4875723) panicked at /Users/apple/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wry-0.57.0/src/wkwebview/mod.rs:1370:40:\ncalled `Option::unwrap()` on a `None` value\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n",
+    "cleanup": {
+      "testKeychainItemDeleted": true,
+      "tempDirectoryDeleted": true,
+      "databaseRemoved": true,
+      "redisPrefixRemaining": 0
+    }
+  },
+  "rootCause": "The candidate reaches the native resource URL, but WKWebView does not complete the opaque iframe document navigation, so dgos.app.ready is never emitted. Allowing the tauri://localhost/api/v1/apps/*/resources/* navigation triggers a Wry 0.57 panic in url_from_webview because WKWebView.URL() is nil during provisional iframe navigation. The old cross-frame eval path separately fails to inject the diagnostic driver.",
+  "nextFix": "Use a stable native custom protocol/resource URL for the Workbench iframe or upgrade/patch Wry navigation handling to tolerate nil provisional URLs, then rerun the same candidate harness. Do not treat WindowServer visibility alone as success.",
+  "cleanup": {
+    "testKeychainItemDeleted": true,
+    "tempDirectoryDeleted": true,
+    "databaseRemoved": true,
+    "redisPrefixRemaining": 0
+  },
+  "limits": [
+    "No bridge success claim",
+    "No Web Task contract changes",
+    "Unsigned debug app only"
+  ]
+}

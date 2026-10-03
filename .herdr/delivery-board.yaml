@@ -56,6 +56,44 @@ current_packages:
     priority: P0
     status: planned
     artifact: .herdr/work/wp-w1-03-candidate-regression-evidence.md
+  - id: WP-W2-01
+    title: 'Provider 到 Task 持久化链'
+    owner: worker-ai
+    priority: P0
+    status: in_progress
+    artifact: .herdr/status/V1-SPRINT-PLAN.md
+  - id: WP-W2-02
+    title: 'Web 完整 UI 演示'
+    owner: worker-web
+    priority: P0
+    status: ready_parallel
+    depends_on: [WP-W2-01]
+    artifact: .herdr/work/wp-w2-02-web-full-demo.md
+  - id: WP-W2-03
+    title: 'Web 主链 E2E 与证据'
+    owner: worker-test
+    priority: P0
+    status: ready_parallel
+    depends_on: [WP-W2-01]
+    artifact: .herdr/work/wp-w2-03-web-e2e.md
+  - id: WP-W2-04
+    title: 'Native bridge 诊断'
+    owner: worker-native
+    priority: P1
+    status: ready_now
+    artifact: .herdr/work/wp-w2-04-native-bridge-diagnosis.md
+  - id: WP-W2-06
+    title: 'FR-003 Skill/MCP/Agent 完整实现'
+    owner: worker-platform
+    priority: P1
+    status: ready_now
+    artifact: .herdr/work/wp-w2-06-fr003-completion.md
+  - id: WP-W2-07
+    title: 'FR-009 助手 UI'
+    owner: worker-web
+    priority: P1
+    status: ready_now
+    artifact: .herdr/work/wp-w2-07-fr009-assistant-ui.md
 
 workflow_improvements:
   new_approach: 'Wave-based delivery with fast feedback loops'

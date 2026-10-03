@@ -96,6 +96,10 @@ impl ApiProxy {
             return;
         }
         let path = request.uri().path_and_query().map(|p| p.as_str()).unwrap_or(request.uri().path());
+        if cfg!(debug_assertions) && std::env::var("DGOS_DESKTOP_TEST_WORKBENCH").ok().as_deref() == Some("1")
+            && path.contains("/api/v1/apps/dgos.ai-workbench/") {
+            eprintln!("dgos desktop debug workbench resource request: {}", path);
+        }
         let target = format!("{}{}", self.origin, path.trim_start_matches('/'));
         let agent = ureq::AgentBuilder::new().timeout(Duration::from_secs(45)).redirects(0).build();
         let mut upstream = agent.request(request.method().as_str(), &target)

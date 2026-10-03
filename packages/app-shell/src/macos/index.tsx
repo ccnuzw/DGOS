@@ -21,12 +21,24 @@ import {
   SkillsIcon,
   MCPIcon,
   DeveloperIcon,
-} from './icons/app-icons';
+  SystemIcon,
+  DownloadsIcon,
+  TrashIcon,
+} from './icons/premium-app-icons';
 import './macos.css';
+import './premium-macos.css';
+import './ultra-realistic-macos.css';
+import './premium-dock.css';
+import './perfect-traffic-lights.css';
+import './integrated-tabs.css';
+import './disable-context-menu.css';
+import './window-tabs.css';
 
 // Re-export new components and types
 export { CommandPalette, type CommandItem } from './command-palette';
 export { NotificationCenter, type Notification, ToastNotification } from './notification-center';
+export { WindowTabBar, type WindowTab } from './window-tabs';
+export { useWindowManager, type WindowInstance } from './window-manager';
 
 export interface MacOSShellProps {
   currentRoute: RouteKey;
@@ -70,14 +82,44 @@ export function MacOSShell({
   const {
     windows,
     focusedWindowId,
+    openWindow,
     setWindows,
     setFocusedWindowId,
   } = useWindowManager();
 
-  // Update running apps when route changes
+  const hasMaximizedWindow = windows.some((window) => window.state === 'maximized');
+
+  // Open window for current route on mount and when route changes
   useEffect(() => {
-    setRunningApps((prev) => new Set([...prev, currentRoute]));
-  }, [currentRoute]);
+    // Check if window for this route already exists
+    const existingWindow = windows.find((w) => w.route === currentRoute);
+
+    if (!existingWindow && currentRoute !== 'desktop') {
+      // Open a new window for this route
+      openWindow(
+        currentRoute,
+        labels[currentRoute] || currentRoute,
+        children,
+        {
+          icon: appIcons[currentRoute],
+        }
+      );
+    } else if (existingWindow) {
+      // Focus existing window and update its content
+      setFocusedWindowId(existingWindow.id);
+      setWindows((prev) =>
+        prev.map((w) =>
+          w.id === existingWindow.id ? { ...w, content: children } : w
+        )
+      );
+    }
+  }, [currentRoute, children, labels, windows, openWindow, setWindows, setFocusedWindowId]);
+
+  // Update running apps based on open windows
+  useEffect(() => {
+    const runningRoutes = new Set(windows.map((w) => w.route));
+    setRunningApps(runningRoutes);
+  }, [windows]);
 
   // Define dock apps
   const dockApps: DockApp[] = [
@@ -167,6 +209,20 @@ export function MacOSShell({
     onExecute: app.onClick,
   }));
 
+  // Disable browser context menu on desktop
+  useEffect(() => {
+    const handleContextMenu = (e: MouseEvent) => {
+      // Only prevent on desktop area, not in windows
+      if ((e.target as HTMLElement).closest('.macos-desktop') &&
+          !(e.target as HTMLElement).closest('.macos-window__content')) {
+        e.preventDefault();
+      }
+    };
+
+    document.addEventListener('contextmenu', handleContextMenu);
+    return () => document.removeEventListener('contextmenu', handleContextMenu);
+  }, []);
+
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -191,12 +247,19 @@ export function MacOSShell({
     <div className="macos-desktop" data-theme={theme}>
       <MacOSSystemBar
         currentApp={labels[currentRoute]}
-        onMenuClick={() => setLaunchpadVisible(true)}
+        onMenuClick={() => setLaunchpadVisible((visible) => !visible)}
         onSearchClick={() => setCommandPaletteVisible(true)}
         onNotificationsClick={() => setNotificationCenterVisible(true)}
         onSettingsClick={() => onNavigate('settings')}
         theme={theme}
         onThemeToggle={onThemeToggle}
+        windows={windows}
+        focusedWindowId={focusedWindowId}
+        onWindowFocus={setFocusedWindowId}
+        onWindowClose={(windowId) => {
+          setWindows((prev) => prev.filter((w) => w.id !== windowId));
+        }}
+        onLauncherClick={() => setLaunchpadVisible((visible) => !visible)}
       />
 
       <div className="macos-desktop__workspace">
@@ -207,17 +270,10 @@ export function MacOSShell({
           onFocusChange={setFocusedWindowId}
         />
 
-        {/* Main content area - rendered as the active "window" */}
-        <div style={{
-          padding: '24px',
-          maxWidth: '1400px',
-          margin: 'auto',
-        }}>
-          {children}
-        </div>
+        {/* Desktop background - empty workspace when no windows or windows are open */}
       </div>
 
-      <MacOSDock apps={dockApps} />
+      <MacOSDock apps={dockApps} hidden={hasMaximizedWindow || launchpadVisible} />
 
       <MacOSLaunchpad
         visible={launchpadVisible}

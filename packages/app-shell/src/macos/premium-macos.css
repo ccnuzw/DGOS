@@ -1,0 +1,739 @@
+/**
+ * Premium macOS Design System for DGOS
+ *
+ * A beautiful, professional-grade enhancement to the base macOS UI
+ * featuring richer glassmorphism, refined colors, better depth,
+ * and smooth micro-interactions.
+ *
+ * Apply this after the base macos.css for premium visuals.
+ */
+
+/* ==================== CSS Variables & Design Tokens ==================== */
+:root {
+  /* Animation curves - Natural, spring-based motion */
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --sharp: cubic-bezier(0.4, 0, 0.6, 1);
+  --bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* Primary brand with variations */
+  --primary: #0F5FD9;
+  --primary-light: #5B9EFF;
+  --primary-hover: #0D54C3;
+  --primary-active: #0A4AB3;
+
+  /* Shadow layers for depth */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.08);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.12), 0 8px 10px rgba(0, 0, 0, 0.1);
+  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.18), 0 10px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* ==================== Enhanced Typography ==================== */
+body {
+  font-family: -apple-system, BlinkMacSystemFont,
+    'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  letter-spacing: -0.01em;
+}
+
+h1 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+h2 {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+}
+
+h3 {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+}
+
+/* ==================== Premium System Bar ==================== */
+.macos-system-bar {
+  /* Enhanced glassmorphism with richer gradient */
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.92) 0%,
+    rgba(255, 255, 255, 0.88) 50%,
+    rgba(255, 255, 255, 0.85) 100%
+  );
+  backdrop-filter: blur(60px) saturate(200%) brightness(1.08);
+  -webkit-backdrop-filter: blur(60px) saturate(200%) brightness(1.08);
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.12);
+
+  /* Premium multi-layer shadows */
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.6) inset,
+    0 1px 3px rgba(0, 0, 0, 0.04),
+    0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="dark"] .macos-system-bar {
+  background: linear-gradient(180deg,
+    rgba(32, 32, 34, 0.92) 0%,
+    rgba(28, 28, 30, 0.88) 50%,
+    rgba(24, 24, 26, 0.85) 100%
+  );
+  backdrop-filter: blur(60px) saturate(180%) brightness(0.92);
+  -webkit-backdrop-filter: blur(60px) saturate(180%) brightness(0.92);
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.08) inset,
+    0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* System bar icons with premium hover */
+.macos-system-bar__icon-button,
+.system-bar-icon {
+  transition: all 0.2s var(--smooth);
+}
+
+.macos-system-bar__icon-button:hover,
+.system-bar-icon:hover {
+  background: rgba(0, 0, 0, 0.06);
+  transform: translateY(-0.5px);
+}
+
+[data-theme="dark"] .macos-system-bar__icon-button:hover,
+[data-theme="dark"] .system-bar-icon:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.macos-system-bar__icon-button:active,
+.system-bar-icon:active {
+  transform: translateY(0);
+  background: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .macos-system-bar__icon-button:active,
+[data-theme="dark"] .system-bar-icon:active {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ==================== Premium Dock ==================== */
+.macos-dock,
+.macos-dock-container {
+  /* Enhanced glassmorphism with vibrant multi-layer glass */
+  background: linear-gradient(180deg,
+    rgba(248, 248, 250, 0.75) 0%,
+    rgba(245, 245, 247, 0.70) 50%,
+    rgba(242, 242, 244, 0.65) 100%
+  );
+  backdrop-filter: blur(80px) saturate(190%) brightness(1.08);
+  -webkit-backdrop-filter: blur(80px) saturate(190%) brightness(1.08);
+
+  /* Premium border with subtle inner glow */
+  border: 1px solid rgba(255, 255, 255, 0.5);
+
+  /* Multi-layer depth shadows */
+  box-shadow:
+    0 0 0 0.5px rgba(0, 0, 0, 0.04) inset,
+    0 0 1px 0 rgba(255, 255, 255, 0.8) inset,
+    0 30px 60px rgba(0, 0, 0, 0.20),
+    0 15px 30px rgba(0, 0, 0, 0.15),
+    0 5px 12px rgba(0, 0, 0, 0.10),
+    0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .macos-dock,
+[data-theme="dark"] .macos-dock-container {
+  background: linear-gradient(180deg,
+    rgba(52, 52, 54, 0.70) 0%,
+    rgba(48, 48, 50, 0.65) 50%,
+    rgba(44, 44, 46, 0.60) 100%
+  );
+  backdrop-filter: blur(80px) saturate(180%) brightness(0.95);
+  -webkit-backdrop-filter: blur(80px) saturate(180%) brightness(0.95);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.08) inset,
+    0 0 1px 0 rgba(255, 255, 255, 0.12) inset,
+    0 30px 60px rgba(0, 0, 0, 0.50),
+    0 15px 30px rgba(0, 0, 0, 0.35),
+    0 5px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* Premium Dock Icons - Larger and more beautiful */
+.macos-dock__icon,
+.macos-dock-icon,
+.dock-icon-image {
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+
+  /* Enhanced shadow with ambient occlusion */
+  box-shadow:
+    0 3px 12px rgba(0, 0, 0, 0.18),
+    0 1px 4px rgba(0, 0, 0, 0.12),
+    0 0 1px rgba(0, 0, 0, 0.08);
+
+  /* Smooth transitions */
+  transition: all 0.3s var(--spring);
+}
+
+.macos-dock__item {
+  width: 64px;
+  height: 64px;
+}
+
+/* Premium icon magnification with spring animation */
+.macos-dock-icon-wrapper:hover,
+.macos-dock-icon-wrapper.magnify:hover {
+  transform: scale(1.4) translateY(-10px);
+  z-index: 10;
+}
+
+.macos-dock__icon:hover,
+.macos-dock-icon:hover {
+  /* Enhanced lift effect */
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.25),
+    0 3px 10px rgba(0, 0, 0, 0.18),
+    0 1px 4px rgba(0, 0, 0, 0.12);
+
+  filter: brightness(1.05);
+}
+
+/* Neighbor magnification effect - More pronounced */
+.macos-dock-icon-wrapper.magnify:hover + .macos-dock-icon-wrapper.magnify,
+.macos-dock-icon-wrapper.magnify:has(+ .macos-dock-icon-wrapper.magnify:hover) {
+  transform: scale(1.15) translateY(-5px);
+}
+
+/* Icon reflection effect (premium touch) */
+.macos-dock__icon::after,
+.macos-dock-icon::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(255, 255, 255, 0.15) 30%,
+    transparent 60%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+[data-theme="dark"] .macos-dock__icon::after,
+[data-theme="dark"] .macos-dock-icon::after {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.20) 0%,
+    rgba(255, 255, 255, 0.08) 30%,
+    transparent 60%
+  );
+  opacity: 0.5;
+}
+
+/* Running indicator with premium glow */
+.dock-icon-indicator,
+.macos-dock__indicator {
+  width: 5px;
+  height: 5px;
+  background: radial-gradient(circle,
+    rgba(15, 95, 217, 1) 0%,
+    rgba(15, 95, 217, 0.9) 50%,
+    rgba(15, 95, 217, 0.7) 100%
+  );
+  box-shadow:
+    0 0 8px rgba(15, 95, 217, 0.6),
+    0 0 4px rgba(15, 95, 217, 0.4),
+    0 1px 2px rgba(0, 0, 0, 0.3);
+  bottom: -8px;
+}
+
+[data-theme="dark"] .dock-icon-indicator,
+[data-theme="dark"] .macos-dock__indicator {
+  background: radial-gradient(circle,
+    rgba(91, 158, 255, 1) 0%,
+    rgba(91, 158, 255, 0.9) 50%,
+    rgba(91, 158, 255, 0.8) 100%
+  );
+  box-shadow:
+    0 0 10px rgba(91, 158, 255, 0.7),
+    0 0 5px rgba(91, 158, 255, 0.5);
+}
+
+/* Badge with premium gradient */
+.dock-icon-badge,
+.macos-dock__badge {
+  background: linear-gradient(135deg,
+    #FF4757 0%,
+    #FF3838 50%,
+    #EE2E3D 100%
+  );
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 3px 8px rgba(0, 0, 0, 0.25),
+    0 1px 3px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  min-width: 20px;
+  height: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+[data-theme="dark"] .dock-icon-badge,
+[data-theme="dark"] .macos-dock__badge {
+  border: 2px solid rgba(32, 32, 34, 0.95);
+}
+
+/* ==================== Premium Windows ==================== */
+.macos-window {
+  /* Enhanced glassmorphism */
+  background: linear-gradient(145deg,
+    rgba(255, 255, 255, 0.88) 0%,
+    rgba(252, 252, 253, 0.85) 100%
+  );
+  backdrop-filter: blur(50px) saturate(160%) brightness(1.02);
+  -webkit-backdrop-filter: blur(50px) saturate(160%) brightness(1.02);
+  border: 1px solid rgba(0, 0, 0, 0.10);
+
+  /* Premium depth shadow */
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.8) inset,
+    0 32px 80px rgba(0, 0, 0, 0.28),
+    0 16px 40px rgba(0, 0, 0, 0.18),
+    0 8px 20px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .macos-window {
+  background: linear-gradient(145deg,
+    rgba(42, 42, 44, 0.90) 0%,
+    rgba(38, 38, 40, 0.88) 100%
+  );
+  backdrop-filter: blur(50px) saturate(160%) brightness(0.95);
+  -webkit-backdrop-filter: blur(50px) saturate(160%) brightness(0.95);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.08) inset,
+    0 32px 80px rgba(0, 0, 0, 0.50),
+    0 16px 40px rgba(0, 0, 0, 0.35),
+    0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* Focused window has more depth */
+.macos-window--focused,
+.macos-window.focused {
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.8) inset,
+    0 40px 100px rgba(0, 0, 0, 0.32),
+    0 20px 50px rgba(0, 0, 0, 0.22),
+    0 10px 25px rgba(0, 0, 0, 0.15),
+    0 4px 12px rgba(0, 0, 0, 0.10);
+}
+
+[data-theme="dark"] .macos-window--focused,
+[data-theme="dark"] .macos-window.focused {
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.12) inset,
+    0 40px 100px rgba(0, 0, 0, 0.60),
+    0 20px 50px rgba(0, 0, 0, 0.45),
+    0 10px 25px rgba(0, 0, 0, 0.35);
+}
+
+/* Unfocused window subtly fades */
+.macos-window--unfocused,
+.macos-window.unfocused {
+  opacity: 0.96;
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.5) inset,
+    0 20px 50px rgba(0, 0, 0, 0.18),
+    0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* Premium Traffic Lights with pixel-perfect gradients */
+.macos-window__traffic-light,
+.macos-traffic-light {
+  width: 13px;
+  height: 13px;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.20),
+    0 0.5px 1px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transition: all 0.18s var(--smooth);
+}
+
+.macos-window__traffic-light:hover,
+.macos-traffic-light:hover {
+  transform: scale(1.08);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.25),
+    0 1px 2px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.macos-window__traffic-light:active,
+.macos-traffic-light:active {
+  transform: scale(0.96);
+}
+
+/* Enhanced traffic light colors with rich gradients */
+.macos-window__traffic-light--close,
+.macos-traffic-light.close {
+  background: linear-gradient(135deg,
+    #FF6B60 0%,
+    #FF5F56 40%,
+    #ED5450 100%
+  );
+}
+
+.macos-window__traffic-light--minimize,
+.macos-traffic-light.minimize {
+  background: linear-gradient(135deg,
+    #FFC533 0%,
+    #FFBD2E 40%,
+    #E5A617 100%
+  );
+}
+
+.macos-window__traffic-light--maximize,
+.macos-traffic-light.maximize {
+  background: linear-gradient(135deg,
+    #32CE45 0%,
+    #27C93F 40%,
+    #1FB334 100%
+  );
+}
+
+/* ==================== Premium Buttons & Interactive Elements ==================== */
+button,
+.button,
+[role="button"] {
+  transition: all 0.25s var(--smooth);
+}
+
+button:hover,
+.button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+button:active,
+.button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.10);
+}
+
+/* Primary button with premium gradient */
+.button--primary,
+button.primary {
+  background: linear-gradient(135deg,
+    var(--primary-light) 0%,
+    var(--primary) 50%,
+    var(--primary-hover) 100%
+  );
+  box-shadow:
+    0 2px 8px rgba(15, 95, 217, 0.25),
+    0 1px 3px rgba(15, 95, 217, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.button--primary:hover,
+button.primary:hover {
+  background: linear-gradient(135deg,
+    var(--primary) 0%,
+    var(--primary-hover) 50%,
+    var(--primary-active) 100%
+  );
+  box-shadow:
+    0 4px 14px rgba(15, 95, 217, 0.35),
+    0 2px 6px rgba(15, 95, 217, 0.20);
+}
+
+/* ==================== Premium Command Palette ==================== */
+.macos-command-palette {
+  background: linear-gradient(145deg,
+    rgba(255, 255, 255, 0.97) 0%,
+    rgba(252, 252, 253, 0.95) 100%
+  );
+  backdrop-filter: blur(60px) saturate(180%) brightness(1.05);
+  -webkit-backdrop-filter: blur(60px) saturate(180%) brightness(1.05);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.8) inset,
+    0 30px 80px rgba(0, 0, 0, 0.25),
+    0 15px 40px rgba(0, 0, 0, 0.18),
+    0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="dark"] .macos-command-palette {
+  background: linear-gradient(145deg,
+    rgba(32, 32, 34, 0.97) 0%,
+    rgba(28, 28, 30, 0.95) 100%
+  );
+  backdrop-filter: blur(60px) saturate(180%);
+  -webkit-backdrop-filter: blur(60px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.08) inset,
+    0 30px 80px rgba(0, 0, 0, 0.60),
+    0 15px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* ==================== Premium Launchpad ==================== */
+.macos-launchpad {
+  backdrop-filter: blur(60px) brightness(0.88) saturate(140%);
+  -webkit-backdrop-filter: blur(60px) brightness(0.88) saturate(140%);
+}
+
+[data-theme="dark"] .macos-launchpad {
+  backdrop-filter: blur(60px) brightness(0.70) saturate(140%);
+  -webkit-backdrop-filter: blur(60px) brightness(0.70) saturate(140%);
+}
+
+.macos-launchpad__icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.28),
+    0 3px 9px rgba(0, 0, 0, 0.20),
+    0 1px 3px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.macos-launchpad__item:hover .macos-launchpad__icon {
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.35),
+    0 4px 12px rgba(0, 0, 0, 0.25),
+    0 2px 6px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+/* ==================== Premium Notifications ==================== */
+.macos-toast-notification,
+.macos-notification-item {
+  backdrop-filter: blur(50px) saturate(180%) brightness(1.05);
+  -webkit-backdrop-filter: blur(50px) saturate(180%) brightness(1.05);
+
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.6) inset,
+    0 12px 40px rgba(0, 0, 0, 0.18),
+    0 6px 20px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .macos-toast-notification,
+[data-theme="dark"] .macos-notification-item {
+  backdrop-filter: blur(50px) saturate(180%);
+  -webkit-backdrop-filter: blur(50px) saturate(180%);
+
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.10) inset,
+    0 12px 40px rgba(0, 0, 0, 0.50),
+    0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+/* ==================== Premium Scrollbars ==================== */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 10px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  transition: background 0.25s var(--smooth);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.28);
+  background-clip: padding-box;
+  border: 2px solid transparent;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: rgba(0, 0, 0, 0.38);
+  background-clip: padding-box;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.22);
+  background-clip: padding-box;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.32);
+  background-clip: padding-box;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:active {
+  background: rgba(255, 255, 255, 0.42);
+  background-clip: padding-box;
+}
+
+/* ==================== Premium Cards & Surfaces ==================== */
+.card,
+.surface,
+[class*="card"] {
+  background: linear-gradient(145deg,
+    rgba(255, 255, 255, 0.90) 0%,
+    rgba(252, 252, 253, 0.85) 100%
+  );
+  backdrop-filter: blur(40px) saturate(160%);
+  -webkit-backdrop-filter: blur(40px) saturate(160%);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.6) inset,
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    0 2px 6px rgba(0, 0, 0, 0.05);
+
+  transition: all 0.3s var(--smooth);
+}
+
+.card:hover,
+.surface:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.8) inset,
+    0 8px 24px rgba(0, 0, 0, 0.12),
+    0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .card,
+[data-theme="dark"] .surface,
+[data-theme="dark"] [class*="card"] {
+  background: linear-gradient(145deg,
+    rgba(42, 42, 44, 0.85) 0%,
+    rgba(38, 38, 40, 0.80) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.08) inset,
+    0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* ==================== Micro-interactions ==================== */
+
+/* Ripple effect on click */
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Pulse animation for attention */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(0.98);
+  }
+}
+
+/* Shimmer effect for loading states */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.loading-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+}
+
+[data-theme="dark"] .loading-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+/* ==================== Focus States ==================== */
+*:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ==================== Reduced Motion Support ==================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ==================== High Contrast Mode ==================== */
+@media (prefers-contrast: high) {
+  .macos-system-bar,
+  .macos-dock,
+  .macos-dock-container,
+  .macos-window {
+    border-width: 2px;
+    border-color: currentColor;
+  }
+
+  .macos-dock__icon,
+  .macos-dock-icon,
+  .dock-icon-image {
+    border: 2px solid currentColor;
+  }
+}
+
+/* ==================== Print Optimization ==================== */
+@media print {
+  .macos-system-bar,
+  .macos-dock,
+  .macos-dock-container {
+    display: none;
+  }
+
+  .macos-window {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+}

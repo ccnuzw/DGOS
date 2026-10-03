@@ -1,0 +1,128 @@
+{
+  "schema": "dgos/v1-candidate-group/v1",
+  "work_package": "V1-CANDIDATE-COVERAGE",
+  "revision": 15,
+  "run_id": "V1-candidate-tooling-1791047290541-business",
+  "group": "business",
+  "started_at": "2026-10-03T17:08:10.587Z",
+  "ended_at": "2026-10-03T17:08:10.587Z",
+  "candidate_id": "f3fb15f33f57f0f4a4d95e90a216b1bbd2e7258992962b2f418121d1f6561e5e",
+  "build_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "runtime_assets": {
+    "config": {
+      "id": "api-worker-runtime",
+      "files": {
+        "docker-compose.production.yml": "665075a6a0a14e222d37de62ab38ac2b87022bad7a0360793215b1ec24407aae",
+        "docker-compose.integration.yml": "4c5dec78651a9fce318e6eae6819b6b97dbb90bcef4b6b0d1c53d2d0a1e39e54",
+        "deployment/Dockerfile": "af655a07980dec7c52f80ea2dff0556639fd43eb4b1e9b3784c574bc5f95c7f4",
+        "deployment/Caddyfile": "d7d63a60319d18223e5eb4087d302cfe2070f088bf9c8655b304048a525ea693",
+        "scripts/v1-ops-api.mjs": "bd0277e16ba95d3c4e78fe46f11c8468ea927aec76e9b2f7d8e78aabe25f2ac7",
+        "scripts/v1-ops-worker.mjs": "5f35d9a6568ac7659c003751e7f40632b2645cd1726e177f8704026df235359a",
+        "apps/api/src/server.mjs": "98f66a512bb2f22bf87298a2e37966d9cf8edf822724133d37b767a78ee608aa",
+        "apps/worker/src/worker.mjs": "e94c90888699b34a66632c77b8d5afea879734605e341423cf5cb821c58aa7e4",
+        "scripts/v1-ui-management-fixture.mjs": "e746a1a03e377a3f596df9f13773de266d08ba6a46c876c48c2f7b5ec0ad8922",
+        "src/extensions/v1-default-runtime.json": "bd239ddf74be47cd4b7334335148defec79417bf13315359c19de07296e2a064",
+        ".herdr/state/package-fixture-r9/trust-roots.json": "bad1036ed3b953108b9c7f785f1062ebe47d079bffe1ba5eca300057adfee1a0",
+        ".herdr/state/integration-trust-roots-r9.json": "1933e71b80dfd3c63ad93117d199bc9fef18a00597e510f5976c761af9f91ddc"
+      }
+    },
+    "envelope": {
+      "id": "workbench-1.0.1",
+      "path": ".herdr/state/package-fixture-r9/ai-workbench-envelope.json",
+      "sha256": "102fb6cac8aa112f7d762ea7f4e0defceb9af0ea543f02de367d7694494451be"
+    },
+    "dist": {
+      "id": "web-dist",
+      "root": "apps/web/dist",
+      "files": {
+        "apps/web/dist/assets/index-CoSmyPIO.js": "3901581744913607d1fb76f3b013052ad22ac0229ab78f6475f6e312907b7f64",
+        "apps/web/dist/assets/index-DJVL9hR0.css": "ab78dff1dccf389cd5aca8cf794c7f6e16680196473040f1be49a2df5e07fd8a",
+        "apps/web/dist/brand/icon-dark.svg": "adb69db28590191592569b4e0a59ce6602445cba59992b7d14aa607184e73ab5",
+        "apps/web/dist/brand/icon.svg": "d99c8f4d09e543078477c289debf0c518f4d0101cfce207379fd129716456aff",
+        "apps/web/dist/brand/logo.svg": "b0fa83e5b17364427a4fadee9c498bac82d8525d553f14282acbe96fb6090934",
+        "apps/web/dist/icons/apps/assistant.svg": "4641c04f267c3b1e7f2c94300af46e1099946529e0b015e8b2ff5140868e95e3",
+        "apps/web/dist/icons/apps/catalog.svg": "11bc9567d09f123ad40fe37aa570b87edda518a111fedccb1a3d42b85c44a4f0",
+        "apps/web/dist/icons/apps/developer-center.svg": "9e6a2a63695b544bdc75689ff56bb18cfcfce4756608d8b7381c5b39f1ca9a84",
+        "apps/web/dist/icons/apps/extensions.svg": "d28f9e7f7ebe1e440a4328615b4281f266ec40ea7f93e054c0731b973d4a1261",
+        "apps/web/dist/icons/apps/models.svg": "af607bf197bd8811d1b087af15356d5978f5fd752917899a16200e1809354b89",
+        "apps/web/dist/icons/apps/providers.svg": "eafdcb9b7e278441b04d33b5a6eefc378840792a6593161473959e5ee6cd9427",
+        "apps/web/dist/icons/apps/settings.svg": "5816e53bf3b86a86b772af847e9def8e1c80edf58c9cac9e22171d88f8329555",
+        "apps/web/dist/icons/apps/system-info.svg": "64ae08a5ce8fcf0fd13b7818dcf04c0e147c7e4da20fc47ad4d69a58dc443459",
+        "apps/web/dist/icons/apps/tasks.svg": "905095eabaa61cf7d039be14a98136ad71cc0b6e753521ed58871ddc0d41558e",
+        "apps/web/dist/icons/dark/apps/assistant.svg": "2373fee58915d4a2b13b7d28726135d46b786c1ab849f2f6922e14c877c8e964",
+        "apps/web/dist/icons/dark/apps/catalog.svg": "7b88152d9baddd637caa25cfbe18bdf6e550e0778dee256d807d27a6a0f164b4",
+        "apps/web/dist/icons/dark/apps/developer-center.svg": "31262adb6a39499399ab0e292f2bb8dc09f4ec4887f414416c2aecac4692ec42",
+        "apps/web/dist/icons/dark/apps/extensions.svg": "8983af50996a211bbfa8edf62c69ea6c9ddfe7a429ed5ea24d5ee89993712f23",
+        "apps/web/dist/icons/dark/apps/models.svg": "294d956b85efc86591e99055d05bd8fc48d1a9e9640f236a1be5f4acd96c8560",
+        "apps/web/dist/icons/dark/apps/providers.svg": "39131510a92717187954c932ba7c5bf370ecf42c2041981b2f0cfd7449ef8b63",
+        "apps/web/dist/icons/dark/apps/settings.svg": "a5d287621ad2b52436d74cbbc17e94e92c6173cbc850c131a0199bb3c9e2c1fe",
+        "apps/web/dist/icons/dark/apps/system-info.svg": "79fbbd9bbeaa780b547709e0e8fb659514d6981c7af10615a4dea6b03bbfdcc3",
+        "apps/web/dist/icons/dark/apps/tasks.svg": "bcdede92da73c951bd4ddffcc094626b56ec8a8a53b8550c936280bd11f9a878",
+        "apps/web/dist/icons/dark/system/dgos-logo.svg": "8fea5b2f2d2ece80d95701912b8f1a200af7472bf8383e3e21bdaa20a2c6f861",
+        "apps/web/dist/icons/dark/system/downloads.svg": "d812c9c65bed82921c7878c068eeb448ebe2d0e861db5e8692421e701f2d95a5",
+        "apps/web/dist/icons/dark/system/trash-full.svg": "619a0c49e2465ead15ef156bd4695840308ba3fd95899f1b391aae8958cbe8a7",
+        "apps/web/dist/icons/dark/system/trash.svg": "518818968b476cab93e5c46a02afc910246e26113a0851f8c1b42dcf2a503df7",
+        "apps/web/dist/icons/statusbar/battery.svg": "f099f285b5a5b2c29283d5b2fbffb0d34562b3aa1a093856e6c49a5506a301c2",
+        "apps/web/dist/icons/statusbar/clock.svg": "a228cb4efb36ef00b06227d88f15dddcc4262e57e7037aff518ca769d16d1b0e",
+        "apps/web/dist/icons/statusbar/notifications.svg": "e598ebb7577c95fa5a235694462bc8961662ca463861a77a30e29ef9791ece96",
+        "apps/web/dist/icons/statusbar/search.svg": "6aeba741f0892c990e7b7de3d29b539492d9c68829f37dacd3ada7232483a6f5",
+        "apps/web/dist/icons/statusbar/settings.svg": "3404893650dad9d34c18e41224e93f92cea46b2b64b22498681b8f60357a2932",
+        "apps/web/dist/icons/statusbar/user.svg": "7687d9b83a0c02a4b20b891a60a717a671eb58225d3875234e02759c8bb31ff8",
+        "apps/web/dist/icons/statusbar/volume.svg": "92bbd434d4f645bc75679d502e1c2b21ddeb91d2742b06ee99b5ccbe5f56ce93",
+        "apps/web/dist/icons/statusbar/wifi.svg": "abb157105076ed4d9a3b9f209a731632ceb5ff3a0086cd2177e2dc3525087d42",
+        "apps/web/dist/icons/system/dgos-logo.svg": "dda057c8580c73a086379e3d6e0b2140bb0b6cbd3970bff2bfdd68ce275e2589",
+        "apps/web/dist/icons/system/downloads.svg": "c938852cec4c2ea21806ee8bdf77b1ab0ce74305e24ee020b07936100510cead",
+        "apps/web/dist/icons/system/trash-full.svg": "84a0218db2205cf257530a103fff8e6a836b63f178363d433886a24eb9642a41",
+        "apps/web/dist/icons/system/trash.svg": "dfcf8bef7f296a94afb77dd438de04c023641da0fb5d04b1fb21ac650432310b",
+        "apps/web/dist/illustrations/empty-data.svg": "30802f816f00b6cf9b9f13c8b10d6c9ef7707e51d7802c5a933a51f96e42d009",
+        "apps/web/dist/illustrations/empty-providers.svg": "8e78125fc62ec89f1030abb5a08e3d704cd2772676289e7b487e35ff51601200",
+        "apps/web/dist/illustrations/error-connection.svg": "935c66ec473b9c4ce8d1f4b1ed6bf1108bbc55e2c4e16c97b841dfacf64bc751",
+        "apps/web/dist/index.html": "e1ff0e3a4d0c2c0866796f754e9275f9472c1aecc61fc2e72f10909dba7bfc3d"
+      }
+    },
+    "image": {
+      "id": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    }
+  },
+  "source_identity": {
+    "commit": null,
+    "head_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "working_tree_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "source_identity_start": {
+    "commit": null,
+    "head_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "working_tree_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "source_identity_end": {
+    "commit": null,
+    "head_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "working_tree_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "source_drift": false,
+  "exit_code": 1,
+  "candidate_complete": false,
+  "environment": "local host Node with isolated resources; image is candidate artifact binding only",
+  "admin_database": null,
+  "child_database": null,
+  "redis_db": null,
+  "frozen_migrations": [],
+  "evidence_dirs": [
+    "docs/05-测试与发布/端到端验收/报告/V1-candidate-tooling-1791047290541-business"
+  ],
+  "generated_files": [],
+  "generated_file_sha256": {},
+  "asset_sha256": {},
+  "results": [],
+  "failed_assets": [],
+  "unexecuted_assets": [],
+  "covered_cases": [],
+  "cleanup": [],
+  "error": "group has zero results",
+  "limitations": [
+    "Local host execution only; browser/native and unresolved branch receipts remain pending.",
+    "Image field binds the candidate artifact and does not claim these tests ran in that image.",
+    "No E2E case is claimed without explicit passing business assertions."
+  ]
+}

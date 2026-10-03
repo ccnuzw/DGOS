@@ -13,7 +13,7 @@ async function signIn(page, route) {
   const response = page.waitForResponse(value => value.url().endsWith('/api/v1/identity/admin/login') && value.request().method() === 'POST');
   await page.getByRole('button', { name: 'Sign in', exact: true }).last().click();
   await accepted(await response, 200);
-  await expect(page.locator('.dgos-top h1')).toBeVisible();
+  await expect(page.getByRole('dialog', { name: route.replace('/', '').replace(/^./, value => value.toUpperCase()) })).toBeVisible();
 }
 
 async function accepted(response, status) {
@@ -49,6 +49,57 @@ async function permissionDecision(page, decision) {
   expect(result.body.appPermissions).toEqual(expect.arrayContaining([expect.objectContaining(rule)]));
   return result.body;
 }
+
+async function extensionPermissionDecision(page, decision) {
+  const settings = await read(page, '/api/v1/system/settings');
+  const rule = { appId: 'dgos.extensions', subjectType: 'user', subjectId: state.principalId, capability: 'skill.read', scope: { value: '*' }, decision };
+  const result = await page.evaluate(async ({ baseVersion, rule }) => {
+    const response = await fetch('/api/v1/system/settings', {
+      method: 'PATCH', headers: { 'content-type': 'application/json', 'x-dgos-csrf': 'web' },
+      body: JSON.stringify({ requestId: crypto.randomUUID(), baseVersion, domain: 'appPermissions', patch: { rules: [rule] } }),
+    });
+    return { status: response.status, body: await response.json() };
+  }, { baseVersion: settings.settingsVersion, rule });
+  expect(result.status, `skill.read permission patch: ${result.body.errorKey || 'none'}`).toBe(200);
+  return result.body;
+}
+
+test('real Skill definition enforces independent skill.read ask deny allow decisions', async ({ page }) => {
+  test.setTimeout(60_000);
+  await signIn(page, '/skills');
+  const skillId = `ui_read_browser_${crypto.randomUUID().replaceAll('-', '')}`;
+  const createForm = page.locator('details form').filter({ has: page.locator('input[name="skillId"]') });
+  await page.locator('details').filter({ has: page.getByText('Create', { exact: true }) }).first().getByText('Create', { exact: true }).click();
+  await createForm.locator('input[name="skillId"]').fill(skillId);
+  await createForm.locator('input[name="name"]').fill('Read permission fixture');
+  await createForm.locator('textarea[name="description"]').fill('Independent read permission fixture');
+  await createForm.locator('textarea[name="systemPrompt"]').fill('PRIVATE_SKILL_READ_PROMPT');
+  await createForm.getByRole('button', { name: 'Create disabled skill' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Confirm' }).click();
+  await expect(page.getByText(skillId)).toBeVisible();
+
+  await extensionPermissionDecision(page, 'ask');
+  const readDefinition = () => page.evaluate(async skill => { const response = await fetch(`/api/v1/skills/${encodeURIComponent(skill)}/definition`); return { status: response.status, body: await response.json() }; }, skillId);
+  let readResult = await readDefinition();
+  expect(readResult).toMatchObject({ status: 409, body: { errorKey: 'confirmation_required' } });
+  expect(JSON.stringify(readResult)).not.toContain('PRIVATE_SKILL_READ_PROMPT');
+  const permissionRequest = await page.evaluate(async () => { const response = await fetch('/api/v1/permissions/request', { method: 'POST', headers: { 'content-type': 'application/json', 'x-dgos-csrf': 'web' }, body: JSON.stringify({ requestId: crypto.randomUUID(), appId: 'dgos.extensions', capability: 'skill.read', scope: '*' }) }); return { status: response.status, body: await response.json() }; });
+  expect(permissionRequest.status).toBe(202);
+  expect(permissionRequest.body.confirmationRequired).toBe(true);
+  passed('ui.skill.read.ask');
+
+  await extensionPermissionDecision(page, 'deny');
+  readResult = await readDefinition();
+  expect(readResult).toMatchObject({ status: 403, body: { errorKey: 'permission_denied' } });
+  expect(JSON.stringify(readResult)).not.toContain('PRIVATE_SKILL_READ_PROMPT');
+  passed('ui.skill.read.deny');
+
+  await extensionPermissionDecision(page, 'allow');
+  readResult = await readDefinition();
+  expect(readResult.status).toBe(200);
+  expect(readResult.body.content.systemPrompt).toBe('PRIVATE_SKILL_READ_PROMPT');
+  passed('ui.skill.read.allow');
+});
 
 test('real Skill translation reaches Task, Artifact and confirmed apply', async ({ page }) => {
   test.setTimeout(90_000);
@@ -162,7 +213,7 @@ test('real installed MCP connects, discovers tools and invokes a confirmed Run',
   await row.getByRole('button', { name: 'Tools' }).click();
   expect((await accepted(await toolsResponse, 200)).items.some(value => value.operationId === 'credential')).toBe(true);
   const discoverResponse = page.waitForResponse(value => value.url().endsWith(`/api/v1/mcp/${state.mcpId}/tools`) && value.request().method() === 'POST');
-  await page.getByRole('button', { name: 'Discover tools' }).click();
+  await page.locator('h2').filter({ hasText: 'Tools' }).locator('..').getByRole('button', { name: 'Discover tools' }).click();
   await accepted(await discoverResponse, 200);
   await page.locator('.record-list li').filter({ hasText: 'credential' }).last().getByRole('button', { name: 'Choose' }).click();
   await page.getByLabel('Calling app ID').fill(state.appId);

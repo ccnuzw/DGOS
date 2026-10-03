@@ -1,0 +1,228 @@
+/* Window Tabs Integrated into System Bar */
+/* Tabs appear in the system bar when windows are maximized */
+
+.macos-system-bar--with-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+}
+
+.macos-system-bar__left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.macos-system-bar__center {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 1 auto;
+  max-width: min(58vw, 720px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+.macos-system-bar__center::-webkit-scrollbar {
+  display: none;
+}
+
+.macos-system-bar__right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+/* DGOS Logo - Compact and integrated */
+.macos-system-bar__logo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.macos-system-bar__logo:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .macos-system-bar__logo:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.macos-system-bar__logo-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Window Tab in System Bar */
+.macos-window-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  max-width: 180px;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+}
+
+.macos-window-tab:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .macos-window-tab:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Active tab */
+.macos-window-tab--active {
+  background: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .macos-window-tab--active {
+  background: rgba(255, 255, 255, 0.12) !important;
+}
+
+.macos-window-tab__icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 3px;
+}
+
+.macos-window-tab__icon-content {
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.macos-window-tab__icon-content svg {
+  width: 14px;
+  height: 14px;
+  max-width: 14px;
+  max-height: 14px;
+}
+}
+
+.macos-window-tab__title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.macos-window-tab__close {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all 0.15s;
+  font-size: 12px;
+  color: var(--muted);
+  flex-shrink: 0;
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.macos-window-tab:focus-visible,
+.macos-traffic-light:focus-visible {
+  outline: 2px solid #0a84ff;
+  outline-offset: 2px;
+}
+
+.macos-window-tab:hover .macos-window-tab__close {
+  opacity: 1;
+}
+
+.macos-window-tab__close:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: var(--text);
+}
+
+[data-theme="dark"] .macos-window-tab__close:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* System Bar Menu Items */
+.macos-system-bar__menu-item {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.macos-system-bar__menu-item:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .macos-system-bar__menu-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Right side icons */
+.macos-system-bar__icon-button {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s;
+  border: none;
+  background: transparent;
+  color: var(--text);
+}
+
+.macos-system-bar__icon-button:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .macos-system-bar__icon-button:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.macos-system-bar__icon-button svg {
+  width: 16px;
+  height: 16px;
+}

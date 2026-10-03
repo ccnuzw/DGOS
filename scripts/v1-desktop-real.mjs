@@ -30,9 +30,10 @@ const manifestFile = path.join(root, manifestName);
 const screenshotFile = path.join(root, screenshotName);
 const dbBase = 'postgresql://dgos:dgos@127.0.0.1:5432/';
 const redisUrl = 'redis://127.0.0.1:6379/7';
+const candidateDir = path.resolve(process.env.DGOS_DESKTOP_CANDIDATE_DIR ?? path.join(root, '.herdr/state/package-fixture-r9'));
 const env = { ...process.env, NODE_ENV: 'test', DGOS_DATABASE_URL: `${dbBase}${database}`, REDIS_URL: redisUrl,
   DGOS_ALLOW_INSECURE_FIXTURE: '1', DGOS_ALLOWED_ORIGINS: apiOrigin, DGOS_PACKAGE_ROOT: path.join(stateDir, 'packages'),
-  DGOS_PACKAGE_TRUST_ROOTS_FILE: path.join(root, '.herdr/state/package-fixture-r9/trust-roots.json') };
+  DGOS_PACKAGE_TRUST_ROOTS_FILE: path.join(candidateDir, 'trust-roots.json') };
 Object.assign(process.env, { NODE_ENV: env.NODE_ENV, DGOS_DATABASE_URL: env.DGOS_DATABASE_URL, REDIS_URL: env.REDIS_URL,
   DGOS_ALLOW_INSECURE_FIXTURE: env.DGOS_ALLOW_INSECURE_FIXTURE, DGOS_ALLOWED_ORIGINS: env.DGOS_ALLOWED_ORIGINS,
   DGOS_PACKAGE_ROOT: env.DGOS_PACKAGE_ROOT, DGOS_PACKAGE_TRUST_ROOTS_FILE: env.DGOS_PACKAGE_TRUST_ROOTS_FILE });
@@ -46,8 +47,8 @@ const sourceFiles = ['apps/desktop/src-tauri/src/host.rs', 'apps/desktop/src-tau
   'apps/desktop/scripts/workbench-frame-driver.js', 'apps/ai-workbench-package/manifest.json',
   'apps/ai-workbench-package/index.html', 'apps/ai-workbench-package/workbench.css',
   'apps/ai-workbench-package/workbench.js', 'apps/ai-workbench-package/icon.svg',
-  'packages/design-tokens/src/tokens.css', '.herdr/state/package-fixture-r9/ai-workbench-envelope.json',
-  '.herdr/state/package-fixture-r9/trust-roots.json'];
+  'packages/design-tokens/src/tokens.css', path.relative(root, path.join(candidateDir, 'ai-workbench-envelope.json')),
+  path.relative(root, path.join(candidateDir, 'trust-roots.json'))];
 const distFiles = (directory, prefix = '') => fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
   const name = path.posix.join(prefix, entry.name);
   return entry.isDirectory() ? distFiles(path.join(directory, entry.name), name) : [name];

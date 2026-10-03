@@ -1,0 +1,182 @@
+/* Premium Dock - Complete Redesign with Perfect Centering */
+
+.macos-dock {
+  position: fixed;
+  bottom: 8px;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 16px;
+
+  /* Ultra-transparent glass */
+  background: rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(120px) saturate(180%) brightness(1.25) !important;
+  -webkit-backdrop-filter: blur(120px) saturate(180%) brightness(1.25) !important;
+
+  /* Refined border and shadow */
+  border: 0.5px solid rgba(255, 255, 255, 0.4) !important;
+  border-radius: 20px !important;
+
+  /* Multi-layer shadow for depth */
+  box-shadow:
+    0 0 0 0.5px rgba(0, 0, 0, 0.02) inset,
+    0 35px 70px rgba(0, 0, 0, 0.18),
+    0 15px 35px rgba(0, 0, 0, 0.12),
+    0 5px 15px rgba(0, 0, 0, 0.08) !important;
+
+  z-index: 100;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+[data-theme="dark"] .macos-dock {
+  background: rgba(40, 40, 42, 0.25) !important;
+  backdrop-filter: blur(120px) saturate(180%) brightness(0.85) !important;
+  border: 0.5px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.03) inset,
+    0 35px 70px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Dock Items - Perfect Sizing */
+.macos-dock__item {
+  position: relative;
+  width: 58px !important;
+  height: 58px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-origin: bottom center;
+}
+
+/* Icon Container */
+.macos-dock__icon {
+  width: 100%;
+  height: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  /* Subtle shadow */
+  filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.25));
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Hover magnification effect */
+.macos-dock__item:hover {
+  transform: scale(1.45) translateY(-12px);
+}
+
+.macos-dock__item:hover .macos-dock__icon {
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.35));
+}
+
+/* Running indicator */
+.macos-dock__indicator {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .macos-dock__indicator {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+}
+
+/* Badge notifications */
+.macos-dock__badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #FF3B30 0%, #D32F2F 100%);
+  border: 2px solid white;
+  border-radius: 9px;
+  font-size: 10px;
+  font-weight: 700;
+  color: white;
+  box-shadow: 0 2px 6px rgba(255, 59, 48, 0.5);
+  z-index: 1;
+}
+
+[data-theme="dark"] .macos-dock__badge {
+  border-color: rgba(40, 40, 42, 0.9);
+}
+
+/* Separator for dividing sections */
+.macos-dock__separator {
+  width: 1px;
+  height: 50px;
+  background: rgba(0, 0, 0, 0.15);
+  margin: 0 8px;
+}
+
+[data-theme="dark"] .macos-dock__separator {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Icon hover tooltip */
+.macos-dock__tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  padding: 4px 10px;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(20px);
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+}
+
+.macos-dock__item:hover .macos-dock__tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-12px);
+}
+
+/* Ensure proper stacking */
+.macos-dock__item {
+  z-index: 1;
+}
+
+.macos-dock__item:hover {
+  z-index: 10;
+}
+
+/* Beautiful icon base styles */
+.macos-dock__icon svg,
+.macos-dock__icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.macos-dock[data-hidden="true"] {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(18px);
+}

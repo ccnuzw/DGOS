@@ -1,7 +1,8 @@
 // macOS Window Manager
 // Manages multiple windows, z-index, focus, and state
-import React, { useState, useCallback, type ReactNode } from 'react';
+import React, { useState, useCallback, useEffect, type ReactNode } from 'react';
 import { MacOSWindow, type WindowBounds, type WindowState } from './window';
+import { WindowTabBar, type WindowTab } from './window-tabs';
 import type { RouteKey } from '@dgos/design-tokens';
 
 export interface WindowInstance {
@@ -14,6 +15,7 @@ export interface WindowInstance {
   zIndex: number;
   minWidth?: number;
   minHeight?: number;
+  icon?: ReactNode;
 }
 
 export interface WindowManagerProps {
@@ -95,11 +97,63 @@ export function WindowManager({
     onWindowsChange(updatedWindows);
   }, [windows, onWindowsChange]);
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Only handle if Cmd/Ctrl is pressed
+      if (!e.metaKey && !e.ctrlKey) return;
+
+      // Cmd+W - Close focused window
+      if (e.key.toLowerCase() === 'w') {
+        e.preventDefault();
+        if (focusedWindowId) {
+          handleWindowClose(focusedWindowId);
+        }
+      }
+
+      // Cmd+M - Minimize focused window
+      if (e.key.toLowerCase() === 'm') {
+        e.preventDefault();
+        if (focusedWindowId) {
+          handleWindowMinimize(focusedWindowId);
+        }
+      }
+
+      // Cmd+` - Cycle through windows
+      if (e.key === '`') {
+        e.preventDefault();
+        const visibleWindows = windows.filter((w) => w.state !== 'minimized');
+        if (visibleWindows.length > 1) {
+          const currentIndex = visibleWindows.findIndex((w) => w.id === focusedWindowId);
+          const nextIndex = (currentIndex + 1) % visibleWindows.length;
+          handleWindowFocus(visibleWindows[nextIndex].id);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [windows, focusedWindowId, handleWindowClose, handleWindowMinimize, handleWindowFocus]);
+
   // Filter out minimized windows (they're in the Dock)
   const visibleWindows = windows.filter((w) => w.state !== 'minimized');
 
+  // Check if any window is maximized
+  const hasMaximizedWindow = visibleWindows.some((w) => w.state === 'maximized');
+
+  // Create tabs for tab bar (only show when a window is maximized)
+  const tabs: WindowTab[] = hasMaximizedWindow
+    ? visibleWindows.map((w) => ({
+        id: w.id,
+        title: w.title,
+        icon: w.icon,
+        active: w.id === focusedWindowId,
+      }))
+    : [];
+
   return (
     <>
+      {/* Tab bar removed - tabs now integrated into system bar */}
       {visibleWindows.map((window) => (
         <MacOSWindow
           key={window.id}
@@ -116,6 +170,7 @@ export function WindowManager({
           onMaximize={() => handleWindowMaximize(window.id)}
           onFocus={() => handleWindowFocus(window.id)}
           onBoundsChange={(bounds) => handleWindowBoundsChange(window.id, bounds)}
+          hasTabBar={hasMaximizedWindow}
         >
           {window.content}
         </MacOSWindow>
@@ -153,6 +208,7 @@ export function useWindowManager() {
       zIndex: nextZIndex,
       minWidth: options?.minWidth || 400,
       minHeight: options?.minHeight || 300,
+      icon: options?.icon,
     };
 
     setWindows((prev) => [...prev, newWindow]);

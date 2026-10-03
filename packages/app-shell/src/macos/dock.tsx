@@ -15,6 +15,7 @@ export interface DockApp {
 
 export interface MacOSDockProps {
   apps: DockApp[];
+  hidden?: boolean;
   onAppClick?: (appId: string) => void;
   onAppRightClick?: (appId: string, event: React.MouseEvent) => void;
 }
@@ -37,7 +38,7 @@ function calculateIconScale(
   return scale;
 }
 
-export function MacOSDock({ apps, onAppClick, onAppRightClick }: MacOSDockProps) {
+export function MacOSDock({ apps, hidden = false, onAppClick, onAppRightClick }: MacOSDockProps) {
   const [mousePosition, setMousePosition] = useState<number | null>(null);
   const dockRef = useRef<HTMLDivElement>(null);
   const iconRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -86,6 +87,7 @@ export function MacOSDock({ apps, onAppClick, onAppRightClick }: MacOSDockProps)
     <div
       ref={dockRef}
       className="macos-dock"
+      data-hidden={hidden ? 'true' : 'false'}
       role="toolbar"
       aria-label="Application Dock"
       onMouseMove={handleMouseMove}

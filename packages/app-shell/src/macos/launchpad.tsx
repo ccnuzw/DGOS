@@ -129,6 +129,7 @@ export function MacOSLaunchpad({
       aria-modal="true"
       aria-label="Application Launcher"
     >
+      <button className="macos-launchpad__backdrop-close" aria-label="Close application launcher" onClick={handleClose} type="button" />
       <div className="macos-launchpad__grid">
         {apps.map((app, index) => (
           <div

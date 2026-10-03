@@ -1,0 +1,26 @@
+/* Disable Browser Context Menu on Desktop */
+
+.macos-desktop {
+  /* Prevent default browser context menu */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+.macos-desktop,
+.macos-desktop * {
+  /* Disable right-click context menu on desktop area */
+}
+
+/* Allow text selection in windows and content */
+.macos-window__content,
+.macos-window__content *,
+input,
+textarea,
+[contenteditable="true"] {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  user-select: text;
+}
+
+/* JavaScript will handle this in the component */

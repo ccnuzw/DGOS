@@ -26,6 +26,7 @@ export interface MacOSWindowProps {
   zIndex?: number;
   minWidth?: number;
   minHeight?: number;
+  hasTabBar?: boolean;
 }
 
 export function MacOSWindow({
@@ -43,6 +44,7 @@ export function MacOSWindow({
   zIndex = 10,
   minWidth = 400,
   minHeight = 300,
+  hasTabBar = false,
 }: MacOSWindowProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
@@ -53,7 +55,7 @@ export function MacOSWindow({
 
   const handleTitleBarMouseDown = (e: React.MouseEvent) => {
     if (e.button !== 0) return; // Only left click
-    if ((e.target as HTMLElement).closest('.macos-window__traffic-lights')) return;
+    if ((e.target as HTMLElement).closest('.macos-traffic-lights')) return;
 
     e.preventDefault();
     setIsDragging(true);
@@ -158,6 +160,7 @@ export function MacOSWindow({
     'macos-window',
     focused ? 'macos-window--focused' : 'macos-window--unfocused',
     state === 'maximized' ? 'macos-window--maximized' : '',
+    state === 'maximized' && hasTabBar ? 'macos-window--with-tabs' : '',
   ].filter(Boolean).join(' ');
 
   const windowStyle: React.CSSProperties = state === 'maximized' ? {
@@ -180,34 +183,37 @@ export function MacOSWindow({
       aria-label={title}
       aria-modal="false"
     >
-      <div
-        className="macos-window__title-bar"
-        onMouseDown={handleTitleBarMouseDown}
-        onDoubleClick={handleTitleBarDoubleClick}
-      >
-        <div className="macos-window__traffic-lights">
-          <button
-            className="macos-window__traffic-light macos-window__traffic-light--close"
-            onClick={onClose}
-            aria-label="Close"
-            type="button"
-          />
-          <button
-            className="macos-window__traffic-light macos-window__traffic-light--minimize"
-            onClick={onMinimize}
-            aria-label="Minimize"
-            type="button"
-          />
-          <button
-            className="macos-window__traffic-light macos-window__traffic-light--maximize"
-            onClick={onMaximize}
-            aria-label={state === 'maximized' ? 'Restore' : 'Maximize'}
-            type="button"
-          />
-        </div>
+      {/* Keep the chrome visible in maximized windows so the controls remain usable. */}
+      {
+        <div
+          className="macos-window__title-bar"
+          onMouseDown={handleTitleBarMouseDown}
+          onDoubleClick={handleTitleBarDoubleClick}
+        >
+          <div className="macos-traffic-lights">
+            <button
+              className="macos-traffic-light macos-traffic-light--close"
+              onClick={(e) => { e.stopPropagation(); onClose?.(); }}
+              aria-label="Close"
+              type="button"
+            />
+            <button
+              className="macos-traffic-light macos-traffic-light--minimize"
+              onClick={(e) => { e.stopPropagation(); onMinimize?.(); }}
+              aria-label="Minimize"
+              type="button"
+            />
+            <button
+              className="macos-traffic-light macos-traffic-light--maximize"
+              onClick={(e) => { e.stopPropagation(); onMaximize?.(); }}
+              aria-label="Maximize"
+              type="button"
+            />
+          </div>
 
-        <div className="macos-window__title">{title}</div>
-      </div>
+          <div className="macos-window__title">{title}</div>
+        </div>
+      }
 
       <div className="macos-window__content">
         {children}

@@ -77,14 +77,16 @@ body {
 .macos-system-bar__logo {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
+  gap: 6px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--text);
   cursor: pointer;
   padding: 4px 8px;
   border-radius: 6px;
   transition: background 150ms;
+  border: none;
+  background: transparent;
 }
 
 .macos-system-bar__logo:hover {
@@ -96,15 +98,16 @@ body {
 }
 
 .macos-system-bar__logo-mark {
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
   background: var(--primary);
   color: white;
-  border-radius: 6px;
+  border-radius: 4px;
   display: grid;
   place-items: center;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 10px;
+  flex-shrink: 0;
 }
 
 .macos-system-bar__app-name {
@@ -133,6 +136,22 @@ body {
 .macos-system-bar__icon-button:active {
   transform: scale(0.96);
   background: rgba(0, 0, 0, 0.08);
+}
+
+.macos-system-bar__launcher {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  color: var(--text);
+  background: transparent;
+  cursor: pointer;
+}
+
+.macos-system-bar__launcher:hover {
+  background: rgba(0, 0, 0, 0.06);
 }
 
 [data-theme="dark"] .macos-system-bar__icon-button:hover {
@@ -1172,6 +1191,16 @@ body {
   user-select: none;
 }
 
+/* The window component uses the public traffic-light class names. */
+.macos-window__title-bar .macos-traffic-lights {
+  left: 12px;
+}
+
+.macos-window__title-bar .macos-traffic-light {
+  width: 13px;
+  height: 13px;
+}
+
 .macos-window__traffic-lights {
   position: absolute;
   left: 12px;
@@ -1209,27 +1238,24 @@ body {
 .macos-window__traffic-light--close {
   background: linear-gradient(
     135deg,
-    #FF6159 0%,
-    #FF5F56 50%,
-    #ED5450 100%
+    #FF5F57 0%,
+    #FF5F57 100%
   );
 }
 
 .macos-window__traffic-light--minimize {
   background: linear-gradient(
     135deg,
-    #FFC02F 0%,
-    #FFBD2E 50%,
-    #E5A617 100%
+    #FEBC2E 0%,
+    #FEBC2E 100%
   );
 }
 
 .macos-window__traffic-light--maximize {
   background: linear-gradient(
     135deg,
-    #2DCC40 0%,
-    #27C93F 50%,
-    #1FB334 100%
+    #28C840 0%,
+    #28C840 100%
   );
 }
 
@@ -1241,39 +1267,39 @@ body {
   align-items: center;
   justify-content: center;
   font-size: 10px;
-  color: #8C0000;
   font-weight: 700;
   opacity: 0;
   transition: opacity 0.15s;
   line-height: 1;
 }
 
-.macos-window__traffic-lights:hover .macos-window__traffic-light::after {
+.macos-window:hover .macos-window__traffic-light::after {
   opacity: 1;
 }
 
 .macos-window__traffic-light--close::after {
   content: '×';
-  font-size: 13px;
-  color: #8C0000;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.6);
 }
 
 .macos-window__traffic-light--minimize::after {
   content: '−';
-  font-size: 11px;
-  color: #A15E00;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.6);
 }
 
 .macos-window__traffic-light--maximize::after {
   content: '⤢';
-  font-size: 9px;
-  color: #006600;
+  font-size: 10px;
+  color: rgba(0, 0, 0, 0.6);
 }
 
 /* Unfocused state - gray out the buttons */
 .macos-window--unfocused .macos-window__traffic-light {
-  background: #d4d4d8 !important;
+  background: #E0E0E0 !important;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  opacity: 0.5;
 }
 
 .macos-window--unfocused .macos-window__traffic-light::after {
@@ -1291,6 +1317,7 @@ body {
   flex: 1;
   overflow: auto;
   background: var(--canvas);
+  padding: 24px;
 }
 
 /* ==================== Launchpad ==================== */
