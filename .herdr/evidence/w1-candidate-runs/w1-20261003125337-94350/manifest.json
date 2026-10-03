@@ -1,0 +1,146 @@
+{
+  "schema": "dgos/w1-candidate-regression/v1",
+  "work_package": "WP-W1-03",
+  "run_id": "w1-20261003125337-94350",
+  "started_at": "2026-10-03T12:53:37.496Z",
+  "ended_at": "2026-10-03T12:53:41.940Z",
+  "code_version": "7833ced2d70e009e6cc76f3c7ad1e93bfca99ac6",
+  "source": {
+    "code_version": "7833ced2d70e009e6cc76f3c7ad1e93bfca99ac6",
+    "branch": "main",
+    "dirty": true,
+    "patch_sha256": "e2e1cd19a6d685983eb6c19ac4beea240408792f487f29a5c5280fcdcb9c9783"
+  },
+  "asset_sha256": [
+    {
+      "path": "apps/web/dist",
+      "sha256": null,
+      "size": 224,
+      "kind": "directory-present"
+    },
+    {
+      "path": "apps/desktop/src-tauri/target/release",
+      "sha256": null,
+      "size": 608,
+      "kind": "directory-present"
+    },
+    {
+      "path": "apps/ai-workbench-package/dist",
+      "sha256": null,
+      "present": false
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "fe272df8f72ad5dc066e41399c4c8739689d64e6421e0d007dc847ad25ae1a20",
+      "size": 766
+    },
+    {
+      "path": "apps/desktop/package.json",
+      "sha256": "692c8c1eed404587f1430a3dc6a7a02392bdff569f112991f2d5dc5fa7e41c77",
+      "size": 462
+    }
+  ],
+  "environment": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v22.23.0",
+    "package_manager": "git version 2.54.0",
+    "cwd": "/Users/apple/Progame/DGOS"
+  },
+  "commands": [
+    {
+      "id": "check-docs",
+      "group": "governance",
+      "argv": [
+        "node",
+        "scripts/check-docs.mjs"
+      ],
+      "required": true,
+      "exit_code": 1,
+      "signal": null,
+      "timed_out": false,
+      "started_at": "2026-10-03T12:53:37.862Z",
+      "ended_at": "2026-10-03T12:53:38.045Z",
+      "stdout_log": ".herdr/evidence/w1-candidate-runs/w1-20261003125337-94350/governance/check-docs.stdout.log",
+      "stderr_log": ".herdr/evidence/w1-candidate-runs/w1-20261003125337-94350/governance/check-docs.stderr.log",
+      "status": "failed"
+    },
+    {
+      "id": "typecheck",
+      "group": "web-text-only",
+      "argv": [
+        "pnpm",
+        "--filter",
+        "@dgos/web",
+        "check"
+      ],
+      "required": true,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "started_at": "2026-10-03T12:53:38.045Z",
+      "ended_at": "2026-10-03T12:53:40.945Z",
+      "stdout_log": ".herdr/evidence/w1-candidate-runs/w1-20261003125337-94350/web-text-only/typecheck.stdout.log",
+      "stderr_log": ".herdr/evidence/w1-candidate-runs/w1-20261003125337-94350/web-text-only/typecheck.stderr.log",
+      "status": "passed"
+    },
+    {
+      "id": "provider-tests",
+      "group": "web-text-only",
+      "argv": [
+        "node",
+        "--test",
+        "tests/provider/*.test.mjs"
+      ],
+      "required": true,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "started_at": "2026-10-03T12:53:40.945Z",
+      "ended_at": "2026-10-03T12:53:41.470Z",
+      "stdout_log": ".herdr/evidence/w1-candidate-runs/w1-20261003125337-94350/web-text-only/provider-tests.stdout.log",
+      "stderr_log": ".herdr/evidence/w1-candidate-runs/w1-20261003125337-94350/web-text-only/provider-tests.stderr.log",
+      "status": "passed"
+    },
+    {
+      "id": "task-api-tests",
+      "group": "web-text-only",
+      "argv": [
+        "node",
+        "--test",
+        "tests/integration/ai-task-api.test.mjs",
+        "tests/integration/provider-worker.test.mjs"
+      ],
+      "required": true,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "started_at": "2026-10-03T12:53:41.470Z",
+      "ended_at": "2026-10-03T12:53:41.939Z",
+      "stdout_log": ".herdr/evidence/w1-candidate-runs/w1-20261003125337-94350/web-text-only/task-api-tests.stdout.log",
+      "stderr_log": ".herdr/evidence/w1-candidate-runs/w1-20261003125337-94350/web-text-only/task-api-tests.stderr.log",
+      "status": "passed"
+    },
+    {
+      "id": "native-workbench-tests",
+      "group": "native-workbench",
+      "argv": [
+        "pnpm",
+        "--filter",
+        "@dgos/desktop",
+        "test"
+      ],
+      "required": false,
+      "status": "blocked",
+      "exit_code": null,
+      "limitation": "No explicit native Workbench command supplied; web text-only evidence cannot substitute."
+    }
+  ],
+  "result": "FAIL",
+  "limitations": [
+    "This batch records local host execution only.",
+    "Web text-only and native Workbench results are separate evidence groups.",
+    "Native Workbench is blocked unless DGOS_NATIVE_WORKBENCH_COMMAND is supplied."
+  ],
+  "evidence_root": ".herdr/evidence/w1-candidate-runs/w1-20261003125337-94350"
+}

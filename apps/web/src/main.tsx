@@ -10,7 +10,7 @@ import {
   type Theme,
 } from "@dgos/design-tokens";
 import { webHost } from "@dgos/host-adapter-web";
-import { ApiError, api, items, json, receiptError } from "./api";
+import { ApiError, api, items, json, receiptError, taskApi } from "./api";
 import { allLabels } from "./i18n";
 import { ExtensionsV1 } from "./advanced";
 import { DeveloperCenter } from "./developer-center";
@@ -190,7 +190,7 @@ function Auth({
     e.preventDefault();
     const form = new FormData(e.currentTarget);
     const result = await op.run(() =>
-      api<Dict>(
+      taskApi<Dict>(
         `/api/v1/identity/admin/${mode}`,
         json({
           credential: form.get("credential"),
@@ -744,6 +744,9 @@ function Tasks({ t }: { t: ReturnType<typeof allLabels> }) {
     [text, setText] = useState(""),
     [cursor, setCursor] = useState(0),
     [connection, setConnection] = useState(""),
+    [eventCount, setEventCount] = useState(0),
+    [prompt, setPrompt] = useState(""),
+    [modelId, setModelId] = useState("fixture-text-model"),
     [resumeVersion, setResumeVersion] = useState(0);
   useEffect(() => { localStorage.removeItem('dgos.ui.prompt'); }, []);
   useEffect(() => {
@@ -752,7 +755,7 @@ function Tasks({ t }: { t: ReturnType<typeof allLabels> }) {
     let timer: ReturnType<typeof setTimeout>;
     async function tick() {
       try {
-        const value = await api<Dict>(
+        const value = await taskApi<Dict>(
           `/api/v1/ai-tasks/${encodeURIComponent(taskId)}`,
         );
         if (!active) return;
@@ -761,16 +764,10 @@ function Tasks({ t }: { t: ReturnType<typeof allLabels> }) {
         if (authoritativeText) setText(value.text);
         setConnection("connected");
         if (terminal(value.status)) return;
-        const response = await fetch(
+        const body = await taskApi<string>(
           `/api/v1/ai-tasks/${encodeURIComponent(taskId)}/events?cursor=${cursor}`,
-          {
-            credentials: "include",
-            headers: cursor ? { "last-event-id": String(cursor) } : {},
-          },
+          { credentials: "include", headers: cursor ? { "last-event-id": String(cursor) } : {} },
         );
-        if (!response.ok)
-          throw new Error(`Event stream failed (${response.status})`);
-        const body = await response.text();
         if (!active) return;
         let latest = cursor;
         for (const block of body.split("\n\n")) {
@@ -779,6 +776,7 @@ function Tasks({ t }: { t: ReturnType<typeof allLabels> }) {
           const event = JSON.parse(line.slice(6));
           if (event.sequence > latest) {
             latest = event.sequence;
+            setEventCount(count => count + 1);
             if (event.type === "text.delta" && !authoritativeText)
               setText((v) => v + (event.delta || event.data?.delta || ""));
           }
@@ -808,6 +806,19 @@ function Tasks({ t }: { t: ReturnType<typeof allLabels> }) {
     setTaskId(next);
     setResumeVersion(value => value + 1);
   }
+  async function submitTask(e: FormEvent) {
+    e.preventDefault();
+    const value = prompt.trim();
+    if (!value) return;
+    const result = await op.run(() => taskApi<Dict>("/api/v1/ai-tasks", json({
+      requestId: crypto.randomUUID(), target: "text", intent: "text.chat",
+      input: { text: value }, options: { modelId, providerConfigId: "fixture-provider" },
+    })));
+    if (result?.taskId) {
+      remember("taskId", result.taskId); setQueryId(result.taskId); setTaskId(result.taskId);
+      setSnapshot(result); setText(""); setCursor(0); setEventCount(0); setConnection("queued"); setResumeVersion(v => v + 1);
+    }
+  }
   async function cancel() {
     if (!taskId) return;
     const result = await op.run(() =>
@@ -824,6 +835,12 @@ function Tasks({ t }: { t: ReturnType<typeof allLabels> }) {
       <div className="two-col">
         <Panel>
           <h2>{t.tasks}</h2>
+          <form onSubmit={submitTask} className="stack">
+            <label>{t.prompt}<textarea value={prompt} onChange={event => setPrompt(event.target.value)} rows={4} required placeholder="Describe what the model should do" /></label>
+            <label>{t.model}<input value={modelId} onChange={event => setModelId(event.target.value)} required /></label>
+            <Button variant="primary" type="submit" busy={op.busy}>Submit task</Button>
+          </form>
+          <hr />
           <form onSubmit={selectTask}>
             <label>{t.taskId}<input value={queryId} onChange={event => setQueryId(event.target.value)} required /></label>
             <Button variant="primary" type="submit">{t.resume}</Button>
@@ -845,6 +862,7 @@ function Tasks({ t }: { t: ReturnType<typeof allLabels> }) {
                       {connection}
                     </p>
                   )}
+                  <p className="muted">{t.events}: {eventCount} · {t.cursor}: {cursor}</p>
                   <pre className="task-output">
                     {text || snapshot?.text || "Waiting for output…"}
                   </pre>

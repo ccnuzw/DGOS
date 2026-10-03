@@ -25,5 +25,5 @@ if (role.kind === 'codex') {
   args.push('-c', `developer_instructions=${JSON.stringify(`You are DGOS ${role.label}. Read ${root}.herdr/roles/${role.role} and ${root}AGENTS.md. Only act on the Lead-assigned task. No task: standby. Use native file and exec tools. Do not spawn other agents or change your role/client/model. Report actual commands, evidence and limitations.`)}`);
 }
 console.log(JSON.stringify(api('agent', 'start', name, '--kind', role.kind, '--pane', pane, '--timeout', '45000', '--', ...args)));
-api('tab', 'rename', target.tab_id, role.label);
+api('tab', 'rename', target.tab_id, role.tabLabel ?? role.label);
 api('pane', 'rename', pane, role.label);

@@ -11,6 +11,10 @@ export { MacOSDock } from './macos/dock';
 export { MacOSWindow } from './macos/window';
 export { MacOSLaunchpad } from './macos/launchpad';
 export { WindowManager, useWindowManager } from './macos/window-manager';
+export { CommandPalette } from './macos/command-palette';
+export { NotificationCenter, ToastNotification } from './macos/notification-center';
+export type { CommandItem } from './macos/command-palette';
+export type { Notification, NotificationAction, NotificationSeverity } from './macos/notification-center';
 
 const icons={desktop:AppWindow,catalog:LayoutGrid,settings:Settings,system:Info,providers:Cpu,models:Boxes,protocols:Workflow,skills:Blocks,mcp:Workflow,assistant:Sparkles,tasks:Activity,developer:Code2,keys:KeyRound,governance:Shield,usage:Wrench,designSystem:Palette};
 export const navGroups:RouteKey[][]=[['desktop','catalog','tasks','assistant'],['settings','providers','models','skills','mcp'],['developer','protocols','keys','governance','usage']];

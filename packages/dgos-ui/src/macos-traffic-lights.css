@@ -1,0 +1,157 @@
+/**
+ * macOS Traffic Lights Styles
+ *
+ * Exact macOS window control button styling:
+ * - 12px circular buttons
+ * - Authentic colors from macOS
+ * - Hover reveals symbols
+ * - Focus/unfocus states
+ */
+
+/* Traffic Lights Group Container */
+.macos-traffic-lights-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Individual Traffic Light Button */
+.macos-traffic-light {
+  /* Size and shape */
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+
+  /* Reset button styles */
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+
+  /* Layout */
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  /* Smooth transitions */
+  transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              filter 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Remove default focus outline, we'll add our own */
+  outline: none;
+}
+
+/* Focus state for accessibility */
+.macos-traffic-light:focus-visible {
+  outline: 2px solid var(--focus, #0F5FD9);
+  outline-offset: 2px;
+}
+
+/* Active state - slight scale down */
+.macos-traffic-light:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+/* Disabled state */
+.macos-traffic-light:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+/* Traffic Light Colors - Close (Red) */
+.macos-traffic-light.close {
+  background-color: #FF5F56;
+}
+
+.macos-traffic-light.close:hover:not(:disabled) {
+  background-color: #E64942;
+}
+
+/* Traffic Light Colors - Minimize (Yellow) */
+.macos-traffic-light.minimize {
+  background-color: #FFBD2E;
+}
+
+.macos-traffic-light.minimize:hover:not(:disabled) {
+  background-color: #E5A824;
+}
+
+/* Traffic Light Colors - Maximize (Green) */
+.macos-traffic-light.maximize {
+  background-color: #27C93F;
+}
+
+.macos-traffic-light.maximize:hover:not(:disabled) {
+  background-color: #1FB035;
+}
+
+/* Traffic Light Symbol (×, −, +) */
+.traffic-light-symbol {
+  /* Position */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  /* Typography */
+  font-size: 10px;
+  font-weight: bold;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.5);
+
+  /* Hidden by default */
+  opacity: 0;
+  transition: opacity 150ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Prevent text selection */
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+}
+
+/* Show symbol on hover */
+.macos-traffic-light:hover:not(:disabled) .traffic-light-symbol {
+  opacity: 1;
+}
+
+/* Unfocused State - Muted appearance */
+.macos-traffic-light.unfocused {
+  filter: saturate(0.5);
+  opacity: 0.7;
+}
+
+.macos-traffic-light.unfocused:hover:not(:disabled) {
+  filter: saturate(1);
+  opacity: 1;
+}
+
+/* Unfocused buttons don't show symbols unless hovered */
+.macos-traffic-light.unfocused .traffic-light-symbol {
+  opacity: 0;
+}
+
+.macos-traffic-light.unfocused:hover:not(:disabled) .traffic-light-symbol {
+  opacity: 1;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .macos-traffic-light {
+    border: 1px solid currentColor;
+  }
+
+  .traffic-light-symbol {
+    color: rgba(0, 0, 0, 0.8);
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .macos-traffic-light,
+  .traffic-light-symbol {
+    transition: none;
+  }
+}

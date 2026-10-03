@@ -155,9 +155,8 @@ export function MCPPresetSelector({ t, lang, onPresetSelected }: MCPPresetSelect
           {categories.map((cat) => (
             <Button
               key={cat.id}
-              variant={selectedCategory === cat.id ? 'primary' : 'secondary'}
+              variant={selectedCategory === cat.id ? 'primary' : 'default'}
               onClick={() => setSelectedCategory(cat.id)}
-              size="small"
             >
               {cat.label[lang as 'en' | 'zh'] || cat.label.en}
             </Button>

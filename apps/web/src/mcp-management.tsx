@@ -55,13 +55,12 @@ export function MCPManagementApp({ t, lang }: { t: T; lang: string }) {
       </header>
 
       <Tabs
-        value={activeTab}
+        active={activeTab}
         onChange={(value) => setActiveTab(value as any)}
         tabs={[
           {
             id: 'servers',
             label: t.servers || 'Servers',
-            badge: undefined,
           },
           {
             id: 'add',

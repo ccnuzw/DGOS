@@ -1,0 +1,184 @@
+{
+  "schema": "dgos/w1-candidate-regression/v1",
+  "work_package": "WP-W1-03",
+  "run_id": "w1-20261003131836-1617",
+  "started_at": "2026-10-03T13:18:36.162Z",
+  "ended_at": "2026-10-03T13:18:41.830Z",
+  "code_version": "7833ced2d70e009e6cc76f3c7ad1e93bfca99ac6",
+  "source": {
+    "code_version": "7833ced2d70e009e6cc76f3c7ad1e93bfca99ac6",
+    "branch": "main",
+    "dirty": true,
+    "patch_sha256": "684ea61aca7b2215e5192030292f2d7ed10c053cc54aae94c052c038f0b25f3c"
+  },
+  "asset_sha256": [
+    {
+      "path": "apps/web/dist",
+      "sha256": "87c22bedc2e607b2223957b85b13645bbea930b422343f672de8e0dc4ecbc72e",
+      "kind": "directory-tree"
+    },
+    {
+      "path": "apps/desktop/src-tauri/target/release",
+      "sha256": "40bf754d0c4ac5c6b6522f67483f815c8a59f0b858dba4a2442b1b4604f27f84",
+      "kind": "directory-tree"
+    },
+    {
+      "path": "apps/ai-workbench-package/dist",
+      "sha256": null,
+      "present": false
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "fe272df8f72ad5dc066e41399c4c8739689d64e6421e0d007dc847ad25ae1a20",
+      "size": 766,
+      "kind": "file"
+    },
+    {
+      "path": "apps/desktop/package.json",
+      "sha256": "692c8c1eed404587f1430a3dc6a7a02392bdff569f112991f2d5dc5fa7e41c77",
+      "size": 462,
+      "kind": "file"
+    }
+  ],
+  "environment": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v22.23.0",
+    "package_manager": "pnpm 9.0.0",
+    "cwd": "/Users/apple/Progame/DGOS"
+  },
+  "groups": {
+    "governance": {
+      "result": "FAIL",
+      "commands": [
+        "check-docs"
+      ]
+    },
+    "web-text-only": {
+      "result": "PASS",
+      "commands": [
+        "typecheck",
+        "provider-tests",
+        "task-api-tests"
+      ]
+    },
+    "native-workbench": {
+      "result": "BLOCKED",
+      "commands": [
+        "native-static-check",
+        "native-workbench-e2e"
+      ]
+    }
+  },
+  "commands": [
+    {
+      "id": "check-docs",
+      "group": "governance",
+      "argv": [
+        "node",
+        "scripts/check-docs.mjs"
+      ],
+      "required": true,
+      "exit_code": 1,
+      "signal": null,
+      "timed_out": false,
+      "started_at": "2026-10-03T13:18:37.545Z",
+      "ended_at": "2026-10-03T13:18:37.714Z",
+      "stdout_log": ".herdr/evidence/w1-candidate-runs/w1-20261003131836-1617/governance/check-docs.stdout.log",
+      "stderr_log": ".herdr/evidence/w1-candidate-runs/w1-20261003131836-1617/governance/check-docs.stderr.log",
+      "status": "failed"
+    },
+    {
+      "id": "typecheck",
+      "group": "web-text-only",
+      "argv": [
+        "pnpm",
+        "--filter",
+        "@dgos/web",
+        "check"
+      ],
+      "required": true,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "started_at": "2026-10-03T13:18:37.714Z",
+      "ended_at": "2026-10-03T13:18:40.571Z",
+      "stdout_log": ".herdr/evidence/w1-candidate-runs/w1-20261003131836-1617/web-text-only/typecheck.stdout.log",
+      "stderr_log": ".herdr/evidence/w1-candidate-runs/w1-20261003131836-1617/web-text-only/typecheck.stderr.log",
+      "status": "passed"
+    },
+    {
+      "id": "provider-tests",
+      "group": "web-text-only",
+      "argv": [
+        "node",
+        "--test",
+        "tests/provider/*.test.mjs"
+      ],
+      "required": true,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "started_at": "2026-10-03T13:18:40.571Z",
+      "ended_at": "2026-10-03T13:18:41.070Z",
+      "stdout_log": ".herdr/evidence/w1-candidate-runs/w1-20261003131836-1617/web-text-only/provider-tests.stdout.log",
+      "stderr_log": ".herdr/evidence/w1-candidate-runs/w1-20261003131836-1617/web-text-only/provider-tests.stderr.log",
+      "status": "passed"
+    },
+    {
+      "id": "task-api-tests",
+      "group": "web-text-only",
+      "argv": [
+        "node",
+        "--test",
+        "tests/integration/ai-task-api.test.mjs",
+        "tests/integration/provider-worker.test.mjs"
+      ],
+      "required": true,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "started_at": "2026-10-03T13:18:41.070Z",
+      "ended_at": "2026-10-03T13:18:41.538Z",
+      "stdout_log": ".herdr/evidence/w1-candidate-runs/w1-20261003131836-1617/web-text-only/task-api-tests.stdout.log",
+      "stderr_log": ".herdr/evidence/w1-candidate-runs/w1-20261003131836-1617/web-text-only/task-api-tests.stderr.log",
+      "status": "passed"
+    },
+    {
+      "id": "native-static-check",
+      "group": "native-workbench",
+      "argv": [
+        "pnpm",
+        "--filter",
+        "@dgos/desktop",
+        "check"
+      ],
+      "required": true,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "started_at": "2026-10-03T13:18:41.538Z",
+      "ended_at": "2026-10-03T13:18:41.830Z",
+      "stdout_log": ".herdr/evidence/w1-candidate-runs/w1-20261003131836-1617/native-workbench/native-static-check.stdout.log",
+      "stderr_log": ".herdr/evidence/w1-candidate-runs/w1-20261003131836-1617/native-workbench/native-static-check.stderr.log",
+      "status": "passed"
+    },
+    {
+      "id": "native-workbench-e2e",
+      "group": "native-workbench",
+      "argv": [],
+      "required": false,
+      "status": "blocked",
+      "exit_code": null,
+      "limitation": "No explicit macOS foreground-window/bridge E2E command supplied; static check is not runtime evidence."
+    }
+  ],
+  "result": "FAIL",
+  "limitations": [
+    "This batch records local host execution only.",
+    "Web text-only and native Workbench results are separate evidence groups.",
+    "Native static check does not prove foreground-window ownership, frame-present or bridge handshake.",
+    "Native Workbench runtime E2E is blocked unless DGOS_NATIVE_WORKBENCH_COMMAND is supplied on macOS."
+  ],
+  "evidence_root": ".herdr/evidence/w1-candidate-runs/w1-20261003131836-1617"
+}

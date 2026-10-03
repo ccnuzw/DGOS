@@ -1,0 +1,28 @@
+{
+  "workPackage": "WP-W1-01",
+  "result": "failed",
+  "command": "node apps/desktop/scripts/native-workbench-diagnostic.mjs",
+  "limitations": [
+    "Diagnostic uses loopback Session fixture and debug native binary; Provider/Task chain is not asserted here."
+  ],
+  "nativePid": 8199,
+  "windowServer": {
+    "ownerPid": 8199,
+    "windowId": 3996,
+    "bounds": {
+      "X": 50,
+      "Width": 1280,
+      "Y": 50,
+      "Height": 840
+    },
+    "layer": 0,
+    "alpha": 1
+  },
+  "screenshot": {
+    "file": ".herdr/evidence/native-workbench-2026-10-03T13-43-50-459Z.png",
+    "bytes": 278848,
+    "sha256": "5fbcdaa824059ed20c2c815fe97c018f016a366a28c789384b33365949280b4b"
+  },
+  "error": "native_result_timeout",
+  "nativeStderr": ""
+}

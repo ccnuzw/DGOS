@@ -101,8 +101,8 @@
          }
        };
        frame.addEventListener('load', () => { frameDiagnostics.loads++; recordFrame('load'); });
-      frame.addEventListener('error', () => { frameDiagnostics.errors++; recordFrame('error'); });
-      recordFrame('present');
+       frame.addEventListener('error', () => { frameDiagnostics.errors++; recordFrame('error'); });
+       recordFrame('present');
        await report({ stage: 'workbench_frame_present', phase, src: frame.getAttribute('src')?.split('?')[0] });
        sendHello();
        const helloTimer = setInterval(() => {

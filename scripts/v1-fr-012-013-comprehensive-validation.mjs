@@ -6,28 +6,45 @@
  * - FR-012: Provider Account and Connection (4 ACs)
  * - FR-013: Connection Testing (4 ACs)
  *
- * Uses REAL production Provider with paid credentials.
+ * Uses an explicitly configured real Provider.
  * Security-focused testing with real secret handling.
  */
 
-import assert from 'node:assert/strict';
-import { createHash, randomBytes, randomUUID } from 'node:crypto';
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
-import { resolve } from 'node:path';
-import pg from '../apps/api/node_modules/pg/lib/index.js';
-import { createClient } from '../apps/api/node_modules/redis/dist/index.js';
-import { buildServer } from '../apps/api/src/server.mjs';
-import { ProviderEgress } from '../src/security/provider-egress.mjs';
-import { RedisSecretService } from '../src/security/secret-service.mjs';
-import { DiskPackageStore } from '../src/apps/package-service.mjs';
-import { discoverMigrations, buildMigrationSql } from './migrate.mjs';
+const PROVIDER_BASE_URL = process.env.DGOS_REAL_PROVIDER_BASE_URL;
+const PROVIDER_API_KEY = process.env.DGOS_REAL_PROVIDER_KEY;
+if (!PROVIDER_BASE_URL || !PROVIDER_API_KEY) {
+  console.error('real_provider_credentials_required');
+  process.exit(2);
+}
+
+const [
+  { default: assert },
+  { createHash, randomBytes, randomUUID },
+  { readFile, writeFile, mkdir },
+  { resolve },
+  { default: pg },
+  { createClient },
+  { buildServer },
+  { ProviderEgress },
+  { RedisSecretService },
+  { DiskPackageStore },
+  { discoverMigrations, buildMigrationSql }
+] = await Promise.all([
+  import('node:assert/strict'),
+  import('node:crypto'),
+  import('node:fs/promises'),
+  import('node:path'),
+  import('../apps/api/node_modules/pg/lib/index.js'),
+  import('../apps/api/node_modules/redis/dist/index.js'),
+  import('../apps/api/src/server.mjs'),
+  import('../src/security/provider-egress.mjs'),
+  import('../src/security/secret-service.mjs'),
+  import('../src/apps/package-service.mjs'),
+  import('./migrate.mjs')
+]);
 
 // Load real provider configuration
-const configPath = resolve('.herdr/real-provider-config.json');
-const providerConfig = JSON.parse(await readFile(configPath, 'utf8'));
-
-const PROVIDER_BASE_URL = providerConfig.base_url;
-const PROVIDER_API_KEY = providerConfig.api_key;
+const providerConfig = { protocol: 'openai-compatible', test_models: ['gpt-6-sol'] };
 const TEST_MODEL = providerConfig.test_models[0];
 
 // Database setup - use postgres as parent, create unique test DB
@@ -141,7 +158,7 @@ try {
 
   const boot = await post('/identity/admin/bootstrap', {
     displayName: 'FR-012-013 Admin',
-    credential: `fr012-013-${randomUUID()}`
+    credential: `fixture-admin-${randomUUID()}`
   }, 201);
 
   session = boot.sessionId;
@@ -463,7 +480,7 @@ try {
     requestId: randomUUID(),
     protocolType: 'openai-compatible',
     displayName: 'Bad Credentials Account',
-    credential: 'sk-invalid-key-12345',
+    credential: 'fixture-invalid-provider-key',
     scope: { endpoint: PROVIDER_BASE_URL }
   }, 201);
 

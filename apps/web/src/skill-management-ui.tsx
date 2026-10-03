@@ -57,7 +57,6 @@ function SkillCard({ skill, selected, onSelect, onAction, t }: any) {
       )}
       <div className="skill-card-actions">
         <Button
-          size="small"
           onClick={(e: any) => {
             e.stopPropagation();
             onAction(skill.skillId, skill.state === 'enabled' ? 'disable' : 'enable');
@@ -66,8 +65,7 @@ function SkillCard({ skill, selected, onSelect, onAction, t }: any) {
           {skill.state === 'enabled' ? t.disable : t.enable}
         </Button>
         <Button
-          size="small"
-          variant="secondary"
+          variant="default"
           onClick={(e: any) => {
             e.stopPropagation();
             onAction(skill.skillId, 'test');
@@ -241,7 +239,7 @@ function SkillDetailPanel({ skill, t, onAction, onClose }: any) {
 
         <div className="modal-actions">
           <Button
-            variant={skill.state === 'enabled' ? 'secondary' : 'primary'}
+            variant={skill.state === 'enabled'  ? 'default' : 'primary'}
             onClick={() => onAction(skill.skillId, skill.state === 'enabled' ? 'disable' : 'enable')}
           >
             {skill.state === 'enabled' ? t.disable : t.enable}
@@ -249,7 +247,7 @@ function SkillDetailPanel({ skill, t, onAction, onClose }: any) {
           <Button onClick={() => onAction(skill.skillId, 'test')}>
             Test Skill
           </Button>
-          <Button variant="secondary" onClick={() => onAction(skill.skillId, 'edit')}>
+          <Button variant="default" onClick={() => onAction(skill.skillId, 'edit')}>
             Edit
           </Button>
           <Button variant="danger" onClick={() => onAction(skill.skillId, 'delete')}>
@@ -399,15 +397,13 @@ export function SkillManagementUI({ t }: { t: T }) {
         </div>
         <div className="toolbar-right">
           <Button
-            variant={viewMode === 'grid' ? 'primary' : 'secondary'}
-            size="small"
+            variant={viewMode === 'grid' ? 'primary' : 'default'}
             onClick={() => setViewMode('grid')}
           >
             Grid
           </Button>
           <Button
-            variant={viewMode === 'list' ? 'primary' : 'secondary'}
-            size="small"
+            variant={viewMode === 'list' ? 'primary' : 'default'}
             onClick={() => setViewMode('list')}
           >
             List

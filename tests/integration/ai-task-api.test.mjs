@@ -60,6 +60,9 @@ test('public ProviderConfig to text task API supports explicit refresh, idempote
   const receipt = submitted.json();
   const duplicate = await app.inject({ method: 'POST', url: '/api/v1/ai-tasks', headers: auth, payload: input });
   assert.equal(duplicate.json().taskId, receipt.taskId);
+  const conflictingDuplicate = await app.inject({ method: 'POST', url: '/api/v1/ai-tasks', headers: auth, payload: { ...input, input: { text: 'different input' } } });
+  assert.equal(conflictingDuplicate.statusCode, 409, conflictingDuplicate.body);
+  assert.equal(conflictingDuplicate.json().errorKey, 'version_conflict');
   await new Promise((resolve) => setTimeout(resolve, 20));
   const snapshot = await app.inject({ method: 'GET', url: `/api/v1/ai-tasks/${receipt.taskId}`, headers: auth });
   assert.equal(snapshot.json().status, 'succeeded');

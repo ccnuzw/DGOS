@@ -27,6 +27,16 @@ test('task route restores an existing task without submitting or repeating snaps
   expect(submits).toBe(0);
 });
 
+test('mock workbench submits a task and renders streamed result', async ({ page }) => {
+  await page.goto('/ai-tasks?mock=1');
+  await page.getByLabel('Prompt').fill('hello from mock');
+  await page.getByLabel('Model').fill('fixture-text-model');
+  await page.getByRole('button', { name: 'Submit task' }).click();
+  await expect(page.getByText(/Task ID: mock-task-/)).toBeVisible();
+  await expect(page.locator('.task-output')).toContainText('Mock response for: hello from mock', { timeout: 10000 });
+  await expect(page.getByText(/Events:/)).toContainText('Events:');
+});
+
 test('skill translation freezes the reviewed request and applies only the task artifact reference', async ({ page }) => {
   let translation, applied, reads = 0;
   const definition = { skillId: 'local.text', stateVersion: 3, state: 'disabled', sourceType: 'custom', content: { name: 'Local text', description: 'Local description', systemPrompt: 'private prompt fixture' } };

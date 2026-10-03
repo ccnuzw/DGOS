@@ -172,9 +172,8 @@ export function MCPMarketplace({ t, lang }: MCPMarketplaceProps) {
             {categories.map((cat) => (
               <Button
                 key={cat.id}
-                variant={selectedCategory === cat.id ? 'primary' : 'secondary'}
+                variant={selectedCategory === cat.id ? 'primary' : 'default'}
                 onClick={() => setSelectedCategory(cat.id)}
-                size="small"
               >
                 {cat.label[lang as 'en' | 'zh'] || cat.label.en}
               </Button>
@@ -217,7 +216,7 @@ export function MCPMarketplace({ t, lang }: MCPMarketplaceProps) {
 
                 <div className="card-tags">
                   {item.tags.slice(0, 3).map((tag) => (
-                    <Badge key={tag} variant="info" size="small">
+                    <Badge key={tag} variant="info">
                       {tag}
                     </Badge>
                   ))}
@@ -231,13 +230,13 @@ export function MCPMarketplace({ t, lang }: MCPMarketplaceProps) {
                     ⬇️ {item.downloads.toLocaleString()}
                   </span>
                   {item.requiresCredentials && (
-                    <Badge variant="warning" size="small">
+                    <Badge variant="warning">
                       {t.needsCredentials || 'Needs Credentials'}
                     </Badge>
                   )}
                 </div>
 
-                <Button variant="primary" size="small">
+                <Button variant="primary">
                   {t.viewDetails || 'View Details'}
                 </Button>
               </div>
@@ -267,7 +266,7 @@ export function MCPMarketplace({ t, lang }: MCPMarketplaceProps) {
                   </div>
                 </div>
               </div>
-              <Button onClick={() => setSelectedItem(null)} variant="ghost">
+              <Button onClick={() => setSelectedItem(null)}>
                 {t.close}
               </Button>
             </div>
@@ -294,7 +293,7 @@ export function MCPMarketplace({ t, lang }: MCPMarketplaceProps) {
                     <dt>{t.tags || 'Tags'}</dt>
                     <dd>
                       {selectedItem.tags.map((tag) => (
-                        <Badge key={tag} variant="info" size="small">
+                        <Badge key={tag} variant="info">
                           {tag}
                         </Badge>
                       ))}

@@ -9,6 +9,8 @@ import { MacOSSystemBar } from './system-bar';
 import { MacOSDock, type DockApp } from './dock';
 import { MacOSLaunchpad, type LaunchpadApp } from './launchpad';
 import { WindowManager, useWindowManager } from './window-manager';
+import { CommandPalette, type CommandItem } from './command-palette';
+import { NotificationCenter, type Notification } from './notification-center';
 import {
   CatalogIcon,
   AssistantIcon,
@@ -21,6 +23,10 @@ import {
   DeveloperIcon,
 } from './icons/app-icons';
 import './macos.css';
+
+// Re-export new components and types
+export { CommandPalette, type CommandItem } from './command-palette';
+export { NotificationCenter, type Notification, ToastNotification } from './notification-center';
 
 export interface MacOSShellProps {
   currentRoute: RouteKey;
@@ -56,7 +62,10 @@ export function MacOSShell({
   onThemeToggle,
 }: MacOSShellProps) {
   const [launchpadVisible, setLaunchpadVisible] = useState(false);
+  const [commandPaletteVisible, setCommandPaletteVisible] = useState(false);
+  const [notificationCenterVisible, setNotificationCenterVisible] = useState(false);
   const [runningApps, setRunningApps] = useState<Set<string>>(new Set([currentRoute]));
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const {
     windows,
@@ -148,13 +157,23 @@ export function MacOSShell({
     { id: 'developer', name: labels.developer || 'Developer', icon: appIcons.developer, onClick: () => onNavigate('developer') },
   ];
 
+  // Define command palette items
+  const commandItems: CommandItem[] = launchpadApps.map((app) => ({
+    id: app.id,
+    type: 'app' as const,
+    label: app.name,
+    description: `Open ${app.name}`,
+    icon: app.icon,
+    onExecute: app.onClick,
+  }));
+
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // ⌘K or Ctrl+K - Command palette (using launchpad for now)
+      // ⌘K or Ctrl+K - Command palette
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
-        setLaunchpadVisible((prev) => !prev);
+        setCommandPaletteVisible((prev) => !prev);
       }
 
       // F4 - Launchpad
@@ -173,8 +192,8 @@ export function MacOSShell({
       <MacOSSystemBar
         currentApp={labels[currentRoute]}
         onMenuClick={() => setLaunchpadVisible(true)}
-        onSearchClick={() => setLaunchpadVisible(true)}
-        onNotificationsClick={() => console.log('Notifications')}
+        onSearchClick={() => setCommandPaletteVisible(true)}
+        onNotificationsClick={() => setNotificationCenterVisible(true)}
         onSettingsClick={() => onNavigate('settings')}
         theme={theme}
         onThemeToggle={onThemeToggle}
@@ -204,6 +223,27 @@ export function MacOSShell({
         visible={launchpadVisible}
         apps={launchpadApps}
         onClose={() => setLaunchpadVisible(false)}
+      />
+
+      <CommandPalette
+        visible={commandPaletteVisible}
+        items={commandItems}
+        onClose={() => setCommandPaletteVisible(false)}
+        placeholder={labels.commandPalettePlaceholder || 'Search apps and actions...'}
+        recentLabel={labels.recentLabel || 'Recent'}
+        noResultsLabel={labels.noResultsLabel || 'No results found'}
+      />
+
+      <NotificationCenter
+        visible={notificationCenterVisible}
+        notifications={notifications}
+        onClose={() => setNotificationCenterVisible(false)}
+        onNotificationDismiss={(id) => {
+          setNotifications((prev) => prev.filter((n) => n.id !== id));
+        }}
+        titleText={labels.notificationsTitle || 'Notifications'}
+        clearAllText={labels.clearAllText || 'Clear All'}
+        emptyMessage={labels.noNotificationsMessage || 'No notifications'}
       />
     </div>
   );

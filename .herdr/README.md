@@ -1,64 +1,150 @@
-# DGOS Herdr 协作运行区
+# DGOS Agent团队
 
-本目录保存 DGOS Agent 团队的角色协议和轻量调度记录。它不是产品需求、接口、数据或实现状态的权威来源；业务事实仍以 `docs/`、代码、测试和证据报告为准。
+**版本**: v4.0 - 基于真实架构  
+**更新**: 2026-10-03  
+**状态**: Ready to Start
 
-## 角色
+## 团队结构（9角色）
 
-- `lead`：用户唯一入口，负责全局调度、授权、整合和最终回写。
-- `planner`：使用 `spec-docs` 生成上下文、任务包和文档变更。
-- `worker-a` / `worker-b` / `worker-c`：按任务包执行代码、测试、迁移或文档工作。
-- `verify`：执行整合、测试、文档检查和证据检查。
+基于DGOS真实架构和领域边界设计：
 
-## 使用约束
-
-1. 任何工作先绑定版本、功能或交付切片；无法绑定时先做规格/盘点任务。
-2. Worker 不在没有 Lead 任务包和工作区边界时修改代码。
-3. 代码工作优先使用独立 Git worktree；共享主工作区只用于明确无写入冲突的文档或只读任务。
-4. Agent 的聊天内容不是交接依据；交接依据是任务包、报告、代码状态和文档证据。
-5. 运行时调度记录只记录任务流转，不复制业务规则或功能实现状态。
-
-规范正文：`docs/01-项目概览/Agent团队与SDD协作规范.md`
-
-## 固定客户端与显示名称
-
-以 `team.json` 为准：Lead、Planner 为 OpenCode；Worker-A、Worker-B、Worker-C、Verify 为 Codex。名称不带数字前缀。Herdr 自身显示的 tab 序号与角色名无关。
-
-## 启动与重新接入
-
-在 Herdr 内，为目标角色准备本项目的空 shell pane，然后运行：
-
-```sh
-node .herdr/start-agent.mjs worker-a <实际空pane-ID>
-node .herdr/start-agent.mjs worker-b <实际空pane-ID>
-node .herdr/start-agent.mjs worker-c <实际空pane-ID>
-node .herdr/start-agent.mjs verify <实际空pane-ID>
-node .herdr/start-agent.mjs planner <实际空pane-ID>
+```
+Lead (Claude) - 战略协调
+    ↓
+Planner (OpenCode + spec-docs) - 规格驱动
+    ↓
+    ├─ Worker-Platform (Codex) - Identity/Permission/Apps/System后端
+    ├─ Worker-AI (Codex) - Provider/Model/AI Task/Extensions后端
+    ├─ Worker-Web (Codex) - React UI全栈前端
+    ├─ Worker-Native (Codex) - Tauri/Desktop/构建打包
+    ├─ Worker-Test (Codex) - 编写测试/fixture（新增）
+    └─ Worker-DevOps (Codex) - 部署/运维/CI/CD
+    ↓
+Verify (Codex) - 独立验证，运行测试
 ```
 
-启动器按 `team.json` 选客户端，拒绝覆盖已有 Agent 或当前 Lead。Codex 通过启动指令注入角色；OpenCode 启动后由 Lead 明确派发角色读取指令。启动成功只代表交互入口可用，仍须执行读取角色文件、命令验证和 READY 回执。不要将旧 pane ID 当作永久地址，恢复前查询 `herdr pane list --workspace "$HERDR_WORKSPACE_ID"`。
+## 核心特点
 
-Codex 0.159.3 在当前 `gpt-6-sol` 配置下，默认 `code_mode_only` 未向本次会话提供可调用的原生命令工具。`prepare-codex-catalog.mjs` 从本机安装版本生成忽略跟踪的 `state/codex-models.json`，仅将工具呈现方式切为 `direct`；保留模型 ID、原有指令、审批策略及其他模型元数据。启动器仅通过本次进程的 `model_catalog_json` 引用该文件，并关闭本次进程的 Computer Use。供应商、模型、全局配置和 TLS 校验不变。Codex 升级后可重新生成并复核。
+### 1. 领域驱动划分
+- **不是简单的Backend/Frontend**
+- **按DGOS真实领域独立**：Platform、AI、Web、Native、Test、DevOps
+- 每个Worker有明确的代码路径和功能规格
 
-### Herdr 重启后的 Codex 工具恢复
+### 2. 真正的并行能力
+- **最大并行度：5-6个任务**
+- Worker-Platform和Worker-AI完全独立（不同数据库表、不同API路由）
+- Worker-Web可以Mock开发，不阻塞
+- Worker-Test可以和实现并行（TDD）
 
-Herdr 0.9.3 内置恢复会执行 `codex resume <session-id>`，不会保留首次启动的附加参数。2026-10-02 已确认，这会丢失 `model_catalog_json` 和 `--disable computer_use`，导致本项目模型恢复为 `code_mode_only`、只剩 Computer Use 可用。会话上下文仍在，问题是启动配置未恢复。
+### 3. 测试是一等公民
+- **Worker-Test专门编写测试**（不是Verify附带）
+- Verify只负责运行测试和独立验证
+- 测试是工程资产，需要维护
 
-实际对照验证：仅用项目 `.codex/config.toml` 时，`codex debug` 显示 direct，但裸 `resume` 的实际会话仍没有 exec。因此不依赖该配置。当前 `~/.zshrc` 在 Herdr 内加载 `.herdr/codex-resume.zsh`；此适配器只对 DGOS 目录内的 `codex resume` 补入 direct catalog、关闭 Computer Use，并保留原 `workspace-write` / `never` 策略。其他项目和非 Herdr 终端按原命令执行。路径是当前机器绝对路径；迁移工作区时须同步更新，Codex 升级后须重新生成 catalog。
+### 4. Spec-docs驱动
+- **Context-pack有价值**（从3000行提炼200行关键信息）
+- Work-package明确边界
+- 不是流程文档垃圾
 
-受影响会话恢复流程：
+## 工作流程
 
-1. 核对真实回执和进程，确认 Agent 已停止业务写入；保存角色、pane ID 和原 session UUID。
-2. 正常退出该 Codex，核实 pane 已回到空闲 shell。当前收敛工作包在主目录执行，应把该 shell 的目录也切到 `/Users/apple/Progame/DGOS`；独立 worktree 任务须另行明确目录及项目配置，不能假设主目录配置会跨 worktree 继承。
-3. 运行 `node .herdr/start-agent.mjs <role> <empty-pane-id> <original-session-uuid>`。启动器保留会话、注入完整参数并显式 `--cd` 到主目录。
-4. 如遇临时 `This conversation is open in another app`，先确认原 TUI 已退出，再重试；不 fork，不启动第二份同 session。
-5. 必须让 Agent 实际调用原生命令工具执行 `pwd`、`git rev-parse --show-toplevel` 并读取角色文件，核验命令和退出码后才恢复业务任务。`agent start` 返回 idle 本身不证明 session 已解锁或工具可用。
+### 周循环
 
-当前 Worker-A 至 Worker-I 和 Verify 的会话都按原 session 恢复到主目录；旧 worktree 内容保留。操作记录见 `HERDR-TOOLS-RECOVERY-r1.md`。
+**周一上午** (Lead + Planner):
+- Lead定义本周目标（1-2个FR）
+- Planner使用spec-docs生成context-pack和work-package
+- 分配给对应Worker
 
-当前 Codex 使用 workspace-write / never：常规工作区操作无需人工审批，超出权限时回报 Lead，不自动提升权限。派发独立 worktree 任务时应在对应工作区启动会话。
+**周二-周四** (Worker + Verify):
+- Worker并行工作（5-6个任务）
+- 完成后提交 → Verify验证（4小时内）
+- PASS → 合并main
+- FAIL → 当天修复
 
-## 派发与收敛
+**周五** (Verify + Lead):
+- Verify运行完整测试
+- Lead验收，更新V1-实现状态.md
+- 向用户汇报
 
-Lead 先登记 `delivery-board.yaml` 的工作包、修订号、工作区、写入边界及下一步，再通过 `herdr agent prompt <内部名> <任务文本>` 派发。Worker 返回工作包及修订号，Lead 用 `herdr agent read <内部名> --source visible` 检查真实回复；长历史需等会话空闲后使用 `recent-unwrapped`。现有 Codex hook 可能在工具间隙短暂报告 done，必须以最终回执和真实结果验收。
+## 领域映射
 
-当前采用 Lead 主动协调方式；未安装后台自动重派或无人值守守护进程。没有明确工作包时所有协作 Agent 待命。
+```yaml
+Platform: Identity/Permission/Apps/System/Audit
+  - src/identity, src/permissions, src/apps, src/system, src/audit
+  - FR-010, FR-011, FR-002, FR-014
+
+AI: Provider/Model/AI Task/Extensions/Actions
+  - src/provider, src/provider-adapters, src/ai-task, src/extensions, src/actions
+  - FR-012, FR-013, FR-007, FR-005, FR-003, FR-009
+
+Web: React UI全栈
+  - apps/web, packages/dgos-ui
+  - 所有FR的前端部分
+
+Native: Tauri/Desktop
+  - apps/desktop, apps/ai-workbench-package
+  - FR-001桌面集成
+
+Test: 测试工程
+  - tests/, fixtures/
+  - 所有FR的测试资产
+
+DevOps: 运维部署
+  - scripts/, deployment/, docker/
+  - 构建/打包/部署
+```
+
+## 并行示例
+
+**典型Week：完成FR-012 Provider账号管理**
+
+```
+并行度=5
+
+WP-001: Provider账号API      (Worker-Platform, 2天)
+WP-002: Provider适配器       (Worker-AI, 2天)      ║ 同时进行
+WP-003: Provider配置UI       (Worker-Web, 2天, Mock先行)
+WP-004: Provider测试         (Worker-Test, 1天, TDD)
+WP-005: 测试环境配置         (Worker-DevOps, 1天)
+
+每个完成 → Verify 4小时内反馈
+```
+
+## 文档策略
+
+- **权威文档**: `docs/` (功能规格、OpenAPI、架构设计)
+- **工作文档**: `.herdr/work/` (context-pack、work-package，每周清理)
+- **状态记录**: `.herdr/status/` (current.yaml实时更新)
+- **证据**: `.herdr/evidence/` (截图、测试报告、日志)
+
+## 配置
+
+- **团队配置**: `team.json` (9角色)
+- **当前状态**: `status/current.yaml`
+- **角色定义**: `roles/*.md` (9个文件)
+
+## 历史
+
+- **2026-10-03**: 
+  - 从8角色混乱模型重组
+  - 经过v2(3角色太简单)、v3(5角色不够并行)
+  - 最终v4(9角色)基于DGOS真实架构
+  - 清理426→232个文档
+  - 备份: `~/DGOS-herdr-backup-20261003.tar.gz`
+
+## 成功指标
+
+### 第一周
+- 5-6个work-package并行
+- 每个Worker交付2-3个包
+- Verify验证10+次
+- 80%包4小时内通过
+
+### 第一个月
+- 完成6-8个FR
+- V1-实现状态.md显著进展
+- 团队流畅协作
+
+---
+
+**准备就绪，可以启动！**

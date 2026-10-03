@@ -1,0 +1,307 @@
+/**
+ * macOS Dock Styles
+ *
+ * Bottom-centered app launcher with:
+ * - Glassmorphism background
+ * - Icon magnification on hover (spring animation)
+ * - Running indicator dots
+ * - Badge support
+ * - Divider between apps and system items
+ */
+
+/* Dock Container - Bottom centered by default */
+.macos-dock {
+  position: fixed;
+  z-index: 100;
+
+  /* Smooth entrance animation */
+  animation: dockEntrance 400ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes dockEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Bottom position (default) */
+.macos-dock.bottom {
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Left position */
+.macos-dock.left {
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Right position */
+.macos-dock.right {
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Inner Container with glassmorphism */
+.macos-dock-container {
+  display: flex;
+  align-items: center;
+  gap: 0;
+
+  /* Size */
+  min-height: 68px;
+  padding: 10px 16px;
+  border-radius: 24px;
+
+  /* Glassmorphism - Light theme */
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+
+  /* Smooth transitions */
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark theme */
+@media (prefers-color-scheme: dark) {
+  .macos-dock-container {
+    background: rgba(50, 50, 50, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+}
+
+/* Apps and System sections */
+.macos-dock-apps,
+.macos-dock-system {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Divider between apps and system items */
+.macos-dock-divider {
+  width: 2px;
+  height: 40px;
+  background: rgba(0, 0, 0, 0.15);
+  margin: 0 8px;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .macos-dock-divider {
+    background: rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* Dock Icon Wrapper - Handles magnification */
+.macos-dock-icon-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+
+  /* Smooth magnification transition */
+  transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Magnification effect on hover */
+.macos-dock-icon-wrapper.magnify:hover {
+  transform: scale(1.21) translateY(-8px);
+  z-index: 1;
+}
+
+/* Adjacent icon subtle lift (neighbor effect) */
+.macos-dock-icon-wrapper.magnify:hover + .macos-dock-icon-wrapper.magnify,
+.macos-dock-icon-wrapper.magnify:has(+ .macos-dock-icon-wrapper.magnify:hover) {
+  transform: scale(1.1) translateY(-4px);
+}
+
+/* Dock Icon Button */
+.macos-dock-icon {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+
+  /* Smooth transitions */
+  transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1),
+              filter 200ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Remove default focus, we'll add custom */
+  outline: none;
+}
+
+.macos-dock-icon:focus-visible {
+  outline: 2px solid var(--focus, #0F5FD9);
+  outline-offset: 2px;
+}
+
+.macos-dock-icon:active {
+  transform: scale(0.95);
+}
+
+/* Icon Image */
+.dock-icon-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 12px;
+
+  /* Subtle shadow */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Icon Emoji (fallback) */
+.dock-icon-emoji {
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Badge (notification count) */
+.dock-icon-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+
+  /* Size and shape */
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+
+  /* Styling */
+  background: #ef4444;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 18px;
+  text-align: center;
+
+  /* Border for contrast */
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+
+  /* Prevent text selection */
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+
+  /* Entrance animation */
+  animation: badgePop 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes badgePop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Running Indicator Dot */
+.dock-icon-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary, #0F5FD9);
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  /* Glow effect */
+  box-shadow: 0 0 6px var(--primary, #0F5FD9);
+
+  /* Subtle pulse animation */
+  animation: indicatorPulse 2s ease-in-out infinite;
+}
+
+@keyframes indicatorPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Vertical dock layouts (left/right) */
+.macos-dock.left .macos-dock-container,
+.macos-dock.right .macos-dock-container {
+  flex-direction: column;
+  min-height: auto;
+  min-width: 68px;
+  padding: 16px 10px;
+}
+
+.macos-dock.left .macos-dock-apps,
+.macos-dock.left .macos-dock-system,
+.macos-dock.right .macos-dock-apps,
+.macos-dock.right .macos-dock-system {
+  flex-direction: column;
+}
+
+.macos-dock.left .macos-dock-divider,
+.macos-dock.right .macos-dock-divider {
+  width: 40px;
+  height: 2px;
+  margin: 8px 0;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .macos-dock,
+  .macos-dock-icon-wrapper,
+  .macos-dock-icon,
+  .dock-icon-badge,
+  .dock-icon-indicator {
+    animation: none;
+    transition: none;
+  }
+
+  .macos-dock-icon-wrapper.magnify:hover {
+    transform: scale(1.1);
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .macos-dock-container {
+    border: 2px solid currentColor;
+  }
+
+  .dock-icon-image {
+    border: 1px solid currentColor;
+  }
+}

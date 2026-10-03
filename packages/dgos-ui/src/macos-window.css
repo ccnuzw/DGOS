@@ -1,0 +1,292 @@
+/**
+ * macOS Window Frame Styles
+ *
+ * Implements the macOS window chrome with:
+ * - Glassmorphism effect (blur + translucency)
+ * - Dynamic shadows for focus states
+ * - 12px rounded corners
+ * - Light/Dark theme support via CSS variables
+ */
+
+.macos-window {
+  /* Layout */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 400px;
+  min-height: 300px;
+  width: 800px;
+  height: 600px;
+
+  /* Visual */
+  border-radius: 12px;
+  overflow: hidden;
+
+  /* Glassmorphism - Light theme default */
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+
+  /* Shadow - focused by default */
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.3);
+
+  /* Transitions */
+  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Z-index for window layering */
+  z-index: 10;
+}
+
+/* Dark theme */
+@media (prefers-color-scheme: dark) {
+  .macos-window {
+    background: rgba(30, 30, 30, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* Focused state */
+.macos-window.focused {
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.3);
+  opacity: 1;
+}
+
+/* Unfocused state */
+.macos-window.unfocused {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  opacity: 0.95;
+}
+
+/* Title Bar */
+.macos-window-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 0 16px;
+  flex-shrink: 0;
+
+  /* Slightly darker background for separation */
+  background: rgba(0, 0, 0, 0.02);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+  /* User cannot select title text */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .macos-window-titlebar {
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+}
+
+/* Window Title */
+.macos-window-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text, #0f172a);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 400px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .macos-window-title {
+    color: var(--text, #f1f5f9);
+  }
+}
+
+/* Unfocused title is more muted */
+.macos-window.unfocused .macos-window-title {
+  color: var(--muted, #64748b);
+}
+
+@media (prefers-color-scheme: dark) {
+  .macos-window.unfocused .macos-window-title {
+    color: var(--muted, #94a3b8);
+  }
+}
+
+/* Traffic Lights Container */
+.macos-window-traffic-lights-container {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 1;
+}
+
+/* Individual Traffic Light Buttons */
+.macos-traffic-light {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Smooth transitions */
+  transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              filter 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.macos-traffic-light:focus {
+  outline: 2px solid var(--focus, #0F5FD9);
+  outline-offset: 2px;
+}
+
+.macos-traffic-light:active {
+  transform: scale(0.95);
+}
+
+/* Traffic Light Colors */
+.macos-traffic-light.close {
+  background: #FF5F56;
+}
+
+.macos-traffic-light.close:hover {
+  background: #E64942;
+}
+
+.macos-traffic-light.minimize {
+  background: #FFBD2E;
+}
+
+.macos-traffic-light.minimize:hover {
+  background: #E5A824;
+}
+
+.macos-traffic-light.maximize {
+  background: #27C93F;
+}
+
+.macos-traffic-light.maximize:hover {
+  background: #1FB035;
+}
+
+/* Traffic Light Symbols (hidden by default, shown on hover) */
+.traffic-light-symbol {
+  position: absolute;
+  font-size: 10px;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  line-height: 1;
+}
+
+.macos-traffic-light:hover .traffic-light-symbol {
+  opacity: 1;
+}
+
+/* Unfocused traffic lights are more muted */
+.macos-window.unfocused .macos-traffic-light {
+  filter: saturate(0.5);
+  opacity: 0.7;
+}
+
+.macos-window.unfocused .macos-traffic-light:hover {
+  filter: saturate(1);
+  opacity: 1;
+}
+
+/* Window Content Area */
+.macos-window-content {
+  flex: 1;
+  overflow: auto;
+  padding: 16px;
+
+  /* Smooth scrolling */
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Resize Handles (invisible but interactive) */
+.macos-window-resize-handle {
+  position: absolute;
+  z-index: 2;
+}
+
+/* Edge handles */
+.macos-window-resize-handle.top,
+.macos-window-resize-handle.bottom {
+  left: 12px;
+  right: 12px;
+  height: 8px;
+  cursor: ns-resize;
+}
+
+.macos-window-resize-handle.top {
+  top: 0;
+}
+
+.macos-window-resize-handle.bottom {
+  bottom: 0;
+}
+
+.macos-window-resize-handle.left,
+.macos-window-resize-handle.right {
+  top: 12px;
+  bottom: 12px;
+  width: 8px;
+  cursor: ew-resize;
+}
+
+.macos-window-resize-handle.left {
+  left: 0;
+}
+
+.macos-window-resize-handle.right {
+  right: 0;
+}
+
+/* Corner handles */
+.macos-window-resize-handle.top-left,
+.macos-window-resize-handle.top-right,
+.macos-window-resize-handle.bottom-left,
+.macos-window-resize-handle.bottom-right {
+  width: 12px;
+  height: 12px;
+}
+
+.macos-window-resize-handle.top-left {
+  top: 0;
+  left: 0;
+  cursor: nwse-resize;
+}
+
+.macos-window-resize-handle.top-right {
+  top: 0;
+  right: 0;
+  cursor: nesw-resize;
+}
+
+.macos-window-resize-handle.bottom-left {
+  bottom: 0;
+  left: 0;
+  cursor: nesw-resize;
+}
+
+.macos-window-resize-handle.bottom-right {
+  bottom: 0;
+  right: 0;
+  cursor: nwse-resize;
+}
+
+/* Hide resize handles when not resizable */
+.macos-window:not(.resizable) .macos-window-resize-handle {
+  display: none;
+}

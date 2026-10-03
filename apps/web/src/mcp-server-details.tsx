@@ -139,14 +139,14 @@ export function MCPServerDetails({ t, server, onClose, onRefresh }: MCPServerDet
                     ? 'success'
                     : server.connectionState === 'connecting'
                     ? 'warning'
-                    : 'error'
+                    : 'danger'
                 }
               >
                 {server.connectionState}
               </Badge>
             </div>
           </div>
-          <Button onClick={onClose} variant="ghost">
+          <Button onClick={onClose}>
             {t.close}
           </Button>
         </div>
@@ -154,7 +154,7 @@ export function MCPServerDetails({ t, server, onClose, onRefresh }: MCPServerDet
         {error && <Alert kind="error">{error}</Alert>}
 
         <Tabs
-          value={activeTab}
+          active={activeTab}
           onChange={(value) => setActiveTab(value as any)}
           tabs={[
             { id: 'info', label: t.information || 'Information' },
@@ -162,12 +162,10 @@ export function MCPServerDetails({ t, server, onClose, onRefresh }: MCPServerDet
             {
               id: 'resources',
               label: `${t.resources || 'Resources'} (${resources.length})`,
-              disabled: !server.capabilities?.resources,
             },
             {
               id: 'prompts',
               label: `${t.prompts || 'Prompts'} (${prompts.length})`,
-              disabled: !server.capabilities?.prompts,
             },
             { id: 'logs', label: t.logs || 'Logs' },
           ]}
@@ -255,7 +253,7 @@ export function MCPServerDetails({ t, server, onClose, onRefresh }: MCPServerDet
                           </details>
                         )}
                       </div>
-                      <Button onClick={() => testTool(tool)} size="small">
+                      <Button onClick={() => testTool(tool)}>
                         {t.test || 'Test'}
                       </Button>
                     </li>

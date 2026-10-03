@@ -1,0 +1,747 @@
+/* DGOS UI - Data Display & Layout Components */
+
+/* ============================================
+   DataTable Component
+   ============================================ */
+
+.dgos-data-table {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg, 8px);
+  overflow: hidden;
+}
+
+.dgos-data-table .table-header {
+  background: var(--soft, rgba(0, 0, 0, 0.02));
+  border-bottom: 2px solid var(--border);
+}
+
+.dgos-data-table .table-header.fixed {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.dgos-data-table .table-row {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  transition: background 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dgos-data-table .table-row:last-child {
+  border-bottom: none;
+}
+
+.dgos-data-table .table-row:not(.header-row):hover {
+  background: var(--soft);
+}
+
+.dgos-data-table .table-row.selected {
+  background: rgba(23, 105, 224, 0.08);
+}
+
+.dgos-data-table .table-cell {
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dgos-data-table .table-cell.numeric {
+  font-variant-numeric: tabular-nums;
+  font-family: 'SF Mono', 'Monaco', 'Menlo', monospace;
+}
+
+.dgos-data-table .table-cell.left {
+  justify-content: flex-start;
+}
+
+.dgos-data-table .table-cell.center {
+  justify-content: center;
+}
+
+.dgos-data-table .table-cell.right {
+  justify-content: flex-end;
+}
+
+.dgos-data-table .checkbox-cell {
+  width: 44px;
+  flex: none;
+  justify-content: center;
+}
+
+.dgos-data-table .cell-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.dgos-data-table .sort-button {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dgos-data-table .sort-button:hover {
+  color: var(--primary);
+}
+
+.dgos-data-table .sort-indicator {
+  font-size: 12px;
+  color: var(--primary);
+}
+
+.dgos-data-table .filter-input {
+  margin-top: 4px;
+  width: 100%;
+  min-height: 28px;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm, 4px);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 12px;
+  font: inherit;
+}
+
+.dgos-data-table .filter-input:focus {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+  border-color: var(--primary);
+}
+
+.dgos-data-table .table-body {
+  overflow: auto;
+}
+
+.dgos-data-table .table-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.dgos-data-table .table-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  color: var(--muted);
+}
+
+/* ============================================
+   Tree Component
+   ============================================ */
+
+.dgos-tree {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg, 8px);
+  padding: 8px;
+  overflow: auto;
+}
+
+.dgos-tree .tree-node {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm, 4px);
+  cursor: pointer;
+  transition: background 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+.dgos-tree .tree-node:hover:not(.disabled) {
+  background: var(--soft);
+}
+
+.dgos-tree .tree-node:focus {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.dgos-tree .tree-node.selected {
+  background: rgba(23, 105, 224, 0.1);
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.dgos-tree .tree-node.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dgos-tree .expand-button {
+  background: none;
+  border: none;
+  padding: 2px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--muted);
+  transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dgos-tree .expand-button:hover {
+  color: var(--text);
+}
+
+.dgos-tree .expand-icon {
+  display: block;
+  font-size: 10px;
+  transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dgos-tree .expand-icon.expanded {
+  transform: rotate(90deg);
+}
+
+.dgos-tree .expand-spacer {
+  width: 20px;
+  flex-shrink: 0;
+}
+
+.dgos-tree .node-icon {
+  font-size: 16px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dgos-tree .node-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dgos-tree .tree-children {
+  /* Children inherit padding from parent nodes */
+}
+
+/* ============================================
+   SplitPane Component
+   ============================================ */
+
+.dgos-split-pane {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.dgos-split-pane.horizontal {
+  flex-direction: row;
+}
+
+.dgos-split-pane.vertical {
+  flex-direction: column;
+}
+
+.dgos-split-pane .split-pane-first,
+.dgos-split-pane .split-pane-second {
+  overflow: auto;
+  min-width: 0;
+  min-height: 0;
+}
+
+.dgos-split-pane .split-handle {
+  flex-shrink: 0;
+  position: relative;
+  background: var(--border);
+  transition: background 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dgos-split-pane .split-handle.horizontal {
+  width: 8px;
+  cursor: col-resize;
+}
+
+.dgos-split-pane .split-handle.vertical {
+  height: 8px;
+  cursor: row-resize;
+}
+
+.dgos-split-pane .split-handle:hover,
+.dgos-split-pane .split-handle:focus {
+  background: var(--primary);
+  outline: none;
+}
+
+.dgos-split-pane.dragging .split-handle {
+  background: var(--primary);
+}
+
+.dgos-split-pane .split-handle-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dgos-split-pane .split-handle-grip {
+  background: var(--surface);
+  border-radius: 2px;
+}
+
+.dgos-split-pane .split-handle.horizontal .split-handle-grip {
+  width: 3px;
+  height: 32px;
+}
+
+.dgos-split-pane .split-handle.vertical .split-handle-grip {
+  width: 32px;
+  height: 3px;
+}
+
+/* ============================================
+   Enhanced Tabs Component
+   ============================================ */
+
+.dgos-enhanced-tabs {
+  position: relative;
+  border-bottom: 1px solid var(--border);
+}
+
+.dgos-enhanced-tabs .tabs-container {
+  display: flex;
+  gap: 4px;
+  position: relative;
+}
+
+.dgos-enhanced-tabs .tab-button {
+  background: none;
+  border: none;
+  padding: 10px 16px;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: var(--radius-sm, 4px) var(--radius-sm, 4px) 0 0;
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              background 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.dgos-enhanced-tabs.sm .tab-button {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+.dgos-enhanced-tabs.lg .tab-button {
+  padding: 12px 20px;
+  font-size: 15px;
+}
+
+.dgos-enhanced-tabs .tab-button:hover:not(.disabled) {
+  color: var(--text);
+  background: var(--soft);
+}
+
+.dgos-enhanced-tabs .tab-button:focus {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.dgos-enhanced-tabs .tab-button.active {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.dgos-enhanced-tabs .tab-button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dgos-enhanced-tabs .tab-icon {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dgos-enhanced-tabs .tab-label {
+  white-space: nowrap;
+}
+
+.dgos-enhanced-tabs .tab-badge {
+  background: var(--soft);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm, 4px);
+  min-width: 18px;
+  text-align: center;
+}
+
+.dgos-enhanced-tabs .tab-button.active .tab-badge {
+  background: rgba(23, 105, 224, 0.1);
+  color: var(--primary);
+}
+
+.dgos-enhanced-tabs .tab-indicator {
+  position: absolute;
+  bottom: 0;
+  height: 2px;
+  background: var(--primary);
+  transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1),
+              width 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 2px 2px 0 0;
+}
+
+.dgos-tab-panel {
+  padding: 16px 0;
+}
+
+/* ============================================
+   Enhanced Breadcrumbs Component
+   ============================================ */
+
+.dgos-enhanced-breadcrumbs {
+  padding: 8px 0;
+}
+
+.dgos-enhanced-breadcrumbs .breadcrumb-list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+}
+
+.dgos-enhanced-breadcrumbs .breadcrumb-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dgos-enhanced-breadcrumbs .breadcrumb-link {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 2px 4px;
+  border-radius: var(--radius-sm, 4px);
+}
+
+.dgos-enhanced-breadcrumbs .breadcrumb-link:hover {
+  color: var(--text);
+  background: var(--soft);
+}
+
+.dgos-enhanced-breadcrumbs .breadcrumb-link:focus {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.dgos-enhanced-breadcrumbs .breadcrumb-text {
+  color: var(--muted);
+  padding: 2px 4px;
+}
+
+.dgos-enhanced-breadcrumbs .breadcrumb-text.current {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.dgos-enhanced-breadcrumbs .breadcrumb-separator {
+  color: var(--muted);
+  user-select: none;
+}
+
+.dgos-enhanced-breadcrumbs .breadcrumb-ellipsis {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm, 4px);
+  font: inherit;
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              background 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dgos-enhanced-breadcrumbs .breadcrumb-ellipsis:hover {
+  color: var(--text);
+  background: var(--soft);
+}
+
+.dgos-enhanced-breadcrumbs .breadcrumb-ellipsis:focus {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   EmptyState Component
+   ============================================ */
+
+.dgos-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--muted);
+}
+
+.dgos-empty-state.sm {
+  padding: 32px 16px;
+}
+
+.dgos-empty-state.lg {
+  padding: 64px 32px;
+}
+
+.dgos-empty-state .empty-state-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.6;
+}
+
+.dgos-empty-state.sm .empty-state-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.dgos-empty-state.lg .empty-state-icon {
+  font-size: 64px;
+  margin-bottom: 24px;
+}
+
+.dgos-empty-state .empty-state-content {
+  max-width: 400px;
+}
+
+.dgos-empty-state .empty-state-title {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.dgos-empty-state.sm .empty-state-title {
+  font-size: 14px;
+}
+
+.dgos-empty-state.lg .empty-state-title {
+  font-size: 18px;
+}
+
+.dgos-empty-state .empty-state-description {
+  margin: 0 0 24px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.dgos-empty-state .empty-state-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ============================================
+   ErrorState Component
+   ============================================ */
+
+.dgos-error-state {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg, 8px);
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.dgos-error-state.warning {
+  border-left: 4px solid var(--warning);
+  background: rgba(245, 158, 11, 0.03);
+}
+
+.dgos-error-state.error {
+  border-left: 4px solid var(--danger);
+  background: rgba(239, 68, 68, 0.03);
+}
+
+.dgos-error-state.critical {
+  border-left: 4px solid var(--danger);
+  background: rgba(239, 68, 68, 0.05);
+  border-color: var(--danger);
+}
+
+.dgos-error-state.inline {
+  margin: 8px 0;
+  padding: 12px;
+}
+
+.dgos-error-state .error-state-header {
+  display: flex;
+  gap: 12px;
+}
+
+.dgos-error-state .error-state-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.dgos-error-state .error-state-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.dgos-error-state .error-state-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.dgos-error-state .error-state-title {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.dgos-error-state .error-state-dismiss {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 24px;
+  line-height: 1;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dgos-error-state .error-state-dismiss:hover {
+  color: var(--text);
+}
+
+.dgos-error-state .error-state-description {
+  margin: 0 0 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.dgos-error-state .error-state-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+.dgos-error-state .error-state-meta code {
+  background: var(--soft);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm, 4px);
+  font-family: 'SF Mono', 'Monaco', 'Menlo', monospace;
+  font-size: 11px;
+}
+
+.dgos-error-state .error-state-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+/* Inline Error */
+.dgos-inline-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(239, 68, 68, 0.05);
+  border-left: 3px solid var(--danger);
+  border-radius: var(--radius-sm, 4px);
+  font-size: 13px;
+  color: var(--text);
+}
+
+.dgos-inline-error .inline-error-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.dgos-inline-error .inline-error-message {
+  flex: 1;
+}
+
+.dgos-inline-error .inline-error-request-id {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.dgos-inline-error .inline-error-request-id code {
+  background: var(--soft);
+  padding: 2px 4px;
+  border-radius: var(--radius-sm, 4px);
+  font-family: 'SF Mono', 'Monaco', 'Menlo', monospace;
+}
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .dgos-enhanced-tabs .tab-indicator,
+  .dgos-tree .expand-icon,
+  .dgos-tree .tree-node,
+  .dgos-data-table .table-row,
+  .dgos-enhanced-tabs .tab-button,
+  .dgos-enhanced-breadcrumbs .breadcrumb-link,
+  .dgos-split-pane .split-handle {
+    transition-duration: 0.01ms !important;
+  }
+}

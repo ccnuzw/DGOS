@@ -1,0 +1,91 @@
+{
+  "workPackage": "WP-W1-01",
+  "owner": "worker-native",
+  "date": "2026-10-03T14:02:26.950Z",
+  "result": "partial",
+  "changes": {
+    "files": [
+      {
+        "path": "apps/desktop/src-tauri/src/host.rs",
+        "sha256": "a03e24ca6b762edc9ca75dc83cde08ed3a73baaeee5f2e7d71a476ed3c1055a0"
+      },
+      {
+        "path": "apps/desktop/scripts/workbench-main-driver.js",
+        "sha256": "ee0837dc0ec21a781b4eb5d5d3f546e1b4755c872f625f4f2a984fe877551839"
+      },
+      {
+        "path": "apps/desktop/scripts/native-workbench-diagnostic.mjs",
+        "sha256": "08dd3e5e32c66c7d793cd632929bfd91b03e1b2fe1962a920bcda5109cb3e8d7"
+      },
+      {
+        "path": "apps/ai-workbench-package/index.html",
+        "sha256": "50470986926e5418d4d515f9defb3d7be53f3550da468f493b7747dd2c70a1df"
+      }
+    ],
+    "behavior": [
+      "Load native Workbench test driver inside the signed iframe document via dgosDesktopTest=1",
+      "Avoid cross-frame WebKit eval and post-load iframe src mutation",
+      "Retain explicit failed/timeout diagnostics"
+    ]
+  },
+  "commands": [
+    {
+      "command": "pnpm --filter @dgos/desktop check",
+      "result": "passed"
+    },
+    {
+      "command": "pnpm --filter @dgos/web build",
+      "result": "passed"
+    },
+    {
+      "command": "DGOS_BUNDLE_ENVELOPE=/tmp/dgos-w1-01-fixture/ai-workbench-envelope.json DGOS_BUNDLE_TRUST_ROOTS=/tmp/dgos-w1-01-fixture/trust-roots.json node --test tests/integration/app-package-browser.test.mjs",
+      "result": "passed (1/1)"
+    },
+    {
+      "command": "cargo tauri build --debug --bundles app -- --jobs 1",
+      "result": "passed"
+    },
+    {
+      "command": "node apps/desktop/scripts/native-workbench-diagnostic.mjs",
+      "result": "window evidence passed; Workbench result timeout"
+    }
+  ],
+  "evidence": {
+    "windowServerOwnerPidMatched": true,
+    "window": {
+      "ownerPid": 10967,
+      "windowServer": {
+        "ownerPid": 10967,
+        "windowId": 4027,
+        "bounds": {
+          "Y": 50,
+          "X": 50,
+          "Height": 840,
+          "Width": 1280
+        },
+        "layer": 0,
+        "alpha": 1
+      }
+    },
+    "screenshot": {
+      "file": ".herdr/evidence/native-workbench-2026-10-03T13-54-09-114Z.png",
+      "bytes": 278848,
+      "sha256": "5fbcdaa824059ed20c2c815fe97c018f016a366a28c789384b33365949280b4b"
+    },
+    "latestDiagnostic": ".herdr/evidence/"
+  },
+  "acceptance": {
+    "real_window_owner": "passed",
+    "iframe_frame_present": "observed in prior driver path; current diagnostic stops before catalog launch",
+    "bridge_handshake": "blocked by absent real catalog/API launch chain in diagnostic fixture",
+    "web_entry": "passed by shared apps/web build and package browser regression",
+    "timeout_failure_diagnostic": "passed",
+    "manifest_binding": "passed",
+    "provider_task_chain": "not run"
+  },
+  "limits": [
+    "Frozen package fixture .herdr/state/package-fixture-r9 is intentionally rejected when source index.html drifts; no stale candidate was claimed as passed.",
+    "Full native Workbench bridge/Task chain requires the existing isolated Postgres/Redis/API/worker/provider harness to install the modified envelope; this runner currently proves host window ownership and records timeout diagnostics only.",
+    "Unsigned debug app only; no release signing/notarization."
+  ]
+}

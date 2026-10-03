@@ -104,6 +104,22 @@ fn create(app: &tauri::AppHandle, summary: &WindowSummary, restored_geometry: bo
         const result = await window.__TAURI_INTERNALS__.invoke('desktop_api', {{ input: {{ path, method: options.method || 'GET', body: options.body == null ? null : String(options.body), headers }} }});
         return new Response(result.body, {{ status: result.status, headers: result.headers }});
       }};
+      if ({workbench_test}) {{
+        const nativeCreateElement = document.createElement.bind(document);
+        document.createElement = (tagName, options) => {{
+          const element = nativeCreateElement(tagName, options);
+          if (String(tagName).toLowerCase() === 'iframe') {{
+            const setSrc = element.setAttribute.bind(element);
+            element.setAttribute = (name, value) => {{
+              if (name === 'src' && typeof value === 'string' && value.includes('/api/v1/apps/dgos.ai-workbench/resources/')) {{
+                try {{ const url = new URL(value, location.href); url.searchParams.set('dgosDesktopTest', '1'); value = url.toString(); }} catch (_) {{}}
+              }}
+              return setSrc(name, value);
+            }};
+          }}
+          return element;
+        }};
+      }}
       if (!window.__DGOS_ROUTE_LISTENER__) {{
         window.__DGOS_ROUTE_LISTENER__ = true;
         window.addEventListener('popstate', () => window.__TAURI_INTERNALS__?.invoke('set_window_route', {{ label: {label}, route: location.pathname }}));
@@ -247,45 +263,9 @@ fn create(app: &tauri::AppHandle, summary: &WindowSummary, restored_geometry: bo
       }}, {{ once: true }});
     }})()"#);
     let (logical_width, logical_height) = if summary.label == "main" { (1280.0, 840.0) } else { (1100.0, 760.0) };
-    let frame_driver_source = if workbench_test { include_str!("../../scripts/workbench-frame-driver.js") } else { "" };
-    let frame_injection_script = if workbench_test {
-        format!(r#"(() => {{
-          const frameDriverSource = {};
-          const injectIntoFrame = (iframe) => {{
-            try {{
-              if (!iframe.contentWindow) return false;
-              iframe.contentWindow.eval(frameDriverSource);
-              return true;
-            }} catch (error) {{
-              console.error('dgos desktop frame driver injection failed:', error);
-              return false;
-            }}
-          }};
-          const observer = new MutationObserver((mutations) => {{
-            for (const mutation of mutations) {{
-              for (const node of mutation.addedNodes) {{
-                if (node.nodeName === 'IFRAME' && node.title === 'dgos.ai-workbench') {{
-                  node.addEventListener('load', () => {{
-                    setTimeout(() => injectIntoFrame(node), 50);
-                  }}, {{ once: true }});
-                  if (node.contentWindow) {{
-                    setTimeout(() => injectIntoFrame(node), 50);
-                  }}
-                }}
-              }}
-            }}
-          }});
-          observer.observe(document.body, {{ childList: true, subtree: true }});
-          for (const iframe of document.querySelectorAll('iframe[title="dgos.ai-workbench"]')) {{
-            iframe.addEventListener('load', () => {{
-              setTimeout(() => injectIntoFrame(iframe), 50);
-            }}, {{ once: true }});
-            if (iframe.contentWindow) {{
-              setTimeout(() => injectIntoFrame(iframe), 50);
-            }}
-          }}
-        }})()"#, serde_json::to_string(frame_driver_source).unwrap_or_else(|_| "\"\"".to_string()))
-    } else { String::new() };
+    // WebKit does not guarantee cross-frame eval for the signed app resource.
+    // The frame driver is therefore loaded by the Workbench test entry itself.
+    let frame_injection_script = String::new();
     let builder = WebviewWindowBuilder::new(app, &summary.label, WebviewUrl::App("index.html".into()))
         .title("DGOS")
         .inner_size(logical_width, logical_height)

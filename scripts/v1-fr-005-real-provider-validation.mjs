@@ -2,7 +2,7 @@
 /**
  * V1 FR-005 Complete Real Provider Validation
  *
- * Tests all FR-005 acceptance criteria with real Provider (cc.nextcc.cc):
+ * Tests FR-005 acceptance criteria against an explicitly configured Provider:
  * - AC01: Text task end-to-end flow
  * - AC02: Failure and duplicate submission handling
  * - AC08: SSE streaming with disconnect recovery
@@ -10,18 +10,36 @@
  * Evidence: .herdr/V1-FR-005-COMPLETE-VALIDATION.md
  */
 
-import assert from 'node:assert/strict';
-import { createHash, randomBytes, randomUUID } from 'node:crypto';
-import { execFileSync } from 'node:child_process';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
-import pg from '../apps/api/node_modules/pg/lib/index.js';
-import { createClient } from '../apps/api/node_modules/redis/dist/index.js';
-import { buildServer } from '../apps/api/src/server.mjs';
-
 // Configuration
-const REAL_PROVIDER_CONFIG_PATH = resolve('.herdr/real-provider-config.json');
+const PROVIDER_BASE_URL = process.env.DGOS_REAL_PROVIDER_BASE_URL;
+const PROVIDER_API_KEY = process.env.DGOS_REAL_PROVIDER_KEY;
+if (!PROVIDER_BASE_URL || !PROVIDER_API_KEY) {
+  console.error('real_provider_credentials_required');
+  process.exit(2);
+}
+
+const [
+  { default: assert },
+  { createHash, randomBytes, randomUUID },
+  { execFileSync },
+  { mkdir, readFile, writeFile },
+  { tmpdir },
+  { join, resolve },
+  { default: pg },
+  { createClient },
+  { buildServer }
+] = await Promise.all([
+  import('node:assert/strict'),
+  import('node:crypto'),
+  import('node:child_process'),
+  import('node:fs/promises'),
+  import('node:os'),
+  import('node:path'),
+  import('../apps/api/node_modules/pg/lib/index.js'),
+  import('../apps/api/node_modules/redis/dist/index.js'),
+  import('../apps/api/src/server.mjs')
+]);
+
 const EVIDENCE_DIR = resolve('.herdr');
 const RUN_ID = `V1-FR-005-REAL-${new Date().toISOString().replace(/[:.]/g, '-')}`;
 const REPORT_PATH = join(EVIDENCE_DIR, `${RUN_ID}-report.json`);
@@ -76,12 +94,13 @@ async function main() {
   try {
     // Load real provider configuration
     logEntry('Loading real provider configuration...');
-    const configData = await readFile(REAL_PROVIDER_CONFIG_PATH, 'utf-8');
-    realProviderConfig = JSON.parse(configData);
-
-    assert.ok(realProviderConfig.base_url, 'base_url required');
-    assert.ok(realProviderConfig.api_key, 'api_key required');
-    assert.ok(Array.isArray(realProviderConfig.test_models), 'test_models required');
+    realProviderConfig = {
+      base_url: PROVIDER_BASE_URL,
+      api_key: PROVIDER_API_KEY,
+      protocol: 'openai-compatible',
+      test_models: ['gpt-6-sol'],
+      connection_verified: 'redacted-revocation-receipt-required'
+    };
 
     report.evidence.provider = {
       base_url: realProviderConfig.base_url,
@@ -168,7 +187,7 @@ async function main() {
     logEntry('Bootstrapping admin identity...');
     const boot = await post('/identity/admin/bootstrap', {
       displayName: 'FR-005 Test Admin',
-      credential: `test-admin-${randomUUID()}`
+      credential: `fixture-admin-${randomUUID()}`
     }, 201);
 
     session = boot.sessionId;
