@@ -1,0 +1,31 @@
+{
+  "workPackage": "WP-W4-02",
+  "status": "prepared_not_recorded",
+  "runId": null,
+  "sourceCommit": null,
+  "workingTree": "dirty state must be recorded",
+  "webBuild": null,
+  "nativeBuild": null,
+  "manifestSchema": null,
+  "apiSchema": null,
+  "sdkSchema": null,
+  "migrationHash": null,
+  "environment": {
+    "date": null,
+    "timezone": null,
+    "os": null,
+    "architecture": null,
+    "browser": null,
+    "viewport": null,
+    "dependencyMode": null,
+    "databaseIsolationId": null
+  },
+  "verification": {
+    "wpW401Report": null,
+    "verifyDecision": null,
+    "candidatePassed": false
+  },
+  "assets": [],
+  "limitations": [],
+  "recordedAt": null
+}

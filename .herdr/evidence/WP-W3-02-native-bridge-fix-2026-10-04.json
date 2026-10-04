@@ -1,0 +1,75 @@
+{
+  "workPackage": "WP-W3-02",
+  "owner": "worker-native",
+  "date": "2026-10-03T18:13:47.741Z",
+  "status": "completed",
+  "result": "loopback_http_resource_server_native_bridge_passed",
+  "candidate": {
+    "directory": ".herdr/state/wp-w2-04-native-candidate",
+    "digest": "sha256:9c4cd6cb8edeca071794e27f3e52b4c0c9bed6b60f7a066551376384a46591fa"
+  },
+  "filesChanged": {
+    "apps/desktop/src-tauri/src/host.rs": "ef29bc342a50137f433b5a803650ef30e3ff60909adee0cb6f7cadb72e728986",
+    "apps/desktop/src-tauri/src/proxy.rs": "2c795d6b688266d78e802d1dc22d1f2c002cdcc08b02f7c007ccb761860c3489",
+    "apps/desktop/src-tauri/src/lib.rs": "7948cd7ea1cd0b5a6a312d3c764d30733823881e93b0be3142c4c59bad4f7d59",
+    "apps/desktop/scripts/workbench-main-driver.js": "b4992a4d26d78ef815087800272e278582b2859fb532c918ae8bb7a96a128846",
+    "apps/desktop/scripts/candidate-preflight.mjs": "7e19f38727c734d0fc19566459aecd7347673825d363eb486d80eb99f64ccb17",
+    "scripts/v1-desktop-real.mjs": "c4689ff1bf417a7154abd44ab77e14c466e8ebc58b9216ec3714515c3a81976c",
+    "apps/web/src/macos-app-styles.css": "ef101603c05ddcf7b15139030aed18978df5c320c96db4108482cad9e7673725",
+    "packages/app-shell/src/macos/window-tabs.tsx": "0b5984397e248a44799b7bddb76f95c41bde8bddaa9a100ed9962eed1076b938",
+    "packages/app-shell/src/macos/window.tsx": "af705b3e4b7f1101c2c36b09553ed63e1993e5f4faf8ff3cb4f6ce65dd399476"
+  },
+  "commands": [
+    {
+      "command": "pnpm --filter @dgos/web build",
+      "result": "passed with existing CSS warnings"
+    },
+    {
+      "command": "cargo check --manifest-path apps/desktop/src-tauri/Cargo.toml",
+      "result": "passed"
+    },
+    {
+      "command": "cargo tauri build --debug --bundles app -- --jobs 1",
+      "result": "passed"
+    },
+    {
+      "command": "DGOS_DESKTOP_CANDIDATE_DIR=... DGOS_DESKTOP_CANDIDATE_ALLOW_DRIFT=1 node scripts/v1-desktop-real.mjs",
+      "result": "passed; real loopback iframe load, dgos.app.ready, bridge calls, Task/Artifact/reload, close and relaunch"
+    }
+  ],
+  "evidence": {
+    "runManifest": ".herdr/V1-NATIVE-EXECUTION-r13-2026-10-04T01-20-45-568Z-c5d8a8a6-manifest.json",
+    "windowServerOwnerMatched": true,
+    "framePresent": true,
+    "iframeLoadCount": 2,
+    "appReady": ["dgos.app.ready"],
+    "bridgeCalls": ["dgos.model.list", "dgos.system.context.read", "dgos.model.resolve", "dgos.aiTask.submit", "dgos.aiTask.events", "dgos.aiTask.get", "dgos.artifact.read"],
+    "nativeStderr": "run manifest records loopback Workbench resources, frame load, dgos.app.ready, bridge calls and complete stages",
+    "cleanup": {
+      "testKeychainItemDeleted": true,
+      "tempDirectoryDeleted": true,
+      "databaseRemoved": true,
+      "redisPrefixRemaining": 0
+    }
+  },
+    "rootCause": "Wry 0.57 did not load provisional iframe navigation through the built-in asset scheme; a native loopback HTTP resource server provides a stable subframe-capable origin while forwarding every resource request through the authenticated API resource validator.",
+  "nextImplementation": "Provide the Workbench resource from a real native loopback HTTP server bound to 127.0.0.1 on an ephemeral port, with launchTicket validation forwarded through the existing authenticated ApiProxy. Rewrite iframe and relative assets to that origin, bind server lifecycle to app lifetime, and restrict routes to GET /api/v1/apps/{appId}/resources/*; alternatively use a custom subframe-capable WKURLSchemeHandler integration. Then rerun task/artifact/reload smoke.",
+  "acceptance": {
+    "apiCatalog": "passed",
+    "packageInstall": "passed",
+    "stableUrlRewrite": "passed",
+    "iframeLoad": "passed",
+    "postMessage": "passed",
+    "handshake": "passed",
+    "taskArtifactReload": "passed"
+  },
+  "limitations": [
+    "Local Provider fixture and unsigned debug bundle only; screenshot visual review remains pending"
+  ],
+  "cleanup": {
+    "testKeychainItemDeleted": true,
+    "tempDirectoryDeleted": true,
+    "databaseRemoved": true,
+    "redisPrefixRemaining": 0
+  }
+}

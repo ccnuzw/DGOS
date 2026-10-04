@@ -1,6 +1,8 @@
 use std::borrow::Cow;
-use std::io::Read;
-use std::sync::Mutex;
+use std::io::{Read, Write};
+use std::net::{SocketAddr, TcpListener, TcpStream};
+use std::sync::{Arc, Mutex};
+use std::thread;
 use std::time::Duration;
 use tauri::http::{header, Request, Response, StatusCode};
 use url::Url;
@@ -36,6 +38,78 @@ fn keychain_delete(service: &str, account: &str) -> security_framework::base::Re
 
 pub struct ApiProxy { origin: Url, subject: Mutex<Option<String>> }
 
+#[derive(Clone)]
+pub struct WorkbenchResourceServer { origin: String }
+
+impl WorkbenchResourceServer {
+    pub fn start(api: Arc<ApiProxy>) -> Result<Self, String> {
+        let listener = TcpListener::bind("127.0.0.1:0").map_err(|e| format!("loopback bind failed: {e}"))?;
+        listener.set_nonblocking(true).map_err(|e| format!("loopback setup failed: {e}"))?;
+        let address = listener.local_addr().map_err(|e| e.to_string())?;
+        thread::Builder::new().name("dgos-workbench-resource".into()).spawn(move || loop {
+            match listener.accept() {
+                Ok((stream, peer)) => {
+                    let api = api.clone();
+                    let _ = thread::Builder::new().name("dgos-workbench-request".into()).spawn(move || serve_workbench_resource(stream, peer, address, api));
+                }
+                Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => thread::sleep(Duration::from_millis(15)),
+                Err(error) => { eprintln!("dgos workbench loopback server stopped: {error}"); break; }
+            }
+        }).map_err(|e| format!("loopback server start failed: {e}"))?;
+        Ok(Self { origin: format!("http://127.0.0.1:{}", address.port()) })
+    }
+
+    pub fn origin(&self) -> &str { &self.origin }
+}
+
+fn serve_workbench_resource(mut stream: TcpStream, peer: SocketAddr, bound: SocketAddr, api: Arc<ApiProxy>) {
+    let _ = stream.set_read_timeout(Some(Duration::from_secs(3)));
+    let mut request_bytes = Vec::with_capacity(4096);
+    let mut chunk = [0u8; 1024];
+    while request_bytes.len() < 8192 {
+        match stream.read(&mut chunk) {
+            Ok(0) => break,
+            Ok(count) => {
+                request_bytes.extend_from_slice(&chunk[..count]);
+                if request_bytes.windows(4).any(|window| window == b"\r\n\r\n") { break; }
+            }
+            Err(_) => return,
+        }
+    }
+    let raw = String::from_utf8_lossy(&request_bytes);
+    let mut lines = raw.split("\r\n");
+    let Some(first) = lines.next() else { return; };
+    let mut parts = first.split_whitespace();
+    let method = parts.next().unwrap_or("");
+    let target = parts.next().unwrap_or("");
+    let host = lines.find_map(|line| line.strip_prefix("Host:").or_else(|| line.strip_prefix("host:"))).map(str::trim).unwrap_or("");
+    let expected_host = format!("127.0.0.1:{}", bound.port());
+    let mut status = StatusCode::FORBIDDEN;
+    let mut content_type = String::from("text/plain; charset=utf-8");
+    let mut body = b"forbidden workbench resource".to_vec();
+    if peer.ip().is_loopback() && bound.ip().is_loopback() && host == expected_host && method == "GET"
+        && target.starts_with("/api/v1/apps/dgos.ai-workbench/resources/")
+        && !target.contains('\\') && !target.contains('#') && !target.contains("..") {
+        if let Ok(uri) = target.parse::<tauri::http::Uri>() {
+            let allowed_extension = [".html", ".js", ".css", ".svg", ".json", ".png", ".woff2"]
+                .iter().any(|extension| uri.path().ends_with(extension));
+            if allowed_extension {
+                let request = match Request::builder().method("GET").uri(format!("tauri://localhost{target}"))
+                    .header("accept", "*/*").body(Vec::new()) { Ok(request) => request, Err(_) => return };
+                let mut response: Response<Cow<'static, [u8]>> = match Response::builder().status(StatusCode::BAD_GATEWAY).body(Cow::Owned(Vec::new())) { Ok(response) => response, Err(_) => return };
+                api.handle(&request, &mut response);
+                status = response.status();
+                body = response.body().to_vec();
+                content_type = response.headers().get(header::CONTENT_TYPE).and_then(|value| value.to_str().ok())
+                    .unwrap_or("application/octet-stream").to_string();
+            }
+        }
+    }
+    let reason = status.canonical_reason().unwrap_or("Response");
+    let header = format!("HTTP/1.1 {} {}\r\nContent-Type: {}\r\nContent-Length: {}\r\nCache-Control: no-store\r\nX-Content-Type-Options: nosniff\r\nReferrer-Policy: no-referrer\r\nAccess-Control-Allow-Origin: null\r\nCross-Origin-Resource-Policy: cross-origin\r\nConnection: close\r\n\r\n", status.as_u16(), reason, content_type, body.len());
+    let _ = stream.write_all(header.as_bytes()).and_then(|_| stream.write_all(&body));
+}
+
 #[derive(Deserialize)]
 pub struct ProxyInput { path: String, method: String, body: Option<String>, headers: Option<std::collections::HashMap<String, String>> }
 
@@ -43,7 +117,7 @@ pub struct ProxyInput { path: String, method: String, body: Option<String>, head
 pub struct ProxyOutput { status: u16, headers: std::collections::HashMap<String, String>, body: String }
 
 #[tauri::command]
-pub fn desktop_api(api: tauri::State<ApiProxy>, input: ProxyInput) -> Result<ProxyOutput, String> {
+pub fn desktop_api(api: tauri::State<std::sync::Arc<ApiProxy>>, input: ProxyInput) -> Result<ProxyOutput, String> {
     if !input.path.starts_with("/api/v1/") || input.path.starts_with("//") || input.path.contains('#')
         || input.path.contains("\\") || input.path.len() > 4096 { return Err("invalid API path".into()); }
     if !["GET", "POST", "PUT", "PATCH", "DELETE"].contains(&input.method.as_str()) { return Err("invalid API method".into()); }
@@ -58,7 +132,7 @@ pub fn desktop_api(api: tauri::State<ApiProxy>, input: ProxyInput) -> Result<Pro
     let request = builder.body(input.body.unwrap_or_default().into_bytes()).map_err(|_| "invalid API request")?;
     let mut response: Response<Cow<'static, [u8]>> = Response::builder().status(StatusCode::BAD_GATEWAY).body(Cow::Owned(Vec::new()))
         .map_err(|_| "invalid API response")?;
-    api.handle(request, &mut response);
+    api.handle(&request, &mut response);
     let headers = response.headers().iter().filter_map(|(key, value)| value.to_str().ok().map(|v| (key.to_string(), v.to_owned()))).collect();
     Ok(ProxyOutput { status: response.status().as_u16(), headers, body: String::from_utf8_lossy(response.body()).into_owned() })
 }
@@ -80,8 +154,15 @@ impl ApiProxy {
         Ok(Self { origin, subject: Mutex::new(None) })
     }
 
-    pub fn handle(&self, request: Request<Vec<u8>>, response: &mut Response<Cow<'static, [u8]>>) {
-        if !request.uri().path().starts_with("/api/v1/") { return; }
+    pub fn handle(&self, request: &Request<Vec<u8>>, response: &mut Response<Cow<'static, [u8]>>) {
+        let request_path = request.uri().path();
+        if !request_path.starts_with("/api/v1/") { return; }
+        if request.method() == "GET" && request_path.starts_with("/api/v1/apps/dgos.ai-workbench/resources/")
+            && (request_path.split('/').any(|segment| segment == "..") || request_path.contains("//")) {
+            *response.status_mut() = StatusCode::FORBIDDEN;
+            *response.body_mut() = Cow::Borrowed(b"invalid Workbench resource path");
+            return;
+        }
         let packaged = (request.uri().scheme_str() == Some("tauri") && request.uri().host() == Some("localhost") && request.uri().port_u16().is_none())
             || (request.uri().scheme_str() == Some("http") && request.uri().host() == Some("tauri.localhost") && request.uri().port_u16().is_none());
         let development = cfg!(debug_assertions)
@@ -95,7 +176,7 @@ impl ApiProxy {
             *response.body_mut() = Cow::Borrowed(b"forbidden desktop resource origin");
             return;
         }
-        let path = request.uri().path_and_query().map(|p| p.as_str()).unwrap_or(request.uri().path());
+        let path = request.uri().path_and_query().map(|p| p.as_str()).unwrap_or(request.uri().path()).to_string();
         if cfg!(debug_assertions) && std::env::var("DGOS_DESKTOP_TEST_WORKBENCH").ok().as_deref() == Some("1")
             && path.contains("/api/v1/apps/dgos.ai-workbench/") {
             eprintln!("dgos desktop debug workbench resource request: {}", path);

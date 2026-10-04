@@ -121,11 +121,16 @@ export function AppCatalog({ t, subjectId }: { t: T; subjectId: string }) {
   const [confirm, setConfirm] = useState<Dict | null>(null);
   const [deployments, setDeployments] = useState<Record<string, Dict>>({});
   const [deploymentErrors, setDeploymentErrors] = useState<Record<string, string>>({});
+  const [health, setHealth] = useState<Record<string, Dict>>({});
   const [selectedVersion, setSelectedVersion] = useState<Record<string, string>>({});
   async function loadDeployment(appId: string) {
     try {
       const result = await api<Dict>(`/api/v1/apps/${encodeURIComponent(appId)}/deployment`);
       setDeployments(value => ({ ...value, [appId]: result }));
+      try {
+        const status = await api<Dict>(`/api/v1/apps/${encodeURIComponent(appId)}/health`);
+        setHealth(value => ({ ...value, [appId]: status }));
+      } catch { setHealth(value => ({ ...value, [appId]: { state: 'unavailable', healthy: false } })); }
       setDeploymentErrors(value => { const next = { ...value }; delete next[appId]; return next; });
     } catch (failure) {
       setDeployments(value => { const next = { ...value }; delete next[appId]; return next; });
@@ -167,7 +172,7 @@ export function AppCatalog({ t, subjectId }: { t: T; subjectId: string }) {
       {loading && !records.length ? <p role="status">{t.loading}</p> : groups.size ? <ul className="record-list">{[...groups].map(([appId, releases]) => {
         const chosen = releases.find(release => `${release.version}:${release.build}:${release.releaseChannel}` === selectedVersion[appId]) || releases[0];
         const deployment = deployments[appId];
-        return <li key={appId}><div><strong>{chosen.name?.['en-US'] || chosen.displayName || appId}</strong><small>{appId} · {chosen.catalogState}</small>{deployment ? <Status value={deployment.state} /> : <small>{deploymentErrors[appId] || t.loading}</small>}</div><div className="row"><label>{t.version}<select value={`${chosen.version}:${chosen.build}:${chosen.releaseChannel}`} onChange={event => setSelectedVersion(value => ({ ...value, [appId]: event.target.value }))}>{releases.map(release => <option key={`${release.version}:${release.build}:${release.releaseChannel}`} value={`${release.version}:${release.build}:${release.releaseChannel}`}>{release.version} · {t.build} {release.build} · {release.releaseChannel}</option>)}</select></label><Button onClick={() => act(chosen, 'install')} busy={busy}>{t.install}</Button><Button onClick={() => act(chosen, 'launch')} busy={busy}>{t.launch}</Button><Button onClick={() => act(chosen, 'update')} disabled={!deployment?.versionNumber} title={!deployment?.versionNumber ? t.deploymentVersionUnavailable : undefined} busy={busy}>{t.update}</Button><Button variant="danger" onClick={() => setConfirm(chosen)} disabled={!deployment?.versionNumber} title={!deployment?.versionNumber ? t.deploymentVersionUnavailable : undefined}>{t.uninstall}</Button></div></li>;
+        return <li key={appId}><div><strong>{chosen.name?.['en-US'] || chosen.displayName || appId}</strong><small>{appId} · {chosen.version} · {t.build} {chosen.build} · {chosen.releaseChannel}</small><small>{t.source}: {chosen.source || t.none} · {t.permissions}: {chosen.manifest?.permissions?.join(', ') || chosen.permissions?.join(', ') || t.none}</small><small>{t.uninstallPolicy}: {chosen.uninstallPolicy || t.none}</small><Status value={deployment?.state || chosen.catalogState || 'unknown'} />{deployment && <small>{t.healthCheck}: <Status value={health[appId]?.state || 'pending'} />{health[appId]?.version ? ` · ${health[appId].version} (${t.build} ${health[appId].build})` : ''}</small>}{!deployment && <small>{deploymentErrors[appId] || t.loading}</small>}</div><div className="row"><label>{t.version}<select value={`${chosen.version}:${chosen.build}:${chosen.releaseChannel}`} onChange={event => setSelectedVersion(value => ({ ...value, [appId]: event.target.value }))}>{releases.map(release => <option key={`${release.version}:${release.build}:${release.releaseChannel}`} value={`${release.version}:${release.build}:${release.releaseChannel}`}>{release.version} · {t.build} {release.build} · {release.releaseChannel}</option>)}</select></label><Button onClick={() => act(chosen, 'install')} busy={busy}>{t.install}</Button><Button onClick={() => act(chosen, 'launch')} busy={busy}>{t.launch}</Button><Button onClick={() => act(chosen, 'update')} disabled={!deployment?.versionNumber} title={!deployment?.versionNumber ? t.deploymentVersionUnavailable : undefined} busy={busy}>{t.update}</Button><Button variant="danger" onClick={() => setConfirm(chosen)} disabled={!deployment?.versionNumber} title={!deployment?.versionNumber ? t.deploymentVersionUnavailable : undefined}>{t.uninstall}</Button></div></li>;
       })}</ul> : <Empty>{t.empty}</Empty>}
     </Panel>
     {active && <AppRuntime key={active.receipt.instanceId} appId={active.appId} receipt={active.receipt} subjectId={subjectId} t={t} onClose={() => setActive(null)} />}

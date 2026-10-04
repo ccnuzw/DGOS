@@ -1,0 +1,198 @@
+/**
+ * macOS Design System - CSS Variables and Design Tokens
+ *
+ * 所有设计令牌的单一来源
+ * 其他CSS文件应该引用这些变量，而不是硬编码值
+ */
+
+/* ==================== CSS Cascade Layers ==================== */
+@layer base, components, utilities;
+
+:root {
+  /* ==================== 颜色系统 ==================== */
+
+  /* 主色 */
+  --macos-primary: #0F5FD9;
+  --macos-primary-hover: #0D54C3;
+
+  /* 背景 */
+  --macos-bg-light: rgba(255, 255, 255, 0.7);
+  --macos-bg-dark: rgba(30, 30, 30, 0.7);
+
+  /* 文本 */
+  --macos-text-light: #000000;
+  --macos-text-dark: #ffffff;
+
+  /* 边框 */
+  --macos-border-light: rgba(0, 0, 0, 0.08);
+  --macos-border-dark: rgba(255, 255, 255, 0.08);
+
+  /* ==================== 透明度级别 ==================== */
+
+  --alpha-1: 0.03;
+  --alpha-2: 0.05;
+  --alpha-3: 0.08;
+  --alpha-4: 0.12;
+  --alpha-5: 0.15;
+  --alpha-6: 0.18;
+  --alpha-7: 0.20;
+  --alpha-8: 0.25;
+  --alpha-9: 0.30;
+  --alpha-10: 0.35;
+
+  /* ==================== 渐变系统 ==================== */
+
+  /* Dock 玻璃态渐变 */
+  --macos-glass-dock-light: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, var(--alpha-8)) 0%,
+    rgba(255, 255, 255, var(--alpha-7)) 50%,
+    rgba(255, 255, 255, var(--alpha-6)) 100%
+  );
+
+  --macos-glass-dock-dark: linear-gradient(
+    to bottom,
+    rgba(40, 40, 42, var(--alpha-9)) 0%,
+    rgba(35, 35, 37, var(--alpha-8)) 50%,
+    rgba(30, 30, 32, 0.22) 100%
+  );
+
+  /* System Bar 玻璃态渐变 */
+  --macos-glass-systembar-light: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.85) 0%,
+    rgba(255, 255, 255, 0.75) 100%
+  );
+
+  --macos-glass-systembar-dark: linear-gradient(
+    to bottom,
+    rgba(30, 30, 30, 0.9) 0%,
+    rgba(25, 25, 25, 0.85) 100%
+  );
+
+  /* Launchpad 背景 */
+  --macos-launchpad-bg-light: rgba(0, 0, 0, var(--alpha-10));
+  --macos-launchpad-bg-dark: rgba(0, 0, 0, 0.5);
+
+  /* ==================== 阴影系统 ==================== */
+
+  /* 单层阴影 */
+  --macos-shadow-none: none;
+  --macos-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --macos-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
+  --macos-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.2);
+
+  /* 组合阴影 */
+  --macos-shadow-dock-light:
+    0 0 0 0.5px rgba(0, 0, 0, var(--alpha-1)) inset,
+    0 16px 32px rgba(0, 0, 0, var(--alpha-5)),
+    0 6px 12px rgba(0, 0, 0, 0.1);
+
+  --macos-shadow-dock-dark:
+    0 0 0 0.5px rgba(255, 255, 255, 0.04) inset,
+    0 16px 32px rgba(0, 0, 0, 0.6),
+    0 6px 12px rgba(0, 0, 0, 0.4);
+
+  --macos-shadow-systembar-light:
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.04),
+    0 1px 3px rgba(0, 0, 0, 0.02);
+
+  --macos-shadow-systembar-dark:
+    inset 0 -1px 0 0 rgba(255, 255, 255, var(--alpha-1)),
+    0 1px 3px rgba(0, 0, 0, var(--alpha-5));
+
+  /* ==================== 模糊和玻璃效果 ==================== */
+
+  --macos-blur-light: blur(80px) saturate(180%) brightness(1.15);
+  --macos-blur-dark: blur(80px) saturate(180%) brightness(0.85);
+  --macos-blur-strong: blur(100px) saturate(200%);
+  --macos-blur-launchpad: blur(40px) brightness(0.9);
+  --macos-blur-launchpad-dark: blur(40px) brightness(0.7);
+
+  /* ==================== 圆角系统 ==================== */
+
+  /* macOS Squircle 标准: 22% of size */
+  --macos-radius-icon-sm: 9.7px;   /* 44px * 0.22 */
+  --macos-radius-icon-md: 11.4px;  /* 52px * 0.22 */
+  --macos-radius-icon-lg: 12.3px;  /* 56px * 0.22 */
+  --macos-radius-icon-xl: 14px;    /* 64px * 0.22 */
+  --macos-radius-icon-2xl: 17.6px; /* 80px * 0.22 */
+  --macos-radius-icon-3xl: 21px;   /* 96px * 0.22 */
+
+  --macos-radius-window: 12px;
+  --macos-radius-panel: 8px;
+  --macos-radius-button: 6px;
+  --macos-radius-dock: 20px;
+
+  /* ==================== 动画和过渡 ==================== */
+
+  --macos-transition-fast: 150ms ease;
+  --macos-transition-base: 200ms ease;
+  --macos-transition-slow: 300ms ease;
+
+  --macos-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --macos-ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --macos-ease-sharp: cubic-bezier(0.4, 0, 0.6, 1);
+
+  /* ==================== 尺寸系统 ==================== */
+
+  /* System Bar */
+  --macos-systembar-height: 44px;
+
+  /* Dock */
+  --macos-dock-icon-sm: 44px;
+  --macos-dock-icon-md: 52px;
+  --macos-dock-icon-lg: 56px;
+  --macos-dock-icon-xl: 64px;
+  --macos-dock-gap: 8px;
+  --macos-dock-padding: 8px 12px;
+
+  /* Launchpad */
+  --macos-launchpad-icon-sm: 70px;
+  --macos-launchpad-icon-md: 84px;
+  --macos-launchpad-icon-lg: 96px;
+  --macos-launchpad-gap: 48px 56px;
+  --macos-launchpad-columns: 7;
+
+  /* Traffic Lights */
+  --macos-trafficlight-size: 16px;
+  --macos-trafficlight-gap: 8px;
+
+  /* ==================== Z-Index 层级 ==================== */
+
+  --z-base: 1;
+  --z-dock: 100;
+  --z-window: 200;
+  --z-systembar: 1000;
+  --z-launchpad: 500;
+  --z-command-palette: 1200;
+  --z-notification: 1300;
+  --z-tooltip: 1400;
+
+  /* ==================== 交互颜色 ==================== */
+
+  --macos-hover-light: rgba(0, 0, 0, var(--alpha-2));
+  --macos-hover-dark: rgba(255, 255, 255, var(--alpha-3));
+  --macos-active-light: rgba(0, 0, 0, var(--alpha-3));
+  --macos-active-dark: rgba(255, 255, 255, var(--alpha-4));
+}
+
+/* ==================== Dark Theme Overrides ==================== */
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --macos-bg-light: rgba(30, 30, 30, 0.7);
+  --macos-bg-dark: rgba(40, 40, 40, 0.7);
+
+  --macos-text-light: #ffffff;
+  --macos-text-dark: #000000;
+
+  --macos-border-light: rgba(255, 255, 255, var(--alpha-3));
+  --macos-border-dark: rgba(0, 0, 0, var(--alpha-7));
+}
+
+/* Light theme explicit */
+[data-theme="light"] {
+  color-scheme: light;
+}

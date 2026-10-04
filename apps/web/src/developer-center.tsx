@@ -253,17 +253,18 @@ function InstallationRecordsView({ appId, t, onClose }: InstallationRecordsViewP
                 <dd>{displayDate(data.installedAt)}</dd>
               </div>
               {data.healthCheckState && (
-                <div>
-                  <dt>{t.healthCheck}</dt>
-                  <dd><Status value={data.healthCheckState} /></dd>
-                </div>
+              <div>
+                <dt>{t.healthCheck}</dt>
+                <dd><Status value={data.healthCheckState || data.lastHealth?.state || data.state || 'unknown'} /></dd>
+              </div>
               )}
-              {data.rollbackVersion && (
+              {(data.rollbackVersion || data.previousDigest || data.previousVersion) && (
                 <div>
                   <dt>{t.rollbackVersion}</dt>
-                  <dd>{data.rollbackVersion}</dd>
+                  <dd>{data.rollbackVersion || data.previousVersion || data.previousDigest}</dd>
                 </div>
               )}
+              <div><dt>{t.dataVersion}</dt><dd>{data.dataRetained === false ? t.error : t.none}</dd></div>
             </dl>
           )}
         </Load>
@@ -282,21 +283,20 @@ export function DeveloperCenter({ t }: { t: ReturnType<typeof allLabels> }) {
     [reason, setReason] = useState(""),
     [selectedApp, setSelectedApp] = useState<Dict | null>(null),
     [installationView, setInstallationView] = useState<string | null>(null),
+    [validationIssues, setValidationIssues] = useState<string[]>([]),
     [filter, setFilter] = useState<string>("all");
 
   function inspect() {
+    setValidationIssues([]);
     try {
       const value = JSON.parse(envelope);
-      if (
-        !formatOk(value.manifest) ||
-        !value.files ||
-        !value.resourceDigests ||
-        !value.keyId ||
-        !value.signature
-      )
-        throw new Error(
-          "Envelope needs a dgos-app/v1 manifest, files, resourceDigests, keyId and signature.",
-        );
+      const issues: string[] = [];
+      if (!formatOk(value.manifest)) issues.push('manifest: invalid or incomplete dgos-app/v1 manifest');
+      if (!value.files || typeof value.files !== 'object' || Array.isArray(value.files)) issues.push('files: package file map is required');
+      if (!value.resourceDigests || typeof value.resourceDigests !== 'object' || Array.isArray(value.resourceDigests)) issues.push('resourceDigests: resource digest map is required');
+      if (!value.keyId) issues.push('keyId: trusted key identifier is required');
+      if (!value.signature) issues.push('signature: package signature is required');
+      if (issues.length) { setValidationIssues(issues); throw new Error(issues.join('; ')); }
       setSummary(value.manifest);
     } catch (e) {
       op.run(async () => {
@@ -390,6 +390,7 @@ export function DeveloperCenter({ t }: { t: ReturnType<typeof allLabels> }) {
               </div>
             </dl>
           )}
+          {validationIssues.length > 0 && <div role="alert" className="stack"><strong>{t.error}</strong><ul>{validationIssues.map(issue => <li key={issue}>{issue}</li>)}</ul></div>}
         </Panel>
 
         <Load resource={catalog}>

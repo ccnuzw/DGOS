@@ -7,9 +7,6 @@
 @import '@dgos/dgos-ui/accessibility.css';
 @import '@dgos/app-shell/style.css';
 
-/* Import premium visual enhancements */
-@import '../../../packages/app-shell/src/macos/premium-visual-boost.css';
-
 /* Global macOS theme setup */
 :root {
   /* Ensure proper rendering */

@@ -94,6 +94,69 @@ current_packages:
     priority: P1
     status: ready_now
     artifact: .herdr/work/wp-w2-07-fr009-assistant-ui.md
+  - id: WP-W3-01
+    title: 'Web 完整演示'
+    owner: worker-web
+    priority: P0
+    status: ready_now
+    baseline: f14a3c9
+    artifact: .herdr/work/wp-w3-01-web-complete-demo.md
+  - id: WP-W3-02
+    title: 'Native bridge 最小修复与复验'
+    owner: worker-native
+    priority: P1
+    status: ready_now
+    baseline: f14a3c9
+    artifact: .herdr/work/wp-w3-02-native-bridge-fix.md
+  - id: WP-W3-03
+    title: 'FR-002 完整入口'
+    owner: worker-platform
+    priority: P1
+    status: ready_now
+    baseline: f14a3c9
+    artifact: .herdr/work/wp-w3-03-fr002-entry.md
+  - id: WP-W3-04
+    title: '统一集成验证与证据'
+    owner: worker-test
+    priority: P0
+    status: ready_now
+    baseline: f14a3c9
+    artifact: .herdr/work/wp-w3-04-integration-verification.md
+  - id: WP-W3-05
+    title: 'V1 文档与交付收敛'
+    owner: planner
+    priority: P1
+    status: prepare_now_writeback_after_verify
+    depends_on: [WP-W3-01, WP-W3-03, WP-W3-04]
+    artifact: .herdr/work/wp-w3-05-docs-release.md
+  - id: WP-W4-01
+    title: 'V1 最终集成验证'
+    owner: verify
+    priority: P0
+    status: prepare_now_execute_after_w3
+    depends_on: [WP-W3-01, WP-W3-02, WP-W3-03, WP-W3-04]
+    artifact: .herdr/work/wp-w4-01-final-integration.md
+  - id: WP-W4-02
+    title: '演示视频和 V1 完成报告'
+    owner: lead
+    priority: P1
+    status: prepare_now
+    depends_on: [WP-W4-01]
+    artifact: .herdr/work/wp-w4-02-demo-report.md
+  - id: WP-W4-03
+    title: 'V1 发布准备'
+    owner: worker-devops
+    priority: P1
+    status: prepare_now
+    depends_on: [WP-W4-01]
+    artifact: .herdr/work/wp-w4-03-release-prep.md
+  - id: WP-W4-04
+    title: '最终状态与追踪回写'
+    owner: planner
+    priority: P0
+    status: prepare_now_writeback_after_verify
+    depends_on: [WP-W4-01]
+    artifact: .herdr/work/wp-w4-04-status-writeback.md
 
 workflow_improvements:
   new_approach: 'Wave-based delivery with fast feedback loops'

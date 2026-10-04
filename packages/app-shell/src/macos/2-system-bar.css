@@ -1,0 +1,169 @@
+/**
+ * macOS Design System - System Bar Component
+ *
+ * 优化版本 - 使用CSS变量，零硬编码
+ * 单一职责：只负责系统栏相关样式
+ */
+
+@layer components {
+  /* ==================== System Bar ==================== */
+
+  .macos-system-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--macos-systembar-height);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+
+    /* 使用变量 - 无硬编码 */
+    background: var(--macos-glass-systembar-light);
+    backdrop-filter: var(--macos-blur-light);
+    -webkit-backdrop-filter: var(--macos-blur-light);
+
+    border-bottom: 0.5px solid var(--macos-border-light);
+    box-shadow: var(--macos-shadow-systembar-light);
+
+    z-index: var(--z-systembar);
+    user-select: none;
+    -webkit-app-region: drag;
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
+  }
+
+  [data-theme="dark"] .macos-system-bar {
+    background: var(--macos-glass-systembar-dark);
+    backdrop-filter: var(--macos-blur-dark);
+    -webkit-backdrop-filter: var(--macos-blur-dark);
+    border-bottom: 0.5px solid var(--macos-border-dark);
+    box-shadow: var(--macos-shadow-systembar-dark);
+  }
+
+  /* ==================== System Bar Sections ==================== */
+
+  .macos-system-bar__left,
+  .macos-system-bar__center,
+  .macos-system-bar__right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    -webkit-app-region: no-drag;
+  }
+
+  .macos-system-bar__left {
+    flex: 1;
+  }
+
+  .macos-system-bar__center {
+    flex: 0 0 auto;
+  }
+
+  .macos-system-bar__right {
+    flex: 1;
+    justify-content: flex-end;
+  }
+
+  /* ==================== Logo ==================== */
+
+  .macos-system-bar__logo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--macos-radius-button);
+    transition: background var(--macos-transition-fast);
+    border: none;
+    background: transparent;
+  }
+
+  .macos-system-bar__logo:hover {
+    background: var(--macos-hover-light);
+  }
+
+  [data-theme="dark"] .macos-system-bar__logo:hover {
+    background: var(--macos-hover-dark);
+  }
+
+  .macos-system-bar__logo-mark {
+    width: 16px;
+    height: 16px;
+    background: var(--macos-primary);
+    color: white;
+    border-radius: 4px;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+
+  /* ==================== App Name ==================== */
+
+  .macos-system-bar__app-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* ==================== Icon Buttons ==================== */
+
+  .macos-system-bar__icon-button {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    color: var(--text);
+    border-radius: var(--macos-radius-button);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: all var(--macos-transition-fast) var(--macos-ease-smooth);
+  }
+
+  .macos-system-bar__icon-button:hover {
+    background: var(--macos-hover-light);
+  }
+
+  .macos-system-bar__icon-button:active {
+    transform: scale(0.96);
+    background: var(--macos-active-light);
+  }
+
+  [data-theme="dark"] .macos-system-bar__icon-button:hover {
+    background: var(--macos-hover-dark);
+  }
+
+  [data-theme="dark"] .macos-system-bar__icon-button:active {
+    background: var(--macos-active-dark);
+  }
+
+  /* ==================== Time Display ==================== */
+
+  .macos-system-bar__time {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    min-width: 48px;
+    text-align: center;
+  }
+
+  /* ==================== Responsive ==================== */
+
+  @media (max-width: 520px) {
+    .macos-system-bar {
+      padding: 0 12px;
+    }
+
+    .macos-system-bar__app-name {
+      display: none;
+    }
+  }
+}

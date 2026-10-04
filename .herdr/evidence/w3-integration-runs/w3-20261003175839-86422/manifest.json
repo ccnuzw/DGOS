@@ -1,0 +1,195 @@
+{
+  "schema": "dgos/w3-integration-verification/v1",
+  "work_package": "WP-W3-04",
+  "run_id": "w3-20261003175839-86422",
+  "started_at": "2026-10-03T17:58:39.805Z",
+  "ended_at": "2026-10-03T18:00:00.790Z",
+  "source": {
+    "code_version": "f14a3c9827bd8a9948a5f30f97a546388936b082",
+    "branch": "main",
+    "dirty": true,
+    "patch_sha256": "3b4b7477eb73347180925855a90889fd3c31e3ec406424164144034b113ec325"
+  },
+  "source_end": {
+    "code_version": "f14a3c9827bd8a9948a5f30f97a546388936b082",
+    "branch": "main",
+    "dirty": true,
+    "patch_sha256": "34e855c08c4873545e6e50cedd60d93f9e147d6eee3637cf69b18c74b53380b0"
+  },
+  "source_drift": true,
+  "asset_sha256": [
+    {
+      "path": "apps/web/dist",
+      "kind": "directory-tree",
+      "sha256": "697496c7556344e913dd44cd26ba0d8f76c7ac3bae1ca899f9f42b0bf07a3924",
+      "files": 43
+    },
+    {
+      "path": "apps/desktop/src-tauri/target/debug/bundle/macos/DGOS.app",
+      "kind": "directory-tree",
+      "sha256": "3621d3302aeb7464740551a7d10902a053a2fe67a225aeaaf1f9583b2171634d",
+      "files": 4
+    },
+    {
+      "path": "apps/desktop/src-tauri/target/debug/dgos-keychain-fixture",
+      "kind": "file",
+      "sha256": "416f1e80c9fac4ac5f00deac8857604463ec4d852106efd2746e74ee9379a408",
+      "size": 615992
+    },
+    {
+      "path": "apps/ai-workbench-package/dist",
+      "present": false,
+      "sha256": null
+    }
+  ],
+  "environment": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v22.23.0",
+    "package_manager": "pnpm 9.0.0",
+    "cwd": "/Users/apple/Progame/DGOS"
+  },
+  "groups": {
+    "web": {
+      "result": "FAIL",
+      "commands": [
+        "web-e2e-w2-management",
+        "web-e2e-w2-provider-task"
+      ]
+    },
+    "fr002": {
+      "result": "PASS",
+      "commands": [
+        "fr002-api-and-lifecycle",
+        "provider-task-api"
+      ]
+    },
+    "native": {
+      "result": "PASS",
+      "commands": [
+        "native-static-check",
+        "native-smoke"
+      ]
+    }
+  },
+  "commands": [
+    {
+      "id": "web-e2e-w2-management",
+      "group": "web",
+      "argv": [
+        "pnpm",
+        "exec",
+        "playwright",
+        "test",
+        "apps/web/e2e/real-management-fixture.spec.mjs",
+        "--config=apps/web/playwright.config.mjs",
+        "--reporter=line"
+      ],
+      "exit_code": 1,
+      "signal": null,
+      "status": "failed",
+      "started_at": "2026-10-03T17:58:39.871Z",
+      "ended_at": "2026-10-03T17:59:45.463Z",
+      "stdout_log": ".herdr/evidence/w3-integration-runs/w3-20261003175839-86422/web/web-e2e-w2-management.stdout.log",
+      "stderr_log": ".herdr/evidence/w3-integration-runs/w3-20261003175839-86422/web/web-e2e-w2-management.stderr.log"
+    },
+    {
+      "id": "web-e2e-w2-provider-task",
+      "group": "web",
+      "argv": [
+        "pnpm",
+        "exec",
+        "playwright",
+        "test",
+        "apps/web/e2e/w2-03-web-e2e.spec.mjs",
+        "--config=apps/web/playwright.config.mjs",
+        "--reporter=line"
+      ],
+      "exit_code": 1,
+      "signal": null,
+      "status": "failed",
+      "started_at": "2026-10-03T17:59:45.463Z",
+      "ended_at": "2026-10-03T17:59:48.642Z",
+      "stdout_log": ".herdr/evidence/w3-integration-runs/w3-20261003175839-86422/web/web-e2e-w2-provider-task.stdout.log",
+      "stderr_log": ".herdr/evidence/w3-integration-runs/w3-20261003175839-86422/web/web-e2e-w2-provider-task.stderr.log"
+    },
+    {
+      "id": "fr002-api-and-lifecycle",
+      "group": "fr002",
+      "argv": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "tests/integration/app-package-fixture.test.mjs",
+        "tests/unit/app-packages.test.mjs",
+        "tests/unit/runtime.test.mjs"
+      ],
+      "exit_code": 0,
+      "signal": null,
+      "status": "passed",
+      "started_at": "2026-10-03T17:59:48.642Z",
+      "ended_at": "2026-10-03T17:59:49.225Z",
+      "stdout_log": ".herdr/evidence/w3-integration-runs/w3-20261003175839-86422/fr002/fr002-api-and-lifecycle.stdout.log",
+      "stderr_log": ".herdr/evidence/w3-integration-runs/w3-20261003175839-86422/fr002/fr002-api-and-lifecycle.stderr.log"
+    },
+    {
+      "id": "provider-task-api",
+      "group": "fr002",
+      "argv": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "tests/integration/ai-task-api.test.mjs",
+        "tests/integration/provider-worker.test.mjs",
+        "tests/provider/profile-task-wiring.test.mjs"
+      ],
+      "exit_code": 0,
+      "signal": null,
+      "status": "passed",
+      "started_at": "2026-10-03T17:59:49.225Z",
+      "ended_at": "2026-10-03T17:59:50.134Z",
+      "stdout_log": ".herdr/evidence/w3-integration-runs/w3-20261003175839-86422/fr002/provider-task-api.stdout.log",
+      "stderr_log": ".herdr/evidence/w3-integration-runs/w3-20261003175839-86422/fr002/provider-task-api.stderr.log"
+    },
+    {
+      "id": "native-static-check",
+      "group": "native",
+      "argv": [
+        "pnpm",
+        "--filter",
+        "@dgos/desktop",
+        "check"
+      ],
+      "exit_code": 0,
+      "signal": null,
+      "status": "passed",
+      "started_at": "2026-10-03T17:59:50.134Z",
+      "ended_at": "2026-10-03T17:59:50.433Z",
+      "stdout_log": ".herdr/evidence/w3-integration-runs/w3-20261003175839-86422/native/native-static-check.stdout.log",
+      "stderr_log": ".herdr/evidence/w3-integration-runs/w3-20261003175839-86422/native/native-static-check.stderr.log"
+    },
+    {
+      "id": "native-smoke",
+      "group": "native",
+      "argv": [
+        "node",
+        "apps/desktop/scripts/e2e-macos.mjs"
+      ],
+      "exit_code": 0,
+      "signal": null,
+      "status": "passed",
+      "started_at": "2026-10-03T17:59:50.433Z",
+      "ended_at": "2026-10-03T18:00:00.713Z",
+      "stdout_log": ".herdr/evidence/w3-integration-runs/w3-20261003175839-86422/native/native-smoke.stdout.log",
+      "stderr_log": ".herdr/evidence/w3-integration-runs/w3-20261003175839-86422/native/native-smoke.stderr.log"
+    }
+  ],
+  "result": "FAIL",
+  "limitations": [
+    "Web fixture uses deterministic local Provider upstream; it is not external Provider evidence.",
+    "Native smoke proves process/window/webview bridge/keychain session only; it does not assert Provider/Task/Artifact.",
+    "Historical reports and prior builds are not included in this manifest.",
+    "A failing command remains evidence and cannot be promoted to PASS."
+  ],
+  "evidence_root": ".herdr/evidence/w3-integration-runs/w3-20261003175839-86422"
+}

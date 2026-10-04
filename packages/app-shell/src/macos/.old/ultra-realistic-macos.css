@@ -53,8 +53,9 @@
 .macos-dock__icon {
   width: 100%;
   height: 100%;
-  border-radius: 13px;
-  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.2));
+  border-radius: 11.4px;
+  /* Remove drop-shadow completely */
+  filter: none !important;
 }
 
 /* ==================== PERFECT WINDOWS ==================== */
@@ -92,9 +93,35 @@
 /* ==================== REFINED TRAFFIC LIGHTS ==================== */
 
 .macos-traffic-light {
-  width: 12px !important;
-  height: 12px !important;
-  border: 0.5px solid rgba(0, 0, 0, 0.08);
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px !important;
+  min-height: 16px !important;
+  max-width: 16px !important;
+  max-height: 16px !important;
+  aspect-ratio: 1 / 1 !important;
+  flex: 0 0 16px !important;
+  border-radius: 50% !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-sizing: border-box !important;
+}
+
+/* Final cascade guard: the ultra-realistic layer loads after the traffic-light layer. */
+.macos-window__title-bar .macos-traffic-light,
+.macos-window__title-bar .macos-traffic-light:hover,
+.macos-window__title-bar .macos-traffic-light:active {
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px !important;
+  min-height: 16px !important;
+  max-width: 16px !important;
+  max-height: 16px !important;
+  aspect-ratio: 1 / 1 !important;
+  flex: 0 0 16px !important;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
 }
 
 .macos-traffic-light--close {
@@ -306,12 +333,20 @@ button.primary:hover {
 
 /* ==================== PERFORMANCE OPTIMIZATIONS ==================== */
 
-.macos-dock,
 .macos-system-bar,
 .macos-window,
 .macos-command-palette {
   will-change: transform;
   transform: translateZ(0);
+}
+
+/* A transformed dock can no longer use its fixed positioning against the viewport.
+   Keep the floating dock out of transformed stacking contexts. */
+.macos-dock {
+  transform: translateX(-50%) !important;
+  position: fixed !important;
+  bottom: 8px !important;
+  z-index: 10000 !important;
 }
 
 /* Reduce motion for accessibility */

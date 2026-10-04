@@ -1,0 +1,206 @@
+/**
+ * macOS Design System - Dock Component
+ *
+ * 完全修复版本 - 悬浮居中
+ */
+
+@layer components {
+  /* ==================== Dock Container ==================== */
+
+  .macos-dock {
+    position: fixed;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--macos-dock-gap);
+    padding: var(--macos-dock-padding);
+    width: auto;
+    min-width: auto;
+    max-width: 90vw;
+
+    /* 使用变量 - 无硬编码 */
+    background: var(--macos-glass-dock-light);
+    backdrop-filter: var(--macos-blur-light);
+    -webkit-backdrop-filter: var(--macos-blur-light);
+
+    border: 0.5px solid rgba(255, 255, 255, var(--alpha-10));
+    border-radius: var(--macos-radius-dock);
+    box-shadow: var(--macos-shadow-dock-light);
+
+    z-index: var(--z-dock);
+    user-select: none;
+    will-change: transform;
+    pointer-events: auto;
+  }
+
+  [data-theme="dark"] .macos-dock {
+    background: var(--macos-glass-dock-dark);
+    backdrop-filter: var(--macos-blur-dark);
+    -webkit-backdrop-filter: var(--macos-blur-dark);
+    border: 0.5px solid rgba(255, 255, 255, var(--alpha-5));
+    box-shadow: var(--macos-shadow-dock-dark);
+  }
+
+  /* Hidden state */
+  .macos-dock[data-hidden="true"] {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* ==================== Dock Item ==================== */
+
+  .macos-dock__item {
+    position: relative;
+    width: var(--macos-dock-icon-lg);
+    height: var(--macos-dock-icon-lg);
+    cursor: pointer;
+    transition: transform var(--macos-transition-base) var(--macos-ease-spring);
+    will-change: transform;
+    transform-origin: center bottom;
+    flex-shrink: 0;
+  }
+
+  .macos-dock__item:active {
+    transition-duration: 100ms;
+  }
+
+  /* ==================== Dock Icon ==================== */
+
+  .macos-dock__icon {
+    width: 100%;
+    height: 100%;
+    border-radius: var(--macos-radius-icon-lg);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    position: relative;
+    background: transparent;
+
+    /* 极致优化：显式声明无阴影 */
+    filter: var(--macos-shadow-none);
+    box-shadow: var(--macos-shadow-none);
+
+    transition: transform var(--macos-transition-fast);
+  }
+
+  /* Icon内容填充 */
+  .macos-dock__icon img,
+  .macos-dock__icon svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+  }
+
+  /* ==================== Hover Effects ==================== */
+
+  .macos-dock__item:hover {
+    transform: scale(1.1) translateY(-4px);
+  }
+
+  .macos-dock__item:hover .macos-dock__icon {
+    transform: scale(1.02);
+  }
+
+  /* ==================== Running Indicator ==================== */
+
+  .macos-dock__indicator {
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 200ms;
+  }
+
+  .macos-dock__item--running .macos-dock__indicator {
+    opacity: 1;
+  }
+
+  [data-theme="dark"] .macos-dock__indicator {
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  /* ==================== Badge ==================== */
+
+  .macos-dock__badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    background: linear-gradient(135deg, #FF4747 0%, #FF3838 100%);
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--macos-shadow-sm);
+    line-height: 1;
+  }
+
+  [data-theme="dark"] .macos-dock__badge {
+    border: 2px solid rgba(30, 30, 30, 0.9);
+  }
+
+  /* ==================== Divider ==================== */
+
+  .macos-dock__divider {
+    width: 2px;
+    height: 40px;
+    background: var(--macos-border-light);
+    border-radius: 1px;
+    margin: 0 4px;
+    flex-shrink: 0;
+  }
+
+  [data-theme="dark"] .macos-dock__divider {
+    background: var(--macos-border-dark);
+  }
+
+  /* ==================== Responsive ==================== */
+
+  @media (max-width: 850px) {
+    .macos-dock {
+      padding: 8px 12px;
+      gap: 6px;
+    }
+
+    .macos-dock__item {
+      width: var(--macos-dock-icon-md);
+      height: var(--macos-dock-icon-md);
+    }
+
+    .macos-dock__icon {
+      border-radius: var(--macos-radius-icon-md);
+    }
+  }
+
+  @media (max-width: 520px) {
+    .macos-dock {
+      bottom: 4px;
+      padding: 6px 10px;
+      gap: 4px;
+    }
+
+    .macos-dock__item {
+      width: var(--macos-dock-icon-sm);
+      height: var(--macos-dock-icon-sm);
+    }
+
+    .macos-dock__icon {
+      border-radius: var(--macos-radius-icon-sm);
+    }
+  }
+}

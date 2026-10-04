@@ -98,6 +98,17 @@ test('public ProviderConfig to text task API supports explicit refresh, idempote
   await app.close();
 });
 
+test('unknown Provider config maps errorKey to 404 without creating task side effects', async () => {
+  const app = buildServer({ logger: false, repository: new InMemoryIdentityRepository(), providerRepository: new InMemoryProviderRepository(), providerConfigRepository: new InMemoryProviderConfigRepository(), aiTaskRepository: new InMemoryAiTaskRepository(), secretService: new InMemorySecretService(), providerAdapters: [], providerEgress: fixtureEgress });
+  const bootstrap = await app.inject({ method: 'POST', url: '/api/v1/identity/admin/bootstrap', payload: { displayName: 'Unknown config owner', credential: 'owner-password' } });
+  const auth = { authorization: `Bearer ${bootstrap.json().sessionId}`, 'x-dgos-csrf': 'test' };
+  const response = await app.inject({ method: 'POST', url: '/api/v1/ai-tasks', headers: auth, payload: { requestId: 'unknown-provider-config', target: 'text', intent: 'text.chat', input: { text: 'hello' }, options: { providerConfigId: 'missing-provider-config', modelId: 'missing-model' } } });
+  assert.equal(response.statusCode, 404, response.body);
+  assert.equal(response.json().errorKey, 'provider_config_not_found');
+  assert.equal(response.json().artifactIds, undefined);
+  await app.close();
+});
+
 test('quota preflight rejection creates no task, attempt or reservation', async () => {
   const providerRepository = new InMemoryProviderRepository();
   const providerConfigRepository = new InMemoryProviderConfigRepository();

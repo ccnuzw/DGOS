@@ -219,6 +219,69 @@ Context-pack：`context-w2-02-web-ui.md`、`context-w2-03-e2e.md`、`context-w2-
 
 Work-package：`wp-w2-02-web-full-demo.md`、`wp-w2-03-web-e2e.md`、`wp-w2-04-native-bridge-diagnosis.md`、`wp-w2-06-fr003-completion.md`、`wp-w2-07-fr009-assistant-ui.md`。
 
+## Wave 3 立即派发计划（基线：`f14a3c9`，2026-10-04）
+
+Wave 2 已打通 Provider→Task→SSE→Artifact，Native 根因已有诊断，FR-003/FR-009 与 E2E 框架已有交付。Wave 3 目标是快速形成可录制的 Web MVP，同时并行修复 Native、补齐 FR-002，并滚动收敛证据。
+
+### P0：立即启动
+
+| 包 | Owner | 目标 | 依赖 |
+|---|---|---|---|
+| WP-W3-01 | worker-web | Web 登录→Provider→模型→Task→SSE→Artifact→恢复完整演示 | W2 Provider 链已完成 |
+| WP-W3-04 | worker-test + verify | Web 主链、FR-003/009、FR-002 与 Native smoke 统一验证 | 可滚动执行 |
+
+### P1：立即并行启动
+
+| 包 | Owner | 目标 | 依赖 |
+|---|---|---|---|
+| WP-W3-02 | worker-native | 按已知根因修复 bridge/API catalog 启动链并复验 | 无；不阻塞 Web |
+| WP-W3-03 | worker-platform + worker-web | FR-002 应用目录/开发者中心/生命周期完整入口 | 现有应用 API |
+
+### P1：等待证据后启动
+
+| 包 | Owner | 目标 | 依赖 |
+|---|---|---|---|
+| WP-W3-05 | planner + worker-devops | 回写实现状态、E2E/发布报告、演示运行说明 | W3-01/W3-03/W3-04 真实结果 |
+
+Context-pack：`context-w3-web-demo.md`、`context-w3-native-fix.md`、`context-w3-fr002.md`、`context-w3-integration.md`、`context-w3-docs.md`。
+
+Work-package：`wp-w3-01-web-complete-demo.md`、`wp-w3-02-native-bridge-fix.md`、`wp-w3-03-fr002-entry.md`、`wp-w3-04-integration-verification.md`、`wp-w3-05-docs-release.md`。
+
+并行边界：W3-01/W3-02/W3-03/W3-04 可立即并行；Web 主线不等待 Native；W3-05 不提前宣布 FR 完成，只消费 Verify 的日期化证据。
+
+## Wave 4 最终收敛计划（2026-10-04）
+
+### 当前判断
+
+- 核心演示链已在 Wave 2 打通，W3-01 已完成 Web UI，W3-03 已完成 FR-002 入口。
+- W3-02 Native bridge 与 W3-04 集成验证仍是当前硬阻塞。
+- V1 实现状态仍显示多数 FR 为本地验证/基础实现；文档中的历史证据不能替代 `f14a3c9` 之后的统一候选证据。
+- 产品需求要求 Web + macOS 双宿主、Provider/Task 失败恢复、应用生命周期回滚、权限/秘密边界；发布空间仍明确 fresh image/canary、目标恢复、性能批准和签字缺失。
+
+### 优先级与依赖
+
+| 优先级 | 包 | Owner | 可开始时间 | 依赖 |
+|---|---|---|---|---|
+| P0 | WP-W4-01 最终集成验证 | Verify + Worker-Test | W3-02/W3-04完成后；现在可准备测试矩阵 | W3-01/02/03/04 |
+| P0 | WP-W4-04 状态与追踪回写 | Planner | 现在准备，W4-01后写入 | W4-01证据 |
+| P1 | WP-W4-03 发布准备 | Worker-DevOps + Verify | 现在盘点，最终门禁等待W4-01 | W4-01候选 |
+| P1 | WP-W4-02 演示视频/报告 | Lead + DevOps | 现在准备脚本，验证后录制 | W4-01结果 |
+
+### 并行边界
+
+1. W3-02/W3-04完成前，W4-01可并行准备夹具、矩阵、环境和清理脚本，但不得宣布最终通过。
+2. W4-02/W4-03/W4-04可并行准备；三者都不能以任务完成代替 Verify 证据。
+3. Web MVP 不等待 Native 修复即可形成 Web 结论；V1 双宿主结论必须单独记录 Native 结果。
+4. 若 W4-01通过 Web 但 Native/发布门禁未通过，交付结论应为“Web MVP可演示，Native或Release Pending/Blocked”，不得宣布完整 V1 Release。
+
+Context-pack：`context-w3-05-docs.md`、`context-w4-01-final-integration.md`、`context-w4-02-demo-report.md`、`context-w4-03-release.md`。
+
+Work-package：`wp-w3-05-docs-release.md`、`wp-w4-01-final-integration.md`、`wp-w4-02-demo-report.md`、`wp-w4-03-release-prep.md`、`wp-w4-04-status-writeback.md`。
+
+### WP-W4-04 执行回执（2026-10-04）
+
+当前仅完成证据盘点，**未执行正式状态回写**：未发现 WP-W4-01 最终 Verify manifest/report。最新可查 `WP-W3-04` 批次 `w3-20261003180728-89569` 为 `FAIL`，`source_drift=true`；Web 两组失败，FR-002 API/Task 组通过，Native 仅 smoke/static check 通过。Native 修复证据仍为 partial（iframe load=0、`dgos.app.ready`=0、bridge calls=0）。因此 `V1-实现状态.md` 保持原有状态，不将 W3 任务完成标记升格为 FR 完成；待冻结候选重新执行 W4-01 后再回写。
+
 ---
 
 ## 📊 并行度规划

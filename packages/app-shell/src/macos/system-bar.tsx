@@ -1,7 +1,7 @@
 // macOS System Bar Component
 // Top bar with app name, search, and system controls
 import React, { useState, useEffect, type ReactNode } from 'react';
-import { Search, Bell, Settings, User, X, Grid2X2 } from 'lucide-react';
+import { Search, Bell, Settings, User, X } from 'lucide-react';
 import type { WindowInstance } from './window-manager';
 
 export interface SystemBarProps {
@@ -16,7 +16,6 @@ export interface SystemBarProps {
   focusedWindowId?: string | null;
   onWindowFocus?: (windowId: string) => void;
   onWindowClose?: (windowId: string) => void;
-  onLauncherClick?: () => void;
 }
 
 export function MacOSSystemBar({
@@ -31,7 +30,6 @@ export function MacOSSystemBar({
   focusedWindowId,
   onWindowFocus,
   onWindowClose,
-  onLauncherClick,
 }: SystemBarProps) {
   const [time, setTime] = useState(formatTime(new Date()));
 
@@ -72,14 +70,6 @@ export function MacOSSystemBar({
           </div>
         )}
         <span className="macos-window-tab__title">{window.title}</span>
-        <button
-          className="macos-system-bar__launcher"
-          onClick={onLauncherClick}
-          aria-label="Open application launcher"
-          type="button"
-        >
-          <Grid2X2 size={18} />
-        </button>
         <button
           className="macos-window-tab__close"
           onClick={(e) => {

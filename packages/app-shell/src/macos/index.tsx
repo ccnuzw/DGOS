@@ -25,14 +25,19 @@ import {
   DownloadsIcon,
   TrashIcon,
 } from './icons/premium-app-icons';
-import './macos.css';
-import './premium-macos.css';
-import './ultra-realistic-macos.css';
-import './premium-dock.css';
+
+// Import the consolidated CSS layers in dependency order.
+import './0-variables.css';
+import './1-base.css';
+import './2-system-bar.css';
+import './3-dock.css';
+import './4-launchpad.css';
+import './5-window.css';
 import './perfect-traffic-lights.css';
-import './integrated-tabs.css';
-import './disable-context-menu.css';
 import './window-tabs.css';
+import './disable-context-menu.css';
+
+// Launchpad is a full-screen mode; the dock remains hidden while it is open.
 
 // Re-export new components and types
 export { CommandPalette, type CommandItem } from './command-palette';
@@ -258,8 +263,15 @@ export function MacOSShell({
         onWindowFocus={setFocusedWindowId}
         onWindowClose={(windowId) => {
           setWindows((prev) => prev.filter((w) => w.id !== windowId));
+          setFocusedWindowId((current) => {
+            if (current !== windowId) return current;
+            const remaining = windows.filter((w) => w.id !== windowId && w.state !== 'minimized');
+            return remaining.reduce< string | null >(
+              (top, candidate) => !top || candidate.zIndex > (remaining.find((w) => w.id === top)?.zIndex ?? -1) ? candidate.id : top,
+              null,
+            );
+          });
         }}
-        onLauncherClick={() => setLaunchpadVisible((visible) => !visible)}
       />
 
       <div className="macos-desktop__workspace">

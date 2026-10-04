@@ -107,7 +107,9 @@ test.describe('WP-W2-03 Web Provider to Task chain', () => {
     const resumedEvents = parseSse(typeof resumed.body === 'string' ? resumed.body : '');
     expect(resumedEvents.every(event => !Number.isFinite(event.sequence) || event.sequence > last)).toBe(true);
     const cancelled = await api(page, `/api/v1/ai-tasks/${receipt.body.taskId}`, { method: 'DELETE', body: { requestId: requestId() }, csrf: true, expected: 200 });
-    expect(['cancelled', 'succeeded', 'failed', 'timed_out']).toContain(cancelled.body.status);
+    expect(['cancel_requested', 'cancelled', 'succeeded', 'failed', 'timed_out']).toContain(cancelled.body.status);
+    const terminal = ['cancelled', 'succeeded', 'failed', 'timed_out'].includes(cancelled.body.status) ? cancelled.body : await waitForTerminal(page, receipt.body.taskId);
+    expect(['cancelled', 'succeeded', 'failed', 'timed_out']).toContain(terminal.status);
   });
 
   test('unknown task submission has no artifact side effect', async ({ page }) => {

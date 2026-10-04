@@ -8,88 +8,108 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 6px 16px;
+  gap: 14px;
+  padding: 10px 18px 12px;
 
   /* Ultra-transparent glass */
-  background: rgba(255, 255, 255, 0.2) !important;
-  backdrop-filter: blur(120px) saturate(180%) brightness(1.25) !important;
-  -webkit-backdrop-filter: blur(120px) saturate(180%) brightness(1.25) !important;
+  background: linear-gradient(180deg, rgba(255,255,255,.22), rgba(220,226,242,.28)) !important;
+  backdrop-filter: blur(24px) saturate(165%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(165%) !important;
 
   /* Refined border and shadow */
-  border: 0.5px solid rgba(255, 255, 255, 0.4) !important;
-  border-radius: 20px !important;
+  border: 1px solid rgba(255, 255, 255, 0.48) !important;
+  border-radius: 28px !important;
 
   /* Multi-layer shadow for depth */
   box-shadow:
     0 0 0 0.5px rgba(0, 0, 0, 0.02) inset,
-    0 35px 70px rgba(0, 0, 0, 0.18),
-    0 15px 35px rgba(0, 0, 0, 0.12),
-    0 5px 15px rgba(0, 0, 0, 0.08) !important;
+  0 22px 50px rgba(22, 38, 72, .20),
+  0 4px 12px rgba(22, 38, 72, .12),
+  inset 0 1px 0 rgba(255,255,255,.72),
+  inset 0 -1px 0 rgba(90,105,145,.16) !important;
 
-  z-index: 100;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 10000;
+  isolation: isolate;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.macos-dock::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255,255,255,.22), transparent 42%, rgba(255,255,255,.06));
+  box-shadow: inset 0 0 24px rgba(255,255,255,.08);
 }
 
 [data-theme="dark"] .macos-dock {
-  background: rgba(40, 40, 42, 0.25) !important;
-  backdrop-filter: blur(120px) saturate(180%) brightness(0.85) !important;
-  border: 0.5px solid rgba(255, 255, 255, 0.2) !important;
+  background: linear-gradient(180deg, rgba(46, 50, 62, .28), rgba(28, 32, 44, .34)) !important;
+  backdrop-filter: blur(24px) saturate(165%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(165%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
   box-shadow:
     0 0 0 0.5px rgba(255, 255, 255, 0.03) inset,
     0 35px 70px rgba(0, 0, 0, 0.7) !important;
 }
 
+/* Windows remain behind the floating dock; their content can pass underneath it. */
+.macos-window {
+  z-index: auto;
+}
+
 /* Dock Items - Perfect Sizing */
 .macos-dock__item {
   position: relative;
-  width: 58px !important;
-  height: 58px !important;
+  width: 64px !important;
+  height: 64px !important;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-  transform-origin: bottom center;
+  transition: transform 0.18s ease, filter 0.18s ease;
+  transform-origin: center bottom;
 }
 
 /* Icon Container */
 .macos-dock__icon {
   width: 100%;
   height: 100%;
-  border-radius: 14px;
+  border-radius: 18px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
 
-  /* Subtle shadow */
-  filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.25));
-  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Remove all shadows for clean look */
+  filter: none !important;
+  transition: transform 0.18s ease;
 }
 
 /* Hover magnification effect */
 .macos-dock__item:hover {
-  transform: scale(1.45) translateY(-12px);
+  transform: scale(1.12) translateY(-4px);
 }
 
 .macos-dock__item:hover .macos-dock__icon {
-  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.35));
+  /* No shadow on hover, keep it clean */
+  filter: none !important;
+  transform: scale(1.02);
 }
 
 /* Running indicator */
 .macos-dock__indicator {
   position: absolute;
-  bottom: -8px;
+  bottom: -6px;
   left: 50%;
   transform: translateX(-50%);
-  width: 4px;
-  height: 4px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.7);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
 }
 
 [data-theme="dark"] .macos-dock__indicator {
@@ -175,8 +195,14 @@
   height: 100%;
   object-fit: cover;
 }
+
+.macos-dock__icon > svg,
+.macos-dock__icon > img {
+  display: block;
+  border-radius: inherit;
+}
 .macos-dock[data-hidden="true"] {
   opacity: 0;
   pointer-events: none;
-  transform: translateX(-50%) translateY(18px);
+  transform: translateX(-50%) translateY(18px) !important;
 }

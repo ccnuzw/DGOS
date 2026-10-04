@@ -118,8 +118,8 @@ export function MacOSDock({ apps, hidden = false, onAppClick, onAppRightClick }:
                   handleAppClick(app);
                 }
               }}
-              style={{
-                transform: `scale(${scale}) translateY(${scale > 1 ? -(scale - 1) * 8 : 0}px)`,
+                style={{
+                 transform: `scale(${Math.min(scale, 1.1)}) translateY(${scale > 1 ? -(Math.min(scale, 1.1) - 1) * 4 : 0}px)`,
                 zIndex: Math.round(scale * 10),
               }}
             >

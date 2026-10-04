@@ -752,8 +752,33 @@ function Tasks({ t }: { t: ReturnType<typeof allLabels> }) {
     [connection, setConnection] = useState(""),
     [eventCount, setEventCount] = useState(0),
     [prompt, setPrompt] = useState(""),
-    [modelId, setModelId] = useState("fixture-text-model"),
+    [providerConfigId, setProviderConfigId] = useState(saved("taskProviderId")),
+    [modelId, setModelId] = useState(saved("taskModelId")),
+    [providers, setProviders] = useState<Dict[]>([]),
+    [models, setModels] = useState<Dict[]>([]),
+    [artifact, setArtifact] = useState<Dict | null>(null),
     [resumeVersion, setResumeVersion] = useState(0);
+  useEffect(() => {
+    let active = true;
+    api<Dict>("/api/v1/provider/configs").then(value => {
+      if (!active) return;
+      const next = items(value); setProviders(next);
+      const preferred = providerConfigId || next[0]?.id || next[0]?.providerConfigId || "";
+      if (preferred && preferred !== providerConfigId) setProviderConfigId(preferred);
+    }).catch(() => {});
+    return () => { active = false; };
+  }, []);
+  useEffect(() => {
+    if (!providerConfigId) return;
+    let active = true;
+    api<Dict>(`/api/v1/provider/configs/${encodeURIComponent(providerConfigId)}/models`).then(value => {
+      if (!active) return;
+      const next = items(value).filter((model: Dict) => model.intent === "text.chat" || model.taskModes?.includes?.("text.chat") || model.capabilities?.includes?.("text"));
+      setModels(next);
+      if (!next.some((model: Dict) => model.modelId === modelId)) setModelId(next[0]?.modelId || "");
+    }).catch(() => { if (active) setModels([]); });
+    return () => { active = false; };
+  }, [providerConfigId]);
   useEffect(() => { localStorage.removeItem('dgos.ui.prompt'); }, []);
   useEffect(() => {
     if (!taskId) return;
@@ -818,22 +843,27 @@ function Tasks({ t }: { t: ReturnType<typeof allLabels> }) {
     if (!value) return;
     const result = await op.run(() => taskApi<Dict>("/api/v1/ai-tasks", json({
       requestId: crypto.randomUUID(), target: "text", intent: "text.chat",
-      input: { text: value }, options: { modelId, providerConfigId: "fixture-provider" },
+      input: { text: value }, options: { modelId, providerConfigId },
     })));
     if (result?.taskId) {
       remember("taskId", result.taskId); setQueryId(result.taskId); setTaskId(result.taskId);
-      setSnapshot(result); setText(""); setCursor(0); setEventCount(0); setConnection("queued"); setResumeVersion(v => v + 1);
+      remember("taskProviderId", providerConfigId); remember("taskModelId", modelId);
+      setSnapshot(result); setArtifact(null); setText(""); setCursor(0); setEventCount(0); setConnection("queued"); setResumeVersion(v => v + 1);
     }
   }
   async function cancel() {
     if (!taskId) return;
     const result = await op.run(() =>
-      api<Dict>(
+      taskApi<Dict>(
         `/api/v1/ai-tasks/${encodeURIComponent(taskId)}`,
         json({}, "DELETE"),
       ),
     );
     if (result) setSnapshot(result);
+  }
+  async function readArtifact(id: string) {
+    const value = await op.run(() => api<Dict>(`/api/v1/artifacts/${encodeURIComponent(id)}`));
+    if (value) setArtifact(value);
   }
   return (
     <div className="stack">
@@ -843,8 +873,9 @@ function Tasks({ t }: { t: ReturnType<typeof allLabels> }) {
           <h2>{t.tasks}</h2>
           <form onSubmit={submitTask} className="stack">
             <label>{t.prompt}<textarea value={prompt} onChange={event => setPrompt(event.target.value)} rows={4} required placeholder="Describe what the model should do" /></label>
-            <label>{t.model}<input value={modelId} onChange={event => setModelId(event.target.value)} required /></label>
-            <Button variant="primary" type="submit" busy={op.busy}>Submit task</Button>
+            <label>{t.providerConfig || "Provider configuration"}<select value={providerConfigId} onChange={event => { setProviderConfigId(event.target.value); remember("taskProviderId", event.target.value); }} required><option value="">{t.chooseProvider || "Choose Provider"}</option>{providers.map((provider: Dict) => <option key={provider.id || provider.providerConfigId} value={provider.id || provider.providerConfigId}>{provider.displayName || provider.name || provider.id || provider.providerConfigId}</option>)}</select></label>
+            <label>{t.model}<select value={modelId} onChange={event => { setModelId(event.target.value); remember("taskModelId", event.target.value); }} required><option value="">{models.length ? (t.choose || "Choose model") : (t.noModels || "No text models available")}</option>{models.map((model: Dict) => <option key={model.modelId} value={model.modelId}>{model.displayName || model.modelId}</option>)}</select></label>
+            <Button variant="primary" type="submit" busy={op.busy} disabled={!providerConfigId || !modelId}>Submit task</Button>
           </form>
           <hr />
           <form onSubmit={selectTask}>
@@ -893,15 +924,9 @@ function Tasks({ t }: { t: ReturnType<typeof allLabels> }) {
                       <Button onClick={cancel}>{t.cancelTask}</Button>
                     )}
                     {snapshot?.artifactIds?.map((id: string) => (
-                      <a
-                        key={id}
-                        href={`/api/v1/artifacts/${encodeURIComponent(id)}`}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        {t.artifactId}: {id}
-                      </a>
+                      <Button key={id} onClick={() => void readArtifact(id)}>{t.artifactId}: {id}</Button>
                     ))}
+                  {artifact && <Panel><h3>{t.result}</h3><pre className="task-output">{artifact.content || JSON.stringify(artifact, null, 2)}</pre></Panel>}
                   </div>
                 </>
               ) : (
@@ -1111,18 +1136,18 @@ function Assistant({ t, session }: { t: ReturnType<typeof allLabels>; session: D
       <Feedback op={op} />
       <Resource resource={actions} t={t}>
         {() => (
-          <div className="two-col">
+          <div className="two-col" data-testid="assistant-ui">
             <Panel>
               <h2>{t.assistant}</h2>
-              <div className="quick-actions-grid" aria-label="Quick commands">
+              <div className="quick-actions-grid" data-testid="assistant-quick-actions" aria-label="Quick commands">
                 {[["system.navigate.system.settings", "Open system settings", { target: "system.settings" }], ["system.info.read", "Check system status", {}], ["app.catalog.open", "Open app catalog", {}], ["provider.status.read", "Check providers", {}]].map(([id, label, value]) => {
                   const available = items(actions.data).some((item: Dict) => item.actionId === id);
-                  return <Button key={String(id)} disabled={!available} onClick={() => { const item = items(actions.data).find((candidate: Dict) => candidate.actionId === id); if (item) { setActionId(id as string); setInput(value as Dict); clearPlan(); } }}>{String(label)}{!available ? ` · ${t.unavailable}` : ""}</Button>;
+                  return <Button key={String(id)} data-testid={`quick-action-${String(id)}`} disabled={!available} onClick={() => { const item = items(actions.data).find((candidate: Dict) => candidate.actionId === id); if (item) { setActionId(id as string); setInput(value as Dict); clearPlan(); } }}>{String(label)}{!available ? ` · ${t.unavailable}` : ""}</Button>;
                 })}
               </div>
-              <form onSubmit={resolve}>
-                <label>{t.intent}<input value={intent} onChange={e => setIntent(e.target.value)} required /></label>
-                <Button type="submit" busy={op.busy}>{t.resolve}</Button>
+              <form onSubmit={resolve} data-testid="assistant-resolve-form">
+                <label>{t.intent}<input aria-label={t.intent} name="intent" data-testid="assistant-intent" value={intent} onChange={e => setIntent(e.target.value)} required /></label>
+                <Button type="submit" data-testid="assistant-resolve" busy={op.busy}>{t.resolve}</Button>
               </form>
               {candidates && <div className="result"><h3>{t.candidates}</h3>{candidates.length ?
                 <ul className="record-list">{candidates.map((candidate: Dict) => {
@@ -1132,6 +1157,9 @@ function Assistant({ t, session }: { t: ReturnType<typeof allLabels>; session: D
               <label>
                 {t.action}
                 <select
+                  aria-label={t.action}
+                  name="actionId"
+                  data-testid="assistant-action-selector"
                   value={selected?.actionId || ""}
                   onChange={(e) => {
                     setActionId(e.target.value);
@@ -1151,7 +1179,7 @@ function Assistant({ t, session }: { t: ReturnType<typeof allLabels>; session: D
                   <p className="muted">
                     {selected.description || required.join(', ')}
                   </p>
-                  <form onSubmit={createPlan}>
+                  <form onSubmit={createPlan} data-testid="assistant-plan-form">
                     {Object.entries<Dict>(
                       selected.inputSchema?.properties || {},
                     ).map(([name, spec]) => (
@@ -1188,7 +1216,7 @@ function Assistant({ t, session }: { t: ReturnType<typeof allLabels>; session: D
                         )}
                       </label>
                     ))}
-                    <Button variant="primary" type="submit" busy={op.busy}>
+                    <Button variant="primary" type="submit" data-testid="assistant-create-plan" busy={op.busy}>
                       {t.createPlan}
                     </Button>
                   </form>
@@ -1197,7 +1225,7 @@ function Assistant({ t, session }: { t: ReturnType<typeof allLabels>; session: D
                 <Empty>{t.empty}</Empty>
               )}
               {plan && (
-                <div className="secret-receipt">
+                <div className="secret-receipt" data-testid="assistant-plan">
                   <strong>{t.confirm}</strong>
                   <p>
                     {t.risk}: {plan.riskLevel || plan.risk} · {t.permission}:{" "}
@@ -1219,11 +1247,11 @@ function Assistant({ t, session }: { t: ReturnType<typeof allLabels>; session: D
                     </>}
                   </div>)}
                   {(!required.length || permissionValues.some((value: string | undefined) => value === 'deny') || plan.permission?.decision === 'deny') && <Alert>{t.noAccess}</Alert>}
-                  {plan.permission?.decision === "allow" && allPermissionsAllowed && <Button variant="primary" onClick={execute} busy={op.busy}>{t.execute}</Button>}
+                  {plan.permission?.decision === "allow" && allPermissionsAllowed && <Button variant="primary" data-testid="assistant-confirm-execute" onClick={execute} busy={op.busy}>{t.execute}</Button>}
                 </div>
               )}
             </Panel>
-            <Panel>
+            <Panel data-testid="assistant-run-panel">
               <h2>{t.history}</h2>
               {runId ? (
                 <>
@@ -1246,7 +1274,7 @@ function Assistant({ t, session }: { t: ReturnType<typeof allLabels>; session: D
                         )}
                       </pre>
                       {!terminal(run.state || run.status) && (
-                        <Button onClick={cancel}>{t.cancel}</Button>
+                        <Button data-testid="assistant-cancel-run" onClick={cancel}>{t.cancel}</Button>
                       )}
                     </>
                   )}

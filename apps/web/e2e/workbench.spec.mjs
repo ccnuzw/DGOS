@@ -30,11 +30,27 @@ test('task route restores an existing task without submitting or repeating snaps
 test('mock workbench submits a task and renders streamed result', async ({ page }) => {
   await page.goto('/ai-tasks?mock=1');
   await page.getByLabel('Prompt').fill('hello from mock');
-  await page.getByLabel('Model').fill('fixture-text-model');
+  await page.route('**/api/v1/provider/configs', route => respond(route, { items: [] }));
   await page.getByRole('button', { name: 'Submit task' }).click();
   await expect(page.getByText(/Task ID: mock-task-/)).toBeVisible();
   await expect(page.locator('.task-output')).toContainText('Mock response for: hello from mock', { timeout: 10000 });
   await expect(page.getByText(/Events:/)).toContainText('Events:');
+});
+
+test('workbench selects real provider model and submits the same binding', async ({ page }) => {
+  let submitted;
+  await page.route('**/api/v1/provider/configs', route => respond(route, { items: [{ id: 'provider-demo', displayName: 'Demo Provider', status: 'ready' }] }));
+  await page.route('**/api/v1/provider/configs/provider-demo/models', route => respond(route, { items: [{ modelId: 'text-demo', displayName: 'Text Demo', intent: 'text.chat' }, { modelId: 'image-demo', intent: 'image.generate' }] }));
+  await page.route('**/api/v1/ai-tasks', route => { submitted = route.request().postDataJSON(); return respond(route, { taskId: 'task-demo', status: 'queued' }, 202); });
+  await page.route('**/api/v1/ai-tasks/task-demo', route => respond(route, { taskId: 'task-demo', status: 'succeeded', text: 'hello', artifactIds: ['artifact-demo'] }));
+  await page.route('**/api/v1/artifacts/artifact-demo', route => respond(route, { artifactId: 'artifact-demo', content: 'hello artifact' }));
+  await page.goto('/ai-tasks');
+  await page.getByLabel('Prompt').fill('hello');
+  await page.getByLabel('Provider configuration').selectOption('provider-demo');
+  await page.locator('form.stack').getByLabel('Model').selectOption('text-demo');
+  await page.getByRole('button', { name: 'Submit task' }).click();
+  await expect(page.locator('.task-output')).toContainText('hello');
+  await expect.poll(() => submitted).toMatchObject({ options: { providerConfigId: 'provider-demo', modelId: 'text-demo' } });
 });
 
 test('assistant quick command plans, confirms, cancels and restores a run', async ({ page }) => {
@@ -336,6 +352,21 @@ test('catalog mutation carries selected release and shows unavailable extension 
   expect(received).toMatchObject({ version: '1.2.3', build: 7, releaseChannel: 'beta', baseVersion: 2 });
   await page.getByRole('link', { name: 'Skills' }).click();
   await expect(page.getByRole('alert')).toContainText('Extension service unavailable · request req-2');
+});
+
+test('catalog entry exposes source permissions uninstall policy and health state', async ({ page }) => {
+  let healthChecks = 0;
+  await page.route('**/api/v1/apps', route => respond(route, { items: [{ appId: 'example.app', version: '1.2.3', build: 7, releaseChannel: 'stable', catalogState: 'approved', source: 'developer', uninstallPolicy: 'user-removable', manifest: { permissions: ['dgos.model.list'] } }] }));
+  await page.route('**/api/v1/apps/example.app/deployment', route => respond(route, { appId: 'example.app', state: 'active', versionNumber: 2 }));
+  await page.route('**/api/v1/apps/example.app/health', route => { healthChecks++; return respond(route, { appId: 'example.app', healthy: true, integrityHealthy: true, runtimeChecked: true, state: 'active', version: '1.2.3', build: 7 }); });
+  await page.goto('/catalog');
+  const row = page.locator('.record-list li').first();
+  await expect(row).toContainText('Source: developer');
+  await expect(row).toContainText('Permissions: dgos.model.list');
+  await expect(row).toContainText('Uninstall Policy: user-removable');
+  await expect(row).toContainText('Health Check:');
+  await expect(row.locator('.dgos-status').last()).toHaveText('active');
+  expect(healthChecks).toBe(1);
 });
 
 test('catalog selects a release and a sandboxed app bridges only a declared capability', async ({ page }) => {

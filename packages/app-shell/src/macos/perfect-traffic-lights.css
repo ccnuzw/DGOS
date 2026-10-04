@@ -1,97 +1,103 @@
-/* Perfect macOS Traffic Lights - Exact Recreation */
-
+/* macOS traffic lights: fixed optical size and per-button hover glyphs. */
 .macos-traffic-lights {
   position: absolute;
-  left: 12px;
+  left: 16px;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
-  gap: 7px;
+  gap: 9px;
   z-index: 2;
 }
 
 .macos-traffic-light {
-  width: 13px !important;
-  height: 13px !important;
-  border-radius: 50% !important;
-  border: 0.5px solid rgba(0, 0, 0, 0.04);
-  cursor: pointer;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  flex-shrink: 0;
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px !important;
+  min-height: 16px !important;
+  max-width: 16px !important;
+  max-height: 16px !important;
+  aspect-ratio: 1 / 1 !important;
   padding: 0;
+  border: 1px solid rgba(0, 0, 0, .12);
+  border-radius: 50% !important;
+  overflow: hidden;
   appearance: none;
   -webkit-appearance: none;
   box-sizing: border-box;
-  background: none;
+  position: relative;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
   outline: none;
+  flex: 0 0 16px;
+  margin: 0 !important;
+  line-height: 0 !important;
+  transition: transform .14s ease, filter .14s ease;
 }
 
-/* Exact macOS colors */
 .macos-traffic-light--close {
-  background: linear-gradient(135deg, #FF5F57 0%, #FF4136 100%) !important;
+  background: #ff5f57 !important;
 }
 
 .macos-traffic-light--minimize {
-  background: linear-gradient(135deg, #FEBC2E 0%, #FFA000 100%) !important;
+  background: #febc2e !important;
 }
 
 .macos-traffic-light--maximize {
-  background: linear-gradient(135deg, #28C840 0%, #00C853 100%) !important;
+  background: #28c840 !important;
 }
 
-/* Symbols appear only on window hover */
-.macos-window:hover .macos-traffic-light--close::after {
-  content: '×';
-  color: rgba(0, 0, 0, 0.5);
-  font-size: 16px;
+.macos-traffic-light::after {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: rgba(0, 0, 0, .62);
+  font-family: Arial, sans-serif;
+  font-size: 10px !important;
   font-weight: 700;
   line-height: 1;
-  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
 }
 
-.macos-window:hover .macos-traffic-light--minimize::after {
-  content: '−';
-  color: rgba(0, 0, 0, 0.5);
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1;
-  position: absolute;
+.macos-traffic-light--close::after { content: '×'; }
+.macos-traffic-light--minimize::after { content: '−'; }
+.macos-traffic-light--maximize::after { content: '+'; }
+
+.macos-traffic-light::after {
+  opacity: 0;
+  visibility: hidden;
 }
 
-.macos-window:hover .macos-traffic-light--maximize::after {
-  content: '⤢';
-  color: rgba(0, 0, 0, 0.5);
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 1;
-  position: absolute;
+.macos-traffic-lights:hover .macos-traffic-light::after {
+  opacity: 1;
+  visibility: visible;
 }
 
-/* Unfocused window - gray and translucent */
-.macos-window:not(.focused) .macos-traffic-light {
-  background: #E0E0E0 !important;
-  opacity: 0.5;
-  border-color: rgba(0, 0, 0, 0.08);
-}
-
-.macos-window:not(.focused) .macos-traffic-light::after {
+/* Inactive windows retain the colored lights but hide their glyphs. */
+.macos-window--unfocused .macos-traffic-light::after {
   display: none !important;
 }
 
-/* Hover state for traffic lights */
 .macos-traffic-light:hover {
-  filter: brightness(1.1);
+  filter: brightness(1.08);
+  transform: scale(1.06);
 }
 
 .macos-traffic-light:active {
-  filter: brightness(0.9);
+  filter: brightness(.92);
+  transform: scale(.96);
 }
 
-/* Ensure traffic lights are circles, not squares */
-.macos-traffic-light * {
-  pointer-events: none;
+.macos-window--unfocused .macos-traffic-light {
+  background: #d8d8d8 !important;
+  opacity: .58;
+}
+
+.macos-traffic-light:focus-visible {
+  outline: 2px solid #0a84ff;
+  outline-offset: 2px;
 }

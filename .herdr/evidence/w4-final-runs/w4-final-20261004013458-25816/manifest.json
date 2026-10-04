@@ -1,0 +1,334 @@
+{
+  "schema": "dgos/w4-final-integration/v1",
+  "work_package": "WP-W4-01",
+  "run_id": "w4-final-20261004013458-25816",
+  "mode": "prepare",
+  "started_at": "2026-10-04T01:34:58.965Z",
+  "ended_at": "2026-10-04T01:35:00.827Z",
+  "source": {
+    "commit": "f14a3c9827bd8a9948a5f30f97a546388936b082",
+    "branch": "main",
+    "patch_sha256": "c0f1aa8df98b7cbf4cb1d06eebe9b593a1c344c0172ea771cce23eb60fd89fbd",
+    "working_tree_dirty": true
+  },
+  "source_end": {
+    "commit": "f14a3c9827bd8a9948a5f30f97a546388936b082",
+    "branch": "main",
+    "patch_sha256": "c0f1aa8df98b7cbf4cb1d06eebe9b593a1c344c0172ea771cce23eb60fd89fbd",
+    "working_tree_dirty": true
+  },
+  "source_drift": false,
+  "prerequisites": {
+    "w3_02_native": "completed",
+    "native_handshake": "passed",
+    "task_artifact_reload": "passed",
+    "ready": true
+  },
+  "assets": [
+    {
+      "path": "apps/web/dist",
+      "kind": "directory",
+      "files": 43,
+      "sha256": "f7dcb45254d7809225ea680d13e87125a637c73cc43a0d7c74cee441138c2b6a"
+    },
+    {
+      "path": "apps/desktop/src-tauri/target/debug/bundle/macos/DGOS.app",
+      "kind": "directory",
+      "files": 4,
+      "sha256": "a416b1a980b3579562bf3fa2a6cc4cfa357946dd169ef0f2014fee1a015e963f"
+    },
+    {
+      "path": "apps/desktop/src-tauri/target/debug/dgos-keychain-fixture",
+      "kind": "file",
+      "sha256": "c5d8e9038398c06ae71646f48659d06f82b0b2652b68b767dc2d557d04920e70"
+    },
+    {
+      "path": "apps/ai-workbench-package/dist",
+      "present": false,
+      "sha256": null
+    }
+  ],
+  "migration_set": {
+    "files": [
+      "0001-v1-governance.sql",
+      "0002-connection-test-leases.sql",
+      "0003-audit-outbox-leases.sql",
+      "0004-retention-jobs.sql",
+      "0005-quota-usage.sql",
+      "0006-runtime.sql",
+      "0007-provider-config-ai-task.sql",
+      "0009-quota-usage-dimensions.sql",
+      "0010-quota-usage-idempotency.sql",
+      "0011-runtime-persistence.sql",
+      "0012-ai-task-leases.sql",
+      "0013-action-run-recovery.sql",
+      "0014-audit-runtime-targets.sql",
+      "0015-action-handler-claim.sql",
+      "0016-action-input-recovery.sql",
+      "0017-action-recovery-guard.sql",
+      "0018-action-cancel-guard.sql",
+      "0019-ai-task-dispatch-fence.sql",
+      "0022-api-key-rotation.sql",
+      "0023-governance-policy.sql",
+      "0024-admin-session-freshness.sql",
+      "0025-extension-registry.sql",
+      "0026-extension-runs.sql",
+      "0027-extension-run-events.sql",
+      "0028-app-packages.sql",
+      "0029-app-package-deployments.sql",
+      "0030-app-package-operations.sql",
+      "0031-provider-account-bindings.sql",
+      "0032-provider-connection-recovery.sql",
+      "0033-provider-admission.sql",
+      "0034-extension-recovery.sql",
+      "0035-package-recovery.sql",
+      "0036-provider-operations.sql",
+      "0037-app-data-migration.sql",
+      "0038-permission-action-lifecycle.sql",
+      "0039-provider-protocol-confirmations.sql",
+      "0040-provider-profile-bindings.sql",
+      "0041-app-data-migration-package-digests.sql",
+      "0043-provider-protocol-receipts.sql",
+      "0044-system-projection.sql",
+      "0045-network-route-activation.sql",
+      "0046-package-retention.sql",
+      "0047-ai-task-parameters.sql",
+      "0048-network-route-fingerprint.sql",
+      "0049-extension-management.sql",
+      "0050-session-management.sql",
+      "0051-proxy-provisioning.sql"
+    ],
+    "sha256": "c0ec543d0536c47f72910729b6ad1502002c9e5b6392eb5981546ddacd400370"
+  },
+  "environment": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v22.23.0",
+    "package_manager": "pnpm 9.0.0",
+    "base_url": "http://127.0.0.1:15176",
+    "database_name": "dgos_v1_ui_management_2c303de3773495770891e0182a320091",
+    "redis_db": 5
+  },
+  "fixture_source": {
+    "state": "data/v1-ui-management-fixture/state.json",
+    "credentials": "data/v1-ui-management-fixture/2c303de3773495770891e0182a320091/credentials.json",
+    "credentials_sha256": "0faaa9adb9f81996b2fdcb0ae24c59c0539fe9528033a8824cc3a141a52fa8bb"
+  },
+  "native_smoke": null,
+  "groups": {
+    "web": {
+      "result": "BLOCKED",
+      "commands": [
+        "web-provider-task-recovery"
+      ]
+    },
+    "fr002": {
+      "result": "PASS",
+      "commands": [
+        "fr002-catalog-lifecycle"
+      ]
+    },
+    "fr003": {
+      "result": "BLOCKED",
+      "commands": [
+        "fr003-skill-and-mcp"
+      ]
+    },
+    "fr009": {
+      "result": "BLOCKED",
+      "commands": [
+        "fr009-assistant-permission-confirm-cancel-recovery"
+      ]
+    },
+    "native": {
+      "result": "BLOCKED",
+      "commands": [
+        "native-desktop-static-check",
+        "native-session-smoke",
+        "native-workbench-task-artifact"
+      ]
+    },
+    "gates": {
+      "result": "PASS",
+      "commands": [
+        "migration-contract",
+        "docs-structure",
+        "secret-scan"
+      ]
+    }
+  },
+  "commands": [
+    {
+      "id": "web-provider-task-recovery",
+      "group": "web",
+      "argv": [
+        "pnpm",
+        "exec",
+        "playwright",
+        "test",
+        "apps/web/e2e/w2-03-web-e2e.spec.mjs",
+        "--grep",
+        "login, provider|duplicate requestId|SSE cursor",
+        "--config=apps/web/playwright.config.mjs",
+        "--reporter=line"
+      ],
+      "result": "BLOCKED",
+      "exit_code": null,
+      "reason": "W3 final prerequisites not met: native_status=completed, handshake=passed, taskArtifactReload=passed"
+    },
+    {
+      "id": "fr002-catalog-lifecycle",
+      "group": "fr002",
+      "argv": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "tests/integration/app-package-fixture.test.mjs",
+        "tests/integration/app-package-routes.test.mjs",
+        "tests/unit/app-packages.test.mjs",
+        "tests/unit/runtime.test.mjs"
+      ],
+      "exit_code": 0,
+      "signal": null,
+      "result": "PASS",
+      "tests": 26,
+      "skipped": 0,
+      "started_at": "2026-10-04T01:34:59.049Z",
+      "ended_at": "2026-10-04T01:35:00.367Z",
+      "stdout_log": ".herdr/evidence/w4-final-runs/w4-final-20261004013458-25816/fr002/fr002-catalog-lifecycle.stdout.log",
+      "stderr_log": ".herdr/evidence/w4-final-runs/w4-final-20261004013458-25816/fr002/fr002-catalog-lifecycle.stderr.log"
+    },
+    {
+      "id": "fr003-skill-and-mcp",
+      "group": "fr003",
+      "argv": [
+        "pnpm",
+        "exec",
+        "playwright",
+        "test",
+        "apps/web/e2e/real-management-fixture.spec.mjs",
+        "--grep",
+        "Skill definition|Skill translation|MCP first credential|MCP connects",
+        "--config=apps/web/playwright.config.mjs",
+        "--reporter=line"
+      ],
+      "result": "BLOCKED",
+      "exit_code": null,
+      "reason": "W3 final prerequisites not met: native_status=completed, handshake=passed, taskArtifactReload=passed"
+    },
+    {
+      "id": "fr009-assistant-permission-confirm-cancel-recovery",
+      "group": "fr009",
+      "argv": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "tests/e2e/assistant-settings-actions.spec.mjs"
+      ],
+      "result": "BLOCKED",
+      "exit_code": null,
+      "reason": "W3 final prerequisites not met: native_status=completed, handshake=passed, taskArtifactReload=passed"
+    },
+    {
+      "id": "native-desktop-static-check",
+      "group": "native",
+      "argv": [
+        "pnpm",
+        "--filter",
+        "@dgos/desktop",
+        "check"
+      ],
+      "result": "BLOCKED",
+      "exit_code": null,
+      "reason": "W3 final prerequisites not met: native_status=completed, handshake=passed, taskArtifactReload=passed"
+    },
+    {
+      "id": "native-session-smoke",
+      "group": "native",
+      "argv": [
+        "node",
+        "apps/desktop/scripts/e2e-macos.mjs"
+      ],
+      "result": "BLOCKED",
+      "exit_code": null,
+      "reason": "W3 final prerequisites not met: native_status=completed, handshake=passed, taskArtifactReload=passed"
+    },
+    {
+      "id": "native-workbench-task-artifact",
+      "group": "native",
+      "argv": [
+        "node",
+        "apps/desktop/scripts/native-workbench-diagnostic.mjs"
+      ],
+      "result": "BLOCKED",
+      "exit_code": null,
+      "reason": "W3 final prerequisites not met: native_status=completed, handshake=passed, taskArtifactReload=passed"
+    },
+    {
+      "id": "migration-contract",
+      "group": "gates",
+      "argv": [
+        "node",
+        "scripts/check-migration.mjs"
+      ],
+      "exit_code": 0,
+      "signal": null,
+      "result": "PASS",
+      "tests": 0,
+      "skipped": 0,
+      "started_at": "2026-10-04T01:35:00.367Z",
+      "ended_at": "2026-10-04T01:35:00.404Z",
+      "stdout_log": ".herdr/evidence/w4-final-runs/w4-final-20261004013458-25816/gates/migration-contract.stdout.log",
+      "stderr_log": ".herdr/evidence/w4-final-runs/w4-final-20261004013458-25816/gates/migration-contract.stderr.log"
+    },
+    {
+      "id": "docs-structure",
+      "group": "gates",
+      "argv": [
+        "node",
+        "scripts/check-docs.mjs"
+      ],
+      "exit_code": 0,
+      "signal": null,
+      "result": "PASS",
+      "tests": 0,
+      "skipped": 0,
+      "started_at": "2026-10-04T01:35:00.404Z",
+      "ended_at": "2026-10-04T01:35:00.615Z",
+      "stdout_log": ".herdr/evidence/w4-final-runs/w4-final-20261004013458-25816/gates/docs-structure.stdout.log",
+      "stderr_log": ".herdr/evidence/w4-final-runs/w4-final-20261004013458-25816/gates/docs-structure.stderr.log"
+    },
+    {
+      "id": "secret-scan",
+      "group": "gates",
+      "argv": [
+        "node",
+        "scripts/secret-scan.mjs",
+        "--paths",
+        "scripts",
+        ".herdr",
+        "docs",
+        "packages"
+      ],
+      "exit_code": 0,
+      "signal": null,
+      "result": "PASS",
+      "tests": 0,
+      "skipped": 0,
+      "started_at": "2026-10-04T01:35:00.615Z",
+      "ended_at": "2026-10-04T01:35:00.758Z",
+      "stdout_log": ".herdr/evidence/w4-final-runs/w4-final-20261004013458-25816/gates/secret-scan.stdout.log",
+      "stderr_log": ".herdr/evidence/w4-final-runs/w4-final-20261004013458-25816/gates/secret-scan.stderr.log"
+    }
+  ],
+  "result": "BLOCKED",
+  "mvp_demo_ready": false,
+  "limitations": [
+    "Final candidate requires a frozen source/build; any source drift blocks a pass.",
+    "Local deterministic Provider fixture is not external Provider evidence.",
+    "Native macOS smoke script covers session/webview bridge only; it does not prove Workbench iframe handshake, Task or Artifact.",
+    "MCP/Assistant fixture tests use isolated local resources and do not replace production-provider or signed-release evidence.",
+    "Commands returning skipped or having no detectable Playwright tests are INCOMPLETE, never PASS."
+  ],
+  "evidence_root": ".herdr/evidence/w4-final-runs/w4-final-20261004013458-25816"
+}

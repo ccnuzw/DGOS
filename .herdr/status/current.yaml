@@ -1,68 +1,126 @@
 version: 3
 project: DGOS
-last_updated: '2026-10-04T00:05:00-07:00'
+last_updated: '2026-10-04T02:40:00-07:00'
 
-# 状态：Wave 2第一批完成，立即启动第二轮
-status: wave2_second_iteration
-mode: fix_and_complete
+# 状态：V1完善修复全力推进
+status: v1_fix_sprint
+mode: critical_fixes
 
-# 团队状态
+# 修复计划
+plan: ".herdr/status/V1-FIX-PLAN.md"
+timeline: "24小时完成V1"
+
+# 当前基线
+baseline:
+  commit: f14a3c9
+  issues: "Native blocked + Web 500错误"
+
+# 团队状态（4个Workers并行修复）
 team:
+  # Phase 1: 关键修复
   worker-ai:
     status: working
-    task: "修复protocol_mismatch，完成Task链"
+    task: "修复Web Provider 500错误"
     priority: P0
     blocking: true
-    note: "关键路径！"
-
-  worker-platform:
-    status: working
-    task: "WP-W2-06继续（PG测试和浏览器正反例）"
+    started_at: '2026-10-04T02:40:00'
+    estimated: "1-2小时"
+    note: "阻塞验证的关键问题"
 
   worker-native:
     status: working
-    task: "WP-W2-04继续（新候选和完整链）"
+    task: "Native loopback HTTP方案"
+    priority: P0
+    started_at: '2026-10-04T02:15:00'
+    estimated: "2-3小时"
+    note: "Wry iframe解决方案"
 
   worker-web:
-    status: completed
-    task: "WP-W2-07完成 ✅"
+    status: working
+    task: "修复Assistant UI selector"
+    priority: P1
+    started_at: '2026-10-04T02:40:00'
+    estimated: "30分钟"
 
   worker-test:
+    status: working
+    task: "准备最终验证环境"
+    priority: P0
+    started_at: '2026-10-04T02:40:00'
+    note: "等待修复完成后立即验证"
+
+  # 待命
+  planner:
     status: standby
-    task: "等待W2-01修复后真实测试"
+    next_task: "Phase 3状态回写"
+
+  worker-platform:
+    status: standby
+    next_task: "Phase 3演示视频"
 
   worker-devops:
-    status: idle
+    status: standby
+    next_task: "Phase 2冻结候选"
 
   verify:
     status: standby
+    next_task: "Phase 2验证报告"
 
-  planner:
-    status: completed
+# Phase 1: 关键修复（今晚）
+phase1_fixes:
+  critical:
+    - task: "Web Provider 500错误"
+      owner: worker-ai
+      status: working
+      eta: "1-2小时"
+      blocking: true
 
-# 关键问题
-critical_issue:
-  title: "Worker-AI的protocol_mismatch阻塞演示链"
-  severity: P0
-  blocking: "整个V1演示链"
-  action: "Worker-AI正在修复"
+    - task: "Native loopback方案"
+      owner: worker-native
+      status: working
+      eta: "2-3小时"
+      blocking: true
 
-# 第一批成果
-wave2_first_results:
-  completed:
-    - WP-W2-07 (Worker-Web) - FR-009助手UI ✅
-  partial:
-    - WP-W2-01 (Worker-AI) - 90%完成，protocol_mismatch
-    - WP-W2-03 (Worker-Test) - 框架完成，等真实环境
-    - WP-W2-04 (Worker-Native) - 诊断完成，需继续
-    - WP-W2-06 (Worker-Platform) - 部分完成，需继续
+  important:
+    - task: "Assistant UI selector"
+      owner: worker-web
+      status: working
+      eta: "30分钟"
+
+# 阻塞升级机制
+escalation:
+  enabled: true
+  conditions:
+    - "Worker遇到技术障碍"
+    - "修复方案失败"
+    - "需要外部信息"
+  action: "立即向用户反馈具体问题"
 
 # 并行度
 parallelism:
-  current: 3
-  working: [worker-ai, worker-platform, worker-native]
+  current: 4
+  phase1: "4个Workers修复"
+  phase2: "3个Workers验证"
+  phase3: "3个Workers交付"
+
+# 成功指标
+success_criteria:
+  minimum:
+    - "Web版完整演示可用"
+    - "E2E主流程通过"
+    - "文档完整"
+  ideal:
+    - "Native基础可用"
+    - "完整验证通过"
+
+# 时间线
+timeline:
+  phase1: "今晚23:00"
+  phase2: "明天10:00"
+  phase3: "明天18:00"
+  v1_delivery: "明天晚上"
 
 # 预期
 estimates:
-  worker-ai_fix: "2小时"
-  then: "派发WP-W2-02 Web完整演示"
+  total_time: "24小时"
+  confidence: "高（已明确问题）"

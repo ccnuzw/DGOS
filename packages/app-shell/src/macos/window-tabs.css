@@ -48,8 +48,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 0 16px;
-  height: 32px;
+  padding: 0 12px;
+  height: 28px;
   border: none;
   background: transparent;
   color: var(--muted);
@@ -95,6 +95,60 @@
 
 [data-theme="dark"] .macos-window-tabs__tab--active:hover {
   background: rgba(65, 65, 65, 1);
+}
+
+.macos-window-tabs__icon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.macos-window-tabs__label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.macos-window-tabs__close {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  min-height: 16px;
+  max-width: 16px;
+  max-height: 16px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  opacity: 0;
+  transition: all 0.15s;
+}
+
+.macos-window-tabs__close svg {
+  width: 12px;
+  height: 12px;
+}
+
+.macos-window-tabs__tab:hover .macos-window-tabs__close,
+.macos-window-tabs__tab--active .macos-window-tabs__close {
+  opacity: 1;
+}
+
+.macos-window-tabs__close:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: var(--text);
+}
+
+[data-theme="dark"] .macos-window-tabs__close:hover {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .macos-window-tabs__icon {

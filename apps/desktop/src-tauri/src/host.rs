@@ -22,7 +22,7 @@ const ROUTES: &[&str] = &["/desktop", "/catalog", "/settings", "/providers", "/p
 fn valid_route(route: &str) -> bool { ROUTES.contains(&route) }
 
 fn subject_key(app: &tauri::AppHandle) -> Result<String, String> {
-    let api = app.state::<crate::proxy::ApiProxy>();
+    let api = app.state::<std::sync::Arc<crate::proxy::ApiProxy>>();
     let subject = api.authenticated_subject().ok_or("desktop session has no verified subject")?;
     let digest = Sha256::digest(subject.as_bytes());
     Ok(format!("{:x}", digest))
@@ -91,6 +91,10 @@ fn create(app: &tauri::AppHandle, summary: &WindowSummary, restored_geometry: bo
         && std::env::var("DGOS_DESKTOP_TEST_VISIBLE").ok().as_deref() == Some("1");
     let workbench_test = fixture_probe
         && std::env::var("DGOS_DESKTOP_TEST_WORKBENCH").ok().as_deref() == Some("1");
+    let workbench_resources = app.state::<crate::proxy::WorkbenchResourceServer>();
+    let workbench_origin = workbench_resources.origin().to_string();
+    let workbench_port = workbench_origin.rsplit(':').next().and_then(|port| port.parse::<u16>().ok()).ok_or("invalid Workbench loopback port")?;
+    let workbench_origin_json = serde_json::to_string(&workbench_origin).map_err(|e| e.to_string())?;
     if fixture_probe { eprintln!("dgos desktop debug window: workbench_test={workbench_test}, visible_test={visible_test}"); }
     let real_config = serde_json::to_string(&real_config).map_err(|e| e.to_string())?;
     let init = format!(r#"(() => {{
@@ -104,7 +108,7 @@ fn create(app: &tauri::AppHandle, summary: &WindowSummary, restored_geometry: bo
         const result = await window.__TAURI_INTERNALS__.invoke('desktop_api', {{ input: {{ path, method: options.method || 'GET', body: options.body == null ? null : String(options.body), headers }} }});
         return new Response(result.body, {{ status: result.status, headers: result.headers }});
       }};
-      if ({workbench_test}) {{
+      {{
         const nativeCreateElement = document.createElement.bind(document);
         document.createElement = (tagName, options) => {{
           const element = nativeCreateElement(tagName, options);
@@ -112,7 +116,7 @@ fn create(app: &tauri::AppHandle, summary: &WindowSummary, restored_geometry: bo
             const setSrc = element.setAttribute.bind(element);
             element.setAttribute = (name, value) => {{
               if (name === 'src' && typeof value === 'string' && value.includes('/api/v1/apps/dgos.ai-workbench/resources/')) {{
-                try {{ const url = new URL(value, location.href); url.searchParams.set('dgosDesktopTest', '1'); value = url.toString(); }} catch (_) {{}}
+                try {{ const url = new URL(value, location.href); const resource = `${{url.pathname}}${{url.search}}`; value = {workbench_origin_json} + resource; if ({workbench_test}) value += (value.includes('?') ? '&' : '?') + 'dgosDesktopTest=1'; }} catch (_) {{}}
               }}
               return setSrc(name, value);
             }};
@@ -289,9 +293,11 @@ fn create(app: &tauri::AppHandle, summary: &WindowSummary, restored_geometry: bo
             let packaged = (url.scheme() == "tauri" && url.host_str() == Some("localhost") && url.port().is_none())
                 || (url.scheme() == "http" && url.host_str() == Some("tauri.localhost") && url.port().is_none());
             let development = dev && url.scheme() == "http" && url.host_str() == Some("127.0.0.1") && url.port() == Some(15151);
-            packaged || development
+            let loopback_workbench = url.scheme() == "http" && url.host_str() == Some("127.0.0.1")
+                && url.port() == Some(workbench_port) && url.path().starts_with("/api/v1/apps/dgos.ai-workbench/resources/");
+            packaged || development || loopback_workbench
         })
-        .on_web_resource_request(move |request, response| handle.state::<crate::proxy::ApiProxy>().handle(request, response));
+        .on_web_resource_request(move |request, response| handle.state::<std::sync::Arc<crate::proxy::ApiProxy>>().handle(&request, response));
     let window = builder.build().map_err(|e| e.to_string())?;
     if restored_geometry {
         window.set_size(PhysicalSize::new(summary.width.clamp(720, 7680), summary.height.clamp(500, 4320))).map_err(|e| e.to_string())?;
@@ -312,7 +318,7 @@ pub fn restore_windows(app: &mut tauri::App) -> Result<(), Box<dyn std::error::E
         width: 1280, height: 840, maximized: false }, false)?;
     let background = handle.clone();
     std::thread::spawn(move || {
-        if background.state::<crate::proxy::ApiProxy>().probe_session().is_none() {
+        if background.state::<std::sync::Arc<crate::proxy::ApiProxy>>().probe_session().is_none() {
             background.state::<RestoreGate>().0.store(true, Ordering::Release);
             return;
         }
@@ -355,7 +361,7 @@ pub fn persist_window_event(window: &Window, event: &WindowEvent) {
 
 #[tauri::command]
 pub fn restore_subject_workspace(app: tauri::AppHandle) -> Result<serde_json::Value, String> {
-    let api = app.state::<crate::proxy::ApiProxy>();
+    let api = app.state::<std::sync::Arc<crate::proxy::ApiProxy>>();
     api.authenticated_subject().ok_or("desktop session unavailable")?;
     let snapshot = read(&app)?;
     for summary in &snapshot.windows {
@@ -369,8 +375,8 @@ pub fn open_window(app: tauri::AppHandle, label: String) -> Result<(), String> {
     if !label.starts_with("app-") || label.len() > 68 || !label.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'.') { return Err("invalid app window label".into()); }
     let app_id = label.strip_prefix("app-").ok_or("invalid app window label")?;
     if app_id.is_empty() { return Err("invalid app window label".into()); }
-    app.state::<crate::proxy::ApiProxy>().authenticated_subject().ok_or("desktop session unavailable")?;
-    app.state::<crate::proxy::ApiProxy>().authorize_app(app_id)?;
+    app.state::<std::sync::Arc<crate::proxy::ApiProxy>>().authenticated_subject().ok_or("desktop session unavailable")?;
+    app.state::<std::sync::Arc<crate::proxy::ApiProxy>>().authorize_app(app_id)?;
     if let Some(window) = app.get_webview_window(&label) { return window.set_focus().map_err(|e| e.to_string()); }
     if app.webview_windows().len() >= 12 { return Err("window limit reached".into()); }
     create(&app, &WindowSummary { label, route: "/desktop".into(), x: 120, y: 120, width: 1100, height: 760, maximized: false }, false)?;
@@ -399,7 +405,7 @@ pub fn set_window_route(app: tauri::AppHandle, label: String, route: String) -> 
 }
 
 #[tauri::command]
-pub fn forget_desktop_session(api: tauri::State<crate::proxy::ApiProxy>) -> Result<(), String> { crate::proxy::forget_session(&api) }
+pub fn forget_desktop_session(api: tauri::State<std::sync::Arc<crate::proxy::ApiProxy>>) -> Result<(), String> { crate::proxy::forget_session(&api) }
 
 #[tauri::command]
 pub fn desktop_test_result(result: serde_json::Value) -> Result<(), String> {

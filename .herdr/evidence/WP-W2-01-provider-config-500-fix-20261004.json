@@ -1,0 +1,35 @@
+{
+  "schema": "dgos/wp-w2-01-provider-config-500-fix/v1",
+  "status": "PASS",
+  "work_package": "WP-W2-01",
+  "problem": {
+    "request": "POST /api/v1/ai-tasks",
+    "input": { "providerConfigId": "missing-provider-config", "modelId": "fixture-text-model" },
+    "expected": 404,
+    "observed": 500,
+    "errorKey": "internal_error"
+  },
+  "root_cause": "Some business errors carried errorKey without statusCode. server.mjs only used error.statusCode, so provider_config_not_found degraded to HTTP 500.",
+  "fix": {
+    "file": "apps/api/src/server.mjs",
+    "details": [
+      "Resolve public error key from error.errorKey before error.message.",
+      "Map known provider/task business keys to their contract status codes.",
+      "Use the resolved public key for response classification and message lookup."
+    ]
+  },
+  "verification": [
+    { "command": "node --test tests/integration/ai-task-api.test.mjs", "result": "PASS: 6/6" },
+    { "command": "node --test tests/integration/ai-task-api.test.mjs tests/integration/provider-worker.test.mjs tests/provider/profile-task-wiring.test.mjs", "result": "PASS: 13/13" },
+    { "command": "node --check apps/api/src/server.mjs && git diff --check", "result": "PASS" },
+    { "command": "W2-03 Playwright", "result": "blocked by invalid external REAL_ADMIN credentials; no server 500 observed during this rerun" }
+  ],
+  "expected_contract_after_fix": {
+    "status": 404,
+    "errorKey": "provider_config_not_found",
+    "artifactIds": null
+  },
+  "known_limitations": [
+    "Playwright live Web run requires valid REAL_ADMIN_ID and REAL_ADMIN_CREDENTIAL for the running fixture service."
+  ]
+}
