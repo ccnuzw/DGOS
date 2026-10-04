@@ -1,0 +1,54 @@
+{
+  "schema": "dgos/wp-d1-01-core-task-chain/v1",
+  "work_package": "WP-D1-01",
+  "owner": "worker-ai",
+  "recorded_at": "2026-10-04T02:37:01.124Z",
+  "code_version": {
+    "git_head": "0ef7d57e3218cff7c4100be1e8ca12c9dc37246f",
+    "working_tree": "dirty",
+    "changed_files": [
+      "apps/web/e2e/w2-03-fixture.mjs",
+      "src/provider-config/task-admission.mjs"
+    ]
+  },
+  "commands": [
+    {
+      "command": "node --test tests/integration/ai-task-api.test.mjs tests/provider/profile-task-wiring.test.mjs tests/provider/provider-admission-profile.test.mjs",
+      "result": "PASS",
+      "evidence": "11 tests passed"
+    },
+    {
+      "command": "W2_E2E=1 REAL_MANAGEMENT_FIXTURE=1 WEB_EXTERNAL=1 WEB_BASE_URL=http://127.0.0.1:15176 W2_PROVIDER_CONFIG_ID=<fixture> pnpm exec playwright test apps/web/e2e/w2-03-web-e2e.spec.mjs --config=apps/web/playwright.config.mjs --reporter=line",
+      "result": "PASS",
+      "evidence": "4 tests passed in 2.5s",
+      "credential_policy": "credentials injected only via process environment; omitted from manifest"
+    }
+  ],
+  "acceptance": {
+    "provider_config_validation": "PASS",
+    "model_catalog": "PASS",
+    "task_creation": "PASS",
+    "sse_stream_and_cursor_recovery": "PASS",
+    "artifact_persistence_and_read": "PASS",
+    "idempotent_request_id_replay": "PASS",
+    "cancellation_terminal_state": "PASS",
+    "unknown_provider_no_artifact_side_effect": "PASS",
+    "secret_non_leakage": "PASS"
+  },
+  "real_external_provider": {
+    "result": "PASS",
+    "evidence": "tests/provider/evidence/V1-W2-01-REAL-20261004.json",
+    "scope": "historical external Provider evidence; not relitigated in this fixture run"
+  },
+  "evidence_files": [
+    ".herdr/evidence/WP-D1-01-core-task-chain-prep-20261004.json",
+    ".herdr/evidence/WP-D1-01-core-task-chain-day2-20261004.json",
+    "tests/provider/evidence/V1-W2-01-REAL-20261004.json"
+  ],
+  "limitations": [
+    "Web E2E uses deterministic local HTTPS Provider fixture and is not external Provider proof.",
+    "Native/UI desktop path is outside Worker-AI scope.",
+    "Working tree was not clean; git head is recorded for traceability."
+  ],
+  "sanitization": "No credentials, API keys, bearer tokens, or request bodies are stored."
+}

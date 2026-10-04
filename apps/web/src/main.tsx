@@ -25,6 +25,7 @@ import { displayNumber, setRegionFormat } from './region';
 import { DeviceSessions } from './sessions';
 import { DesignSystemShowcase } from './design-system-showcase';
 import { AssistantChat } from './assistant-chat';
+import "./style.css";
 import "./macos-app-styles.css";
 
 type Dict = Record<string, any>;

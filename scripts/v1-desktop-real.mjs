@@ -22,6 +22,7 @@ const database = `dgos_v1_desktop_${id}`;
 const service = `com.dgos.desktop.test.${id}`;
 const apiOrigin = 'http://127.0.0.1:15158';
 const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), 'dgos-desktop-real-'));
+const workspaceFile = path.join(stateDir, 'workspace.json');
 const resultFile = path.join(stateDir, 'webview-result.json');
 const runId = `V1-NATIVE-EXECUTION-r13-${new Date().toISOString().replaceAll(/[:.]/g, '-')}-${id.slice(0, 8)}`;
 const manifestName = `.herdr/${runId}-manifest.json`;
@@ -32,7 +33,7 @@ const dbBase = 'postgresql://dgos:dgos@127.0.0.1:5432/';
 const redisUrl = 'redis://127.0.0.1:6379/7';
 const candidateDir = path.resolve(process.env.DGOS_DESKTOP_CANDIDATE_DIR ?? path.join(root, '.herdr/state/package-fixture-r9'));
 const env = { ...process.env, NODE_ENV: 'test', DGOS_DATABASE_URL: `${dbBase}${database}`, REDIS_URL: redisUrl,
-  DGOS_ALLOW_INSECURE_FIXTURE: '1', DGOS_ALLOWED_ORIGINS: apiOrigin, DGOS_PACKAGE_ROOT: path.join(stateDir, 'packages'),
+  DGOS_ALLOW_INSECURE_FIXTURE: '1', DGOS_ALLOWED_ORIGINS: apiOrigin, DGOS_PACKAGE_ROOT: path.join(stateDir, 'packages'), DGOS_DESKTOP_WORKSPACE_FILE: workspaceFile,
   DGOS_PACKAGE_TRUST_ROOTS_FILE: path.join(candidateDir, 'trust-roots.json') };
 Object.assign(process.env, { NODE_ENV: env.NODE_ENV, DGOS_DATABASE_URL: env.DGOS_DATABASE_URL, REDIS_URL: env.REDIS_URL,
   DGOS_ALLOW_INSECURE_FIXTURE: env.DGOS_ALLOW_INSECURE_FIXTURE, DGOS_ALLOWED_ORIGINS: env.DGOS_ALLOWED_ORIGINS,
@@ -75,7 +76,19 @@ const until = async (read, predicate, label, limit = 15000) => {
   while (Date.now() < deadline) { const value = await read(); if (predicate(value)) return value; await sleep(150); }
   throw new Error(`${label}_timeout`);
 };
-const key = (action, input) => execFileSync(keychainBinary, [action, service, '127.0.0.1:15158'], { input, encoding: 'utf8', timeout: 5000 });
+const key = (action, input) => {
+  const args = [action, service, '127.0.0.1:15158'];
+  try {
+    return execFileSync(keychainBinary, args, { input, encoding: 'utf8', timeout: 12000 });
+  } catch (error) {
+    // Keychain can briefly hold a stale item after a prior interrupted run.
+    if (action === 'put') {
+      try { execFileSync(keychainBinary, ['delete', service, '127.0.0.1:15158'], { encoding: 'utf8', timeout: 4000 }); } catch { /* item absent */ }
+      return execFileSync(keychainBinary, args, { input, encoding: 'utf8', timeout: 12000 });
+    }
+    throw error;
+  }
+};
 
 try {
   assert.equal(process.platform, 'darwin');
@@ -232,7 +245,7 @@ try {
   fs.rmSync(resultFile);
   const nativeBeforeRelaunch = nativeSessionRequests;
   child = spawn(appBinary, [], { cwd: root, env: { ...env, DGOS_DESKTOP_API_ORIGIN: apiOrigin, DGOS_DESKTOP_TEST_KEYCHAIN_SERVICE: service,
-    DGOS_DESKTOP_TEST_RESTORE_PROBE: '1', DGOS_DESKTOP_TEST_RESULT_FILE: resultFile,
+    DGOS_DESKTOP_TEST_RESTORE_PROBE: '1', DGOS_DESKTOP_TEST_WORKBENCH: undefined, DGOS_DESKTOP_TEST_RESULT_FILE: resultFile,
     DGOS_DESKTOP_WORKSPACE_FILE: path.join(stateDir, 'workspace.json') }, stdio: ['ignore', 'ignore', 'pipe'] });
   const scoped = path.join(stateDir, `workspace-${createHash('sha256').update(session.principalId).digest('hex')}.json`);
   await until(() => fs.existsSync(scoped), Boolean, 'subject_workspace', 10000);

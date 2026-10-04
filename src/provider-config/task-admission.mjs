@@ -6,7 +6,13 @@ const reject = (key, statusCode = 422) => { throw Object.assign(new Error(key), 
 // Called only for a new submission. Existing taskId recovery must use its saved attempt.
 export function createTaskAdmission({ configRepository, accountRepository, registry, profileDirectory }) {
   return async function admission({ ownerId, providerConfigId, modelId, intent, transactionClient, parameters, input }) {
-    const config = await configRepository.get(providerConfigId, transactionClient);
+    // PostgreSQL UUID parameters reject arbitrary client strings with 22P02;
+    // expose those values as the same public not-found result as a missing row.
+    let config;
+    try { config = await configRepository.get(providerConfigId, transactionClient); } catch (error) {
+      if (error?.code === '22P02') reject('provider_config_not_found', 404);
+      throw error;
+    }
     if (!config || config.ownerId !== ownerId) reject('provider_config_not_found', 404);
     if (config.status !== 'ready') reject('provider_config_disabled');
     const account = await accountRepository.getAccount(config.providerAccountId, transactionClient);

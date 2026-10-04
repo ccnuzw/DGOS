@@ -4,7 +4,7 @@ export const W2_E2E_ENABLED = process.env.W2_E2E === '1';
 export const W2_FIXTURE = Object.freeze({
   protocolType: 'openai-compatible',
   displayName: `w2-e2e-${Date.now()}`,
-  modelId: process.env.W2_MODEL_ID || 'fixture-text-model',
+  modelId: process.env.W2_MODEL_ID || 'fixture-model',
   endpoint: process.env.W2_PROVIDER_ENDPOINT || 'https://provider.fixture.test/v1',
   credential: process.env.W2_PROVIDER_CREDENTIAL || 'fixture-e2e-token',
   successText: process.env.W2_SUCCESS_TEXT || 'w2 e2e fixture response',

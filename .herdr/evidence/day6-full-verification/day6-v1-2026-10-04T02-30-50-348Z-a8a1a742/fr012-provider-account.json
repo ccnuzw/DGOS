@@ -1,0 +1,14 @@
+{
+  "id": "fr012-provider-account",
+  "fr": [
+    "V1-FR-012"
+  ],
+  "status": "PASS",
+  "command": "node --test tests/integration/postgres-provider.test.mjs tests/integration/provider-api.test.mjs",
+  "exitCode": 0,
+  "stdoutSha256": "e808af01b2dad8201b833bb1b788cb2d8d95248a2ba8206544c20a12436fb408",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "evidence": ".herdr/evidence/day6-full-verification/day6-v1-2026-10-04T02-30-50-348Z-a8a1a742/fr012-provider-account.json",
+  "stdout": "TAP version 13\n# Subtest: PostgreSQL provider repository persists account and connection test snapshots\nok 1 - PostgreSQL provider repository persists account and connection test snapshots\n  ---\n  duration_ms: 25.085416\n  type: 'test'\n  ...\n# Subtest: provider account and controlled connection test lifecycle\nok 2 - provider account and controlled connection test lifecycle\n  ---\n  duration_ms: 58.369459\n  type: 'test'\n  ...\n# Subtest: ProviderEgress rejects private and non-HTTPS targets before adapter fetch\nok 3 - ProviderEgress rejects private and non-HTTPS targets before adapter fetch\n  ---\n  duration_ms: 0.709208\n  type: 'test'\n  ...\n# Subtest: V1-E2E-07 provider connection failure triggers automatic disable\nok 4 - V1-E2E-07 provider connection failure triggers automatic disable\n  ---\n  duration_ms: 16.341583\n  type: 'test'\n  ...\n1..4\n# tests 4\n# suites 0\n# pass 4\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 289.359875\n",
+  "stderr": ""
+}

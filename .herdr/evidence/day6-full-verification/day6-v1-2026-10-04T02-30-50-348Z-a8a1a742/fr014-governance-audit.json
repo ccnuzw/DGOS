@@ -1,0 +1,14 @@
+{
+  "id": "fr014-governance-audit",
+  "fr": [
+    "V1-FR-014"
+  ],
+  "status": "PASS",
+  "command": "node --test tests/security/v1-governance-e2e.test.mjs tests/integration/audit-query.test.mjs",
+  "exitCode": 0,
+  "stdoutSha256": "930d321a6b6e8baba5b82694c3c9ba56d091aabc1ac20d0687834cd485cf2ee7",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "evidence": ".herdr/evidence/day6-full-verification/day6-v1-2026-10-04T02-30-50-348Z-a8a1a742/fr014-governance-audit.json",
+  "stdout": "TAP version 13\n# Subtest: audit query records access, redacts summaries and scopes cursor pages\nok 1 - audit query records access, redacts summaries and scopes cursor pages\n  ---\n  duration_ms: 53.937667\n  type: 'test'\n  ...\n# Subtest: main API audit query records itself and rejects unauthorized disclosure\nok 2 - main API audit query records itself and rejects unauthorized disclosure\n  ---\n  duration_ms: 22.607625\n  type: 'test'\n  ...\n# Subtest: standalone PostgreSQL audit record and outbox commit or roll back together\nok 3 - standalone PostgreSQL audit record and outbox commit or roll back together # SKIP\n  ---\n  duration_ms: 0.096958\n  type: 'test'\n  ...\n# Subtest: main API with PostgreSQL persists the audit query before disclosure\nok 4 - main API with PostgreSQL persists the audit query before disclosure # SKIP\n  ---\n  duration_ms: 0.044959\n  type: 'test'\n  ...\n# Subtest: two fresh authenticated public policy writes have one winner\nok 5 - two fresh authenticated public policy writes have one winner # SKIP\n  ---\n  duration_ms: 0.0445\n  type: 'test'\n  ...\n# Subtest: V1-E2E-11 authentication session, expiry, origin and high-risk authorization\nok 6 - V1-E2E-11 authentication session, expiry, origin and high-risk authorization\n  ---\n  duration_ms: 60.194416\n  type: 'test'\n  ...\n# Subtest: V1-E2E-12 API key one-time secret, isolation, overlap, revoke and expiry\nok 7 - V1-E2E-12 API key one-time secret, isolation, overlap, revoke and expiry\n  ---\n  duration_ms: 16.542875\n  type: 'test'\n  ...\n# Subtest: V1-E2E-12 extended: API key overlap window and grace period expiry\nok 8 - V1-E2E-12 extended: API key overlap window and grace period expiry\n  ---\n  duration_ms: 10.384875\n  type: 'test'\n  ...\n# Subtest: V1-E2E-13 provider account connection controls reject SSRF and owner violations before enqueue\nok 9 - V1-E2E-13 provider account connection controls reject SSRF and owner violations before enqueue\n  ---\n  duration_ms: 9.539542\n  type: 'test'\n  ...\n# Subtest: V1-E2E-14 audit correlation, redaction, outbox retry and retention recovery\nok 10 - V1-E2E-14 audit correlation, redaction, outbox retry and retention recovery\n  ---\n  duration_ms: 18.452083\n  type: 'test'\n  ...\n1..10\n# tests 10\n# suites 0\n# pass 7\n# fail 0\n# cancelled 0\n# skipped 3\n# todo 0\n# duration_ms 321.486375\n",
+  "stderr": ""
+}

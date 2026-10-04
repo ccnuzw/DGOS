@@ -1,0 +1,14 @@
+{
+  "id": "fr002-lifecycle",
+  "fr": [
+    "V1-FR-002"
+  ],
+  "status": "PASS",
+  "command": "node --test tests/e2e/app-catalog-lifecycle.spec.mjs",
+  "exitCode": 0,
+  "stdoutSha256": "f16c9caa4cae25552cab57d7a877db9ebadb99fa339c932f5b241462a65051dd",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "evidence": ".herdr/evidence/day6-full-verification/day6-v1-2026-10-04T02-37-51-084Z-de8bb4f3/fr002-lifecycle.json",
+  "stdout": "TAP version 13\n# Subtest: V1-E2E-02 app catalog lifecycle asset\nok 1 - V1-E2E-02 app catalog lifecycle asset # SKIP DGOS_E2E_URL is required for Web E2E\n  ---\n  duration_ms: 0.368833\n  type: 'test'\n  ...\n1..1\n# tests 1\n# suites 0\n# pass 0\n# fail 0\n# cancelled 0\n# skipped 1\n# todo 0\n# duration_ms 50.757333\n",
+  "stderr": ""
+}

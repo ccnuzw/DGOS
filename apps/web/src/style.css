@@ -1,4 +1,6 @@
-@import '@dgos/design-tokens/style.css';@import '@dgos/dgos-ui/style.css';@import '@dgos/app-shell/style.css';
+@import '@dgos/design-tokens/style.css';
+@import '@dgos/dgos-ui/style.css';
+@import '@dgos/app-shell/style.css';
 .modal .auth-screen{min-height:0;display:block;padding:0}.modal .auth-card{width:100%}.modal .auth-card>h1,.modal .auth-card>.muted{display:none}.modal .auth-card .dgos-panel{margin:0 0 14px}
 .app-sandbox{display:block;width:100%;min-height:560px;height:70vh;border:1px solid var(--border);background:var(--surface)}
 .info-list{display:grid;gap:8px;margin:14px 0}.info-list dt{color:var(--muted);font-size:12px;font-weight:500;margin-bottom:2px}.info-list dd{margin:0;font-weight:500}.info-list .warning{color:var(--danger)}

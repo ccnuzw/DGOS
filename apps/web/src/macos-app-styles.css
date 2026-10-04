@@ -1,12 +1,6 @@
 /* DGOS macOS-style Application Styles */
 /* Enhanced integration styles for macOS Shell */
 
-/* Import all design system styles */
-@import '@dgos/design-tokens/style.css';
-@import '@dgos/dgos-ui/style.css';
-@import '@dgos/dgos-ui/accessibility.css';
-@import '@dgos/app-shell/style.css';
-
 /* Global macOS theme setup */
 :root {
   /* Ensure proper rendering */

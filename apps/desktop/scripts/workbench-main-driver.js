@@ -29,6 +29,7 @@
   let frameReady = false;
   let bridgeReady = false;
   let instanceId;
+  let readyOrigin = null;
   const frameDiagnostics = { injectedPaths: [], loads: 0, errors: 0, bridgeReady: false, events: [], hostMessages: [], hostHello: null };
   let resolveResult;
   const result = new Promise((resolve) => { resolveResult = resolve; });
@@ -38,11 +39,15 @@
     if (message?.type === 'dgos.app.ready') {
       frameDiagnostics.hostMessages.push({ type: message.type, origin: event.origin, instanceId: message.instanceId, bridgeVersion: message.bridgeVersion });
       instanceId = message.instanceId;
+      readyOrigin = event.origin;
+      frameDiagnostics.readyOrigin = event.origin;
+      frameDiagnostics.readySourceMatchesFrame = event.source === document.querySelector('iframe[title="dgos.ai-workbench"]')?.contentWindow;
+      frameDiagnostics.readyContract = typeof message.instanceId === 'string' && message.instanceId.length > 0 && message.bridgeVersion === 1 && frameDiagnostics.readySourceMatchesFrame;
     }
     if (message?.type === 'dgos.desktop.test.frame.injected') frameDiagnostics.injectedPaths.push(message.path);
     if (message?.type === 'dgos.desktop.test.workbench.ready') frameReady = true;
     if (message?.type === 'dgos.app.ready') { instanceId = message.instanceId; bridgeReady = true; frameDiagnostics.bridgeReady = true; }
-    if (message?.type === 'dgos.app.invoke') {
+    if (message?.type === 'dgos.app.invoke' && event.origin === readyOrigin && event.source === document.querySelector('iframe[title="dgos.ai-workbench"]')?.contentWindow && message.instanceId === instanceId) {
       evidence.bridgeCalls.push(message.capability);
       if (message.capability === 'dgos.aiTask.submit') {
         evidence.parameters = message.input?.options?.parameters;
@@ -113,7 +118,7 @@
          if (bridgeReady) { clearInterval(helloTimer); return; }
          sendHello();
        }, 250);
-       await waitFor(() => bridgeReady, 'signed_workbench_bridge').catch(async (error) => {
+      await waitFor(() => bridgeReady && frameDiagnostics.readyContract, 'signed_workbench_bridge').catch(async (error) => {
          clearInterval(helloTimer);
         await report({ stage: 'workbench_bridge_diagnostic', phase, frameDiagnostics, frameReady, bridgeReady,
           route: location.pathname, frameSrc: frame.getAttribute('src')?.split('?')[0],
@@ -121,7 +126,7 @@
         throw error;
        });
        clearInterval(helloTimer);
-      await report({ stage: 'workbench_bridge_ready', phase, route: location.pathname });
+      await report({ stage: 'workbench_bridge_ready', phase, route: location.pathname, readyOrigin, readyContract: frameDiagnostics.readyContract });
        const postTarget = Boolean(frame.contentWindow);
       let postError = null;
       try {

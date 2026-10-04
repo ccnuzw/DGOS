@@ -134,8 +134,10 @@ fn create(app: &tauri::AppHandle, summary: &WindowSummary, restored_geometry: bo
       }}, {{ once: true }});
       if ({workbench_test}) window.addEventListener('message', (event) => {{
         const type = event.data?.type;
+        const frame = document.querySelector('iframe[title="dgos.ai-workbench"]');
+        const sourceMatchesFrame = event.source === frame?.contentWindow;
         if (type === 'dgos.app.ready' || type === 'dgos.desktop.test.frame.injected' || type === 'dgos.desktop.test.workbench.ready')
-          window.__TAURI_INTERNALS__?.invoke('desktop_test_result', {{ result: {{ stage: 'message_observed', type, origin: event.origin, sourceMatchesFrame: event.source === document.querySelector('iframe[title="dgos.ai-workbench"]')?.contentWindow }} }}).catch(() => {{}});
+          window.__TAURI_INTERNALS__?.invoke('desktop_test_result', {{ result: {{ stage: 'message_observed', type, origin: event.origin, sourceMatchesFrame, instanceId: event.data?.instanceId ?? null, bridgeVersion: event.data?.bridgeVersion ?? null }} }}).catch(() => {{}});
       }});
       const realConfig = {real_config};
       window.__DGOS_VISIBLE_TEST__ = {visible_test};
