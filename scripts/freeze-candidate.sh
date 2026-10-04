@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-CANDIDATE_ID="v1.0.0-rc.$(date +%Y%m%d.%H%M%S)"
+CANDIDATE_ID="${CANDIDATE_ID:-v1.0.0-rc.$(date +%Y%m%d.%H%M%S)}"
 CANDIDATE_DIR="candidates/$CANDIDATE_ID"
 
 echo "🧊 Freezing V1 Release Candidate: $CANDIDATE_ID"
@@ -52,7 +52,7 @@ echo "   Building API..."
 cd apps/api
 pnpm build > /dev/null 2>&1
 cd ../..
-tar czf "$CANDIDATE_DIR/api-dist.tar.gz" apps/api/dist apps/api/package.json
+ tar czf "$CANDIDATE_DIR/api-dist.tar.gz" apps/api/src apps/api/package.json
 API_SIZE=$(du -h "$CANDIDATE_DIR/api-dist.tar.gz" | cut -f1)
 echo "   ✅ API built ($API_SIZE)"
 
@@ -174,8 +174,22 @@ cat > "$CANDIDATE_DIR/manifest.json" << EOF
   },
   "dependencies": {
     "manifest": "dependencies.json",
-    "lockfile": "pnpm-lock.yaml"
-  }
+    "lockfile": "pnpm-lock.yaml",
+    "package_manager": "$(node -p "require('./package.json').packageManager")",
+    "node": "$(node --version)",
+    "pnpm": "$(pnpm --version)",
+    "cargo": "$(cargo --version | sed 's/"/\\"/g')",
+    "rust_lockfile": "apps/desktop/src-tauri/Cargo.lock",
+    "root_package_sha256": "$(sha256sum package.json | cut -d' ' -f1)",
+    "pnpm_lock_sha256": "$(sha256sum pnpm-lock.yaml | cut -d' ' -f1)",
+    "cargo_manifest_sha256": "$(sha256sum apps/desktop/src-tauri/Cargo.toml | cut -d' ' -f1)",
+    "cargo_lock_sha256": "$(sha256sum apps/desktop/src-tauri/Cargo.lock | cut -d' ' -f1)"
+  },
+  "knownLimitations": [
+    "Desktop artifact is unsigned unless a Developer ID identity and notarization credentials are provisioned.",
+    "Local candidate build is not production deployment, performance approval, or target-host recovery evidence.",
+    "API package contains checked source because this workspace build has no API dist output."
+  ]
 }
 EOF
 echo "   ✅ Manifest generated"
