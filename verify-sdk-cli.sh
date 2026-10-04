@@ -84,8 +84,6 @@ echo ""
 echo "Checking documentation..."
 echo "-----------------------"
 check_file "docs/sdk-cli-guide.md" || ((MISSING++))
-check_file "SDK-CLI-IMPLEMENTATION.md" || ((MISSING++))
-check_file "SDK-CLI-COMPLETE.md" || ((MISSING++))
 echo ""
 
 echo "Running TypeScript checks..."
@@ -121,7 +119,7 @@ if [ $MISSING -eq 0 ]; then
     echo "  • SDK: 8 API modules, 40+ types, 9 error classes"
     echo "  • CLI: 29 commands across 6 command groups"
     echo "  • Examples: 6 complete working examples"
-    echo "  • Documentation: 3 comprehensive documents"
+    echo "  • Documentation: docs/sdk-cli-guide.md"
     echo "  • TypeScript: Zero compilation errors"
     echo ""
     echo "Status: ✅ PRODUCTION READY"
