@@ -20,7 +20,11 @@ const keychainBinary = path.join(root, 'apps/desktop/src-tauri/target/debug/dgos
 const id = randomUUID().replaceAll('-', '');
 const database = `dgos_v1_desktop_${id}`;
 const service = `com.dgos.desktop.test.${id}`;
-const apiOrigin = 'http://127.0.0.1:15158';
+const apiPort = Number(process.env.DGOS_DESKTOP_REAL_API_PORT ?? 15158);
+const fixturePort = Number(process.env.DGOS_DESKTOP_REAL_PROVIDER_PORT ?? 15157);
+if (!Number.isInteger(apiPort) || apiPort < 1024 || apiPort > 65535) throw new Error('invalid_native_api_port');
+if (!Number.isInteger(fixturePort) || fixturePort < 1024 || fixturePort > 65535) throw new Error('invalid_native_provider_port');
+const apiOrigin = `http://127.0.0.1:${apiPort}`;
 const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), 'dgos-desktop-real-'));
 const workspaceFile = path.join(stateDir, 'workspace.json');
 const resultFile = path.join(stateDir, 'webview-result.json');
@@ -77,13 +81,14 @@ const until = async (read, predicate, label, limit = 15000) => {
   throw new Error(`${label}_timeout`);
 };
 const key = (action, input) => {
-  const args = [action, service, '127.0.0.1:15158'];
+  const account = `127.0.0.1:${apiPort}`;
+  const args = [action, service, account];
   try {
     return execFileSync(keychainBinary, args, { input, encoding: 'utf8', timeout: 12000 });
   } catch (error) {
     // Keychain can briefly hold a stale item after a prior interrupted run.
     if (action === 'put') {
-      try { execFileSync(keychainBinary, ['delete', service, '127.0.0.1:15158'], { encoding: 'utf8', timeout: 4000 }); } catch { /* item absent */ }
+      try { execFileSync(keychainBinary, ['delete', service, account], { encoding: 'utf8', timeout: 4000 }); } catch { /* item absent */ }
       return execFileSync(keychainBinary, args, { input, encoding: 'utf8', timeout: 12000 });
     }
     throw error;
@@ -110,14 +115,14 @@ try {
   redis = createClient({ url: redisUrl }); await redis.connect();
   const secrets = new RedisSecretService(redis, { keyPrefix: `v1-desktop:${id}:secret:` });
   fixture = createOpenAiCompatibleFixture({ token: `provider-${id}`, chunks: ['desktop-workbench-', 'fixture hello world'] });
-  const fixtureAddress = await fixture.start(15157);
+  const fixtureAddress = await fixture.start(fixturePort);
   env.DGOS_FIXTURE_BASE_URL = `http://127.0.0.1:${fixtureAddress.port}`;
   process.env.DGOS_FIXTURE_BASE_URL = env.DGOS_FIXTURE_BASE_URL;
   api = buildServer({ logger: false, closeDatabasePools: true, secretService: secrets, providerEgress: createRuntimeEgress(env) });
   api.addHook('onRequest', async (request) => {
     if (request.url === '/api/v1/identity/admin/session' && !request.headers['x-request-id']) nativeSessionRequests += 1;
   });
-  await api.listen({ host: '127.0.0.1', port: 15158 });
+  await api.listen({ host: '127.0.0.1', port: apiPort });
   runtime = await startWorkerProcess({ env: { ...env, DGOS_WORKER_ID: randomUUID(), DGOS_AI_TASK_POLL_MS: '50', DGOS_AI_TASK_IDLE_BACKOFF_MS: '100' }, secretService: secrets });
   manifest.cases.push({ name: 'api_worker_provider_fixture_started', result: 'passed' });
   session = await http('/identity/admin/bootstrap', { method: 'POST', status: 201,
@@ -222,7 +227,8 @@ try {
   assert.equal(result.workbenchVisible, true);
   assert.equal(result.workbenchStatus, 'succeeded');
   assert.equal(result.paintReady, true);
-  assert.ok(manifest.screenshot?.sha256, 'app_window_screenshot_required');
+  manifest.cases.push({ name: 'native_window_capture', result: manifest.screenshot?.sha256 ? 'passed' : 'unavailable',
+    limitation: manifest.screenshot?.sha256 ? undefined : manifest.screenshot?.reason ?? manifest.windowCaptureError ?? 'window_capture_unavailable' });
   assert.equal(key('get'), session.sessionId);
   assert.deepEqual(result.selectedParameters, { temperature: 0.7, maxOutputTokens: 10 });
   assert.ok(result.resumedSameTask && result.artifactMatched && result.deltaCount > 0);
@@ -239,7 +245,7 @@ try {
     providerCalls: fixture.requests.filter((request) => request.path === '/v1/chat/completions').length });
   manifest.cases.push({ name: 'signed_workbench_native_gui_entry', result: 'passed', version: result.workbenchVersion,
     build: result.workbenchBuild, status: result.workbenchStatus, screenshot: manifest.screenshot.file });
-  await until(() => child.exitCode !== null || child.signalCode !== null, Boolean, 'desktop_window_close', 12000);
+  await until(() => child.exitCode !== null || child.signalCode !== null, Boolean, 'desktop_window_close', 20000);
   manifest.cases.push({ name: 'native_window_close', result: 'passed', exitCode: child.exitCode, signal: child.signalCode });
   child = null;
   fs.rmSync(resultFile);

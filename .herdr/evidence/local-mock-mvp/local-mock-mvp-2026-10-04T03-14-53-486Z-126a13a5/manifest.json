@@ -1,0 +1,16 @@
+{
+  "schema": "dgos.local-mock-mvp.v1",
+  "runId": "local-mock-mvp-2026-10-04T03-14-53-486Z-126a13a5",
+  "environment": "local-mock",
+  "providerMode": "mock",
+  "port": 64991,
+  "command": "pnpm exec playwright test apps/web/e2e/local-mock-mvp.spec.mjs --config=apps/web/playwright.config.mjs --reporter=line",
+  "exitCode": 1,
+  "result": "FAIL",
+  "stdoutSha256": "93b2dfc8522f5747a0033fb30cca31a3e96ff82f34c92443e7533f9afe24f61a",
+  "stderrSha256": "b8880567834ecc9e5bdd8009ebbb941a46f63ce81e94f9522bca19c81e05a493",
+  "limitations": [
+    "Mock Provider proves Web state flow only; it does not prove external Provider, production credentials, macOS host, or release gates."
+  ],
+  "evidenceDir": ".herdr/evidence/local-mock-mvp/local-mock-mvp-2026-10-04T03-14-53-486Z-126a13a5"
+}

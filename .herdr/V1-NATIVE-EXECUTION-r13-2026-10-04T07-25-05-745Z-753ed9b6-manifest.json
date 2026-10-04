@@ -1,0 +1,685 @@
+{
+  "work_package": "V1-NATIVE-EXECUTION r13",
+  "run_id": "V1-NATIVE-EXECUTION-r13-2026-10-04T07-25-05-745Z-753ed9b6",
+  "result": "failed",
+  "database": "dgos_v1_desktop_753ed9b6d3ca4d259fe4326c952ea7a0",
+  "apiOrigin": "http://127.0.0.1:15158",
+  "redisDatabase": 7,
+  "command": "node scripts/v1-desktop-real.mjs",
+  "cases": [
+    {
+      "name": "isolated_database_migrated",
+      "result": "passed",
+      "count": 47
+    },
+    {
+      "name": "api_worker_provider_fixture_started",
+      "result": "passed"
+    },
+    {
+      "name": "signed_workbench_1_0_1_installed",
+      "result": "passed",
+      "appId": "dgos.ai-workbench",
+      "digest": "sha256:1a46448233d7ec48adebd29d95cbdb8f4c82e254b3f6d577c740f53d8b6d4c39",
+      "capabilityCount": 9
+    },
+    {
+      "name": "public_http_session_and_provider_ready",
+      "result": "passed",
+      "subjectId": "07644d78-c7f5-427c-8958-595875ddc946",
+      "configId": "8028ad6c-5e6d-413d-9577-54d806c8082d"
+    }
+  ],
+  "limitations": [
+    "Local Provider fixture and debug-driven signed iframe DOM; no manual GUI or release signing acceptance. Screenshot requires human review."
+  ],
+  "preflight": {
+    "migrationCount": 47,
+    "finalMigration": "0051-proxy-provisioning",
+    "packageDigest": "sha256:1a46448233d7ec48adebd29d95cbdb8f4c82e254b3f6d577c740f53d8b6d4c39",
+    "envelopeSha256": "41b6df33c0ec6e9fb302dc9e66c601b68f549e34e3c3deaa2e57b7c0684ff04a",
+    "trustRootsSha256": "bfee5901015164af8bf0e37e1942bdf8298dd87fc78e701d7c716467a1a22e3b",
+    "embeddedAssetNames": [
+      "assets/index-WY1X4KmX.js",
+      "assets/index-BgebK2SG.css"
+    ],
+    "appSha256": "255494d9d7a689c9409d320a41be04278a5cf3a8fc48be90d892e704cb2d277e"
+  },
+  "artifact_sha256": "255494d9d7a689c9409d320a41be04278a5cf3a8fc48be90d892e704cb2d277e",
+  "source_sha256": {
+    "apps/desktop/src-tauri/src/host.rs": "184dda334e1e1dccba4bb14ceb820fbbda973d54d70b8075750227b1d156d8a4",
+    "apps/desktop/src-tauri/src/proxy.rs": "f9b6ba3828752cd985bf8448157140b2bc052e82f2d90fda9ba8246b17349f36",
+    "apps/desktop/src-tauri/src/lib.rs": "4d0772c50d98db06c95ce6c03ccb31fadc10769bfd1d5841b3105d05a7e64acb",
+    "apps/desktop/scripts/e2e-macos.mjs": "02610c40defee5f16c974e3dec9d8e35e8b6537f7d85448e96b45ad396a40186",
+    "apps/desktop/scripts/window-server.swift": "8cbb6538d41a5992eb7f1898afa52b18c8bb6b681914964afdb75262e58c0c7e",
+    "apps/api/src/server.mjs": "53474d0da78307f4a0af1368f1346145568741e2336b3bda440da932ae5b4606",
+    "apps/worker/src/worker.mjs": "e94c90888699b34a66632c77b8d5afea879734605e341423cf5cb821c58aa7e4",
+    "src/ai-task/service.mjs": "979006a7ea95762e6949491ecdab5c4c79f5b056cd2841b00ca92a9b5c82f689",
+    "test-support/openai-compatible-fixture.mjs": "57ecc9557736c1c3edb9de8e69334d28cf94a65c58ca2ea964fafb4b4f9fb41e",
+    "scripts/v1-desktop-real.mjs": "e6123315b02e45a835ffd12d42d84ee60e1a08218994d8df1ce7889696d8b50a",
+    "apps/desktop/scripts/candidate-preflight.mjs": "991c788406ddbd260664cb54b52e98b2b7a057ec4e0a3e7f273ed64e0477edee",
+    "apps/desktop/scripts/workbench-main-driver.js": "a3fff568e4c07fced472015a13efb872a237269df77eafd60664e7ce41b560b1",
+    "apps/desktop/scripts/workbench-frame-driver.js": "98f597f38c1a8d955b9153eb544337fdfea5f57bf0e58920242a90ec06fbe01e",
+    "apps/ai-workbench-package/manifest.json": "a6cd7ed540c5997b48315ba1b4c7f0a2c12a03527001a9ee06e9e0691218dbb5",
+    "apps/ai-workbench-package/index.html": "50470986926e5418d4d515f9defb3d7be53f3550da468f493b7747dd2c70a1df",
+    "apps/ai-workbench-package/workbench.css": "fab45f94c3828c7382e3b140e15b267bc988de8cd7e8da3d0c48fa3a1c62f82b",
+    "apps/ai-workbench-package/workbench.js": "ae36fdd54a42792688fb26dcebe6d6981a7aa0c10359854f433a813c50945457",
+    "apps/ai-workbench-package/icon.svg": "c737d6af765181888d1a0d1d7b6fef1f7d04bf64f8b2a33949842b830b7ecd36",
+    "packages/design-tokens/src/tokens.css": "f7ee8f313ad0c82389f6e448c18ad77284806fe332796119c231199000584f10",
+    ".herdr/state/package-fixture-r9/ai-workbench-envelope.json": "41b6df33c0ec6e9fb302dc9e66c601b68f549e34e3c3deaa2e57b7c0684ff04a",
+    ".herdr/state/package-fixture-r9/trust-roots.json": "bfee5901015164af8bf0e37e1942bdf8298dd87fc78e701d7c716467a1a22e3b"
+  },
+  "web_dist_sha256": {
+    "assets/index-BgebK2SG.css": "4f0463e75e0f2ba4a0cb6daca15871722230dce8bc2bdf4872cf41a2709172c8",
+    "assets/index-WY1X4KmX.js": "f987dcf6a359f2778da789ee9844b2f1b284b12a4043abcf453154e90e06e4b5",
+    "brand/icon-dark.svg": "adb69db28590191592569b4e0a59ce6602445cba59992b7d14aa607184e73ab5",
+    "brand/icon.svg": "d99c8f4d09e543078477c289debf0c518f4d0101cfce207379fd129716456aff",
+    "brand/logo.svg": "b0fa83e5b17364427a4fadee9c498bac82d8525d553f14282acbe96fb6090934",
+    "icons/apps/assistant.svg": "4641c04f267c3b1e7f2c94300af46e1099946529e0b015e8b2ff5140868e95e3",
+    "icons/apps/catalog.svg": "11bc9567d09f123ad40fe37aa570b87edda518a111fedccb1a3d42b85c44a4f0",
+    "icons/apps/developer-center.svg": "9e6a2a63695b544bdc75689ff56bb18cfcfce4756608d8b7381c5b39f1ca9a84",
+    "icons/apps/extensions.svg": "d28f9e7f7ebe1e440a4328615b4281f266ec40ea7f93e054c0731b973d4a1261",
+    "icons/apps/models.svg": "af607bf197bd8811d1b087af15356d5978f5fd752917899a16200e1809354b89",
+    "icons/apps/providers.svg": "eafdcb9b7e278441b04d33b5a6eefc378840792a6593161473959e5ee6cd9427",
+    "icons/apps/settings.svg": "5816e53bf3b86a86b772af847e9def8e1c80edf58c9cac9e22171d88f8329555",
+    "icons/apps/system-info.svg": "64ae08a5ce8fcf0fd13b7818dcf04c0e147c7e4da20fc47ad4d69a58dc443459",
+    "icons/apps/tasks.svg": "905095eabaa61cf7d039be14a98136ad71cc0b6e753521ed58871ddc0d41558e",
+    "icons/dark/apps/assistant.svg": "2373fee58915d4a2b13b7d28726135d46b786c1ab849f2f6922e14c877c8e964",
+    "icons/dark/apps/catalog.svg": "7b88152d9baddd637caa25cfbe18bdf6e550e0778dee256d807d27a6a0f164b4",
+    "icons/dark/apps/developer-center.svg": "31262adb6a39499399ab0e292f2bb8dc09f4ec4887f414416c2aecac4692ec42",
+    "icons/dark/apps/extensions.svg": "8983af50996a211bbfa8edf62c69ea6c9ddfe7a429ed5ea24d5ee89993712f23",
+    "icons/dark/apps/models.svg": "294d956b85efc86591e99055d05bd8fc48d1a9e9640f236a1be5f4acd96c8560",
+    "icons/dark/apps/providers.svg": "39131510a92717187954c932ba7c5bf370ecf42c2041981b2f0cfd7449ef8b63",
+    "icons/dark/apps/settings.svg": "a5d287621ad2b52436d74cbbc17e94e92c6173cbc850c131a0199bb3c9e2c1fe",
+    "icons/dark/apps/system-info.svg": "79fbbd9bbeaa780b547709e0e8fb659514d6981c7af10615a4dea6b03bbfdcc3",
+    "icons/dark/apps/tasks.svg": "bcdede92da73c951bd4ddffcc094626b56ec8a8a53b8550c936280bd11f9a878",
+    "icons/dark/system/dgos-logo.svg": "8fea5b2f2d2ece80d95701912b8f1a200af7472bf8383e3e21bdaa20a2c6f861",
+    "icons/dark/system/downloads.svg": "d812c9c65bed82921c7878c068eeb448ebe2d0e861db5e8692421e701f2d95a5",
+    "icons/dark/system/trash-full.svg": "619a0c49e2465ead15ef156bd4695840308ba3fd95899f1b391aae8958cbe8a7",
+    "icons/dark/system/trash.svg": "518818968b476cab93e5c46a02afc910246e26113a0851f8c1b42dcf2a503df7",
+    "icons/statusbar/battery.svg": "f099f285b5a5b2c29283d5b2fbffb0d34562b3aa1a093856e6c49a5506a301c2",
+    "icons/statusbar/clock.svg": "a228cb4efb36ef00b06227d88f15dddcc4262e57e7037aff518ca769d16d1b0e",
+    "icons/statusbar/notifications.svg": "e598ebb7577c95fa5a235694462bc8961662ca463861a77a30e29ef9791ece96",
+    "icons/statusbar/search.svg": "6aeba741f0892c990e7b7de3d29b539492d9c68829f37dacd3ada7232483a6f5",
+    "icons/statusbar/settings.svg": "3404893650dad9d34c18e41224e93f92cea46b2b64b22498681b8f60357a2932",
+    "icons/statusbar/user.svg": "7687d9b83a0c02a4b20b891a60a717a671eb58225d3875234e02759c8bb31ff8",
+    "icons/statusbar/volume.svg": "92bbd434d4f645bc75679d502e1c2b21ddeb91d2742b06ee99b5ccbe5f56ce93",
+    "icons/statusbar/wifi.svg": "abb157105076ed4d9a3b9f209a731632ceb5ff3a0086cd2177e2dc3525087d42",
+    "icons/system/dgos-logo.svg": "dda057c8580c73a086379e3d6e0b2140bb0b6cbd3970bff2bfdd68ce275e2589",
+    "icons/system/downloads.svg": "c938852cec4c2ea21806ee8bdf77b1ab0ce74305e24ee020b07936100510cead",
+    "icons/system/trash-full.svg": "84a0218db2205cf257530a103fff8e6a836b63f178363d433886a24eb9642a41",
+    "icons/system/trash.svg": "dfcf8bef7f296a94afb77dd438de04c023641da0fb5d04b1fb21ac650432310b",
+    "illustrations/empty-data.svg": "30802f816f00b6cf9b9f13c8b10d6c9ef7707e51d7802c5a933a51f96e42d009",
+    "illustrations/empty-providers.svg": "8e78125fc62ec89f1030abb5a08e3d704cd2772676289e7b487e35ff51601200",
+    "illustrations/error-connection.svg": "935c66ec473b9c4ce8d1f4b1ed6bf1108bbc55e2c4e16c97b841dfacf64bc751",
+    "index.html": "beb7a1034dae17cdd25644a2f55fb1af6f147bf31c9db45cce24c97d16d5512d"
+  },
+  "migrations": [
+    {
+      "version": "0001-v1-governance",
+      "checksum": "4041158120cf8fc433117e217d41e483272e8c198e9813935d1f1ae567a833e3"
+    },
+    {
+      "version": "0002-connection-test-leases",
+      "checksum": "556fae173bf3efe8b502ab715e1ac62364e978a8e5f989a1b6bd84e2388978f8"
+    },
+    {
+      "version": "0003-audit-outbox-leases",
+      "checksum": "090a9ca7f251014e7dc8bd35544a4e71ca43c7e30b6ef2e41cdce338f70055bc"
+    },
+    {
+      "version": "0004-retention-jobs",
+      "checksum": "0030ee08a56817e4d283913d6e55e5416478bc2ebc1e156b0e008fc8e75c8145"
+    },
+    {
+      "version": "0005-quota-usage",
+      "checksum": "d037c22c993b91c64e0c54f12d78ed698e303f57fbd64ecbd027721869016e86"
+    },
+    {
+      "version": "0006-runtime",
+      "checksum": "5537f89b8475c4546fe37f6d740a6a5d0300dea17e7095d9ee2df796863b792b"
+    },
+    {
+      "version": "0007-provider-config-ai-task",
+      "checksum": "caf1f288f9f285026649ee61f0770034cedabd02439de4c6d742b9ed644a4229"
+    },
+    {
+      "version": "0009-quota-usage-dimensions",
+      "checksum": "42a11b86d92e23f9d492b34e34a697f52d062e18388cce643f4eeafd3efc5a36"
+    },
+    {
+      "version": "0010-quota-usage-idempotency",
+      "checksum": "87001b0cd6fe7dfa552f3eb278bac932ef0864af09b06cdc98c78bddd38ac5f2"
+    },
+    {
+      "version": "0011-runtime-persistence",
+      "checksum": "bc3db9fa2b38de9817fa9a545bd89971112f22b9664622b652922c6aeca86eee"
+    },
+    {
+      "version": "0012-ai-task-leases",
+      "checksum": "07c93eaa90919726c6d3384b44d0ff3c1e046434c870d0b64196e81600c19813"
+    },
+    {
+      "version": "0013-action-run-recovery",
+      "checksum": "7dda51f53af4ebd624ebfaf1fccc2a1a6d626aefffc445dba31c6c217b939186"
+    },
+    {
+      "version": "0014-audit-runtime-targets",
+      "checksum": "b837e3c5e3f7300b4dd964706b7418b3b19e2889086216eb84833986decb7f49"
+    },
+    {
+      "version": "0015-action-handler-claim",
+      "checksum": "145866e6d23ab992c4fe2e4f11715f6948788a513fa34dfb6a3f16abbc410959"
+    },
+    {
+      "version": "0016-action-input-recovery",
+      "checksum": "c084c94a7b676ef4d4fa9823decaf8d9174315ee8bad8096c38f5b7e314d9dfc"
+    },
+    {
+      "version": "0017-action-recovery-guard",
+      "checksum": "a3fb760d103d5fbb3a31d67f4fa6973982d169bb19a10ab2c3e13bca9c57d8ad"
+    },
+    {
+      "version": "0018-action-cancel-guard",
+      "checksum": "8a5d8b799e25fc219e42a935556e2429ff26609ee3fd05a233257bc6f4f0856c"
+    },
+    {
+      "version": "0019-ai-task-dispatch-fence",
+      "checksum": "b99e6cd5488c9558929048bf8e41e3e9607e6e5fcbdd560791c5f3999b64cbb5"
+    },
+    {
+      "version": "0022-api-key-rotation",
+      "checksum": "bc8e3d735e420ec34d9255807a90f48b559bd651a3ce5ac4511114aaf128c80c"
+    },
+    {
+      "version": "0023-governance-policy",
+      "checksum": "0a19d322f1ff95d7f4db1a5cf427a75f440cff9c4c2e1862f79ad24ab4c757e5"
+    },
+    {
+      "version": "0024-admin-session-freshness",
+      "checksum": "c476ba85c605640f8eea4ff4de5fc3617a12f12ecfb9ac4b33f45ac7a2befcdf"
+    },
+    {
+      "version": "0025-extension-registry",
+      "checksum": "13282166e607b23321221d077ccc19f4185e672f94db928c00771d229eb7d8bd"
+    },
+    {
+      "version": "0026-extension-runs",
+      "checksum": "21cc24eff1f399747864761049a4c4a19ceb765e52b856e589c4f35c7bd620bb"
+    },
+    {
+      "version": "0027-extension-run-events",
+      "checksum": "94aaf8a510f48ea9d87e4cf98657996efb10c5f3026aa8dfc9c91ee287b99538"
+    },
+    {
+      "version": "0028-app-packages",
+      "checksum": "08fae924e0e37d0999c4a43933a83177a5a0f215bac99e5368b73ab1d56b5f71"
+    },
+    {
+      "version": "0029-app-package-deployments",
+      "checksum": "dcdd38cba9baee568bf1919289dfe1d20899abc9a569be380d526f87c3c4e794"
+    },
+    {
+      "version": "0030-app-package-operations",
+      "checksum": "30e68b53884c70f0af4069616b73028019ab01c4a91c3cdcf9950bd94e19e4d6"
+    },
+    {
+      "version": "0031-provider-account-bindings",
+      "checksum": "ea5bb76be51aac25ddd348e6be58f0ec0fef990155ff499745297673bd8e9a2e"
+    },
+    {
+      "version": "0032-provider-connection-recovery",
+      "checksum": "0c8989a248fb373087afa9b1af8f8aa2110feb2303540752422543de44e66a5a"
+    },
+    {
+      "version": "0033-provider-admission",
+      "checksum": "1cf8888eb6a554b4a7fe6a71e8b06b0b1daf80d91a6a3bfa997af27822337679"
+    },
+    {
+      "version": "0034-extension-recovery",
+      "checksum": "9a6c2e429aa756435d2d8bc885277275c47a547851c1ae0ba60f2bda2c6ff81e"
+    },
+    {
+      "version": "0035-package-recovery",
+      "checksum": "c73ff34b55493b548759560d8fb0cbe44fd15de081456069d282eabe91ba6750"
+    },
+    {
+      "version": "0036-provider-operations",
+      "checksum": "24f5649da8b92b2d3ee9c63e9bbf9a7a5ed897180da761a6211c5c0ed8996aad"
+    },
+    {
+      "version": "0037-app-data-migration",
+      "checksum": "554603eff3422d32e6249880a8f62268ef410f33ff1773dc40aab0cb4f12bb0c"
+    },
+    {
+      "version": "0038-permission-action-lifecycle",
+      "checksum": "5542368a6fa955ac58440a3a223ef662fb1a54a62a883ae2fd8ffa2daf9608bd"
+    },
+    {
+      "version": "0039-provider-protocol-confirmations",
+      "checksum": "07259111a3c3808c5e6070b0189bd0bf74dcd040623b137590b17bd452bd8b12"
+    },
+    {
+      "version": "0040-provider-profile-bindings",
+      "checksum": "761b4b96d3a7c509198dbdd1cd1d958b92a28f6b8f4cee449ebf99b080050343"
+    },
+    {
+      "version": "0041-app-data-migration-package-digests",
+      "checksum": "9ab4865298fab5f7be79f0906bf82ed176bf844a96e03b42daf8e5d579a09090"
+    },
+    {
+      "version": "0043-provider-protocol-receipts",
+      "checksum": "2cbc7d81813a50c85393ae857b260c796e8a7ea4db8f7c122541ab0abf5266fb"
+    },
+    {
+      "version": "0044-system-projection",
+      "checksum": "a95019d20a3d2e63678b23f14fb35929f65c0192b075b4d995d35c8fb067e647"
+    },
+    {
+      "version": "0045-network-route-activation",
+      "checksum": "c2bc2a47a3360e47b02d4edd9880b88694ec3ab84cdf7613674cd2099d40040d"
+    },
+    {
+      "version": "0046-package-retention",
+      "checksum": "7321916de0ddff31f40d48b837acada75d8ec893691c7c65f22d0b707d6a9a83"
+    },
+    {
+      "version": "0047-ai-task-parameters",
+      "checksum": "22b6e9e886943f2b660de4d54989e0587c58cb67e373fbd45b7140849f6f15f6"
+    },
+    {
+      "version": "0048-network-route-fingerprint",
+      "checksum": "7879e6cf17753fa82254675756fbeb1fdfb9ad67e11808aec8922cd2f10cd33d"
+    },
+    {
+      "version": "0049-extension-management",
+      "checksum": "ba0bc80a0ccc74e05a5244b50e52e6a26df39ad854995ba038020b7d5d954f1b"
+    },
+    {
+      "version": "0050-session-management",
+      "checksum": "8802fe3a02b0bf7364aeac96215da09454d0c53b48c06d2cb76c6f3d6b455d85"
+    },
+    {
+      "version": "0051-proxy-provisioning",
+      "checksum": "778fddef654d67bc3ecfc01e11fd91f826f91d68a5b6c5c72568b5e35cca1939"
+    }
+  ],
+  "nativePid": 35805,
+  "webviewLastState": {
+    "bridgeReady": true,
+    "error": "model_list_timeout",
+    "frameDiagnostics": {
+      "bridgeReady": true,
+      "errors": 0,
+      "events": [
+        {
+          "connected": true,
+          "contentWindow": true,
+          "readyState": null,
+          "src": "http://127.0.0.1:49857/api/v1/apps/dgos.ai-workbench/resources/index.html",
+          "type": "present"
+        },
+        {
+          "connected": true,
+          "contentWindow": true,
+          "readyState": null,
+          "src": "http://127.0.0.1:49857/api/v1/apps/dgos.ai-workbench/resources/index.html",
+          "type": "load"
+        }
+      ],
+      "hostHello": {
+        "errors": [],
+        "firstSentAt": 1791098713996,
+        "instanceId": "desktop-test-1c5ce381-ba04-455d-b615-44d16a02a89d",
+        "lastSentAt": 1791098714496,
+        "sent": 3
+      },
+      "hostMessages": [
+        {
+          "bridgeVersion": 1,
+          "instanceId": "desktop-test-1c5ce381-ba04-455d-b615-44d16a02a89d",
+          "origin": "null",
+          "type": "dgos.app.ready"
+        }
+      ],
+      "injectedPaths": [
+        "/api/v1/apps/dgos.ai-workbench/resources/index.html"
+      ],
+      "loads": 1,
+      "readyContract": true,
+      "readyOrigin": "null",
+      "readySourceMatchesFrame": true
+    },
+    "frameReady": true,
+    "phase": "submit",
+    "route": "/ai-tasks",
+    "stage": "failed"
+  },
+  "nativeStderr": "dgos desktop debug window: workbench_test=true, visible_test=false\ndgos desktop debug page finished: tauri://localhost/catalog\ndgos desktop debug result: driver_started\ndgos desktop debug result: driver_injected\ndgos desktop debug result: catalog_open\ndgos desktop debug workbench resource request: /api/v1/apps/dgos.ai-workbench/deployment\ndgos desktop debug workbench resource request: /api/v1/apps/dgos.ai-workbench/health\ndgos desktop debug workbench resource request: /api/v1/apps/dgos.ai-workbench/launch\ndgos desktop debug result: workbench_launch_clicked\ndgos desktop debug result: workbench_frame_src_rewritten\ndgos desktop debug result: workbench_frame_present\ndgos desktop debug workbench resource request: /api/v1/apps/dgos.ai-workbench/resources/index.html?launchTicket=ty9JFMsoc318zhmO0h_RlLSlC-LuWpsOJ7iGWlPCa0Y&dgosDesktopTest=1\ndgos desktop debug workbench resource request: /api/v1/apps/dgos.ai-workbench/resources/workbench.js?launchTicket=ty9JFMsoc318zhmO0h_RlLSlC-LuWpsOJ7iGWlPCa0Y\ndgos desktop debug workbench resource request: /api/v1/apps/dgos.ai-workbench/resources/workbench.css?launchTicket=ty9JFMsoc318zhmO0h_RlLSlC-LuWpsOJ7iGWlPCa0Y\ndgos desktop debug workbench resource request: /api/v1/apps/dgos.ai-workbench/resources/tokens.css?launchTicket=ty9JFMsoc318zhmO0h_RlLSlC-LuWpsOJ7iGWlPCa0Y\ndgos desktop debug result: message_observed\ndgos desktop debug result: message_observed\ndgos desktop debug result: message_observed\ndgos desktop debug result: workbench_bridge_ready\ndgos desktop debug result: workbench_command_sent\ndgos desktop debug result: workbench_frame_load\ndgos desktop debug result: workbench_dom_result\ndgos desktop debug result: failed\n",
+  "windowQuery": {
+    "method": "System Events by own PID",
+    "available": false,
+    "reason": "96:138: execution error: “System Events”遇到一个错误：“osascript”不允许辅助访问。 (-25211)\n"
+  },
+  "windowServer": {
+    "ownerPidMatched": true,
+    "ownerPid": 35805,
+    "windowId": 5735,
+    "bounds": {
+      "Width": 1280,
+      "Height": 840,
+      "Y": 50,
+      "X": 50
+    },
+    "layer": 0,
+    "alpha": 1,
+    "allOwnWindows": [
+      {
+        "ownerPid": 35805,
+        "windowId": 5735,
+        "bounds": {
+          "Width": 1280,
+          "Height": 840,
+          "Y": 50,
+          "X": 50
+        },
+        "layer": 0,
+        "alpha": 1
+      }
+    ]
+  },
+  "screenshot": {
+    "available": false,
+    "reason": "could not create image from window\n"
+  },
+  "error": "Webview stopped at failed: model_list_timeout\n+ actual - expected\n\n+ 'failed'\n- 'complete'\n",
+  "stageHistory": [
+    {
+      "phase": "submit",
+      "route": "/catalog",
+      "stage": "driver_started"
+    },
+    {
+      "readyState": "complete",
+      "stage": "driver_injected"
+    },
+    {
+      "phase": "submit",
+      "route": "/catalog",
+      "stage": "catalog_open"
+    },
+    {
+      "phase": "submit",
+      "route": "/catalog",
+      "stage": "workbench_launch_clicked"
+    },
+    {
+      "origin": "http://127.0.0.1:49857",
+      "src": "http://127.0.0.1:49857/api/v1/apps/dgos.ai-workbench/resources/index.html",
+      "stage": "workbench_frame_src_rewritten"
+    },
+    {
+      "phase": "submit",
+      "src": "http://127.0.0.1:49857/api/v1/apps/dgos.ai-workbench/resources/index.html",
+      "stage": "workbench_frame_present"
+    },
+    {
+      "bridgeVersion": null,
+      "instanceId": null,
+      "origin": "null",
+      "sourceMatchesFrame": true,
+      "stage": "message_observed",
+      "type": "dgos.desktop.test.frame.injected"
+    },
+    {
+      "bridgeVersion": null,
+      "instanceId": null,
+      "origin": "null",
+      "sourceMatchesFrame": true,
+      "stage": "message_observed",
+      "type": "dgos.desktop.test.workbench.ready"
+    },
+    {
+      "bridgeVersion": 1,
+      "instanceId": "desktop-test-1c5ce381-ba04-455d-b615-44d16a02a89d",
+      "origin": "null",
+      "sourceMatchesFrame": true,
+      "stage": "message_observed",
+      "type": "dgos.app.ready"
+    },
+    {
+      "phase": "submit",
+      "readyContract": true,
+      "readyOrigin": "null",
+      "route": "/catalog",
+      "stage": "workbench_bridge_ready"
+    },
+    {
+      "frameDiagnostics": {
+        "bridgeReady": true,
+        "errors": 0,
+        "events": [
+          {
+            "connected": true,
+            "contentWindow": true,
+            "readyState": null,
+            "src": "http://127.0.0.1:49857/api/v1/apps/dgos.ai-workbench/resources/index.html",
+            "type": "present"
+          }
+        ],
+        "hostHello": {
+          "errors": [],
+          "firstSentAt": 1791098713996,
+          "instanceId": "desktop-test-1c5ce381-ba04-455d-b615-44d16a02a89d",
+          "lastSentAt": 1791098714496,
+          "sent": 3
+        },
+        "hostMessages": [
+          {
+            "bridgeVersion": 1,
+            "instanceId": "desktop-test-1c5ce381-ba04-455d-b615-44d16a02a89d",
+            "origin": "null",
+            "type": "dgos.app.ready"
+          }
+        ],
+        "injectedPaths": [
+          "/api/v1/apps/dgos.ai-workbench/resources/index.html"
+        ],
+        "loads": 0,
+        "readyContract": true,
+        "readyOrigin": "null",
+        "readySourceMatchesFrame": true
+      },
+      "phase": "submit",
+      "postError": null,
+      "postTarget": true,
+      "stage": "workbench_command_sent"
+    },
+    {
+      "frameDiagnostics": {
+        "bridgeReady": true,
+        "errors": 0,
+        "events": [
+          {
+            "connected": true,
+            "contentWindow": true,
+            "readyState": null,
+            "src": "http://127.0.0.1:49857/api/v1/apps/dgos.ai-workbench/resources/index.html",
+            "type": "present"
+          },
+          {
+            "connected": true,
+            "contentWindow": true,
+            "readyState": null,
+            "src": "http://127.0.0.1:49857/api/v1/apps/dgos.ai-workbench/resources/index.html",
+            "type": "load"
+          }
+        ],
+        "hostHello": {
+          "errors": [],
+          "firstSentAt": 1791098713996,
+          "instanceId": "desktop-test-1c5ce381-ba04-455d-b615-44d16a02a89d",
+          "lastSentAt": 1791098714496,
+          "sent": 3
+        },
+        "hostMessages": [
+          {
+            "bridgeVersion": 1,
+            "instanceId": "desktop-test-1c5ce381-ba04-455d-b615-44d16a02a89d",
+            "origin": "null",
+            "type": "dgos.app.ready"
+          }
+        ],
+        "injectedPaths": [
+          "/api/v1/apps/dgos.ai-workbench/resources/index.html"
+        ],
+        "loads": 1,
+        "readyContract": true,
+        "readyOrigin": "null",
+        "readySourceMatchesFrame": true
+      },
+      "phase": "submit",
+      "stage": "workbench_frame_load"
+    },
+    {
+      "observed": {
+        "error": "model_list_timeout",
+        "phase": "submit",
+        "type": "dgos.desktop.test.workbench.result"
+      },
+      "phase": "submit",
+      "route": "/ai-tasks",
+      "stage": "workbench_dom_result"
+    },
+    {
+      "bridgeReady": true,
+      "error": "model_list_timeout",
+      "frameDiagnostics": {
+        "bridgeReady": true,
+        "errors": 0,
+        "events": [
+          {
+            "connected": true,
+            "contentWindow": true,
+            "readyState": null,
+            "src": "http://127.0.0.1:49857/api/v1/apps/dgos.ai-workbench/resources/index.html",
+            "type": "present"
+          },
+          {
+            "connected": true,
+            "contentWindow": true,
+            "readyState": null,
+            "src": "http://127.0.0.1:49857/api/v1/apps/dgos.ai-workbench/resources/index.html",
+            "type": "load"
+          }
+        ],
+        "hostHello": {
+          "errors": [],
+          "firstSentAt": 1791098713996,
+          "instanceId": "desktop-test-1c5ce381-ba04-455d-b615-44d16a02a89d",
+          "lastSentAt": 1791098714496,
+          "sent": 3
+        },
+        "hostMessages": [
+          {
+            "bridgeVersion": 1,
+            "instanceId": "desktop-test-1c5ce381-ba04-455d-b615-44d16a02a89d",
+            "origin": "null",
+            "type": "dgos.app.ready"
+          }
+        ],
+        "injectedPaths": [
+          "/api/v1/apps/dgos.ai-workbench/resources/index.html"
+        ],
+        "loads": 1,
+        "readyContract": true,
+        "readyOrigin": "null",
+        "readySourceMatchesFrame": true
+      },
+      "frameReady": true,
+      "phase": "submit",
+      "route": "/ai-tasks",
+      "stage": "failed"
+    }
+  ],
+  "testKeychainItemDeleted": true,
+  "redisPrefixRemaining": 0,
+  "databaseRemoved": true,
+  "source_sha256_after": {
+    "apps/desktop/src-tauri/src/host.rs": "184dda334e1e1dccba4bb14ceb820fbbda973d54d70b8075750227b1d156d8a4",
+    "apps/desktop/src-tauri/src/proxy.rs": "f9b6ba3828752cd985bf8448157140b2bc052e82f2d90fda9ba8246b17349f36",
+    "apps/desktop/src-tauri/src/lib.rs": "4d0772c50d98db06c95ce6c03ccb31fadc10769bfd1d5841b3105d05a7e64acb",
+    "apps/desktop/scripts/e2e-macos.mjs": "02610c40defee5f16c974e3dec9d8e35e8b6537f7d85448e96b45ad396a40186",
+    "apps/desktop/scripts/window-server.swift": "8cbb6538d41a5992eb7f1898afa52b18c8bb6b681914964afdb75262e58c0c7e",
+    "apps/api/src/server.mjs": "53474d0da78307f4a0af1368f1346145568741e2336b3bda440da932ae5b4606",
+    "apps/worker/src/worker.mjs": "e94c90888699b34a66632c77b8d5afea879734605e341423cf5cb821c58aa7e4",
+    "src/ai-task/service.mjs": "979006a7ea95762e6949491ecdab5c4c79f5b056cd2841b00ca92a9b5c82f689",
+    "test-support/openai-compatible-fixture.mjs": "57ecc9557736c1c3edb9de8e69334d28cf94a65c58ca2ea964fafb4b4f9fb41e",
+    "scripts/v1-desktop-real.mjs": "e6123315b02e45a835ffd12d42d84ee60e1a08218994d8df1ce7889696d8b50a",
+    "apps/desktop/scripts/candidate-preflight.mjs": "991c788406ddbd260664cb54b52e98b2b7a057ec4e0a3e7f273ed64e0477edee",
+    "apps/desktop/scripts/workbench-main-driver.js": "a3fff568e4c07fced472015a13efb872a237269df77eafd60664e7ce41b560b1",
+    "apps/desktop/scripts/workbench-frame-driver.js": "98f597f38c1a8d955b9153eb544337fdfea5f57bf0e58920242a90ec06fbe01e",
+    "apps/ai-workbench-package/manifest.json": "a6cd7ed540c5997b48315ba1b4c7f0a2c12a03527001a9ee06e9e0691218dbb5",
+    "apps/ai-workbench-package/index.html": "50470986926e5418d4d515f9defb3d7be53f3550da468f493b7747dd2c70a1df",
+    "apps/ai-workbench-package/workbench.css": "fab45f94c3828c7382e3b140e15b267bc988de8cd7e8da3d0c48fa3a1c62f82b",
+    "apps/ai-workbench-package/workbench.js": "ae36fdd54a42792688fb26dcebe6d6981a7aa0c10359854f433a813c50945457",
+    "apps/ai-workbench-package/icon.svg": "c737d6af765181888d1a0d1d7b6fef1f7d04bf64f8b2a33949842b830b7ecd36",
+    "packages/design-tokens/src/tokens.css": "f7ee8f313ad0c82389f6e448c18ad77284806fe332796119c231199000584f10",
+    ".herdr/state/package-fixture-r9/ai-workbench-envelope.json": "41b6df33c0ec6e9fb302dc9e66c601b68f549e34e3c3deaa2e57b7c0684ff04a",
+    ".herdr/state/package-fixture-r9/trust-roots.json": "bfee5901015164af8bf0e37e1942bdf8298dd87fc78e701d7c716467a1a22e3b"
+  },
+  "web_dist_sha256_after": {
+    "assets/index-BgebK2SG.css": "4f0463e75e0f2ba4a0cb6daca15871722230dce8bc2bdf4872cf41a2709172c8",
+    "assets/index-WY1X4KmX.js": "f987dcf6a359f2778da789ee9844b2f1b284b12a4043abcf453154e90e06e4b5",
+    "brand/icon-dark.svg": "adb69db28590191592569b4e0a59ce6602445cba59992b7d14aa607184e73ab5",
+    "brand/icon.svg": "d99c8f4d09e543078477c289debf0c518f4d0101cfce207379fd129716456aff",
+    "brand/logo.svg": "b0fa83e5b17364427a4fadee9c498bac82d8525d553f14282acbe96fb6090934",
+    "icons/apps/assistant.svg": "4641c04f267c3b1e7f2c94300af46e1099946529e0b015e8b2ff5140868e95e3",
+    "icons/apps/catalog.svg": "11bc9567d09f123ad40fe37aa570b87edda518a111fedccb1a3d42b85c44a4f0",
+    "icons/apps/developer-center.svg": "9e6a2a63695b544bdc75689ff56bb18cfcfce4756608d8b7381c5b39f1ca9a84",
+    "icons/apps/extensions.svg": "d28f9e7f7ebe1e440a4328615b4281f266ec40ea7f93e054c0731b973d4a1261",
+    "icons/apps/models.svg": "af607bf197bd8811d1b087af15356d5978f5fd752917899a16200e1809354b89",
+    "icons/apps/providers.svg": "eafdcb9b7e278441b04d33b5a6eefc378840792a6593161473959e5ee6cd9427",
+    "icons/apps/settings.svg": "5816e53bf3b86a86b772af847e9def8e1c80edf58c9cac9e22171d88f8329555",
+    "icons/apps/system-info.svg": "64ae08a5ce8fcf0fd13b7818dcf04c0e147c7e4da20fc47ad4d69a58dc443459",
+    "icons/apps/tasks.svg": "905095eabaa61cf7d039be14a98136ad71cc0b6e753521ed58871ddc0d41558e",
+    "icons/dark/apps/assistant.svg": "2373fee58915d4a2b13b7d28726135d46b786c1ab849f2f6922e14c877c8e964",
+    "icons/dark/apps/catalog.svg": "7b88152d9baddd637caa25cfbe18bdf6e550e0778dee256d807d27a6a0f164b4",
+    "icons/dark/apps/developer-center.svg": "31262adb6a39499399ab0e292f2bb8dc09f4ec4887f414416c2aecac4692ec42",
+    "icons/dark/apps/extensions.svg": "8983af50996a211bbfa8edf62c69ea6c9ddfe7a429ed5ea24d5ee89993712f23",
+    "icons/dark/apps/models.svg": "294d956b85efc86591e99055d05bd8fc48d1a9e9640f236a1be5f4acd96c8560",
+    "icons/dark/apps/providers.svg": "39131510a92717187954c932ba7c5bf370ecf42c2041981b2f0cfd7449ef8b63",
+    "icons/dark/apps/settings.svg": "a5d287621ad2b52436d74cbbc17e94e92c6173cbc850c131a0199bb3c9e2c1fe",
+    "icons/dark/apps/system-info.svg": "79fbbd9bbeaa780b547709e0e8fb659514d6981c7af10615a4dea6b03bbfdcc3",
+    "icons/dark/apps/tasks.svg": "bcdede92da73c951bd4ddffcc094626b56ec8a8a53b8550c936280bd11f9a878",
+    "icons/dark/system/dgos-logo.svg": "8fea5b2f2d2ece80d95701912b8f1a200af7472bf8383e3e21bdaa20a2c6f861",
+    "icons/dark/system/downloads.svg": "d812c9c65bed82921c7878c068eeb448ebe2d0e861db5e8692421e701f2d95a5",
+    "icons/dark/system/trash-full.svg": "619a0c49e2465ead15ef156bd4695840308ba3fd95899f1b391aae8958cbe8a7",
+    "icons/dark/system/trash.svg": "518818968b476cab93e5c46a02afc910246e26113a0851f8c1b42dcf2a503df7",
+    "icons/statusbar/battery.svg": "f099f285b5a5b2c29283d5b2fbffb0d34562b3aa1a093856e6c49a5506a301c2",
+    "icons/statusbar/clock.svg": "a228cb4efb36ef00b06227d88f15dddcc4262e57e7037aff518ca769d16d1b0e",
+    "icons/statusbar/notifications.svg": "e598ebb7577c95fa5a235694462bc8961662ca463861a77a30e29ef9791ece96",
+    "icons/statusbar/search.svg": "6aeba741f0892c990e7b7de3d29b539492d9c68829f37dacd3ada7232483a6f5",
+    "icons/statusbar/settings.svg": "3404893650dad9d34c18e41224e93f92cea46b2b64b22498681b8f60357a2932",
+    "icons/statusbar/user.svg": "7687d9b83a0c02a4b20b891a60a717a671eb58225d3875234e02759c8bb31ff8",
+    "icons/statusbar/volume.svg": "92bbd434d4f645bc75679d502e1c2b21ddeb91d2742b06ee99b5ccbe5f56ce93",
+    "icons/statusbar/wifi.svg": "abb157105076ed4d9a3b9f209a731632ceb5ff3a0086cd2177e2dc3525087d42",
+    "icons/system/dgos-logo.svg": "dda057c8580c73a086379e3d6e0b2140bb0b6cbd3970bff2bfdd68ce275e2589",
+    "icons/system/downloads.svg": "c938852cec4c2ea21806ee8bdf77b1ab0ce74305e24ee020b07936100510cead",
+    "icons/system/trash-full.svg": "84a0218db2205cf257530a103fff8e6a836b63f178363d433886a24eb9642a41",
+    "icons/system/trash.svg": "dfcf8bef7f296a94afb77dd438de04c023641da0fb5d04b1fb21ac650432310b",
+    "illustrations/empty-data.svg": "30802f816f00b6cf9b9f13c8b10d6c9ef7707e51d7802c5a933a51f96e42d009",
+    "illustrations/empty-providers.svg": "8e78125fc62ec89f1030abb5a08e3d704cd2772676289e7b487e35ff51601200",
+    "illustrations/error-connection.svg": "935c66ec473b9c4ce8d1f4b1ed6bf1108bbc55e2c4e16c97b841dfacf64bc751",
+    "index.html": "beb7a1034dae17cdd25644a2f55fb1af6f147bf31c9db45cce24c97d16d5512d"
+  },
+  "artifact_sha256_after": "255494d9d7a689c9409d320a41be04278a5cf3a8fc48be90d892e704cb2d277e",
+  "sourceDrift": false,
+  "finished_at": "2026-10-04T07:25:36.953Z",
+  "cleanup": {
+    "testKeychainItemDeleted": true,
+    "tempDirectoryDeleted": true,
+    "databaseRemoved": true,
+    "redisPrefixRemaining": 0
+  }
+}

@@ -116,7 +116,7 @@ fn create(app: &tauri::AppHandle, summary: &WindowSummary, restored_geometry: bo
             const setSrc = element.setAttribute.bind(element);
             element.setAttribute = (name, value) => {{
               if (name === 'src' && typeof value === 'string' && value.includes('/api/v1/apps/dgos.ai-workbench/resources/')) {{
-                try {{ const url = new URL(value, location.href); const resource = `${{url.pathname}}${{url.search}}`; value = {workbench_origin_json} + resource; if ({workbench_test}) value += (value.includes('?') ? '&' : '?') + 'dgosDesktopTest=1'; }} catch (_) {{}}
+                try {{ const url = new URL(value, location.href); const resource = `${{url.pathname}}${{url.search}}`; value = {workbench_origin_json} + resource; if ({workbench_test}) {{ value += (value.includes('?') ? '&' : '?') + 'dgosDesktopTest=1'; window.__TAURI_INTERNALS__?.invoke('desktop_test_result', {{ result: {{ stage: 'workbench_frame_src_rewritten', src: value.split('?')[0], origin: new URL(value).origin }} }}).catch(() => {{}}); }} }} catch (_) {{}}
               }}
               return setSrc(name, value);
             }};

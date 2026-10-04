@@ -92,7 +92,7 @@ export function MacOSShell({
     setFocusedWindowId,
   } = useWindowManager();
 
-  const hasMaximizedWindow = windows.some((window) => window.state === 'maximized');
+  const [hasMaximizedWindow, setHasMaximizedWindow] = useState(false);
 
   // Open window for current route on mount and when route changes
   useEffect(() => {
@@ -280,6 +280,7 @@ export function MacOSShell({
           focusedWindowId={focusedWindowId}
           onWindowsChange={setWindows}
           onFocusChange={setFocusedWindowId}
+          onMaximizedStateChange={setHasMaximizedWindow}
         />
 
         {/* Desktop background - empty workspace when no windows or windows are open */}

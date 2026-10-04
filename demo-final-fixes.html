@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DGOS 完整修复演示</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* 系统栏 */
+    .system-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      z-index: 1000;
+    }
+
+    .system-bar__left {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .system-bar__center {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      max-width: 65vw;
+      overflow-x: auto;
+      /* 修复1: 标签从左边开始 */
+      justify-content: flex-start;
+    }
+
+    .system-bar__right {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .logo {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    /* 窗口标签 */
+    .window-tab {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 10px;
+      height: 28px;
+      background: transparent;
+      color: #666;
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+      margin: 0 2px;
+    }
+
+    .window-tab:hover {
+      background: rgba(0, 0, 0, 0.05);
+      color: #333;
+    }
+
+    .window-tab.active {
+      background: rgba(255, 255, 255, 0.9);
+      color: #000;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      font-weight: 600;
+    }
+
+    .tab-icon {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+    }
+
+    .tab-title {
+      white-space: nowrap;
+    }
+
+    /* 修复2: 优化后的关闭按钮 */
+    .tab-close {
+      width: 14px;
+      height: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 150ms;
+      margin-left: 4px;
+    }
+
+    .tab-close svg {
+      width: 10px;
+      height: 10px;
+      stroke-width: 2.5;
+    }
+
+    .window-tab:hover .tab-close,
+    .window-tab.active .tab-close {
+      opacity: 1;
+    }
+
+    .tab-close:hover {
+      background: rgba(0, 0, 0, 0.08);
+    }
+
+    /* 桌面区域 */
+    .desktop {
+      position: fixed;
+      top: 44px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+
+    /* 窗口 */
+    .window {
+      position: absolute;
+      width: 500px;
+      height: 400px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(30px);
+      border-radius: 12px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.25);
+      /* 窗口z-index是200，低于Dock的500 */
+      z-index: 200;
+    }
+
+    .window-title-bar {
+      height: 44px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      cursor: move;
+      user-select: none;
+    }
+
+    .traffic-lights {
+      display: flex;
+      gap: 8px;
+      margin-right: 16px;
+    }
+
+    .traffic-light {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+    }
+
+    .traffic-light.close { background: #ff5f56; }
+    .traffic-light.minimize { background: #ffbd2e; }
+    .traffic-light.maximize { background: #27c93f; }
+
+    .window-title {
+      flex: 1;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      pointer-events: none;
+    }
+
+    .window-content {
+      padding: 20px;
+      overflow: auto;
+      height: calc(100% - 44px);
+    }
+
+    /* 修复3: Dock在窗口上方，半透明 */
+    .dock {
+      position: fixed;
+      bottom: 4px;
+      /* Dock居中 */
+      left: 50%;
+      transform: translateX(-50%);
+
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 8px;
+      padding: 4px 8px;
+
+      /* 半透明毛玻璃 */
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(40px) saturate(200%);
+      -webkit-backdrop-filter: blur(40px) saturate(200%);
+
+      border: 0.5px solid rgba(255, 255, 255, 0.2);
+      border-radius: 18px;
+
+      box-shadow:
+        0 0 0 0.5px rgba(0, 0, 0, 0.1) inset,
+        0 4px 20px rgba(0, 0, 0, 0.15),
+        0 8px 40px rgba(0, 0, 0, 0.1);
+
+      /* z-index: 500，高于窗口的200 */
+      z-index: 500;
+      user-select: none;
+    }
+
+    .dock-item {
+      width: 60px;
+      height: 60px;
+      cursor: pointer;
+      transition: transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-origin: center bottom;
+    }
+
+    .dock-item:hover {
+      transform: scale(1.25) translateY(-8px);
+    }
+
+    .dock-icon {
+      width: 100%;
+      height: 100%;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .running-indicator {
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.6);
+    }
+
+    /* 图标背景 */
+    .icon-finder { background: linear-gradient(135deg, #3B82F6, #1D4ED8); }
+    .icon-chrome { background: linear-gradient(135deg, #FBBF24, #DC2626 40%, #10B981 60%, #3B82F6); }
+    .icon-settings { background: linear-gradient(135deg, #6B7280, #374151); }
+
+    .info {
+      position: fixed;
+      top: 60px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      font-size: 12px;
+      z-index: 2000;
+      max-width: 300px;
+    }
+
+    .info h3 {
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .info p {
+      margin: 4px 0;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="system-bar">
+    <div class="system-bar__left">
+      <div class="logo">DGOS</div>
+    </div>
+
+    <div class="system-bar__center">
+      <div class="window-tab active">
+        <div class="tab-icon" style="background: linear-gradient(135deg, #3B82F6, #1D4ED8);"></div>
+        <span class="tab-title">窗口 1</span>
+        <button class="tab-close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M6 6L18 18M18 6L6 18" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="window-tab">
+        <div class="tab-icon" style="background: linear-gradient(135deg, #10B981, #059669);"></div>
+        <span class="tab-title">窗口 2</span>
+        <button class="tab-close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M6 6L18 18M18 6L6 18" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="system-bar__right">
+      <span>11:22</span>
+    </div>
+  </div>
+
+  <div class="desktop">
+    <div class="window" id="window1" style="left: 100px; top: 100px;">
+      <div class="window-title-bar">
+        <div class="traffic-lights">
+          <button class="traffic-light close"></button>
+          <button class="traffic-light minimize"></button>
+          <button class="traffic-light maximize"></button>
+        </div>
+        <div class="window-title">窗口 1</div>
+      </div>
+      <div class="window-content">
+        <h2>可拖动的窗口</h2>
+        <p style="margin-top: 10px;">拖动这个窗口到底部，你会看到它滑到半透明Dock的后面！</p>
+        <p style="margin-top: 10px; color: #666;">窗口 z-index: 200<br>Dock z-index: 500</p>
+      </div>
+    </div>
+
+    <div class="window" id="window2" style="left: 650px; top: 150px;">
+      <div class="window-title-bar">
+        <div class="traffic-lights">
+          <button class="traffic-light close"></button>
+          <button class="traffic-light minimize"></button>
+          <button class="traffic-light maximize"></button>
+        </div>
+        <div class="window-title">窗口 2</div>
+      </div>
+      <div class="window-content">
+        <h2>测试叠加</h2>
+        <p style="margin-top: 10px;">透过半透明的Dock可以看到下方的窗口内容</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="dock">
+    <div class="dock-item">
+      <div class="dock-icon icon-finder">
+        <svg width="40" height="40" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="15" fill="white" opacity="0.3"/>
+        </svg>
+      </div>
+      <div class="running-indicator"></div>
+    </div>
+
+    <div class="dock-item">
+      <div class="dock-icon icon-chrome">
+        <svg width="40" height="40" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="12" fill="white"/>
+        </svg>
+      </div>
+      <div class="running-indicator"></div>
+    </div>
+
+    <div class="dock-item">
+      <div class="dock-icon icon-settings">
+        <svg width="40" height="40" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="8" fill="white"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="info">
+    <h3>✅ 三个修复已完成</h3>
+    <p>1️⃣ <strong>Dock居中</strong>: left: 50% + translateX(-50%)</p>
+    <p>2️⃣ <strong>标签左对齐</strong>: justify-content: flex-start</p>
+    <p>3️⃣ <strong>窗口在Dock后</strong>: 窗口z-index=200, Dock z-index=500</p>
+    <p style="margin-top: 10px; color: #fbbf24;">💡 拖动窗口到底部查看透明效果！</p>
+  </div>
+
+  <script>
+    // 简单的窗口拖动
+    let draggingWindow = null;
+    let offset = { x: 0, y: 0 };
+
+    document.querySelectorAll('.window-title-bar').forEach(titleBar => {
+      titleBar.addEventListener('mousedown', function(e) {
+        if (e.target.closest('.traffic-lights')) return;
+
+        const window = this.closest('.window');
+        draggingWindow = window;
+
+        const rect = window.getBoundingClientRect();
+        offset.x = e.clientX - rect.left;
+        offset.y = e.clientY - rect.top;
+      });
+    });
+
+    document.addEventListener('mousemove', function(e) {
+      if (!draggingWindow) return;
+
+      const newX = e.clientX - offset.x;
+      const newY = Math.max(44, e.clientY - offset.y);
+
+      draggingWindow.style.left = newX + 'px';
+      draggingWindow.style.top = newY + 'px';
+    });
+
+    document.addEventListener('mouseup', function() {
+      draggingWindow = null;
+    });
+  </script>
+</body>
+</html>

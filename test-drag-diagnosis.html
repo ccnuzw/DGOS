@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>窗口拖动诊断测试</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      height: 100vh;
+      overflow: hidden;
+      padding: 20px;
+    }
+
+    .controls {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 15px;
+      border-radius: 10px;
+      z-index: 10000;
+    }
+
+    .controls h3 {
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .controls button {
+      display: block;
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0;
+      border: none;
+      border-radius: 6px;
+      background: #667eea;
+      color: white;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .controls button:hover {
+      background: #5568d3;
+    }
+
+    .log {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(0, 0, 0, 0.9);
+      color: #0f0;
+      padding: 15px;
+      border-radius: 10px;
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      max-width: 400px;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 10000;
+    }
+
+    .window {
+      position: absolute;
+      width: 400px;
+      height: 300px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(30px);
+      border-radius: 12px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.25);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .title-bar {
+      height: 44px;
+      background: transparent;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      cursor: move;
+      user-select: none;
+      position: relative;
+    }
+
+    .title-bar.dragging {
+      background: rgba(0, 0, 255, 0.1);
+    }
+
+    .traffic-lights {
+      display: flex;
+      gap: 8px;
+      position: absolute;
+      left: 12px;
+      cursor: default;
+    }
+
+    .traffic-light {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+    }
+
+    .traffic-light.close { background: #ff5f56; }
+    .traffic-light.minimize { background: #ffbd2e; }
+    .traffic-light.maximize { background: #27c93f; }
+
+    .window-title {
+      flex: 1;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      pointer-events: none;
+    }
+
+    .content {
+      flex: 1;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea20, #764ba220);
+    }
+
+    .info {
+      margin: 10px 0;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 6px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="controls">
+    <h3>拖动诊断控制</h3>
+    <button onclick="createWindow()">创建窗口</button>
+    <button onclick="clearLog()">清空日志</button>
+    <button onclick="testEvents()">测试事件</button>
+  </div>
+
+  <div class="log" id="log">
+    <div>日志初始化...</div>
+  </div>
+
+  <div id="desktop"></div>
+
+  <script>
+    let windowCount = 0;
+    let draggingWindow = null;
+    let dragOffset = { x: 0, y: 0 };
+
+    function log(message) {
+      const logDiv = document.getElementById('log');
+      const time = new Date().toLocaleTimeString('zh-CN', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 3 });
+      const entry = document.createElement('div');
+      entry.textContent = `[${time}] ${message}`;
+      logDiv.appendChild(entry);
+      logDiv.scrollTop = logDiv.scrollHeight;
+    }
+
+    function clearLog() {
+      document.getElementById('log').innerHTML = '<div>日志已清空</div>';
+    }
+
+    function createWindow() {
+      windowCount++;
+      const desktop = document.getElementById('desktop');
+
+      const window = document.createElement('div');
+      window.className = 'window';
+      window.id = `win-${windowCount}`;
+      window.style.left = `${150 + windowCount * 30}px`;
+      window.style.top = `${100 + windowCount * 30}px`;
+      window.style.zIndex = windowCount + 10;
+
+      window.innerHTML = `
+        <div class="title-bar" data-window-id="${windowCount}">
+          <div class="traffic-lights">
+            <button class="traffic-light close" onclick="closeWindow('win-${windowCount}')"></button>
+            <button class="traffic-light minimize"></button>
+            <button class="traffic-light maximize"></button>
+          </div>
+          <div class="window-title">测试窗口 ${windowCount}</div>
+        </div>
+        <div class="content">
+          <h3>窗口 ${windowCount}</h3>
+          <div class="info">
+            <div>位置: <span id="pos-${windowCount}">?</span></div>
+            <div>拖动状态: <span id="drag-${windowCount}">未拖动</span></div>
+            <div>鼠标坐标: <span id="mouse-${windowCount}">?</span></div>
+          </div>
+          <p style="margin-top: 10px; font-size: 13px; line-height: 1.6;">
+            请尝试拖动这个窗口的标题栏。如果可以拖动，说明基础功能正常。
+            如果不能拖动，请检查浏览器控制台的错误信息。
+          </p>
+        </div>
+      `;
+
+      // 绑定标题栏事件
+      const titleBar = window.querySelector('.title-bar');
+
+      titleBar.addEventListener('mousedown', function(e) {
+        // 检查是否点击在traffic lights上
+        if (e.target.closest('.traffic-lights')) {
+          log(`❌ 点击了控制按钮，不触发拖动`);
+          return;
+        }
+
+        log(`✅ mousedown on titleBar - button: ${e.button}, clientX: ${e.clientX}, clientY: ${e.clientY}`);
+
+        if (e.button !== 0) {
+          log(`❌ 不是左键点击，忽略`);
+          return;
+        }
+
+        e.preventDefault();
+
+        const rect = window.getBoundingClientRect();
+        draggingWindow = window;
+        dragOffset.x = e.clientX - rect.left;
+        dragOffset.y = e.clientY - rect.top;
+
+        titleBar.classList.add('dragging');
+        document.getElementById(`drag-${windowCount}`).textContent = '正在拖动';
+
+        log(`🎯 开始拖动窗口 ${windowCount} - offset: (${dragOffset.x}, ${dragOffset.y})`);
+      });
+
+      // 更新位置显示
+      function updatePosition() {
+        const rect = window.getBoundingClientRect();
+        document.getElementById(`pos-${windowCount}`).textContent =
+          `(${Math.round(rect.left)}, ${Math.round(rect.top)})`;
+      }
+
+      window.addEventListener('mousemove', function(e) {
+        document.getElementById(`mouse-${windowCount}`).textContent =
+          `(${e.clientX}, ${e.clientY})`;
+      });
+
+      setInterval(updatePosition, 100);
+
+      desktop.appendChild(window);
+      log(`📦 创建窗口 ${windowCount}`);
+      updatePosition();
+    }
+
+    function closeWindow(id) {
+      const window = document.getElementById(id);
+      if (window) {
+        window.remove();
+        log(`🗑️ 关闭窗口 ${id}`);
+      }
+    }
+
+    // 全局鼠标移动事件
+    document.addEventListener('mousemove', function(e) {
+      if (!draggingWindow) return;
+
+      const newX = e.clientX - dragOffset.x;
+      const newY = e.clientY - dragOffset.y;
+
+      draggingWindow.style.left = newX + 'px';
+      draggingWindow.style.top = newY + 'px';
+
+      // 不要每次移动都记录日志，太多了
+    });
+
+    // 全局鼠标释放事件
+    document.addEventListener('mouseup', function(e) {
+      if (!draggingWindow) return;
+
+      const windowId = draggingWindow.id;
+      const rect = draggingWindow.getBoundingClientRect();
+
+      log(`🏁 停止拖动 ${windowId} - 最终位置: (${Math.round(rect.left)}, ${Math.round(rect.top)})`);
+
+      const titleBar = draggingWindow.querySelector('.title-bar');
+      titleBar.classList.remove('dragging');
+
+      const dragStatus = draggingWindow.querySelector('[id^="drag-"]');
+      if (dragStatus) dragStatus.textContent = '未拖动';
+
+      draggingWindow = null;
+    });
+
+    function testEvents() {
+      log('📋 测试浏览器事件支持:');
+      log(`  - mousedown: ${typeof document.onmousedown !== 'undefined' ? '✅' : '❌'}`);
+      log(`  - mousemove: ${typeof document.onmousemove !== 'undefined' ? '✅' : '❌'}`);
+      log(`  - mouseup: ${typeof document.onmouseup !== 'undefined' ? '✅' : '❌'}`);
+      log(`  - 用户代理: ${navigator.userAgent.substring(0, 50)}...`);
+    }
+
+    // 初始化
+    log('🚀 拖动诊断系统已启动');
+    log('👉 点击"创建窗口"按钮开始测试');
+
+    // 自动创建一个窗口
+    createWindow();
+  </script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "schema": "dgos.local-mock-mvp.v1",
+  "runId": "local-mock-mvp-2026-10-04T06-59-23-288Z-29333bb8",
+  "environment": "local-mock",
+  "providerMode": "mock",
+  "port": 52020,
+  "result": "FAIL",
+  "error": "web_server_start_timeout:http://127.0.0.1:52020",
+  "evidenceDir": ".herdr/evidence/local-mock-mvp/local-mock-mvp-2026-10-04T06-59-23-288Z-29333bb8"
+}

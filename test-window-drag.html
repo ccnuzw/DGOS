@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DGOS Window Test - Drag & Stack</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .desktop {
+      position: fixed;
+      inset: 0;
+      padding-top: 44px;
+    }
+
+    .system-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      z-index: 1000;
+    }
+
+    .system-bar h1 {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .controls {
+      margin-left: auto;
+      display: flex;
+      gap: 8px;
+    }
+
+    button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    button:hover {
+      background: rgba(0, 0, 0, 0.15);
+    }
+
+    .window {
+      position: absolute;
+      min-width: 300px;
+      min-height: 200px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(30px);
+      border-radius: 12px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.25), 0 10px 30px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: box-shadow 200ms;
+    }
+
+    .window.focused {
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3), 0 12px 35px rgba(0, 0, 0, 0.18);
+    }
+
+    .window-title-bar {
+      height: 44px;
+      background: transparent;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      cursor: move;
+      user-select: none;
+    }
+
+    .traffic-lights {
+      display: flex;
+      gap: 8px;
+      margin-right: 16px;
+    }
+
+    .traffic-light {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+    }
+
+    .traffic-light.close { background: #ff5f56; }
+    .traffic-light.minimize { background: #ffbd2e; }
+    .traffic-light.maximize { background: #27c93f; }
+
+    .window-title {
+      flex: 1;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      pointer-events: none;
+    }
+
+    .window-content {
+      flex: 1;
+      padding: 20px;
+      overflow: auto;
+    }
+
+    .status {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      z-index: 2000;
+    }
+  </style>
+</head>
+<body>
+  <div class="system-bar">
+    <h1>DGOS Window Test</h1>
+    <div class="controls">
+      <button onclick="createWindow()">+ New Window</button>
+      <button onclick="clearWindows()">Clear All</button>
+    </div>
+  </div>
+
+  <div class="desktop" id="desktop"></div>
+
+  <div class="status">
+    <div>✅ 修复完成：窗口可拖动、可叠加</div>
+    <div style="margin-top: 4px; opacity: 0.7;">点击标题栏拖动 · 点击窗口聚焦</div>
+  </div>
+
+  <script>
+    let windowCount = 0;
+    let maxZIndex = 10;
+    let draggedWindow = null;
+    let dragOffset = { x: 0, y: 0 };
+
+    function createWindow() {
+      windowCount++;
+      const window = document.createElement('div');
+      window.className = 'window focused';
+      window.style.left = `${100 + (windowCount * 30)}px`;
+      window.style.top = `${100 + (windowCount * 30)}px`;
+      window.style.width = '400px';
+      window.style.height = '300px';
+      window.style.zIndex = ++maxZIndex;
+
+      const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F'];
+      const color = colors[windowCount % colors.length];
+
+      window.innerHTML = `
+        <div class="window-title-bar">
+          <div class="traffic-lights">
+            <button class="traffic-light close" onclick="closeWindow(this)"></button>
+            <button class="traffic-light minimize"></button>
+            <button class="traffic-light maximize"></button>
+          </div>
+          <div class="window-title">Window ${windowCount}</div>
+        </div>
+        <div class="window-content" style="background: ${color}20;">
+          <h2 style="color: ${color};">Window ${windowCount}</h2>
+          <p style="margin-top: 12px; line-height: 1.6;">
+            This window can be dragged by its title bar and will stack on top when clicked.
+          </p>
+          <p style="margin-top: 8px; opacity: 0.7;">
+            Z-Index: <strong id="z-${windowCount}">${maxZIndex}</strong>
+          </p>
+        </div>
+      `;
+
+      // Click to focus
+      window.addEventListener('click', function(e) {
+        focusWindow(this);
+      });
+
+      // Drag functionality
+      const titleBar = window.querySelector('.window-title-bar');
+      titleBar.addEventListener('mousedown', function(e) {
+        if (e.target.classList.contains('traffic-light')) return;
+
+        e.preventDefault();
+        draggedWindow = window;
+        const rect = window.getBoundingClientRect();
+        dragOffset.x = e.clientX - rect.left;
+        dragOffset.y = e.clientY - rect.top;
+
+        focusWindow(window);
+      });
+
+      desktop.appendChild(window);
+    }
+
+    function focusWindow(window) {
+      // Remove focused class from all windows
+      document.querySelectorAll('.window').forEach(w => w.classList.remove('focused'));
+
+      // Add focused class and bring to front
+      window.classList.add('focused');
+      window.style.zIndex = ++maxZIndex;
+
+      // Update z-index display
+      const zDisplay = window.querySelector('[id^="z-"]');
+      if (zDisplay) zDisplay.textContent = maxZIndex;
+    }
+
+    function closeWindow(button) {
+      const window = button.closest('.window');
+      window.style.transform = 'scale(0.95)';
+      window.style.opacity = '0';
+      setTimeout(() => window.remove(), 200);
+    }
+
+    function clearWindows() {
+      desktop.innerHTML = '';
+      windowCount = 0;
+      maxZIndex = 10;
+    }
+
+    // Global mouse move and up handlers
+    document.addEventListener('mousemove', function(e) {
+      if (!draggedWindow) return;
+
+      const x = e.clientX - dragOffset.x;
+      const y = Math.max(44, e.clientY - dragOffset.y); // Don't go above system bar
+
+      draggedWindow.style.left = x + 'px';
+      draggedWindow.style.top = y + 'px';
+    });
+
+    document.addEventListener('mouseup', function() {
+      draggedWindow = null;
+    });
+
+    // Create initial windows
+    createWindow();
+    createWindow();
+    createWindow();
+  </script>
+</body>
+</html>

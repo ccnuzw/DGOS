@@ -59,7 +59,15 @@
 
   .macos-system-bar__center {
     flex: 0 0 auto;
+    min-width: 0;
+    max-width: 65vw;
+    overflow-x: auto;
+    scrollbar-width: none;
+    /* 标签从左边开始，不居中 */
+    justify-content: flex-start;
   }
+
+  .macos-system-bar__center::-webkit-scrollbar { display: none; }
 
   .macos-system-bar__right {
     flex: 1;
@@ -153,6 +161,125 @@
     font-variant-numeric: tabular-nums;
     min-width: 48px;
     text-align: center;
+  }
+
+  /* ==================== Window Tabs (in System Bar) ==================== */
+
+  .macos-window-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 10px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    flex-shrink: 0;
+    max-width: 200px;
+    margin: 0 2px;
+  }
+
+  .macos-window-tab:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--text);
+  }
+
+  [data-theme="dark"] .macos-window-tab:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .macos-window-tab--active {
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--text);
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.08),
+      0 0 0 0.5px rgba(0, 0, 0, 0.06);
+    font-weight: 600;
+  }
+
+  [data-theme="dark"] .macos-window-tab--active {
+    background: rgba(60, 60, 60, 0.9);
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.2),
+      0 0 0 0.5px rgba(255, 255, 255, 0.1);
+  }
+
+  .macos-window-tab--active:hover {
+    background: rgba(255, 255, 255, 1);
+  }
+
+  [data-theme="dark"] .macos-window-tab--active:hover {
+    background: rgba(65, 65, 65, 1);
+  }
+
+  .macos-window-tab__icon {
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .macos-window-tab__icon svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .macos-window-tab__title {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* 优化后的关闭按钮 */
+  .macos-window-tab__close {
+    flex: 0 0 auto;
+    width: 14px;
+    height: 14px;
+    min-width: 14px;
+    min-height: 14px;
+    border: 0;
+    padding: 0;
+    margin: 0 0 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    background: transparent;
+    border-radius: 3px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 150ms ease, background 150ms ease, color 150ms ease;
+  }
+
+  .macos-window-tab__close svg {
+    width: 10px;
+    height: 10px;
+    flex-shrink: 0;
+    stroke-width: 2.5;
+  }
+
+  .macos-window-tab:hover .macos-window-tab__close,
+  .macos-window-tab--active .macos-window-tab__close {
+    opacity: 1;
+  }
+
+  .macos-window-tab__close:hover {
+    background: rgba(0, 0, 0, 0.08);
+    color: var(--text);
+  }
+
+  [data-theme="dark"] .macos-window-tab__close:hover {
+    background: rgba(255, 255, 255, 0.12);
   }
 
   /* ==================== Responsive ==================== */

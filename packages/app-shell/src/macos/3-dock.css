@@ -1,7 +1,12 @@
 /**
- * macOS Design System - Dock Component
+ * macOS Sequoia Dock - 完美还原
  *
- * 完全修复版本 - 悬浮居中
+ * 特点:
+ * - 半透明毛玻璃效果
+ * - 精致的圆角图标
+ * - 完美的间距和尺寸
+ * - 流畅的放大动画
+ * - 运行指示器
  */
 
 @layer components {
@@ -9,72 +14,86 @@
 
   .macos-dock {
     position: fixed;
-    bottom: 8px;
+    bottom: 4px;
     left: 50%;
     transform: translateX(-50%);
+
     display: inline-flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
-    gap: var(--macos-dock-gap);
-    padding: var(--macos-dock-padding);
-    width: auto;
-    min-width: auto;
-    max-width: 90vw;
+    gap: 8px;
+    padding: 4px 8px;
 
-    /* 使用变量 - 无硬编码 */
-    background: var(--macos-glass-dock-light);
-    backdrop-filter: var(--macos-blur-light);
-    -webkit-backdrop-filter: var(--macos-blur-light);
+    /* macOS Sequoia 毛玻璃效果 */
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
 
-    border: 0.5px solid rgba(255, 255, 255, var(--alpha-10));
-    border-radius: var(--macos-radius-dock);
-    box-shadow: var(--macos-shadow-dock-light);
+    /* 精致的边框 */
+    border: 0.5px solid rgba(255, 255, 255, 0.2);
+    border-radius: 18px;
 
-    z-index: 10000 !important;
+    /* 阴影层次 */
+    box-shadow:
+      0 0 0 0.5px rgba(0, 0, 0, 0.1) inset,
+      0 4px 20px rgba(0, 0, 0, 0.15),
+      0 8px 40px rgba(0, 0, 0, 0.1);
+
+    /* 在窗口上方，这样窗口可以滑到Dock下面，透过半透明Dock看到窗口 */
+    z-index: 500;
     user-select: none;
-    will-change: auto;
-    isolation: isolate;
     pointer-events: auto;
+
+    transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1),
+                transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 
+  /* 暗色模式 */
   [data-theme="dark"] .macos-dock {
-    background: var(--macos-glass-dock-dark);
-    backdrop-filter: var(--macos-blur-dark);
-    -webkit-backdrop-filter: var(--macos-blur-dark);
-    border: 0.5px solid rgba(255, 255, 255, var(--alpha-5));
-    box-shadow: var(--macos-shadow-dock-dark);
+    background: rgba(30, 30, 30, 0.7);
+    border: 0.5px solid rgba(255, 255, 255, 0.15);
+    box-shadow:
+      0 0 0 0.5px rgba(255, 255, 255, 0.05) inset,
+      0 4px 20px rgba(0, 0, 0, 0.4),
+      0 8px 40px rgba(0, 0, 0, 0.3);
   }
 
-  /* Hidden state */
-  .macos-dock[data-hidden="true"] {
+  /* 隐藏状态 */
+  .macos-dock--hidden {
     opacity: 0;
     pointer-events: none;
-  }
-
-  .macos-dock::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    background: rgba(255, 255, 255, .08);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.45);
+    transform: translateX(-50%) translateY(20px);
   }
 
   /* ==================== Dock Item ==================== */
 
   .macos-dock__item {
     position: relative;
-    width: var(--macos-dock-icon-lg);
-    height: var(--macos-dock-icon-lg);
+    width: 60px;
+    height: 60px;
     cursor: pointer;
-    transition: transform var(--macos-transition-base) var(--macos-ease-spring);
-    will-change: auto;
+    transition: transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
     transform-origin: center bottom;
     flex-shrink: 0;
   }
 
+  /* 悬停放大效果 */
+  .macos-dock__item:hover {
+    transform: scale(1.25) translateY(-8px);
+  }
+
+  /* 相邻图标的放大效果 */
+  .macos-dock__item:has(+ .macos-dock__item:hover) {
+    transform: scale(1.1) translateY(-4px);
+  }
+
+  .macos-dock__item:hover + .macos-dock__item {
+    transform: scale(1.1) translateY(-4px);
+  }
+
+  /* 点击效果 */
   .macos-dock__item:active {
+    transform: scale(1.15) translateY(-6px);
     transition-duration: 100ms;
   }
 
@@ -83,52 +102,53 @@
   .macos-dock__icon {
     width: 100%;
     height: 100%;
-    border-radius: var(--macos-radius-icon-lg);
-    display: grid;
-    place-items: center;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     overflow: hidden;
     position: relative;
-    background: transparent;
 
-    /* 极致优化：显式声明无阴影 */
-    filter: var(--macos-shadow-none);
-    box-shadow: var(--macos-shadow-none);
+    /* macOS 图标阴影 */
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.15),
+      0 0 0 0.5px rgba(0, 0, 0, 0.1);
 
-    transition: transform var(--macos-transition-fast);
+    transition: box-shadow 200ms ease;
   }
 
-  /* Icon内容填充 */
+  .macos-dock__item:hover .macos-dock__icon {
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.2),
+      0 0 0 0.5px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Icon 内容 */
   .macos-dock__icon img,
   .macos-dock__icon svg {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: inherit;
   }
 
-  /* ==================== Hover Effects ==================== */
-
-  .macos-dock__item:hover {
-    transform: scale(1.1) translateY(-4px);
-  }
-
-  .macos-dock__item:hover .macos-dock__icon {
-    transform: scale(1.02);
+  /* SVG 图标默认样式 */
+  .macos-dock__icon svg {
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
   }
 
   /* ==================== Running Indicator ==================== */
 
   .macos-dock__indicator {
     position: absolute;
-    bottom: -6px;
+    bottom: -8px;
     left: 50%;
     transform: translateX(-50%);
     width: 4px;
     height: 4px;
     border-radius: 50%;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
     opacity: 0;
-    transition: opacity 200ms;
+    transition: opacity 300ms ease;
   }
 
   .macos-dock__item--running .macos-dock__indicator {
@@ -136,82 +156,120 @@
   }
 
   [data-theme="dark"] .macos-dock__indicator {
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.85);
   }
 
-  /* ==================== Badge ==================== */
+  /* ==================== Badge (通知角标) ==================== */
 
   .macos-dock__badge {
     position: absolute;
     top: -4px;
     right: -4px;
-    min-width: 18px;
-    height: 18px;
-    padding: 0 4px;
-    background: linear-gradient(135deg, #FF4747 0%, #FF3838 100%);
-    border: 2px solid rgba(255, 255, 255, 0.9);
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+
+    /* macOS 红色渐变 */
+    background: linear-gradient(135deg, #FF453A 0%, #FF3B30 100%);
+    border: 2px solid rgba(255, 255, 255, 0.95);
+
     color: white;
-    font-size: 11px;
-    font-weight: 600;
-    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 10px;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: var(--macos-shadow-sm);
+
+    box-shadow:
+      0 2px 6px rgba(255, 69, 58, 0.4),
+      0 0 0 0.5px rgba(0, 0, 0, 0.1);
+
     line-height: 1;
   }
 
   [data-theme="dark"] .macos-dock__badge {
-    border: 2px solid rgba(30, 30, 30, 0.9);
+    border: 2px solid rgba(30, 30, 30, 0.95);
+    background: linear-gradient(135deg, #FF453A 0%, #FF3B30 100%);
   }
 
-  /* ==================== Divider ==================== */
+  /* ==================== Divider (分隔线) ==================== */
 
   .macos-dock__divider {
-    width: 2px;
-    height: 40px;
-    background: var(--macos-border-light);
-    border-radius: 1px;
+    width: 1px;
+    height: 48px;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.15) 20%,
+      rgba(0, 0, 0, 0.15) 80%,
+      rgba(0, 0, 0, 0) 100%
+    );
     margin: 0 4px;
     flex-shrink: 0;
+    align-self: center;
   }
 
   [data-theme="dark"] .macos-dock__divider {
-    background: var(--macos-border-dark);
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.2) 20%,
+      rgba(255, 255, 255, 0.2) 80%,
+      rgba(255, 255, 255, 0) 100%
+    );
   }
 
   /* ==================== Responsive ==================== */
 
-  @media (max-width: 850px) {
-    .macos-dock {
-      padding: 8px 12px;
-      gap: 6px;
-    }
-
+  @media (max-width: 1024px) {
     .macos-dock__item {
-      width: var(--macos-dock-icon-md);
-      height: var(--macos-dock-icon-md);
+      width: 54px;
+      height: 54px;
     }
 
     .macos-dock__icon {
-      border-radius: var(--macos-radius-icon-md);
+      border-radius: 14px;
     }
   }
 
-  @media (max-width: 520px) {
+  @media (max-width: 768px) {
     .macos-dock {
-      bottom: 4px;
-      padding: 6px 10px;
-      gap: 4px;
+      gap: 6px;
+      padding: 3px 6px;
+      border-radius: 16px;
     }
 
     .macos-dock__item {
-      width: var(--macos-dock-icon-sm);
-      height: var(--macos-dock-icon-sm);
+      width: 48px;
+      height: 48px;
     }
 
     .macos-dock__icon {
-      border-radius: var(--macos-radius-icon-sm);
+      border-radius: 12px;
+    }
+
+    .macos-dock__item:hover {
+      transform: scale(1.15) translateY(-6px);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .macos-dock {
+      bottom: 2px;
+      gap: 4px;
+      padding: 2px 4px;
+      border-radius: 14px;
+    }
+
+    .macos-dock__item {
+      width: 42px;
+      height: 42px;
+    }
+
+    .macos-dock__icon {
+      border-radius: 10px;
     }
   }
 }

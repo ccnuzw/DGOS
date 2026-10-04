@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>系统栏标签优化测试</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .system-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      z-index: 1000;
+    }
+
+    .system-bar__left {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .system-bar__center {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      max-width: 65vw;
+      overflow-x: auto;
+    }
+
+    .system-bar__center::-webkit-scrollbar {
+      display: none;
+    }
+
+    .system-bar__right {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .logo {
+      font-size: 13px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 150ms;
+    }
+
+    .logo:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    /* 优化后的标签样式 */
+    .window-tab {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 10px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      color: #666;
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      flex-shrink: 0;
+      max-width: 200px;
+      margin: 0 2px;
+    }
+
+    .window-tab:hover {
+      background: rgba(0, 0, 0, 0.05);
+      color: #333;
+    }
+
+    .window-tab.active {
+      background: rgba(255, 255, 255, 0.9);
+      color: #000;
+      box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.08),
+        0 0 0 0.5px rgba(0, 0, 0, 0.06);
+      font-weight: 600;
+    }
+
+    .window-tab.active:hover {
+      background: rgba(255, 255, 255, 1);
+    }
+
+    .tab-icon {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 3px;
+    }
+
+    .tab-title {
+      flex: 1;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* 精致的关闭按钮 */
+    .tab-close {
+      width: 14px;
+      height: 14px;
+      min-width: 14px;
+      min-height: 14px;
+      border: 0;
+      padding: 0;
+      margin: 0 0 0 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      background: transparent;
+      border-radius: 3px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 150ms ease, background 150ms ease;
+      flex-shrink: 0;
+    }
+
+    .tab-close svg {
+      width: 10px;
+      height: 10px;
+      stroke-width: 2.5;
+    }
+
+    .window-tab:hover .tab-close,
+    .window-tab.active .tab-close {
+      opacity: 1;
+    }
+
+    .tab-close:hover {
+      background: rgba(0, 0, 0, 0.08);
+      color: #000;
+    }
+
+    .time {
+      font-size: 13px;
+      font-weight: 500;
+      min-width: 48px;
+      text-align: center;
+    }
+
+    .info {
+      position: fixed;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(30px);
+      padding: 20px 30px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .info h1 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .info p {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .demo-window {
+      position: fixed;
+      top: 44px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      font-weight: 700;
+      color: #667eea;
+    }
+  </style>
+</head>
+<body>
+  <div class="system-bar">
+    <div class="system-bar__left">
+      <div class="logo">DGOS</div>
+    </div>
+
+    <div class="system-bar__center" id="tabs">
+      <div class="window-tab active">
+        <div class="tab-icon" style="background: linear-gradient(135deg, #3B82F6, #1D4ED8);">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="white">
+            <path d="M2 2h6v6h-6z"/>
+          </svg>
+        </div>
+        <span class="tab-title">AI Workbench</span>
+        <button class="tab-close" onclick="closeTab(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M6 6L18 18M18 6L6 18" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="window-tab">
+        <div class="tab-icon" style="background: linear-gradient(135deg, #10B981, #059669);">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="white">
+            <circle cx="5" cy="5" r="3"/>
+          </svg>
+        </div>
+        <span class="tab-title">设置</span>
+        <button class="tab-close" onclick="closeTab(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M6 6L18 18M18 6L6 18" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="window-tab">
+        <div class="tab-icon" style="background: linear-gradient(135deg, #F59E0B, #DC2626);">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="white">
+            <rect x="2" y="2" width="6" height="6" rx="1"/>
+          </svg>
+        </div>
+        <span class="tab-title">提供商配置</span>
+        <button class="tab-close" onclick="closeTab(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M6 6L18 18M18 6L6 18" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="window-tab">
+        <div class="tab-icon" style="background: linear-gradient(135deg, #8B5CF6, #6D28D9);">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="white">
+            <path d="M5 2L8 8H2z"/>
+          </svg>
+        </div>
+        <span class="tab-title">模型管理 - 非常长的标题测试</span>
+        <button class="tab-close" onclick="closeTab(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M6 6L18 18M18 6L6 18" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="system-bar__right">
+      <span class="time" id="time">11:22</span>
+    </div>
+  </div>
+
+  <div class="info">
+    <h1>✅ 标签栏优化完成</h1>
+    <p>
+      ✨ 关闭按钮从 12px 优化为 10px<br>
+      ✨ 按钮容器从 16px 优化为 14px<br>
+      ✨ 悬停时才显示，更加精致<br>
+      ✨ 移除了重复的标签栏渲染
+    </p>
+  </div>
+
+  <div class="demo-window">
+    全屏窗口内容
+  </div>
+
+  <script>
+    // 更新时间
+    function updateTime() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('time').textContent = `${hours}:${minutes}`;
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    // 标签交互
+    document.querySelectorAll('.window-tab').forEach(tab => {
+      tab.addEventListener('click', function(e) {
+        if (e.target.closest('.tab-close')) return;
+
+        document.querySelectorAll('.window-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    function closeTab(button) {
+      const tab = button.closest('.window-tab');
+      tab.style.transform = 'scale(0.8)';
+      tab.style.opacity = '0';
+      setTimeout(() => {
+        tab.remove();
+
+        // 如果关闭的是激活标签，激活第一个
+        if (tab.classList.contains('active')) {
+          const firstTab = document.querySelector('.window-tab');
+          if (firstTab) firstTab.classList.add('active');
+        }
+      }, 150);
+    }
+  </script>
+</body>
+</html>

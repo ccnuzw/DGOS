@@ -15,7 +15,7 @@ html, body, #root {
   padding: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden; /* macOS Shell handles scrolling */
+  overflow: auto;
 }
 
 body {
@@ -133,32 +133,6 @@ body {
 .service-list small {
   color: var(--muted);
   font-size: 12px;
-}
-
-/* Base elements */
-* {
-  box-sizing: border-box;
-}
-
-button,
-input,
-select,
-textarea {
-  font: inherit;
-}
-
-a {
-  color: var(--primary);
-  text-decoration: none;
-  transition: color 0.15s;
-}
-
-a:hover {
-  color: var(--hover);
-}
-
-p {
-  margin: 8px 0 14px;
 }
 
 .muted {

@@ -86,8 +86,7 @@ export function MacOSDock({ apps, hidden = false, onAppClick, onAppRightClick }:
   return (
     <div
       ref={dockRef}
-      className="macos-dock"
-      data-hidden={hidden ? 'true' : 'false'}
+      className={`macos-dock ${hidden ? 'macos-dock--hidden' : ''}`}
       role="toolbar"
       aria-label="Application Dock"
       onMouseMove={handleMouseMove}
@@ -118,12 +117,33 @@ export function MacOSDock({ apps, hidden = false, onAppClick, onAppRightClick }:
                   handleAppClick(app);
                 }
               }}
-                style={{
-                 transform: `scale(${Math.min(scale, 1.1)}) translateY(${scale > 1 ? -(Math.min(scale, 1.1) - 1) * 4 : 0}px)`,
+              style={{
+                position: 'relative',
+                width: '60px',
+                height: '60px',
+                cursor: 'pointer',
+                transition: 'transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+                transformOrigin: 'center bottom',
+                flexShrink: 0,
+                transform: `scale(${scale}) translateY(${scale > 1 ? -(scale - 1) * 8 : 0}px)`,
                 zIndex: Math.round(scale * 10),
               }}
             >
-              <div className="macos-dock__icon">
+              <div
+                className="macos-dock__icon"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden',
+                  position: 'relative',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15), 0 0 0 0.5px rgba(0, 0, 0, 0.1)',
+                  transition: 'box-shadow 200ms ease',
+                }}
+              >
                 {app.icon}
               </div>
 

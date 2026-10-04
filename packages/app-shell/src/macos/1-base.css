@@ -143,7 +143,12 @@ p {
   right: 0;
   bottom: 0;
   z-index: var(--z-window);
-  overflow: hidden;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.macos-desktop__workspace > * {
+  pointer-events: auto;
 }
 
 /* The desktop is a viewport layer; the dock must never participate in layout. */

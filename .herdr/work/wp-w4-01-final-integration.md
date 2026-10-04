@@ -2,7 +2,7 @@
 
 **Owner**：worker-test + verify  
 **Priority**：P0  
-**Status**：立即准备；W3-02/W3-04完成后执行最终批  
+**Status**：completed（2026-10-04；当前工作树最终集成批）
 **Estimated**：2–3 天
 
 ## 目标
@@ -36,3 +36,10 @@
 - W3-02 Native 修复结果
 - W3-04 集成验证批次
 - WP-W2-01 Provider fixture/server 环境
+
+## 实际结果（2026-10-04）
+
+- Manifest：`.herdr/evidence/w4-final-runs/w4-final-20261004075157-46148/manifest.json`
+- 结果：`PASS`，`source_drift=false`，`mvp_demo_ready=true`
+- Web、FR-002、FR-003、FR-009、Native、migration/docs/secret 全部 `PASS`。
+- 限制：local Provider fixture、debug/loopback Native、无正式签名/公证/目标部署证据；不等价于正式 Release。

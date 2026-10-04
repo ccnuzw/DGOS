@@ -79,7 +79,7 @@ export function MacOSSystemBar({
           type="button"
           aria-label={`Close ${window.title}`}
         >
-          <X size={12} />
+          <X size={10} strokeWidth={2.5} />
         </button>
       </div>
     ));

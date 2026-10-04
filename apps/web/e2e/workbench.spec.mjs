@@ -37,6 +37,19 @@ test('mock workbench submits a task and renders streamed result', async ({ page 
   await expect(page.getByText(/Events:/)).toContainText('Events:');
 });
 
+test('local mock preview exposes provider, model, task and assistant paths', async ({ page }) => {
+  await page.goto('/providers?mock=1');
+  await expect(page.getByLabel('Choose')).toHaveValue('mock-provider');
+  await page.goto('/models?mock=1');
+  await expect(page.locator('main, .dgos-content').first()).toBeVisible();
+  await page.goto('/ai-tasks?mock=1');
+  await expect(page.getByLabel('Provider configuration')).toHaveValue('mock-provider');
+  await expect(page.locator('form.stack').getByLabel('Model')).toHaveValue('mock-text-model');
+  await page.goto('/assistant?mock=1');
+  await expect(page.getByTestId('assistant-ui')).toBeVisible();
+  await expect(page.getByTestId('assistant-quick-actions').getByRole('button').first()).toBeVisible();
+});
+
 test('workbench selects real provider model and submits the same binding', async ({ page }) => {
   let submitted;
   await page.route('**/api/v1/provider/configs', route => respond(route, { items: [{ id: 'provider-demo', displayName: 'Demo Provider', status: 'ready' }] }));
@@ -68,10 +81,10 @@ test('assistant quick command plans, confirms, cancels and restores a run', asyn
   await page.getByRole('button', { name: 'Confirm and execute' }).click();
   await expect(page.getByText('Run ID: run-ui')).toBeVisible();
   await page.getByRole('button', { name: 'Cancel' }).click();
-  await expect(page.getByText('cancelled')).toBeVisible();
+  await expect(page.locator('.dgos-status').getByText('cancelled', { exact: true })).toBeVisible();
   expect(executed).toMatchObject({ planId: 'plan-ui', confirmed: true, input: { target: 'system.settings' } });
   await page.reload();
-  await expect(page.getByText('run-ui')).toBeVisible();
+  await expect(page.getByText('Run ID: run-ui', { exact: true })).toBeVisible();
 });
 
 test('skill translation freezes the reviewed request and applies only the task artifact reference', async ({ page }) => {

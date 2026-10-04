@@ -133,7 +133,7 @@ current_packages:
     title: 'V1 最终集成验证'
     owner: verify
     priority: P0
-    status: prepare_now_execute_after_w3
+    status: completed
     depends_on: [WP-W3-01, WP-W3-02, WP-W3-03, WP-W3-04]
     artifact: .herdr/work/wp-w4-01-final-integration.md
   - id: WP-W4-02
@@ -147,14 +147,14 @@ current_packages:
     title: 'V1 发布准备'
     owner: worker-devops
     priority: P1
-    status: prepare_now
+    status: blocked_release_gate
     depends_on: [WP-W4-01]
     artifact: .herdr/work/wp-w4-03-release-prep.md
   - id: WP-W4-04
     title: '最终状态与追踪回写'
     owner: planner
     priority: P0
-    status: prepare_now_writeback_after_verify
+    status: completed
     depends_on: [WP-W4-01]
     artifact: .herdr/work/wp-w4-04-status-writeback.md
   - id: WP-DAY1-FR-AC-GAP
@@ -184,9 +184,9 @@ workflow_improvements:
       goal: '可分享的signed安装包和演示视频'
 
 next_actions:
-  - 'Planner评估V1真实状态，从12个FR中定义演示路径'
-  - 'Lead和Planner明确V1-MVP验收标准（单机macOS，Tech Preview级别）'
-  - '启动Wave 1，派发1-2个修复构建的包'
+  - '冻结当前工作树边界并生成唯一候选 commit'
+  - '重新生成权威文档审批 digest，修复 docs-gate commit binding'
+  - 'Verify 在同一冻结 commit 重跑 W4；补齐真实 Provider/TLS/KMS/目标部署证据'
 
 historical_context:
   previous_delivery: DGOS-V1-CLOSURE-REMEDIATION-20261003

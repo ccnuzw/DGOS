@@ -36,6 +36,40 @@ async function fixtureCredentials() {
     return { state, env: { REAL_ADMIN_ID: state.principalId, REAL_ADMIN_CREDENTIAL: credentials.adminCredential, W2_PROVIDER_CONFIG_ID: state.providerConfigId, W2_MODEL_ID: state.modelId, REAL_MANAGEMENT_FIXTURE: '1', W2_E2E: '1', WEB_EXTERNAL: '1', WEB_BASE_URL: state.web }, source: { state: rel(statePath), credentials: rel(state.privateCredentialsFile), credentials_sha256: sha(await readFile(state.privateCredentialsFile)) } };
   } catch { return null; }
 }
+async function fixtureHealthy(state) {
+  if (!state?.web || !state?.api) return false;
+  try {
+    const [web, api] = await Promise.all([
+      fetch(state.web, { signal: AbortSignal.timeout(1500) }),
+      fetch(`${state.api}/health`, { signal: AbortSignal.timeout(1500) }),
+    ]);
+    return web.ok && api.ok;
+  } catch {
+    return false;
+  }
+}
+async function startManagementFixture() {
+  const statePath = join(root, 'data/v1-ui-management-fixture/state.json');
+  try {
+    const state = JSON.parse(await readFile(statePath, 'utf8'));
+    if (await fixtureHealthy(state)) return { state, child: null, started: false };
+    try { await exec(process.execPath, ['scripts/v1-ui-management-fixture.mjs', '--stop'], { cwd: root, timeout: 10_000 }); } catch { /* stale owner may already be gone */ }
+  } catch { /* start below */ }
+  const child = spawn(process.execPath, ['scripts/v1-ui-management-fixture.mjs'], { cwd: root, stdio: ['ignore', 'pipe', 'pipe'] });
+  const deadline = Date.now() + 30000;
+  while (Date.now() < deadline) {
+    try {
+      const state = JSON.parse(await readFile(statePath, 'utf8'));
+      if (await fixtureHealthy(state)) return { state, child, started: true };
+    } catch { /* fixture still starting */ }
+    await new Promise(resolve => setTimeout(resolve, 200));
+  }
+  child.kill('SIGTERM'); throw new Error('management_fixture_start_timeout');
+}
+async function stopManagementFixture(started) {
+  if (!started) return;
+  await new Promise(resolve => { const child = spawn(process.execPath, ['scripts/v1-ui-management-fixture.mjs', '--stop'], { cwd: root, stdio: 'ignore' }); child.on('close', resolve); });
+}
 async function migrationSet() {
   const migrationsDir = join(root, 'migrations');
   const files = (await readdir(migrationsDir)).filter(file => file.endsWith('.sql')).sort();
@@ -61,7 +95,9 @@ async function run(spec) {
 
 async function main() {
   for (const group of ['web', 'fr002', 'fr003', 'fr009', 'native', 'gates']) await mkdir(join(runDir, group), { recursive: true });
-  const started = new Date(); const sourceStart = await source(); const fixture = await fixtureCredentials(); const prerequisites = await readiness();
+  const started = new Date(); const sourceStart = await source();
+  const fixtureProcess = await startManagementFixture();
+  const fixture = await fixtureCredentials(); const prerequisites = await readiness();
   const commonWeb = fixture?.env || {};
   const commands = [
     { id: 'web-provider-task-recovery', group: 'web', argv: ['pnpm', 'exec', 'playwright', 'test', 'apps/web/e2e/w2-03-web-e2e.spec.mjs', '--grep', 'login, provider|duplicate requestId|SSE cursor', '--config=apps/web/playwright.config.mjs', '--reporter=line'], env: commonWeb },
@@ -70,7 +106,7 @@ async function main() {
     { id: 'fr009-assistant-permission-confirm-cancel-recovery', group: 'fr009', argv: ['node', '--test', '--test-concurrency=1', 'tests/e2e/assistant-settings-actions.spec.mjs'], env: {} },
     { id: 'native-desktop-static-check', group: 'native', argv: ['pnpm', '--filter', '@dgos/desktop', 'check'], env: {} },
     { id: 'native-session-smoke', group: 'native', argv: ['node', 'apps/desktop/scripts/e2e-macos.mjs'], env: {} },
-    { id: 'native-workbench-task-artifact', group: 'native', argv: ['node', 'apps/desktop/scripts/native-workbench-diagnostic.mjs'], env: {} },
+    { id: 'native-workbench-task-artifact', group: 'native', argv: ['node', 'scripts/v1-desktop-real.mjs'], env: {} },
     { id: 'migration-contract', group: 'gates', argv: ['node', 'scripts/check-migration.mjs'], env: {} },
     { id: 'docs-structure', group: 'gates', argv: ['node', 'scripts/check-docs.mjs'], env: {} },
     { id: 'secret-scan', group: 'gates', argv: ['node', 'scripts/secret-scan.mjs', '--paths', 'scripts', '.herdr', 'docs', 'packages'], env: {} },
@@ -96,6 +132,7 @@ async function main() {
   ];
   const overall = sourceDrift || Object.values(groups).some(group => ['FAIL', 'INCOMPLETE'].includes(group.result)) ? 'FAIL' : Object.values(groups).some(group => group.result === 'BLOCKED') ? 'BLOCKED' : 'PASS';
   const manifest = { schema: 'dgos/w4-final-integration/v1', work_package: 'WP-W4-01', run_id: runId, mode: prepareOnly ? 'prepare' : 'final-candidate', started_at: iso(started), ended_at: iso(new Date()), source: sourceStart, source_end: sourceEnd, source_drift: sourceDrift, prerequisites, assets: await Promise.all(['apps/web/dist', 'apps/desktop/src-tauri/target/debug/bundle/macos/DGOS.app', 'apps/desktop/src-tauri/target/debug/dgos-keychain-fixture', 'apps/ai-workbench-package/dist'].map(treeHash)), migration_set: await migrationSet(), environment: { platform: process.platform, arch: process.arch, node: process.version, package_manager: await exec('pnpm', ['--version']).then(result => `pnpm ${result.stdout.trim()}`).catch(() => 'unavailable'), base_url: fixture?.state.web || null, database_name: fixture?.state.database || null, redis_db: fixture?.state.redisDb ?? null }, fixture_source: fixture?.source || null, native_smoke: nativeSmoke, groups, commands: results, result: overall, mvp_demo_ready: overall === 'PASS' && prerequisites.ready, limitations, evidence_root: rel(runDir) };
+  await stopManagementFixture(fixtureProcess.started);
   await writeFile(join(runDir, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
   await writeFile(join(runDir, 'report.md'), [`# ${runId}`, '', `- Final result: ${manifest.result}`, `- MVP demo ready: ${manifest.mvp_demo_ready}`, `- Commit: \`${sourceStart.commit}\``, `- Source drift: ${sourceDrift}`, '', '| Matrix group | Result | Commands |', '| --- | --- | --- |', ...Object.entries(groups).map(([name, item]) => `| ${name} | ${item.result} | ${item.commands.join(', ')} |`), '', '## Limitations', ...limitations.map(value => `- ${value}`), ''].join('\n'));
   process.stdout.write(`${JSON.stringify({ run_id: runId, result: manifest.result, manifest: rel(join(runDir, 'manifest.json')) }, null, 2)}\n`);

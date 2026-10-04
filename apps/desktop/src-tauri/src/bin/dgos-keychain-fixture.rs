@@ -5,9 +5,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let action = args.next().ok_or("missing action")?;
     let service = args.next().ok_or("missing service")?;
     let account = args.next().ok_or("missing account")?;
+    let valid_account = account.strip_prefix("127.0.0.1:").and_then(|port| port.parse::<u16>().ok()).is_some();
     if !service.starts_with("com.dgos.desktop.test.") || service.len() > 120
         || !service.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'.' || b == b'-')
-        || !account.starts_with("127.0.0.1:1515") {
+        || !valid_account {
         return Err("fixture keychain scope rejected".into());
     }
     let options = || {

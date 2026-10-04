@@ -2,7 +2,7 @@
 
 **Owner**：planner  
 **Priority**：P0（与最终 Verify 同步）  
-**Status**：阻塞：当前未发现 WP-W4-01 最终候选证据；禁止正式回写 FR 完成状态
+**Status**：completed（2026-10-04；已完成证据盘点与状态回写）
 
 ## 目标
 
@@ -24,10 +24,9 @@
 
 ## 当前门禁检查（2026-10-04）
 
-- `.herdr/evidence/` 未发现 `WP-W4-01` manifest 或 Verify 最终报告。
-- 现有最新集成批次属于 `WP-W3-04`，run `w3-20261003180728-89569`：source drift=true、Web 组 FAIL、FR-002 API/Task 组 PASS、Native smoke PASS，但不证明 Native Workbench bridge/Task/Artifact，也不满足 W4-01。
-- `WP-W3-02-native-bridge-fix-2026-10-04.json` 为 `partial`：iframe load 0、`dgos.app.ready` 0、bridge calls 0；不能将 FR-001 升格。
-- 因此本任务当前只完成“证据盘点/回写准备”，不修改 `V1-实现状态.md` 的完成度结论。
+- W4-01 manifest：`.herdr/evidence/w4-final-runs/w4-final-20261004075157-46148/manifest.json`，结果 `PASS`，`source_drift=false`，`mvp_demo_ready=true`。
+- Native 当前证据：`.herdr/V1-NATIVE-EXECUTION-r13-2026-10-04T07-51-17-073Z-14979554-manifest.json`，WorkBench Task/Artifact/reload/provider/GUI entry/close/session restore 通过。
+- 本次回写只确认当前 MVP 集成证据，不把 FR-001/005/007/010–015 的剩余 AC 或正式 Release 门禁标为完成。
 
 ## 缺口评估关联
 

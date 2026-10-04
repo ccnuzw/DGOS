@@ -1,0 +1,27 @@
+import { createHash, randomUUID } from 'node:crypto';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { spawn } from 'node:child_process';
+import { createServer } from 'node:net';
+
+const root = resolve(new URL('..', import.meta.url).pathname);
+const runId = `local-mock-mvp-${new Date().toISOString().replaceAll(/[:.]/g, '-')}-${randomUUID().slice(0, 8)}`;
+const evidenceDir = resolve(root, '.herdr/evidence/local-mock-mvp', runId);
+await mkdir(evidenceDir, { recursive: true });
+const server = createServer();
+await new Promise((resolvePort, reject) => { server.once('error', reject); server.listen({ host: '127.0.0.1', port: 0 }, resolvePort); });
+const port = server.address().port;
+await new Promise(resolvePort => server.close(resolvePort));
+const web = spawn(process.execPath, ['apps/web/scripts/serve.mjs'], { cwd: root, env: { ...process.env, HOST: '127.0.0.1', PORT: String(port) }, stdio: ['ignore', 'pipe', 'pipe'] });
+await new Promise((resolveReady, rejectReady) => { const timer = setTimeout(() => rejectReady(new Error('local_web_start_timeout')), 15000); const check = async () => { try { const response = await fetch(`http://127.0.0.1:${port}`); if (response.ok) { clearTimeout(timer); resolveReady(); return; } } catch {} setTimeout(check, 100); }; check(); web.once('exit', code => rejectReady(new Error(`local_web_exit_${code}`))); });
+const args = ['exec', 'playwright', 'test', 'apps/web/e2e/workbench.spec.mjs', '--grep', 'mock workbench submits a task', '--config=apps/web/playwright.config.mjs', '--reporter=line'];
+const env = { ...process.env, VITE_DGOS_MOCK: '1', WEB_EXTERNAL: '1', WEB_BASE_URL: `http://127.0.0.1:${port}` };
+const result = await new Promise(done => { const child = spawn('pnpm', args, { cwd: root, env, stdio: ['ignore', 'pipe', 'pipe'] }); let stdout = ''; let stderr = ''; child.stdout.on('data', c => { stdout += c; }); child.stderr.on('data', c => { stderr += c; }); child.on('close', exitCode => done({ exitCode: exitCode ?? 1, stdout, stderr })); });
+web.kill('SIGTERM');
+const sha = value => createHash('sha256').update(value).digest('hex');
+await writeFile(resolve(evidenceDir, 'stdout.log'), result.stdout);
+await writeFile(resolve(evidenceDir, 'stderr.log'), result.stderr);
+const manifest = { schema: 'dgos.local-mock-mvp.v1', runId, environment: 'local-mock', providerMode: 'mock', port, command: `pnpm ${args.join(' ')}`, exitCode: result.exitCode, result: result.exitCode === 0 ? 'PASS' : 'FAIL', stdoutSha256: sha(result.stdout), stderrSha256: sha(result.stderr), limitations: ['Mock Provider proves Web state flow only; it does not prove external Provider, production credentials, macOS host, or release gates.'], evidenceDir: `.herdr/evidence/local-mock-mvp/${runId}` };
+await writeFile(resolve(evidenceDir, 'manifest.json'), JSON.stringify(manifest, null, 2));
+console.log(JSON.stringify({ runId, result: manifest.result, manifest: `${manifest.evidenceDir}/manifest.json` }, null, 2));
+process.exit(result.exitCode);

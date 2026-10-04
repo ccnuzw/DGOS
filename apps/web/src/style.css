@@ -1,3 +1,4 @@
+/* Keep all imports before rules so Vite/PostCSS can process this file reliably. */
 @import '@dgos/design-tokens/style.css';
 @import '@dgos/dgos-ui/style.css';
 @import '@dgos/app-shell/style.css';

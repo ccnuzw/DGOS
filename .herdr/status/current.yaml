@@ -1,111 +1,125 @@
 version: 3
 project: DGOS
-last_updated: '2026-10-04T10:30:00-07:00'
+last_updated: '2026-10-04T10:50:00-07:00'
 
-# 状态：Day 1执行中 - 5个Workers并行
-status: day1_execution
-mode: max_parallel
+# 状态：V1 Web MVP Local Preview（2-3天）
+status: v1_web_mvp_local_preview
+mode: focused_execution
 
-# Day 1目标
-day: 1
-goal: "冻结基线 + 开始核心任务"
+# 调整原因
+adjustment_reason: "Day 2发现无签名环境、无真实Provider环境，调整为本地可验证范围"
 
-# 团队状态（5个Workers并行）
+# 新目标
+goal:
+  title: "V1 Web MVP - Local Development Preview"
+  timeline: "2-3天"
+  scope: "本地环境完整可验证"
+  not: "正式Release"
+
+# 当前：Day 2下午，立即启动
+current_phase: "day2_afternoon"
+phase_goal: "Web核心链完善"
+
+# 团队状态（立即启动4个Workers）
 team:
-  # P0关键路径
+  # 核心
   worker-ai:
     status: working
-    task: "WP-D1-01 核心Task链（FR-005/007）"
+    task: "Web核心链完善（Mock Provider）"
     priority: P0
-    started_at: '2026-10-04T10:30:00'
-    note: "Day 2-3关键任务，今天开始"
-
-  worker-native:
-    status: working
-    task: "WP-D1-01 Native完善（FR-001）"
-    priority: P0
-    started_at: '2026-10-04T10:30:00'
-    note: "Day 4关键任务，今天推进"
-
-  # P1重要任务
-  worker-platform:
-    status: working
-    task: "WP-D1-02/03/04 FR-002/003完善"
-    priority: P1
-    started_at: '2026-10-04T10:30:00'
-    note: "Day 5任务，提前开始"
+    target: "Day 3完成"
+    started_at: '2026-10-04T10:50:00'
 
   worker-web:
     status: working
-    task: "WP-D1-05 FR-009完善"
-    priority: P1
-    started_at: '2026-10-04T10:30:00'
-    note: "Day 5任务，提前开始"
+    task: "UI完善和集成"
+    priority: P0
+    target: "Day 3完成"
+    started_at: '2026-10-04T10:50:00'
 
   worker-test:
     status: working
-    task: "准备Day 6验证矩阵"
+    task: "本地E2E测试"
     priority: P0
-    started_at: '2026-10-04T10:30:00'
-    note: "为Day 6准备"
+    target: "Day 3完成"
+    started_at: '2026-10-04T10:50:00'
 
-  # 完成
-  planner:
-    status: completed
-    note: "FR缺口评估完成，生成9个work-packages"
+  worker-platform:
+    status: working
+    task: "FR-002/003/009收尾"
+    priority: P1
+    target: "Day 3完成"
+    started_at: '2026-10-04T10:50:00'
 
   # 待命
+  worker-native:
+    status: standby
+    note: "标记为需要签名环境，不阻塞Local Preview"
+
   worker-devops:
     status: standby
-    next_task: "Day 1下午冻结基线"
+    next_task: "Day 4: 本地部署包"
+
+  planner:
+    status: standby
+    next_task: "Day 4: 文档"
 
   verify:
     status: standby
-    next_task: "Day 6验证审核"
+    next_task: "Day 4: 本地验证"
 
-# Planner产出
-planner_output:
-  work_packages: 9
-  list:
-    - "WP-D1-01: Web/Native核心Task链"
-    - "WP-D1-02: 桌面上下文、代理、权限"
-    - "WP-D1-03: 应用生命周期与回滚"
-    - "WP-D1-04: Skill/MCP管理与恢复"
-    - "WP-D1-05: 助手确认、取消、恢复"
-    - "WP-D1-06: 身份、API Key、再认证"
-    - "WP-D1-07: Provider账号与连接测试"
-    - "WP-D1-08: 审计与额度"
-    - "WP-D1-09: 统一候选、发布门禁与证据"
+# 2-3天时间线
+timeline:
+  day2_afternoon:
+    goal: "启动Web核心链完善"
+    workers: 4
+    status: "进行中"
 
-# 并行度
-parallelism:
-  current: 5
-  max: 6
-  utilization: "83%"
+  day3:
+    goal: "Web版本地完整可用"
+    workers: 4
+    status: "待执行"
 
-# Day 1计划
-day1_schedule:
-  上午完成:
-    - "✅ Planner FR缺口评估"
-    - "✅ 生成9个work-packages"
+  day4_morning:
+    goal: "本地部署包和验证"
+    workers: 2
+    status: "待执行"
 
-  下午进行:
-    - "→ 5个Workers并行推进"
-    - "→ Worker-DevOps冻结基线"
+  day4_afternoon_day5:
+    goal: "文档、演示、交付"
+    workers: 3
+    status: "待执行"
 
-  今晚完成:
-    - "Workers初步推进"
-    - "基线冻结"
+# 交付标准
+deliverables:
+  must_have:
+    - "Docker Compose本地部署包"
+    - "Web版完整可访问"
+    - "核心演示流程work"
+    - "演示视频（5-10分钟）"
+    - "快速开始文档"
+    - "限制说明文档"
 
-# 5-8天进度
-progress:
-  day1: "进行中 - 5个Workers工作"
-  day2_3: "准备就绪"
-  day4: "已提前开始（Native）"
-  day5: "已提前开始（FR-002/003/009）"
+  clear_labels:
+    - "V1 Web MVP - Local Development Preview"
+    - "本地环境only"
+    - "使用Mock数据"
+    - "Native需要签名环境"
 
-# 监控重点
-monitoring:
-  critical_path: "Worker-AI的FR-005/007"
-  blocked_risk: "Worker-Native的Native bridge"
-  next_check: "今晚18:00检查Day 1进展"
+# 不包含的（诚实标记）
+excluded:
+  - "Native signed build（无签名环境）"
+  - "真实外部Provider（无生产环境）"
+  - "生产级部署"
+  - "完整性能测试"
+
+# 风险
+risks:
+  level: "低"
+  reason: "聚焦本地环境，不依赖外部服务"
+
+# 成功定义
+success:
+  what: "本地可验证的Web MVP"
+  not: "正式V1 Release"
+  next: "配置环境后继续完善"

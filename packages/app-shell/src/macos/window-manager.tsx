@@ -23,6 +23,7 @@ export interface WindowManagerProps {
   focusedWindowId: string | null;
   onWindowsChange: (windows: WindowInstance[]) => void;
   onFocusChange: (windowId: string | null) => void;
+  onMaximizedStateChange?: (hasMaximized: boolean) => void;
 }
 
 export function WindowManager({
@@ -30,6 +31,7 @@ export function WindowManager({
   focusedWindowId,
   onWindowsChange,
   onFocusChange,
+  onMaximizedStateChange,
 }: WindowManagerProps) {
   const handleWindowClose = useCallback((windowId: string) => {
     const updatedWindows = windows.filter((w) => w.id !== windowId);
@@ -68,16 +70,22 @@ export function WindowManager({
     const updatedWindows = windows.map((w) => {
       if (w.id === windowId) {
         const newState: WindowState = w.state === 'maximized' ? 'normal' : 'maximized';
-        return { ...w, state: newState };
+        return {
+          ...w,
+          state: newState,
+          zIndex: Math.max(...windows.map((item) => item.zIndex), 0) + 1,
+        };
       }
       return w;
     });
     onWindowsChange(updatedWindows);
-  }, [windows, onWindowsChange]);
+
+    // Notify parent about maximized state change
+    const hasMaximized = updatedWindows.some((w) => w.state === 'maximized');
+    onMaximizedStateChange?.(hasMaximized);
+  }, [windows, onWindowsChange, onMaximizedStateChange]);
 
   const handleWindowFocus = useCallback((windowId: string) => {
-    if (focusedWindowId === windowId) return;
-
     // Find the highest z-index
     const maxZIndex = windows.reduce((max, w) => Math.max(max, w.zIndex), 0);
 
@@ -141,19 +149,14 @@ export function WindowManager({
   // Check if any window is maximized
   const hasMaximizedWindow = visibleWindows.some((w) => w.state === 'maximized');
 
-  // Create tabs for tab bar (only show when a window is maximized)
-  const tabs: WindowTab[] = hasMaximizedWindow
-    ? visibleWindows.map((w) => ({
-        id: w.id,
-        title: w.title,
-        icon: w.icon,
-        active: w.id === focusedWindowId,
-      }))
-    : [];
+  // Notify parent about maximized state
+  useEffect(() => {
+    onMaximizedStateChange?.(hasMaximizedWindow);
+  }, [hasMaximizedWindow, onMaximizedStateChange]);
 
   return (
     <>
-      {/* Tab bar removed - tabs now integrated into system bar */}
+      {/* Tabs are rendered in SystemBar, not here */}
       {visibleWindows.map((window) => (
         <MacOSWindow
           key={window.id}
@@ -199,10 +202,10 @@ export function useWindowManager() {
       title,
       content,
       bounds: options?.bounds || {
-        x: 100 + (windows.length * 30),
-        y: 100 + (windows.length * 30),
-        width: 800,
-        height: 600,
+        x: Math.max(24, Math.round((window.innerWidth - 960) / 2) + Math.min(windows.length, 3) * 28),
+        y: Math.max(56, Math.round((window.innerHeight - 680) / 2) + Math.min(windows.length, 3) * 24),
+        width: Math.min(960, Math.max(560, window.innerWidth - 96)),
+        height: Math.min(680, Math.max(360, window.innerHeight - 160)),
       },
       state: options?.state || 'normal',
       zIndex: nextZIndex,

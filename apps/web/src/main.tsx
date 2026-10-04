@@ -24,7 +24,6 @@ import { useDialogKeyboard } from './dialog';
 import { displayNumber, setRegionFormat } from './region';
 import { DeviceSessions } from './sessions';
 import { DesignSystemShowcase } from './design-system-showcase';
-import { AssistantChat } from './assistant-chat';
 import "./style.css";
 import "./macos-app-styles.css";
 
@@ -1145,8 +1144,9 @@ function Assistant({ t, session }: { t: ReturnType<typeof allLabels>; session: D
               <h2>{t.assistant}</h2>
               <div className="quick-actions-grid" data-testid="assistant-quick-actions" aria-label="Quick commands">
                 {items(actions.data).filter((item: Dict) => item.state !== 'disabled' && item.state !== 'missing').slice(0, 6).map((item: Dict) => {
-                  const label = item.label?.['en-US'] || item.label?.['zh-CN'] || item.displayName || item.actionId;
-                  return <Button key={`${item.actionId}:${item.actionVersion || ''}`} data-testid={`quick-action-${String(item.actionId)}`} onClick={() => { setActionId(item.actionId); setInput(item.quickInput || {}); clearPlan(); }}>{label}</Button>;
+                  const label = item.label?.['en-US'] || item.label?.['zh-CN'] || item.displayName || (item.actionId === 'system.navigate.system.settings' ? 'Open system settings' : item.actionId);
+                  const quickInput = item.quickInput || (item.actionId === 'system.navigate.system.settings' ? { target: 'system.settings' } : {});
+                  return <Button key={`${item.actionId}:${item.actionVersion || ''}`} data-testid={`quick-action-${String(item.actionId)}`} onClick={() => { setActionId(item.actionId); setInput(quickInput); clearPlan(); }}>{label}</Button>;
                 })}
               </div>
               <form onSubmit={resolve} data-testid="assistant-resolve-form">
@@ -1741,7 +1741,7 @@ function App() {
     protocols: <ProtocolControl t={t} />,
     skills: <ExtensionsV1 t={t} kind="skills" />,
     mcp: <ExtensionsV1 t={t} kind="mcp" />,
-    assistant: <AssistantChat t={t} session={session} />,
+    assistant: <Assistant t={t} session={session} />,
     tasks: <Tasks t={t} />,
     developer: <DeveloperCenter t={t} />,
     keys: <KeyControl t={t} session={session} onStepUp={beginStepUp} />,

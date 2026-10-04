@@ -31,3 +31,15 @@ Existing format 1 ciphertext must be migrated offline before starting the produc
 Apply `0045-network-route-activation.sql` and `0048-network-route-fingerprint.sql` before starting this runtime. At process start, `SystemService.activateNetworkRoute(route, { role, instanceId })` reads the persisted network target and records an API or Worker instance acknowledgement. The route remains closed until its acknowledgement is committed. Instances renew a short lease and stop network requests if renewal fails or expires. System projection reports a route as effective only when API and Worker each have a live acknowledgement and **every** live instance uses the target network version and the same route fingerprint. A partial restart remains `effectiveRoute=unavailable`, `restartRequired=true`; an offline old instance expires instead of blocking forever. Activation and release changes that alter the public state increment `contextVersion` and write a network SSE event. Saving settings updates the target network version and leaves running process routes unchanged until restart.
 
 For manual mode, `manualProxyRef` points to a Secret whose `purpose` is `network-proxy`, `subjectId` is `system`, and value is JSON `{ "url": "https://proxy.example:443/", "authorization": "Basic ..." }`. Provision that JSON through the Secret service's controlled write path, not a plaintext environment variable. The public PATCH verifies the SecretRef before saving. Every request resolves and reads a fresh short-lived Secret handle; revoke and version change stop requests until the next activation. For system mode, optional `DGOS_SYSTEM_PROXY_SECRET_REF` is a reference only; the referenced Secret has the same scope and JSON shape. An absent reference selects direct routing, whereas an unavailable configured reference blocks startup. Plaintext `HTTP_PROXY`/`HTTPS_PROXY` credentials are not consumed. For a real HTTPS proxy, supply its trust roots through `proxyCa`; `ca` governs target TLS separately. Both target and proxy DNS candidates are checked, connections dial validated IPs, CONNECT sends only the pinned target IP, and target TLS verifies its hostname. The local test uses an explicit HTTP loopback proxy and private target allowance only inside a controlled fixture.
+
+## Local V1 preview
+
+Use the repository-level lifecycle wrapper so each preview gets a dedicated Compose project and a free five-port block:
+
+```bash
+pnpm preview:up
+# record the printed state_file and web_url
+pnpm preview:down -- .herdr/state/local-preview/<id>.json
+```
+
+The preview is fixture-only and is not a signed, notarized, production, or real-Provider release. Run `pnpm candidate:freeze` and `pnpm release:gate` before discussing release readiness; a blocked result is expected until external release dependencies are supplied.

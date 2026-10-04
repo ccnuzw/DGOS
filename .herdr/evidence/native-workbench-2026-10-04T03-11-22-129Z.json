@@ -1,0 +1,12 @@
+{
+  "workPackage": "WP-W1-01",
+  "result": "failed",
+  "command": "node apps/desktop/scripts/native-workbench-diagnostic.mjs",
+  "limitations": [
+    "Diagnostic uses loopback Session fixture and debug native binary; Provider/Task chain is not asserted here."
+  ],
+  "apiOrigin": "http://127.0.0.1:15159",
+  "nativePid": 63297,
+  "error": "windowserver_owner_timeout",
+  "nativeStderr": ""
+}

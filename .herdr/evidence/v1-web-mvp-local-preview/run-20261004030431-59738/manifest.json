@@ -1,0 +1,41 @@
+{
+  "schema": "dgos/v1-web-mvp-local-preview/v1",
+  "work_package": "WP-D1-01",
+  "run_id": "run-20261004030431-59738",
+  "result": "PASS",
+  "scope": "local Web MVP with deterministic Mock Provider",
+  "fixture": {
+    "kind": "isolated-local-https-provider",
+    "web": "http://127.0.0.1:15176",
+    "modelId": "fixture-model",
+    "providerConfigId": "916cc9f7-88c2-4276-b422-18527db366e7"
+  },
+  "commands": [
+    {
+      "command": "pnpm exec playwright test apps/web/e2e/w2-03-web-e2e.spec.mjs --config=apps/web/playwright.config.mjs --reporter=line",
+      "exitCode": 0,
+      "status": "PASS",
+      "startedAt": "2026-10-04T03:04:33.587Z",
+      "endedAt": "2026-10-04T03:04:37.826Z",
+      "stdoutSha256": "1ddea15b6f891a27d7ac68451c02af5792a246f0f0ea3d7cffaa45de327afe59",
+      "stderrSha256": "601632467c43c9978bf5c37b813de9aed67ec63dc26c79788a5820d4730ff293",
+      "stdoutLog": ".herdr/evidence/v1-web-mvp-local-preview/run-20261004030431-59738/w2-03-web-e2e.stdout.log",
+      "stderrLog": ".herdr/evidence/v1-web-mvp-local-preview/run-20261004030431-59738/w2-03-web-e2e.stderr.log"
+    }
+  ],
+  "acceptance": {
+    "provider_configuration": "PASS",
+    "model_catalog": "PASS",
+    "task_submission": "PASS",
+    "sse_stream": "PASS",
+    "artifact_persistence": "PASS",
+    "idempotent_replay": "PASS",
+    "cursor_recovery_and_cancellation": "PASS",
+    "unknown_provider_no_side_effect": "PASS"
+  },
+  "limitations": [
+    "Mock Provider is local and deterministic; no external Provider claim.",
+    "Native signed build and production deployment are outside this preview.",
+    "Credentials are injected into the child process only and are absent from this manifest."
+  ]
+}

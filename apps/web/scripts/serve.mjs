@@ -44,4 +44,11 @@ const server = http.createServer((request, response) => {
 });
 
 server.listen(port, host, () => console.log(`DGOS web listening on http://${host}:${port}`));
-process.on('SIGTERM', () => server.close(() => process.exit(0)));
+let closing = false;
+const close = () => {
+  if (closing) return;
+  closing = true;
+  server.close(() => process.exit(0));
+};
+process.on('SIGINT', close);
+process.on('SIGTERM', close);

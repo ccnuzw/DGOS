@@ -56,6 +56,7 @@ export function MacOSWindow({
   const handleTitleBarMouseDown = (e: React.MouseEvent) => {
     if (e.button !== 0) return; // Only left click
     if ((e.target as HTMLElement).closest('.macos-traffic-lights')) return;
+    if (state === 'maximized') return; // Don't drag maximized windows
 
     e.preventDefault();
     setIsDragging(true);
@@ -215,7 +216,7 @@ export function MacOSWindow({
         </div>
       }
 
-      <div className="macos-window__content">
+      <div className="macos-window__content dgos-content">
         {children}
       </div>
 

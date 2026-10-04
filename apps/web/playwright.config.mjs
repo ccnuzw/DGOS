@@ -1,2 +1,18 @@
 import { defineConfig } from '@playwright/test';
-export default defineConfig({ testDir: './e2e', timeout: 30000, use: { baseURL: process.env.WEB_BASE_URL || 'http://127.0.0.1:15133', headless: true }, webServer: process.env.WEB_EXTERNAL === '1' ? undefined : { command: 'PORT=15133 pnpm start', url: process.env.WEB_BASE_URL || 'http://127.0.0.1:15133', reuseExistingServer: false, timeout: 15_000 }, reporter: [['list']] });
+
+const host = process.env.WEB_HOST || '127.0.0.1';
+const port = Number(process.env.WEB_PORT || 15133);
+const baseURL = process.env.WEB_BASE_URL || `http://${host}:${port}`;
+
+export default defineConfig({
+  testDir: './e2e',
+  timeout: 30000,
+  use: { baseURL, headless: true },
+  webServer: process.env.WEB_EXTERNAL === '1' ? undefined : {
+    command: `HOST=${host} PORT=${port} pnpm start`,
+    url: baseURL,
+    reuseExistingServer: true,
+    timeout: 15_000,
+  },
+  reporter: [['list']],
+});

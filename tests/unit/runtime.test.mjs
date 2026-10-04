@@ -70,3 +70,14 @@ test('settings optimistic concurrency and context redaction', async () => {
   assert.equal((await system.snapshot()).settingsVersion, '3');
   assert.equal(events.length, 2);
 });
+
+test('app release identity is immutable per channel and permits separate channels', async () => {
+  const repository = new InMemoryAppRepository();
+  const first = await repository.recordApp({ appId: 'com.example.immutable', version: '1.0.0', build: '1', releaseChannel: 'stable', manifestDigest: 'sha256:first' });
+  const replay = await repository.recordApp({ appId: 'com.example.immutable', version: '1.0.0', build: '1', releaseChannel: 'stable', manifestDigest: 'sha256:changed' });
+  const beta = await repository.recordApp({ appId: 'com.example.immutable', version: '1.0.0', build: '1', releaseChannel: 'beta', manifestDigest: 'sha256:beta' });
+  assert.equal(replay.appVersionId, first.appVersionId);
+  assert.equal(replay.manifestDigest, 'sha256:first');
+  assert.equal(beta.manifestDigest, 'sha256:beta');
+  assert.equal((await repository.listApps()).length, 2);
+});

@@ -50,7 +50,7 @@ export function WindowTabBar({ tabs, onTabClick, onTabClose }: WindowTabBarProps
               type="button"
               aria-label={`Close ${tab.title}`}
             >
-              <X size={14} />
+              <X size={12} strokeWidth={2} />
             </button>
           </div>
         ))}
