@@ -1,0 +1,35 @@
+{
+  "schema": "dgos/wp-d1-01-core-task-chain-prep/v1",
+  "status": "ready_for_day2_3",
+  "work_package": "WP-D1-01",
+  "scope": ["FR-005", "FR-007"],
+  "acceptance_matrix": {
+    "provider_config_validation": { "status": "covered", "tests": ["tests/integration/ai-task-api.test.mjs", "tests/integration/provider-admission-wiring.test.mjs"] },
+    "model_catalog_and_policy": { "status": "covered", "tests": ["tests/provider/provider-admission-profile.test.mjs", "tests/integration/model-capability-api.test.mjs"] },
+    "task_sse_artifact": { "status": "covered", "tests": ["tests/integration/ai-task-api.test.mjs", "apps/web/e2e/w2-03-web-e2e.spec.mjs"] },
+    "idempotency": { "status": "covered", "tests": ["tests/integration/ai-task-api.test.mjs", "apps/web/e2e/w2-03-web-e2e.spec.mjs"] },
+    "cursor_recovery": { "status": "covered", "tests": ["tests/integration/ai-task-api.test.mjs", "apps/web/e2e/w2-03-web-e2e.spec.mjs"] },
+    "unknown_config_errors": { "status": "fixed_and_covered", "expected": "404 provider_config_not_found", "test": "tests/integration/ai-task-api.test.mjs" }
+  },
+  "latest_evidence": {
+    "web_provider_task_recovery": ".herdr/evidence/w4-final-runs/w4-final-20261004014716-30734/web/web-provider-task-recovery.stdout.log",
+    "w4_manifest": ".herdr/evidence/w4-final-runs/w4-final-20261004014716-30734/manifest.json",
+    "real_provider_task": "tests/provider/evidence/V1-W2-01-REAL-20261004.json"
+  },
+  "day2_3_gates": [
+    "Run Web E2E with a clean fixture database and valid admin credentials.",
+    "Run Native Workbench diagnostic after WindowServer environment is available; this is an external native gate, not an API gap.",
+    "Freeze one candidate source/build before final Verify; do not combine historical fixture evidence with current artifacts.",
+    "Retain secret redaction and ProviderEgress allowlist checks in the final manifest."
+  ],
+  "commands": [
+    "node --test tests/integration/ai-task-api.test.mjs tests/integration/provider-worker.test.mjs tests/provider/profile-task-wiring.test.mjs",
+    "pnpm exec playwright test apps/web/e2e/w2-03-web-e2e.spec.mjs --grep 'login, provider|duplicate requestId|SSE cursor' --config=apps/web/playwright.config.mjs --reporter=line",
+    "node apps/desktop/scripts/native-workbench-diagnostic.mjs"
+  ],
+  "known_limitations": [
+    "Native diagnostic currently may fail with windowserver_owner_timeout on unavailable macOS WindowServer.",
+    "Web E2E requires clean fixture state and valid REAL_ADMIN credentials.",
+    "Local fixture evidence does not replace external Provider evidence."
+  ]
+}

@@ -142,5 +142,11 @@ p {
   left: 0;
   right: 0;
   bottom: 0;
+  z-index: var(--z-window);
   overflow: hidden;
+}
+
+/* The desktop is a viewport layer; the dock must never participate in layout. */
+.macos-desktop {
+  display: block;
 }

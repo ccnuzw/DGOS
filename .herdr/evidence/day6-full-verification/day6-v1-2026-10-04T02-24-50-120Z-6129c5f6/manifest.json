@@ -1,0 +1,237 @@
+{
+  "schema": "dgos.day6.verification.v1",
+  "runId": "day6-v1-2026-10-04T02-24-50-120Z-6129c5f6",
+  "createdAt": "2026-10-04T02:25:29.128Z",
+  "fixture": {
+    "profile": "day6-v1-isolated",
+    "fingerprint": "80560e378f163af343dfd7c88b6ea3a1d2ec1411c9fa5890b7b36cd157e580d2"
+  },
+  "matrixSha256": "0ab10f1ddd2ac190ab466845fe9b39fb860ffb22e63f1e89c1aa79bdf08f8e68",
+  "results": [
+    {
+      "id": "fr001-web",
+      "fr": [
+        "V1-FR-001"
+      ],
+      "status": "BLOCKED",
+      "command": "pnpm exec playwright test apps/web/e2e/ui-acceptance.spec.mjs --config=apps/web/playwright.config.mjs --reporter=line",
+      "exitCode": 1,
+      "stdoutSha256": "9b669a020354d65138ccfc52b36eda6503c43e3e0fee44888907480c65a8cf8c",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": ".herdr/evidence/day6-full-verification/day6-v1-2026-10-04T02-24-50-120Z-6129c5f6/fr001-web.json"
+    },
+    {
+      "id": "fr002-lifecycle",
+      "fr": [
+        "V1-FR-002"
+      ],
+      "status": "PASS",
+      "command": "node --test tests/e2e/app-catalog-lifecycle.spec.mjs",
+      "exitCode": 0,
+      "stdoutSha256": "61c30d806fcd0b9de834ee1bd664cdfd28ebe0a9c3bcbcd6570a33c85c173989",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": ".herdr/evidence/day6-full-verification/day6-v1-2026-10-04T02-24-50-120Z-6129c5f6/fr002-lifecycle.json"
+    },
+    {
+      "id": "fr003-agent-mcp",
+      "fr": [
+        "V1-FR-003"
+      ],
+      "status": "PASS",
+      "command": "node --test tests/integration/app-capabilities.test.mjs tests/integration/runtime-api.test.mjs",
+      "exitCode": 0,
+      "stdoutSha256": "bea7e68ed20800200df0c7a6605b6bd0f1ea2041594ce40e60d87552f2225b5a",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": ".herdr/evidence/day6-full-verification/day6-v1-2026-10-04T02-24-50-120Z-6129c5f6/fr003-agent-mcp.json"
+    },
+    {
+      "id": "fr005-ai-task",
+      "fr": [
+        "V1-FR-005"
+      ],
+      "status": "PASS",
+      "command": "node --test tests/integration/ai-task-api.test.mjs tests/integration/ai-task-worker.test.mjs",
+      "exitCode": 0,
+      "stdoutSha256": "f509ddfdb59b1721d180d9297fc4b3a308e731d610344663b500adc94f128502",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": ".herdr/evidence/day6-full-verification/day6-v1-2026-10-04T02-24-50-120Z-6129c5f6/fr005-ai-task.json"
+    },
+    {
+      "id": "fr007-provider-model",
+      "fr": [
+        "V1-FR-007"
+      ],
+      "status": "PASS",
+      "command": "node --test tests/integration/model-capability-api.test.mjs tests/integration/provider-api.test.mjs",
+      "exitCode": 0,
+      "stdoutSha256": "77606396412747fcc3ad4bc58e07d560b3c70bb5cf5b751a3520049abef83dbb",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": ".herdr/evidence/day6-full-verification/day6-v1-2026-10-04T02-24-50-120Z-6129c5f6/fr007-provider-model.json"
+    },
+    {
+      "id": "fr009-assistant",
+      "fr": [
+        "V1-FR-009"
+      ],
+      "status": "PASS",
+      "command": "node --test tests/e2e/assistant-settings-actions.spec.mjs tests/integration/action-recovery.test.mjs",
+      "exitCode": 0,
+      "stdoutSha256": "2ce0d318b6fad59bb9b14550a7f6fa28f2401e9062d7fa2ed98aa01f85e62e93",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": ".herdr/evidence/day6-full-verification/day6-v1-2026-10-04T02-24-50-120Z-6129c5f6/fr009-assistant.json"
+    },
+    {
+      "id": "fr010-identity",
+      "fr": [
+        "V1-FR-010"
+      ],
+      "status": "PASS",
+      "command": "node --test tests/integration/identity-api.test.mjs tests/security/v1-auth-authz.test.mjs",
+      "exitCode": 0,
+      "stdoutSha256": "ff4ed430bb12a284d5288b0a4cf4321832af952f90402e54b67bb147297d88b8",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": ".herdr/evidence/day6-full-verification/day6-v1-2026-10-04T02-24-50-120Z-6129c5f6/fr010-identity.json"
+    },
+    {
+      "id": "fr011-api-key",
+      "fr": [
+        "V1-FR-011"
+      ],
+      "status": "PASS",
+      "command": "node --test tests/security/v1-ops-durable-secret.test.mjs",
+      "exitCode": 0,
+      "stdoutSha256": "da6d650a034f2eb9e0b62946efa3359eb19ec4d2c5d85946004b85f238066aa7",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": ".herdr/evidence/day6-full-verification/day6-v1-2026-10-04T02-24-50-120Z-6129c5f6/fr011-api-key.json"
+    },
+    {
+      "id": "fr012-provider-account",
+      "fr": [
+        "V1-FR-012"
+      ],
+      "status": "PASS",
+      "command": "node --test tests/integration/postgres-provider.test.mjs tests/integration/provider-api.test.mjs",
+      "exitCode": 0,
+      "stdoutSha256": "1acba7c22e744208d89e7137877263ae1a907e47fab8e3a21014d7ef7ead7874",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": ".herdr/evidence/day6-full-verification/day6-v1-2026-10-04T02-24-50-120Z-6129c5f6/fr012-provider-account.json"
+    },
+    {
+      "id": "fr013-connection-test",
+      "fr": [
+        "V1-FR-013"
+      ],
+      "status": "PASS",
+      "command": "node scripts/v1-provider-failures-http.mjs",
+      "exitCode": 0,
+      "stdoutSha256": "0292ee87a8c4d2ae313e8cce0748b247276c151e18600635fe6b90024153157c",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": ".herdr/evidence/day6-full-verification/day6-v1-2026-10-04T02-24-50-120Z-6129c5f6/fr013-connection-test.json"
+    },
+    {
+      "id": "fr014-governance-audit",
+      "fr": [
+        "V1-FR-014"
+      ],
+      "status": "PASS",
+      "command": "node --test tests/security/v1-governance-e2e.test.mjs tests/integration/audit-query.test.mjs",
+      "exitCode": 0,
+      "stdoutSha256": "bf0edd7c5212b2154bfcf343b50b02b6a6c93444dfd14dde3bfc054ce11b1644",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": ".herdr/evidence/day6-full-verification/day6-v1-2026-10-04T02-24-50-120Z-6129c5f6/fr014-governance-audit.json"
+    },
+    {
+      "id": "fr015-usage-quota",
+      "fr": [
+        "V1-FR-015"
+      ],
+      "status": "PASS",
+      "command": "node --test tests/integration/quota-api.test.mjs tests/integration/postgres-quota.test.mjs",
+      "exitCode": 0,
+      "stdoutSha256": "e09bc65792411f7a525b5c4de0d4b758a2500ea5dba879d4e5069c50d4d52565",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": ".herdr/evidence/day6-full-verification/day6-v1-2026-10-04T02-24-50-120Z-6129c5f6/fr015-usage-quota.json"
+    },
+    {
+      "id": "gates-migration",
+      "fr": [
+        "V1-RG-001",
+        "V1-RG-003"
+      ],
+      "status": "PASS",
+      "command": "node scripts/check-migration.mjs",
+      "exitCode": 0,
+      "stdoutSha256": "a4b8ae08e9f870f5879697353b659e18e80af9ac58d74553b28246d5c658b5d0",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": ".herdr/evidence/day6-full-verification/day6-v1-2026-10-04T02-24-50-120Z-6129c5f6/gates-migration.json"
+    },
+    {
+      "id": "gates-secret",
+      "fr": [
+        "V1-NFR-001",
+        "V1-NFR-004"
+      ],
+      "status": "PASS",
+      "command": "node scripts/secret-scan.mjs --paths scripts .herdr docs packages",
+      "exitCode": 0,
+      "stdoutSha256": "711a60b070d40383bfabfef2bf39c844b236c07743a9781d7f48dbf97a64761b",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": ".herdr/evidence/day6-full-verification/day6-v1-2026-10-04T02-24-50-120Z-6129c5f6/gates-secret.json"
+    },
+    {
+      "id": "native-smoke",
+      "fr": [
+        "V1-FR-001"
+      ],
+      "status": "PASS",
+      "command": "node apps/desktop/scripts/e2e-macos.mjs",
+      "exitCode": 0,
+      "stdoutSha256": "23b4b2e31f80267a15ca8718208552907043f37ab5cb16f030c5f59c9d979a6e",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": ".herdr/evidence/day6-full-verification/day6-v1-2026-10-04T02-24-50-120Z-6129c5f6/native-smoke.json"
+    }
+  ],
+  "byFr": {
+    "V1-FR-001": [
+      "BLOCKED",
+      "PASS"
+    ],
+    "V1-FR-002": [
+      "PASS"
+    ],
+    "V1-FR-003": [
+      "PASS"
+    ],
+    "V1-FR-004": [],
+    "V1-FR-005": [
+      "PASS"
+    ],
+    "V1-FR-006": [],
+    "V1-FR-007": [
+      "PASS"
+    ],
+    "V1-FR-008": [],
+    "V1-FR-009": [
+      "PASS"
+    ],
+    "V1-FR-010": [
+      "PASS"
+    ],
+    "V1-FR-011": [
+      "PASS"
+    ],
+    "V1-FR-012": [
+      "PASS"
+    ],
+    "V1-FR-013": [
+      "PASS"
+    ],
+    "V1-FR-014": [
+      "PASS"
+    ],
+    "V1-FR-015": [
+      "PASS"
+    ]
+  },
+  "result": "READY_FOR_VERIFY"
+}

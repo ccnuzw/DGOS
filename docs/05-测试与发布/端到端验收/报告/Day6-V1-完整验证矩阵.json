@@ -1,0 +1,24 @@
+{
+  "schema": "dgos.day6.matrix.v1",
+  "day": 6,
+  "scope": "V1 complete verification preparation",
+  "features": [
+    {"id":"V1-FR-001","name":"桌面与应用工作区","status":"EXECUTE","coverage":["Web UI acceptance","Native smoke","system settings"]},
+    {"id":"V1-FR-002","name":"开发者中心与 APP 生命周期","status":"EXECUTE","coverage":["manifest","install","update","uninstall","rollback"]},
+    {"id":"V1-FR-003","name":"Skill MCP 与 Agent 接入","status":"EXECUTE","coverage":["skill.read","MCP credential","capability boundary","audit"]},
+    {"id":"V1-FR-004","name":"无限画布与项目","status":"NOT_IN_V1","coverage":[],"reason":"V2-V5 planning scope"},
+    {"id":"V1-FR-005","name":"多模态 AI 任务工作流","status":"EXECUTE","coverage":["submit","SSE cursor","artifact","reload recovery","idempotency"]},
+    {"id":"V1-FR-006","name":"Canvas 插件与模板扩展","status":"NOT_IN_V1","coverage":[],"reason":"V5 planning scope"},
+    {"id":"V1-FR-007","name":"模型平台与工作流配置","status":"EXECUTE","coverage":["provider config","model catalog","capability matching"]},
+    {"id":"V1-FR-008","name":"项目资产与生成历史","status":"NOT_IN_V1","coverage":[],"reason":"V4 planning scope"},
+    {"id":"V1-FR-009","name":"系统智能助手与快捷指令","status":"EXECUTE","coverage":["discovery","plan","confirm","deny","cancel","recovery"]},
+    {"id":"V1-FR-010","name":"管理员登录与会话","status":"EXECUTE","coverage":["login","renew","revoke","backoff","device session"]},
+    {"id":"V1-FR-011","name":"API Key 生命周期","status":"EXECUTE","coverage":["create","one-time reveal","rotate","revoke","expiry","scope"]},
+    {"id":"V1-FR-012","name":"Provider 账号与连接","status":"EXECUTE","coverage":["account","credential binding","enable/disable","default binding"]},
+    {"id":"V1-FR-013","name":"上游账号连接测试","status":"EXECUTE","coverage":["success","auth failure","rate limit","protocol mismatch","cancel","no side effect"]},
+    {"id":"V1-FR-014","name":"审计与管理员系统治理","status":"EXECUTE","coverage":["audit","policy change","retention","redaction"]},
+    {"id":"V1-FR-015","name":"用量与额度管理","status":"EXECUTE","coverage":["precheck","reserve","settle","quota denial","aggregate"]}
+  ],
+  "gates":["V1-NFR-001","V1-NFR-002","V1-NFR-003","V1-NFR-004","V1-NFR-005","V1-NFR-006","V1-NFR-007","V1-RG-001","V1-RG-002","V1-RG-003"],
+  "evidenceRules":["single run id","source/build identity","fixture fingerprint","command exit code","stdout/stderr hashes","no secret values","NOT_IN_V1 is not PASS"]
+}

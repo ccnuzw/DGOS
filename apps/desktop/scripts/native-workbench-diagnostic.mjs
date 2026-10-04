@@ -14,7 +14,7 @@ const root = path.resolve(new URL('../../..', import.meta.url).pathname);
 const binary = path.join(root, 'apps/desktop/src-tauri/target/debug/bundle/macos/DGOS.app/Contents/MacOS/dgos-desktop');
 const keychain = path.join(root, 'apps/desktop/src-tauri/target/debug/dgos-keychain-fixture');
 const swift = path.join(root, 'apps/desktop/scripts/window-server.swift');
-let port = 15159;
+const port = 15159;
 const token = `fixture-${randomUUID()}`;
 const service = `com.dgos.desktop.test.${randomUUID()}`;
 const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'dgos-native-workbench-'));
@@ -44,19 +44,19 @@ const until = async (read, predicate, label, timeout = 30000) => {
 const output = { workPackage: 'WP-W1-01', result: 'failed', command: 'node apps/desktop/scripts/native-workbench-diagnostic.mjs', limitations: ['Diagnostic uses loopback Session fixture and debug native binary; Provider/Task chain is not asserted here.'] };
 try {
   if (!fs.existsSync(binary) || !fs.existsSync(keychain)) throw new Error('build_debug_app_and_keychain_fixture_first');
-  let listening = false;
-  for (const candidate of [15159, 15158, 15157, 15156, 15155, 15154, 15153, 15152, 15151]) {
-    try {
-      await new Promise((resolve, reject) => { server.once('error', reject); server.listen(candidate, '127.0.0.1', resolve); });
-      port = candidate; listening = true; break;
-    } catch { /* Try the next assigned loopback port. */ }
-  }
-  if (!listening) throw new Error('no_assigned_loopback_port_available');
+  await new Promise((resolve, reject) => {
+    server.once('error', reject);
+    server.listen({ host: '127.0.0.1', port, exclusive: true }, resolve);
+  });
+  output.apiOrigin = `http://127.0.0.1:${port}`;
   key('put', token); keyWritten = true;
   child = spawn(binary, [], { cwd: root, env: { ...process.env, DGOS_DESKTOP_API_ORIGIN: `http://127.0.0.1:${port}`, DGOS_DESKTOP_TEST_KEYCHAIN_SERVICE: service, DGOS_DESKTOP_TEST_WORKBENCH: '1', DGOS_DESKTOP_TEST_RESULT_FILE: resultFile, DGOS_DESKTOP_WORKSPACE_FILE: workspaceFile }, stdio: ['ignore', 'ignore', 'pipe'] });
   output.nativePid = child.pid;
   let stderr = ''; child.stderr.on('data', (chunk) => { stderr = (stderr + chunk.toString()).slice(-8000); });
-  const windows = await until(() => ownWindows(child.pid), (items) => items.some((item) => item.layer === 0 && item.bounds.Width > 500 && item.bounds.Height > 300), 'windowserver_owner', 15000);
+  // Tauri/WKWebView can take longer to register with WindowServer on a cold
+  // debug launch. Keep the business result gate strict, but allow startup
+  // diagnostics to reach the webview before declaring the window missing.
+  const windows = await until(() => ownWindows(child.pid), (items) => items.some((item) => item.layer === 0 && item.bounds.Width > 500 && item.bounds.Height > 300), 'windowserver_owner', 45000);
   const owner = windows.find((item) => item.layer === 0 && item.bounds.Width > 500 && item.bounds.Height > 300);
   output.windowServer = { ownerPid: child.pid, windowId: owner.windowId, bounds: owner.bounds, layer: owner.layer, alpha: owner.alpha };
   try { execFileSync('screencapture', ['-x', '-l', String(owner.windowId), screenshot], { timeout: 10000 }); output.screenshot = { file: path.relative(root, screenshot), bytes: fs.statSync(screenshot).size, sha256: createHash('sha256').update(fs.readFileSync(screenshot)).digest('hex') }; } catch (error) { output.screenshot = { available: false, reason: String(error.message).slice(0, 180) }; }

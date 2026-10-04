@@ -952,7 +952,10 @@ function Assistant({ t, session }: { t: ReturnType<typeof allLabels>; session: D
     [runId, setRunId] = useState(saved("runId")),
     [run, setRun] = useState<Dict | null>(null),
     [history, setHistory] = useState<Dict[]>(() => {
-      try { return JSON.parse(localStorage.getItem("dgos.ui.assistantHistory") || "[]"); } catch { return []; }
+      try {
+        const value = JSON.parse(localStorage.getItem("dgos.ui.assistantHistory") || "[]");
+        return Array.isArray(value) ? value.map((item: Dict) => ({ runId: item.runId, taskId: item.taskId, actionId: item.actionId, actionVersion: item.actionVersion, state: item.state, recordedAt: item.recordedAt })).filter((item: Dict) => item.runId) : [];
+      } catch { return []; }
     });
   const openedRunId = useRef("");
   useEffect(() => {
@@ -976,7 +979,7 @@ function Assistant({ t, session }: { t: ReturnType<typeof allLabels>; session: D
   }
   function recordRun(value: Dict) {
     if (!value.runId) return;
-    const entry = { runId: value.runId, taskId: value.taskId, actionId: value.actionId, actionVersion: value.actionVersion, state: value.state || value.status, resultSummary: value.resultSummary, errorSummary: value.errorSummary };
+    const entry = { runId: value.runId, taskId: value.taskId, actionId: value.actionId, actionVersion: value.actionVersion, state: value.state || value.status, recordedAt: new Date().toISOString() };
     setHistory(current => {
       const next = [entry, ...current.filter(item => item.runId !== entry.runId)].slice(0, 10);
       localStorage.setItem("dgos.ui.assistantHistory", JSON.stringify(next));
@@ -1140,9 +1143,9 @@ function Assistant({ t, session }: { t: ReturnType<typeof allLabels>; session: D
             <Panel>
               <h2>{t.assistant}</h2>
               <div className="quick-actions-grid" data-testid="assistant-quick-actions" aria-label="Quick commands">
-                {[["system.navigate.system.settings", "Open system settings", { target: "system.settings" }], ["system.info.read", "Check system status", {}], ["app.catalog.open", "Open app catalog", {}], ["provider.status.read", "Check providers", {}]].map(([id, label, value]) => {
-                  const available = items(actions.data).some((item: Dict) => item.actionId === id);
-                  return <Button key={String(id)} data-testid={`quick-action-${String(id)}`} disabled={!available} onClick={() => { const item = items(actions.data).find((candidate: Dict) => candidate.actionId === id); if (item) { setActionId(id as string); setInput(value as Dict); clearPlan(); } }}>{String(label)}{!available ? ` · ${t.unavailable}` : ""}</Button>;
+                {items(actions.data).filter((item: Dict) => item.state !== 'disabled' && item.state !== 'missing').slice(0, 6).map((item: Dict) => {
+                  const label = item.label?.['en-US'] || item.label?.['zh-CN'] || item.displayName || item.actionId;
+                  return <Button key={`${item.actionId}:${item.actionVersion || ''}`} data-testid={`quick-action-${String(item.actionId)}`} onClick={() => { setActionId(item.actionId); setInput(item.quickInput || {}); clearPlan(); }}>{label}</Button>;
                 })}
               </div>
               <form onSubmit={resolve} data-testid="assistant-resolve-form">
@@ -1282,7 +1285,7 @@ function Assistant({ t, session }: { t: ReturnType<typeof allLabels>; session: D
               ) : (
                 <Empty>{t.empty}</Empty>
               )}
-              {history.length > 0 && <ul className="record-list">{history.map((item: Dict) => <li key={item.runId}><div><strong>{item.actionId || t.action}</strong><small>{item.runId} · {item.state || t.status}{item.taskId ? ` · ${t.taskId}: ${item.taskId}` : ""}</small></div><Button onClick={() => { setRunId(item.runId); setRun(null); }}>{t.resume}</Button></li>)}</ul>}
+              {history.length > 0 && <ul className="record-list" data-testid="assistant-history">{history.map((item: Dict) => <li key={item.runId}><div><strong>{item.actionId || t.action}</strong><small>{item.runId} · {item.state || t.status}{item.taskId ? ` · ${t.taskId}: ${item.taskId}` : ""}</small></div><Button data-testid={`assistant-resume-${item.runId}`} onClick={() => { setRunId(item.runId); setRun(null); }}>{t.resume}</Button></li>)}</ul>}
               <h2>{t.audit}</h2>
               <Resource resource={audit} t={t}>
                 {(data) => (

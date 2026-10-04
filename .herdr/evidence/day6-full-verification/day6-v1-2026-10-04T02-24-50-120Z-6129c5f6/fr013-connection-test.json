@@ -1,0 +1,14 @@
+{
+  "id": "fr013-connection-test",
+  "fr": [
+    "V1-FR-013"
+  ],
+  "status": "PASS",
+  "command": "node scripts/v1-provider-failures-http.mjs",
+  "exitCode": 0,
+  "stdoutSha256": "0292ee87a8c4d2ae313e8cce0748b247276c151e18600635fe6b90024153157c",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "evidence": ".herdr/evidence/day6-full-verification/day6-v1-2026-10-04T02-24-50-120Z-6129c5f6/fr013-connection-test.json",
+  "stdout": "PASS authentication_failed\nPASS rate_limited\nPASS protocol_mismatch\nPASS tls_invalid\nPASS network_unreachable\nPASS timed_out\nPASS running_cancel\nPASS two_workers_restart_terminal_unique\n{\"status\":\"passed\",\"cases\":8,\"reportPath\":\"/Users/apple/Progame/DGOS/tests/provider/evidence/V1-PROVIDER-FAILURES-r8-2026-10-04T02-24-55-908Z-a0245d4a.json\",\"logPath\":\"/Users/apple/Progame/DGOS/tests/provider/evidence/V1-PROVIDER-FAILURES-r8-2026-10-04T02-24-55-908Z-a0245d4a.log\",\"manifestPath\":\"/Users/apple/Progame/DGOS/tests/provider/evidence/V1-PROVIDER-FAILURES-r8-2026-10-04T02-24-55-908Z-a0245d4a-manifest.json\"}\n",
+  "stderr": ""
+}

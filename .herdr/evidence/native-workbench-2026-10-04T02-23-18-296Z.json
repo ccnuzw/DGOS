@@ -1,0 +1,11 @@
+{
+  "workPackage": "WP-W1-01",
+  "result": "failed",
+  "command": "node apps/desktop/scripts/native-workbench-diagnostic.mjs",
+  "limitations": [
+    "Diagnostic uses loopback Session fixture and debug native binary; Provider/Task chain is not asserted here."
+  ],
+  "apiOrigin": "http://127.0.0.1:55394",
+  "error": "Command failed: /Users/apple/Progame/DGOS/apps/desktop/src-tauri/target/debug/dgos-keychain-fixture put com.dgos.desktop.test.6e1b557d-0046-45e3-a82e-bf0e581aa491 127.0.0.1:55394\nError: \"fixture keychain scope rejected\"\n",
+  "nativeStderr": ""
+}

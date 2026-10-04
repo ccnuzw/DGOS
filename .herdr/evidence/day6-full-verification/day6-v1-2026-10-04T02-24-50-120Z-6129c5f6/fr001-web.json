@@ -1,0 +1,14 @@
+{
+  "id": "fr001-web",
+  "fr": [
+    "V1-FR-001"
+  ],
+  "status": "BLOCKED",
+  "command": "pnpm exec playwright test apps/web/e2e/ui-acceptance.spec.mjs --config=apps/web/playwright.config.mjs --reporter=line",
+  "exitCode": 1,
+  "stdoutSha256": "9b669a020354d65138ccfc52b36eda6503c43e3e0fee44888907480c65a8cf8c",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "evidence": ".herdr/evidence/day6-full-verification/day6-v1-2026-10-04T02-24-50-120Z-6129c5f6/fr001-web.json",
+  "stdout": "Error: http://127.0.0.1:15133 is already used, make sure that nothing is running on the port/url or set reuseExistingServer:true in config.webServer.\n\n",
+  "stderr": ""
+}

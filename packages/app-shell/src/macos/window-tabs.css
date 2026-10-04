@@ -13,7 +13,7 @@
   backdrop-filter: blur(40px) saturate(180%);
   -webkit-backdrop-filter: blur(40px) saturate(180%);
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-  z-index: 999;
+  z-index: var(--z-systembar);
   display: flex;
   align-items: center;
   user-select: none;
@@ -111,30 +111,27 @@
 }
 
 .macos-window-tabs__close {
-  flex-shrink: 0;
+  flex: 0 0 16px;
   width: 16px;
   height: 16px;
-  min-width: 16px;
-  min-height: 16px;
-  max-width: 16px;
-  max-height: 16px;
-  border: none;
-  background: transparent;
-  color: var(--muted);
-  border-radius: 3px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border: 0;
   padding: 0;
-  margin: 0;
+  margin: 0 0 0 2px;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
   opacity: 0;
-  transition: all 0.15s;
+  transition: opacity 150ms ease, background 150ms ease, color 150ms ease;
 }
 
 .macos-window-tabs__close svg {
-  width: 12px;
-  height: 12px;
+  width: 11px;
+  height: 11px;
+  max-width: 11px;
+  max-height: 11px;
 }
 
 .macos-window-tabs__tab:hover .macos-window-tabs__close,
@@ -175,23 +172,6 @@
   text-overflow: ellipsis;
 }
 
-.macos-window-tabs__close {
-  flex-shrink: 0;
-  width: 20px;
-  height: 20px;
-  border: none;
-  background: transparent;
-  color: var(--muted);
-  border-radius: 4px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.15s;
-  opacity: 0;
-  margin-left: 4px;
-}
-
 .macos-window-tabs__tab:hover .macos-window-tabs__close,
 .macos-window-tabs__tab--active .macos-window-tabs__close {
   opacity: 1;
@@ -200,6 +180,11 @@
 .macos-window-tabs__close:hover {
   background: rgba(0, 0, 0, 0.1);
   color: var(--text);
+}
+
+.macos-window-tabs__close svg {
+  width: 11px;
+  height: 11px;
 }
 
 [data-theme="dark"] .macos-window-tabs__close:hover {

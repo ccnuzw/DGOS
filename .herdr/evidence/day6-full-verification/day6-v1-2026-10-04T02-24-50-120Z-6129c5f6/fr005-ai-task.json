@@ -1,0 +1,14 @@
+{
+  "id": "fr005-ai-task",
+  "fr": [
+    "V1-FR-005"
+  ],
+  "status": "PASS",
+  "command": "node --test tests/integration/ai-task-api.test.mjs tests/integration/ai-task-worker.test.mjs",
+  "exitCode": 0,
+  "stdoutSha256": "f509ddfdb59b1721d180d9297fc4b3a308e731d610344663b500adc94f128502",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "evidence": ".herdr/evidence/day6-full-verification/day6-v1-2026-10-04T02-24-50-120Z-6129c5f6/fr005-ai-task.json",
+  "stdout": "TAP version 13\n# Subtest: public ProviderConfig to text task API supports explicit refresh, idempotency, SSE resume and artifact authorization\nok 1 - public ProviderConfig to text task API supports explicit refresh, idempotency, SSE resume and artifact authorization\n  ---\n  duration_ms: 92.47875\n  type: 'test'\n  ...\n# Subtest: unknown Provider config maps errorKey to 404 without creating task side effects\nok 2 - unknown Provider config maps errorKey to 404 without creating task side effects\n  ---\n  duration_ms: 15.62275\n  type: 'test'\n  ...\n# Subtest: quota preflight rejection creates no task, attempt or reservation\nok 3 - quota preflight rejection creates no task, attempt or reservation\n  ---\n  duration_ms: 10.126708\n  type: 'test'\n  ...\n# Subtest: provider failure settles quota exactly once\nok 4 - provider failure settles quota exactly once\n  ---\n  duration_ms: 35.113083\n  type: 'test'\n  ...\n# Subtest: task cancellation releases quota exactly once\nok 5 - task cancellation releases quota exactly once\n  ---\n  duration_ms: 56.898958\n  type: 'test'\n  ...\n# Subtest: provider timeout settles quota with estimated usage exactly once\nok 6 - provider timeout settles quota with estimated usage exactly once\n  ---\n  duration_ms: 32.179\n  type: 'test'\n  ...\n# Subtest: AI task worker claims queued attempts and reclaims expired leases\nok 7 - AI task worker claims queued attempts and reclaims expired leases\n  ---\n  duration_ms: 17.111083\n  type: 'test'\n  ...\n# Subtest: AI task worker passes the claimed attempt and persisted input to the service\nok 8 - AI task worker passes the claimed attempt and persisted input to the service\n  ---\n  duration_ms: 0.420041\n  type: 'test'\n  ...\n# Subtest: AI task worker runs a continuous loop and stops without claiming after stop\nok 9 - AI task worker runs a continuous loop and stops without claiming after stop\n  ---\n  duration_ms: 6.25\n  type: 'test'\n  ...\n# Subtest: lease loss prevents worker service from committing terminal state\nok 10 - lease loss prevents worker service from committing terminal state\n  ---\n  duration_ms: 0.493166\n  type: 'test'\n  ...\n1..10\n# tests 10\n# suites 0\n# pass 10\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 449.42275\n",
+  "stderr": ""
+}

@@ -43,6 +43,8 @@ export interface StorageAPI {
   clear(): Promise<void>;
 }
 
+type MockStorageAPI = StorageAPI & { data: Map<string, any> };
+
 export interface TasksAPI {
   create(request: {
     prompt: string;
@@ -151,7 +153,10 @@ export function createMockAPI(): SkillAPI {
     system: {
       async getVersion() { return '1.0.0'; },
       async getPlatform() { return 'test'; },
-      async getEnvironment(key: string) { return process.env[key]; },
+      async getEnvironment(key: string) {
+        const environment = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env;
+        return environment?.[key];
+      },
     },
     storage: {
       data: new Map<string, any>(),
@@ -162,7 +167,7 @@ export function createMockAPI(): SkillAPI {
         return Array.from(this.data.keys()).filter(k => !prefix || k.startsWith(prefix));
       },
       async clear() { this.data.clear(); },
-    },
+    } as MockStorageAPI,
     tasks: {
       async create() { return { taskId: 'mock-task-id' }; },
       async getStatus() { return { status: 'succeeded', result: 'mock result' }; },

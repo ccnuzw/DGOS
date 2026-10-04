@@ -1,0 +1,88 @@
+{
+  "workPackage": "WP-W1-01",
+  "result": "failed",
+  "command": "node apps/desktop/scripts/native-workbench-diagnostic.mjs",
+  "limitations": [
+    "Diagnostic uses loopback Session fixture and debug native binary; Provider/Task chain is not asserted here."
+  ],
+  "apiOrigin": "http://127.0.0.1:15159",
+  "nativePid": 43878,
+  "windowServer": {
+    "ownerPid": 43878,
+    "windowId": 5320,
+    "bounds": {
+      "Height": 840,
+      "X": 50,
+      "Width": 1280,
+      "Y": 50
+    },
+    "layer": 0,
+    "alpha": 1
+  },
+  "screenshot": {
+    "file": ".herdr/evidence/native-workbench-2026-10-04T02-25-25-973Z.png",
+    "bytes": 278848,
+    "sha256": "5fbcdaa824059ed20c2c815fe97c018f016a366a28c789384b33365949280b4b"
+  },
+  "webview": {
+    "bridgeReady": false,
+    "error": "signed_workbench_catalog_timeout",
+    "frameDiagnostics": {
+      "bridgeReady": false,
+      "errors": 0,
+      "events": [],
+      "hostHello": null,
+      "hostMessages": [],
+      "injectedPaths": [],
+      "loads": 0
+    },
+    "frameReady": false,
+    "phase": "submit",
+    "route": "/catalog",
+    "stage": "failed"
+  },
+  "nativeStderr": "dgos desktop debug window: workbench_test=true, visible_test=false\ndgos desktop debug page finished: tauri://localhost/catalog\ndgos desktop debug result: driver_started\ndgos desktop debug result: driver_injected\ndgos desktop debug result: catalog_open\ndgos desktop debug result: failed\n",
+  "requests": [
+    {
+      "url": "/api/v1/identity/admin/session",
+      "method": "GET",
+      "requestId": null
+    },
+    {
+      "url": "/api/v1/identity/admin/session",
+      "method": "GET",
+      "requestId": "desktop-bridge-fixture"
+    },
+    {
+      "url": "/api/v1/identity/admin/session",
+      "method": "GET",
+      "requestId": null
+    },
+    {
+      "url": "/api/v1/identity/admin/session",
+      "method": "GET",
+      "requestId": null
+    },
+    {
+      "url": "/api/v1/identity/admin/session",
+      "method": "GET",
+      "requestId": null
+    },
+    {
+      "url": "/api/v1/identity/admin/session",
+      "method": "GET",
+      "requestId": null
+    },
+    {
+      "url": "/api/v1/system/context",
+      "method": "GET",
+      "requestId": null
+    },
+    {
+      "url": "/api/v1/apps",
+      "method": "GET",
+      "requestId": null
+    }
+  ],
+  "error": "signed_workbench_catalog_timeout"
+}

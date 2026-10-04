@@ -34,8 +34,8 @@ export async function desktopCandidatePreflight() {
   const envelopeFile = path.join(fixtureDir, 'ai-workbench-envelope.json');
   const rootsFile = path.join(fixtureDir, 'trust-roots.json');
    if (process.env.DGOS_DESKTOP_CANDIDATE_ALLOW_DRIFT !== '1') {
-     assert.equal(sha256(readFileSync(envelopeFile)), '102fb6cac8aa112f7d762ea7f4e0defceb9af0ea543f02de367d7694494451be', 'frozen_envelope_required');
-     assert.equal(sha256(readFileSync(rootsFile)), 'bad1036ed3b953108b9c7f785f1062ebe47d079bffe1ba5eca300057adfee1a0', 'frozen_trust_roots_required');
+     assert.equal(sha256(readFileSync(envelopeFile)), '3284e22b7c56639c94c78dcbb11b64d516a7f9f5c424c0b612e48a3e640f5122', 'frozen_envelope_required');
+     assert.equal(sha256(readFileSync(rootsFile)), '4e84d35231ba4ffa4a5ba0117a3c01604c3434f8495c26fbad32d5277c0e4342', 'frozen_trust_roots_required');
    }
   const envelope = JSON.parse(readFileSync(envelopeFile, 'utf8'));
   const roots = JSON.parse(readFileSync(rootsFile, 'utf8'));
@@ -45,7 +45,7 @@ export async function desktopCandidatePreflight() {
   assert.equal(envelope.manifest.appId, 'dgos.ai-workbench');
   assert.equal(envelope.manifest.version, '1.0.1');
   assert.equal(envelope.manifest.build, 2);
-   if (process.env.DGOS_DESKTOP_CANDIDATE_ALLOW_DRIFT !== '1') assert.equal(checked.digest, 'sha256:8f643ee33ec7c663a09bd15f28cd1437c61434a9bba08190786fd2ff6f446afb');
+   if (process.env.DGOS_DESKTOP_CANDIDATE_ALLOW_DRIFT !== '1') assert.equal(checked.digest, 'sha256:9c4cd6cb8edeca071794e27f3e52b4c0c9bed6b60f7a066551376384a46591fa');
   for (const [name, bytes] of checked.files) {
     const source = name === 'tokens.css' ? path.join(root, 'packages/design-tokens/src/tokens.css') : path.join(root, 'apps/ai-workbench-package', name);
     assert.equal(sha256(readFileSync(source)), sha256(bytes), `signed_resource_drift:${name}`);

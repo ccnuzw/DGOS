@@ -39,11 +39,10 @@ body {
 
 /* Application content area */
 .macos-desktop__workspace {
-  padding-top: 44px; /* SystemBar height */
-  padding-bottom: 80px; /* Dock height */
-  height: 100vh;
-  overflow-y: auto;
-  overflow-x: hidden;
+  padding: 0;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
 }
 
 /* Smooth scrolling for content */

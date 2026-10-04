@@ -28,3 +28,7 @@
 - 现有最新集成批次属于 `WP-W3-04`，run `w3-20261003180728-89569`：source drift=true、Web 组 FAIL、FR-002 API/Task 组 PASS、Native smoke PASS，但不证明 Native Workbench bridge/Task/Artifact，也不满足 W4-01。
 - `WP-W3-02-native-bridge-fix-2026-10-04.json` 为 `partial`：iframe load 0、`dgos.app.ready` 0、bridge calls 0；不能将 FR-001 升格。
 - 因此本任务当前只完成“证据盘点/回写准备”，不修改 `V1-实现状态.md` 的完成度结论。
+
+## 缺口评估关联
+
+完整评估已写入 `docs/02-产品与版本/当前版本/V1-真实缺口评估-2026-10-04.md`。该报告依据 d65ed78 与 W4-01 manifest，结论为正式 V1 发布阻塞；本文件仍保持“不得将局部证据升格为 FR 完成”的门禁。

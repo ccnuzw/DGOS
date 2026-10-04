@@ -56,7 +56,12 @@
     left: 0 !important;
     width: 100vw !important;
     height: calc(100vh - var(--macos-systembar-height)) !important;
+    z-index: var(--z-window);
     border-radius: 0;
+  }
+
+  .macos-window__title-bar .macos-traffic-lights {
+    z-index: 2;
   }
 
   .macos-window--minimized {
@@ -155,6 +160,11 @@
 
   .macos-window-manager > * {
     pointer-events: auto;
+  }
+
+  /* Windows occupy the workspace only; the fixed Dock floats above them. */
+  .macos-window-manager {
+    bottom: 0;
   }
 
   /* ==================== Resize Handles ==================== */

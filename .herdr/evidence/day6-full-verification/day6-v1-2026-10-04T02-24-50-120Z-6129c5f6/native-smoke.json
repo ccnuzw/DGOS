@@ -1,0 +1,14 @@
+{
+  "id": "native-smoke",
+  "fr": [
+    "V1-FR-001"
+  ],
+  "status": "PASS",
+  "command": "node apps/desktop/scripts/e2e-macos.mjs",
+  "exitCode": 0,
+  "stdoutSha256": "23b4b2e31f80267a15ca8718208552907043f37ab5cb16f030c5f59c9d979a6e",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "evidence": ".herdr/evidence/day6-full-verification/day6-v1-2026-10-04T02-24-50-120Z-6129c5f6/native-smoke.json",
+  "stdout": "{\"result\":\"passed\",\"fixture\":true,\"nativeProcess\":true,\"webviewBridge\":true,\"keychainRelaunch\":true,\"revokedSessionChecked\":true,\"subjectWorkspace\":true,\"origin\":\"http://127.0.0.1:15159\",\"windowPixelsChecked\":false}\n",
+  "stderr": ""
+}

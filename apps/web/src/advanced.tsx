@@ -331,6 +331,11 @@ export function ExtensionsV1({
       localStorage.removeItem("dgos.ui.extensionRunId");
     }
   }, [runId, run.data]);
+  useEffect(() => {
+    const onVisible = () => { if (document.visibilityState === 'visible' && runId) run.reload(); };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
+  }, [runId]);
   async function inspect(e: FormEvent) {
     e.preventDefault();
     setPreview(null);
@@ -646,6 +651,7 @@ export function ExtensionsV1({
                 <Button onClick={run.reload}>{t.refresh}</Button>
               </div>
               <p className="code">Run ID: {runId}</p>
+              {run.error && <Alert>{run.error} <Button onClick={run.reload}>{t.retry}</Button></Alert>}
               {data && (
                 <>
                   <Status value={data.state} />

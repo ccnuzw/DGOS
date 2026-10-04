@@ -1,126 +1,111 @@
 version: 3
 project: DGOS
-last_updated: '2026-10-04T02:40:00-07:00'
+last_updated: '2026-10-04T10:30:00-07:00'
 
-# 状态：V1完善修复全力推进
-status: v1_fix_sprint
-mode: critical_fixes
+# 状态：Day 1执行中 - 5个Workers并行
+status: day1_execution
+mode: max_parallel
 
-# 修复计划
-plan: ".herdr/status/V1-FIX-PLAN.md"
-timeline: "24小时完成V1"
+# Day 1目标
+day: 1
+goal: "冻结基线 + 开始核心任务"
 
-# 当前基线
-baseline:
-  commit: f14a3c9
-  issues: "Native blocked + Web 500错误"
-
-# 团队状态（4个Workers并行修复）
+# 团队状态（5个Workers并行）
 team:
-  # Phase 1: 关键修复
+  # P0关键路径
   worker-ai:
     status: working
-    task: "修复Web Provider 500错误"
+    task: "WP-D1-01 核心Task链（FR-005/007）"
     priority: P0
-    blocking: true
-    started_at: '2026-10-04T02:40:00'
-    estimated: "1-2小时"
-    note: "阻塞验证的关键问题"
+    started_at: '2026-10-04T10:30:00'
+    note: "Day 2-3关键任务，今天开始"
 
   worker-native:
     status: working
-    task: "Native loopback HTTP方案"
+    task: "WP-D1-01 Native完善（FR-001）"
     priority: P0
-    started_at: '2026-10-04T02:15:00'
-    estimated: "2-3小时"
-    note: "Wry iframe解决方案"
+    started_at: '2026-10-04T10:30:00'
+    note: "Day 4关键任务，今天推进"
+
+  # P1重要任务
+  worker-platform:
+    status: working
+    task: "WP-D1-02/03/04 FR-002/003完善"
+    priority: P1
+    started_at: '2026-10-04T10:30:00'
+    note: "Day 5任务，提前开始"
 
   worker-web:
     status: working
-    task: "修复Assistant UI selector"
+    task: "WP-D1-05 FR-009完善"
     priority: P1
-    started_at: '2026-10-04T02:40:00'
-    estimated: "30分钟"
+    started_at: '2026-10-04T10:30:00'
+    note: "Day 5任务，提前开始"
 
   worker-test:
     status: working
-    task: "准备最终验证环境"
+    task: "准备Day 6验证矩阵"
     priority: P0
-    started_at: '2026-10-04T02:40:00'
-    note: "等待修复完成后立即验证"
+    started_at: '2026-10-04T10:30:00'
+    note: "为Day 6准备"
+
+  # 完成
+  planner:
+    status: completed
+    note: "FR缺口评估完成，生成9个work-packages"
 
   # 待命
-  planner:
-    status: standby
-    next_task: "Phase 3状态回写"
-
-  worker-platform:
-    status: standby
-    next_task: "Phase 3演示视频"
-
   worker-devops:
     status: standby
-    next_task: "Phase 2冻结候选"
+    next_task: "Day 1下午冻结基线"
 
   verify:
     status: standby
-    next_task: "Phase 2验证报告"
+    next_task: "Day 6验证审核"
 
-# Phase 1: 关键修复（今晚）
-phase1_fixes:
-  critical:
-    - task: "Web Provider 500错误"
-      owner: worker-ai
-      status: working
-      eta: "1-2小时"
-      blocking: true
-
-    - task: "Native loopback方案"
-      owner: worker-native
-      status: working
-      eta: "2-3小时"
-      blocking: true
-
-  important:
-    - task: "Assistant UI selector"
-      owner: worker-web
-      status: working
-      eta: "30分钟"
-
-# 阻塞升级机制
-escalation:
-  enabled: true
-  conditions:
-    - "Worker遇到技术障碍"
-    - "修复方案失败"
-    - "需要外部信息"
-  action: "立即向用户反馈具体问题"
+# Planner产出
+planner_output:
+  work_packages: 9
+  list:
+    - "WP-D1-01: Web/Native核心Task链"
+    - "WP-D1-02: 桌面上下文、代理、权限"
+    - "WP-D1-03: 应用生命周期与回滚"
+    - "WP-D1-04: Skill/MCP管理与恢复"
+    - "WP-D1-05: 助手确认、取消、恢复"
+    - "WP-D1-06: 身份、API Key、再认证"
+    - "WP-D1-07: Provider账号与连接测试"
+    - "WP-D1-08: 审计与额度"
+    - "WP-D1-09: 统一候选、发布门禁与证据"
 
 # 并行度
 parallelism:
-  current: 4
-  phase1: "4个Workers修复"
-  phase2: "3个Workers验证"
-  phase3: "3个Workers交付"
+  current: 5
+  max: 6
+  utilization: "83%"
 
-# 成功指标
-success_criteria:
-  minimum:
-    - "Web版完整演示可用"
-    - "E2E主流程通过"
-    - "文档完整"
-  ideal:
-    - "Native基础可用"
-    - "完整验证通过"
+# Day 1计划
+day1_schedule:
+  上午完成:
+    - "✅ Planner FR缺口评估"
+    - "✅ 生成9个work-packages"
 
-# 时间线
-timeline:
-  phase1: "今晚23:00"
-  phase2: "明天10:00"
-  phase3: "明天18:00"
-  v1_delivery: "明天晚上"
+  下午进行:
+    - "→ 5个Workers并行推进"
+    - "→ Worker-DevOps冻结基线"
 
-# 预期
-estimates:
-  total_time: "24小时"
-  confidence: "高（已明确问题）"
+  今晚完成:
+    - "Workers初步推进"
+    - "基线冻结"
+
+# 5-8天进度
+progress:
+  day1: "进行中 - 5个Workers工作"
+  day2_3: "准备就绪"
+  day4: "已提前开始（Native）"
+  day5: "已提前开始（FR-002/003/009）"
+
+# 监控重点
+monitoring:
+  critical_path: "Worker-AI的FR-005/007"
+  blocked_risk: "Worker-Native的Native bridge"
+  next_check: "今晚18:00检查Day 1进展"
