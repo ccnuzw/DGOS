@@ -1,4 +1,13 @@
 node_modules/
+.claude/
+.codex/
+.herdr/
+.pnpm-store/
+.tmp-provider-tls-*/
+data/
+evidence/
+preview/
+reference/
 dist/
 build/
 .turbo/
