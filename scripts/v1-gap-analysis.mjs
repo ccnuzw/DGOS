@@ -7,7 +7,7 @@
 import { readFileSync, existsSync } from 'fs';
 import { execSync } from 'child_process';
 
-const BASE = '/Users/apple/Progame/DGOS';
+const BASE = process.cwd();
 
 // All 12 FRs with their ACs
 const frSpecs = [

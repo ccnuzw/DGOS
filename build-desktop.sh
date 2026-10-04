@@ -8,7 +8,7 @@ echo ""
 
 # Step 1: Build web app first
 echo "📦 Building web app..."
-cd /Users/apple/Progame/DGOS
+cd "$(dirname "$0")"
 npm run build --workspace=@dgos/web
 
 # Step 2: Build Tauri desktop app
@@ -20,7 +20,7 @@ echo ""
 echo "✅ Desktop app built successfully!"
 echo ""
 echo "📍 Location:"
-echo "   /Users/apple/Progame/DGOS/apps/desktop/src-tauri/target/release/bundle/macos/"
+echo "   apps/desktop/src-tauri/target/release/bundle/macos/"
 echo ""
 echo "🚀 To run:"
 echo "   open apps/desktop/src-tauri/target/release/bundle/macos/DGOS.app"

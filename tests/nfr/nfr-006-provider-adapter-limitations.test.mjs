@@ -5,8 +5,10 @@ import assert from 'node:assert';
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
+const ROOT = process.cwd();
+
 test('NFR-006: Provider adapter implementations exist', () => {
-  const adaptersPath = '/Users/apple/Progame/DGOS/src/provider-adapters';
+  const adaptersPath = join(ROOT, 'src/provider-adapters');
 
   assert.ok(existsSync(adaptersPath), 'Provider adapters directory should exist');
 
@@ -17,7 +19,7 @@ test('NFR-006: Provider adapter implementations exist', () => {
 });
 
 test('NFR-006: Provider configuration supports multiple protocols', () => {
-  const configPath = '/Users/apple/Progame/DGOS/src/provider-config';
+  const configPath = join(ROOT, 'src/provider-config');
 
   assert.ok(existsSync(configPath), 'Provider config directory should exist');
 

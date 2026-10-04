@@ -8,7 +8,7 @@ echo ""
 
 # Build packages
 echo "📦 Building design tokens..."
-cd /Users/apple/Progame/DGOS
+cd "$(dirname "$0")"
 npm run build --workspace=@dgos/design-tokens --silent
 
 echo "📦 Building dgos-ui..."

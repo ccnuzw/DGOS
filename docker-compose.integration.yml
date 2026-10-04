@@ -60,7 +60,7 @@ services:
       <<: *runtime
       HOST: 0.0.0.0
       PORT: '3000'
-      DGOS_PACKAGE_TRUST_ROOTS_FILE: /workspace/.herdr/state/integration-trust-roots-r9.json
+      DGOS_PACKAGE_TRUST_ROOTS_FILE: /workspace/.local-state/integration-trust-roots.json
     command: ['node', 'apps/api/src/server.mjs']
     ports: ['127.0.0.1:${DGOS_INTEGRATION_API_PORT:-15202}:3000']
     depends_on:

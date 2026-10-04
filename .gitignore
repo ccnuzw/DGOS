@@ -17,6 +17,7 @@ build/
 coverage/
 .DS_Store
 .tmp-*
+.local-state/
 test-results/
 playwright-report/
 .DS_Store
