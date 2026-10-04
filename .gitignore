@@ -33,3 +33,9 @@ reference/*.tar.gz
 # Release candidates (large frozen artifacts)
 candidates/*/
 !candidates/.gitkeep
+
+# Local verification output and generated run state
+.herdr/state/
+.herdr/evidence/**/*.log
+.herdr/evidence/**/stdout.log
+.herdr/evidence/**/stderr.log
