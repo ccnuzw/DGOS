@@ -1,7 +1,0 @@
-# P0-DOC r6 — manual proxy provisioning
-
-Planner after r5 sealed; no changes to prior reports. FR001 AC06 requires user manual proxy configuration, currently UI can only enter pre-existing manualProxyRef. I r7 proposes a bounded authenticated Secret creation path; read proposal/current runtime/ADR0007 and freeze minimal HTTP engineering projection, not general secret management.
-
-Allowed main OpenAPI, new focused proxy engineering contract, FR001 interface mapping and `.herdr/P0-DOC-r6.md`. Keep facts/state/evidence/approvals untouched. Fresh administrator Session, CSRF, system.settings.write, write-only endpoint/credentials through trusted transport; server-generated reference/status only, no secret read/export. Validate bounded proxy config/policy, operation doesn't connect/change settings/activate route; explicit subsequent Settings PATCH + restart. Durable idempotency/Secret compensation avoids orphaning plaintext or losing old usable reference. Deployment proxies and ordinary manual config use same service policy.
-
-Clarify runtime currently allows HTTPS proxies except explicitly local test HTTP; legitimate controlled local proxy requirements must follow existing network allowlist authorization, not broaden arbitrary SSRF. New path/model shape is engineering choice within existing scope. Supply schema tests and Ready report to I/D/Lead. Assign no SQL; Lead supplies number if needed.

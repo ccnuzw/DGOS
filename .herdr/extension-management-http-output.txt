@@ -1,9 +1,0 @@
-PASS isolated_frozen_schema
-PASS public_api_independent_worker
-PASS public_provider_and_quota_setup
-PASS custom_skill_rename_stable_identity
-PASS confirmed_custom_run_real_task_quota_artifact
-PASS translation_task_artifact_apply_source_cas
-PASS template_credential_connect_discovery_invoke
-PASS trusted_https_online_preview_immutable_bytes
-{"status":"passed","cases":8,"report":"/Users/apple/Progame/DGOS/tests/extensions/evidence/V1-EXT-PUBLIC-r7-2026-10-02T11-19-13-678Z-7ebc7fd8.json","log":"/Users/apple/Progame/DGOS/tests/extensions/evidence/V1-EXT-PUBLIC-r7-2026-10-02T11-19-13-678Z-7ebc7fd8.log","manifest":"/Users/apple/Progame/DGOS/tests/extensions/evidence/V1-EXT-PUBLIC-r7-2026-10-02T11-19-13-678Z-7ebc7fd8-manifest.json"}
